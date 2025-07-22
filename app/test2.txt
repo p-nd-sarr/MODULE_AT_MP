@@ -1,0 +1,13 @@
+Résumé des Étapes
+Installer Django
+
+Créer un projet
+
+Créer une app
+
+Définir le modèle Étudiant
+
+Configurer les URLs
+
+Créer une vue et un template
+
