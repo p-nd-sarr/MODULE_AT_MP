@@ -1,0 +1,101 @@
+<%= content_for :titre_page, 'Echéances Conventions' %>
+<%= content_for :actions_page do %>
+  <% if current_user.gestionnaire_compte_allocataire? or current_user.chef_section_liquidation? %>
+    <%= link_to 'Ajouter', new_admin_dossier_cnav_path, class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Evolution </h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-9">
+              <%= area_chart DossierCnav.group_by_month(:created_at).count, height: "200px" %>
+            </div>
+            <div class="col-lg-3">
+              <ul class="stat-list">
+                <li>
+                  <h2 class="no-margins"><%= DossierCnav.soumis.count %></h2>
+                  <small>Soumis</small>
+                  <div class="stat-percent">
+                    <%= DossierCnav.count.zero? ? 0 : DossierCnav.soumis.count * 100 / DossierCnav.count %>%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%=DossierCnav.count.zero? ? 0 : DossierCnav.soumis.count * 100 / DossierCnav.count %>%" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins"><%= DossierCnav.valide.count %></h2>
+                  <small>Validé</small>
+                  <div class="stat-percent">
+                    <%= DossierCnav.count.zero? ? 0 : DossierCnav.valide.count * 100 / DossierCnav.count %>
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%= DossierCnav.count.zero? ? 0 : DossierCnav.valide.count * 100 / DossierCnav.count %>%" class="progress-bar">
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins"><%= DossierCnav.rejete.count %></h2>
+                  <small>Rejeté</small>
+                  <div class="stat-percent">
+                    <%= DossierCnav.count.zero? ? 0 : DossierCnav.rejete.count * 100 / DossierCnav.count %>
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%= DossierCnav.count.zero? ? 0 : DossierCnav.rejete.count * 100 / DossierCnav.count %>%" class="progress-bar">
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="m-t-md">
+            <small class="float-right" style="float: right;">
+              <i class="fa fa-clock-o"></i>
+              Update on 16.12.2020
+            </small>
+            <small>
+              <strong>Analysis</strong>
+              data data data
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="row">
+
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -50px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>Echéances Des Conventions </h5>
+          <span class="label label-warning">Total dossiers <%= DossierCnav.count %></span>
+          <div class="ibox-tools">
+          </div>
+        </div>
+        <div class="ibox-content">
+
+          <div class="tab-content">
+            <div id="tous" class="tab-pane fade in active">
+              <%= render 'liste' %>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

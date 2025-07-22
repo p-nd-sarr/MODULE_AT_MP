@@ -1,0 +1,89 @@
+<%= content_for :titre_page, "Faire une déclaration" %>
+
+<%= content_for :actions_page do %>
+  <% if @declaration.creation? %>
+
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated progress-bar-primary" style="width: <%=@pourcentage%>%" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">Progression : <%= @pourcentage %>%</div>
+    </div>
+
+    <% if @declaration.pret_pour_soumission? %>
+      <%= link_to "Soumettre", employer_declaration_soumettre_declaration_path(@declaration), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <% end %>
+
+  <% end %>
+
+  <% if @declaration.soumis? %>
+    <h4>Etat Déclaration : <span class="btn btn-warning"> <%= Declaration.human_enum_name(:statut, @declaration.statut) %></span></h4>
+
+  <% else %>
+
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <% if @declaration.creation? %>
+              <% if @declaration.pret_pour_soumission? %>
+                <h2 class="text-info">
+                  Votre déclaration est prête pour soumission
+                </h2>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre votre déclaration
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs">
+                <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="<%=@active_mouvement%>"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Confirmation mouvement effectifs
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @declaration.mouvement_effectif_valide? %>
+
+                </a></li>
+                <li class="<%=@active_recaputilatif %>"><a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Récapitulatif salarié
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @declaration.recap_salarie_valide? %>
+                </a></li>
+                <li class="<%=@active_synthese %>"><a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Synthèse déclaration
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @declaration.synthese_valide? %>
+                </a></li>
+              </ul>
+              <div class="tab-content">
+
+                <div id="tab-1" class="tab-pane <%=@active_mouvement%>">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'employer/declarations/show_items/show_mouvement' %>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane <%=@active_recaputilatif%>">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'employer/declarations/show_items/show_recaputilatif' %>
+
+                  </div>
+                </div>
+
+                <div id="tab-3" class="tab-pane <%=@active_synthese%>">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'employer/declarations/show_items/show_synthese' %>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

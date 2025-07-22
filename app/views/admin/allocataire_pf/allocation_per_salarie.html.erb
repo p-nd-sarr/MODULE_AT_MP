@@ -1,0 +1,55 @@
+<%= content_for :titre_page do %>
+  Liste allocation(s) Familiale(s) salarié No -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= params[:allocataire_pf_id] %>
+  </span>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Enfant</th>
+        <th scope="col">Trimestre</th>
+        <th scope="col">Année</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Date Création</th>
+        <th scope="col">Date Liquidation</th>
+        <th scope="col">Montant Liquidé</th>
+        <th scope="col">Date Paiement</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% unless @allocation_familiales.nil? %>
+        <% @allocation_familiales.each do |allocation_familiale| %>
+          <tr>
+            <td> <%= allocation_familiale.enfant.full_name %></td>
+            <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre)%></td>
+            <td><%= allocation_familiale.annee %></td>
+            <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+            <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+            <td>
+              <% unless allocation_familiale.date_validation.nil? %>
+                <%= l allocation_familiale.date_validation %>
+              <%end %>
+            </td>
+            <td><%= allocation_familiale.montant_paiement %></td>
+            <td>
+              <% unless allocation_familiale.date_paiement.nil? %>
+                <%= l allocation_familiale.date_paiement %>
+              <%end %>
+            </td>
+            <td style="width: 75px">
+              <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                          class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+          </tr>
+        <%end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

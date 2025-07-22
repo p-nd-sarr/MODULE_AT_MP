@@ -1,0 +1,78 @@
+<%= content_for :titre_page, "Historique des tranches ICM" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_maternite.nil? %>
+    Salarié : <%= @dossier_maternite.full_name %>
+  <% end %> <br>
+  Date début grossesse (approximative) : <%= l(@dossier_maternite.debut_grossesse) unless @dossier_maternite.debut_grossesse.nil? %>
+  <br>
+  Etat du dossier : <%= "#{DossierMaternite.human_enum_name(:etat, @dossier_maternite.etat)}" unless @dossier_maternite.etat.nil? %>
+  <br>
+  <% if @dossier_maternite.creation? %>
+    Date création : <%= l(@dossier_maternite.created_at) unless @dossier_maternite.created_at.nil? %>
+  <% end %>
+  <% if @dossier_maternite.soumis? %>
+    Date soumission : <%= l(@dossier_maternite.date_soumission) unless @dossier_maternite.date_soumission.nil? %>
+  <% end %>
+  <% if @dossier_maternite.valide? %>
+    Date validation : <%= l(@dossier_maternite.traite_le) unless @dossier_maternite.traite_le.nil? %>
+  <% end %>
+  <% if @dossier_maternite.cloture? %>
+    Date clotûre : <%= l(@dossier_maternite.date_cloture) unless @dossier_maternite.date_cloture.nil? %>
+  <% end %> <br>
+  <span style="font-style: italic">Est repris?</span> : <%= state_yes_no @dossier_maternite.est_repris %>
+  <br> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de la salarié', admin_dossier_maternite_path(@dossier_maternite), class: 'btn btn-white btn-sm' unless @dossier_maternite.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <% if @historic_tranches.nil? %>
+        Historique vide !
+      <% else %>
+        <h3>Historique des tranches ICM</h3>
+        <hr>
+        <%= paginate @historic_tranches %>
+        <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+          <thead>
+          <tr>
+            <th scope="col">Tranche</th>
+            <th scope="col">Montant paiement</th>
+            <th scope="col">Numéro liquidation</th>
+            <th scope="col">Jours prolongation</th>
+            <th scope="col">Date liquidation</th>
+            <th colspan="5"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @historic_tranches.each do |historic_tranche| %>
+            <tr>
+              <td>
+                <%= historic_tranche.try(:num_tranche) %>
+              </td>
+              <td>
+                <%= format_cfa historic_tranche.try(:montant_paiement) %>
+              </td>
+              <td>
+                <%= historic_tranche.try(:numdro_liquidation) %>
+              </td>
+              <td>
+                <%= historic_tranche.try(:jours_prolongation) %>
+              </td>
+              <td>
+                <%= l historic_tranche.try(:date_liquidation) unless historic_tranche.date_liquidation.nil? %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @historic_tranches %>
+      <% end %>
+    </div>
+  </div>
+</div>

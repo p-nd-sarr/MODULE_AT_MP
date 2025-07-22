@@ -1,0 +1,210 @@
+<div class="row">
+  <div class="col-lg-12" style="text-align: right;">
+    <% if @demande_liquidation.creation? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+      <%= link_to ' Modifier', edit_admin_liquidation_retraite_france_path(@demande_liquidation), class: "btn btn-outline btn-white fa fa-edit" %>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.prenom %> <%= @demande_liquidation.nom %>
+          <% if @demande_liquidation.affecter_salarie == current_user %>
+            <button type="button" class="btn btn-link" data-toggle="modal" data-target="#update_fullname" id="update_fullname_id">
+              Modifier
+            </button>
+          <% end %>
+        </dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= l @demande_liquidation.date_naissance %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Lieu de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.lieu_naissance %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> NIN:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.participant.try(:numero_piece) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.telephone || @demande_liquidation.participant.try(:phone) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> E-mail:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.email %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Zone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.zone_human %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Région:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.admin_region.try(:designation) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse de réception de l'allocation:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.adresse_reception_allocation %></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+    <% unless @demande_liquidation.email.nil? or @demande_liquidation.email == "" %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-envelope"></span> Email:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @demande_liquidation.email %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de cessation d'activité:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+        <dd class="mb-1"><%= (l @demande_liquidation.date_cessation_activite) unless @demande_liquidation.date_cessation_activite.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Âge révolu au dépôt:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.age_ouverture_demande %> ans</dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-file"></span> Type de retraite:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= LiquidationRetraiteFrance.human_enum_name(:type_retraite, @demande_liquidation.type_retraite) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-file"></span> Date d'ouverture:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_liquidation.date_ouverture.try(:strftime, "%d/%m/%Y") %></dd>
+      </div>
+    </d1>
+    <% if @demande_liquidation.caisse_ipres? or @demande_liquidation.paiement_a_domicile? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Adresse de paiement:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @demande_liquidation.adresse_paiement unless @demande_liquidation.adresse_paiement.nil? %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Agence de paiement:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @demande_liquidation.admin_agence.try(:code_psrm) unless @demande_liquidation.admin_agence.nil? %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-credit-card"></span> Mode de paiement:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= LiquidationRetraiteFrance.human_enum_name(:mode_paiement, @demande_liquidation.mode_paiement) unless @demande_liquidation.mode_paiement.nil? %>
+        </dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-12" style="text-align: left; font-size: 11px; color: rgb(50, 50, 50);">
+        <% if @demande_liquidation.virement? %>
+          <div class="notes">
+            <p><strong style="font-style: italic;" class="text-info">Nom banque
+              :</strong> <%= @demande_liquidation.compte_bancaire_nom_banque %></p>
+            <p><strong style="font-style: italic;" class="text-info">Code SWIFT
+              :</strong> <%= @demande_liquidation.compte_bancaire_code_swift %></p>
+            <p><strong style="font-style: italic;" class="text-info">RIB :</strong> <%= @demande_liquidation.rib %></p>
+          </div>
+        <% end %>
+      </div>
+    </d1>
+  </div>
+</div>
+
+
+<% if @demande_liquidation.retraite_anticipee_valide? %>
+  <ul class="text-warning">
+    <li>Les minorations sont à appliquer sur les points de base</li>
+    <li>il y a une minoration de 5% pour chaque année sur le nombre de points acquis au régime
+      général
+    </li>
+    <li>il y a une minoration de 1% par trimestre d'anticipation sur le nombre de points acquis au régime cadre
+    </li>
+  </ul>
+<% end %>
+
+
+<div class="modal inmodal" id="update_fullname" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_update_fullname_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Modification Nom et Prénom</h4>
+          <small class="font-bold"></small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :prenom, label: 'Prénom' %>
+          <%= f.text_field :nom, label: 'Nom' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Modifier</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

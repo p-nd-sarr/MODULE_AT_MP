@@ -1,0 +1,73 @@
+<h3>Plage d'extraction</h3>
+<br>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="form-group row">
+    <div class="col-sm-3">
+      <%= f.label :created_at_gteq , "Date début:"%>
+      <%= f.date_field :created_at_gteq, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :created_at_infeq, "Date fin:" %>
+      <%= f.date_field :created_at_infeq, class: 'form-control', value: (params[:q][:created_at_infeq] if params[:q]) %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+      <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+    </div>
+
+     <div class="col-sm-3">
+      <%= f.label :allocataire_ipres_ancien_matric_cont, 'Ancien numéro IPRES' %>
+      <%= f.search_field :allocataire_ipres_ancien_matric_cont, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group row">
+    <div class="col-sm-3">
+      <%= f.label :mode_paiement_eq, 'Mode de paiement' %>
+      <%= f.select :mode_paiement_eq, ModifierModePaiement.mode_paiements.to_a.map { |w| [ModifierModePaiement.human_enum_name(:mode_paiement, w[0]), w[1]] },
+          { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-3">
+      <%= f.label :workflow_state_eq, 'Etat' %>
+      <%= f.select :workflow_state_eq, ModifierModePaiement.workflow_spec.states.keys.map { |k| [ModifierModePaiement.workflow_spec.states[k].meta[:label], k] },
+          { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :admin_agence_id_eq, 'Agence de création' %>
+      <%= f.collection_select :admin_agence_id_eq, Admin::Agence.ipres.order(:description_prest), :id, :description_prest,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="hr-line-dashed"></div>
+    <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+    <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+    <div class="hr-line-dashed"></div>
+  </div>
+<% end %>
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= toutes_les_demandes_admin_modifier_mode_paiements_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= toutes_les_demandes_admin_modifier_mode_paiements_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

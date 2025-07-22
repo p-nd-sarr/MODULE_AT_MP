@@ -1,0 +1,78 @@
+<% if @dossier_prestations.length == 0 %>
+  <h2 style="text-align:center; margin-top:50px"><hr>La liste des dossiers de prestations est vide !!!</h2>
+<%else%>
+
+<%= paginate @dossier_prestations %>
+<div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+  <table class="table table-striped">
+    <thead class="thead-primary">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">N° Dossier</th>
+      <th scope="col">Salarié(e)</th>
+      <!--          <th scope="col">Conjoint(e)</th>-->
+      <th scope="col">Etat</th>
+      <th scope="col">Est repris?</th>
+      <th scope="col">Est incomplet?</th>
+      <th scope="col">Créer le</th>
+      <th colspan="3"></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @dossier_prestations.each do |dossier_prestation| %>
+      <tr>
+        <td></td>
+        <td><%= dossier_prestation.num_dossier %></td>
+        <td><%= dossier_prestation.prenom unless dossier_prestation.prenom.nil? %> <%= dossier_prestation.nom unless dossier_prestation.nom.nil? %> </td>
+        <!--<td>
+            <%#unless dossier_prestation.conjoint.nil? %>
+              <%#= dossier_prestation.conjoint.prenom + ' ' + dossier_prestation.conjoint.nom %>
+            <%#end %>
+          </td>-->
+        <td>
+          <%= DossierPrestation.human_enum_name(:etat, dossier_prestation.etat) %>
+        </td>
+        <td>
+          <%= state_yes_no dossier_prestation.est_repris %>
+        </td>
+        <td>
+          <%= state_yes_no dossier_prestation.incomplete? %>
+        </td>
+        <td>
+          <%= l dossier_prestation.created_at.to_date %>
+        </td>
+        <% if dossier_prestation.incomplete? and current_user.chef_agence? %>
+          <td style="width: 75px">
+            <%= (link_to ' Fiabiliser', admin_dossier_prestation_edit_incomplete_path(dossier_prestation), 'data-turbolinks': false, class: 'btn btn-success btn-outline btn-xs fa fa-edit') %>
+          </td>
+        <% end %>
+
+        <% unless dossier_prestation.incomplete? %>
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_dossier_prestation_path(dossier_prestation), 'data-turbolinks': false, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px" class="dropdown">
+            <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+              <li>
+                <%= link_to 'Historiques', admin_dossier_prestation_historique_dossier_path(dossier_prestation), id: "dd_hover" %>
+              </li>
+              <% unless dossier_prestation.creation? || dossier_prestation.rejete? %>
+                <li>
+                  <a href="<%= url_for(admin_dossier_prestation_recipisse_dossier_path(dossier_prestation, format: :pdf)) %>" target="_blank" id="dd_hover">
+                    Récépissé</a>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <%= paginate @dossier_prestations %>
+</div>
+
+<% end %>

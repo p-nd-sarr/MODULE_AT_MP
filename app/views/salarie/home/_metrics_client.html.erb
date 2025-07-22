@@ -1,0 +1,287 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    
+      <div class="col-lg-3">
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>PERIODE D'ACTIVITE</h5>
+            </div>
+            <div class="ibox-content">
+               <br>
+              <div class="stat-percent text-success font-bold">
+                <i class="fa fa-bolt"></i>
+              </div>
+               <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+              <div style="text-align:center">
+                <%= link_to ' Voir carrieres', salarie_carrieres_path, class: 'btn btn-primary btn-xs fa fa-eye', style: 'margin-top:15px;' %>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="col-lg-3">
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>TOTAL POINTS</h5>
+            </div>
+            <div class="ibox-content">
+               <br>
+              <div class="stat-percent text-success font-bold">
+                <i class="fa fa-bolt"></i>
+              </div>
+              <h1 class="no-margins">
+                <%= format_cfa @total_points, false %>
+              </h1>
+                <div style="text-align:center">
+                <%= link_to ' Voir carrieres', salarie_carrieres_path, class: 'btn btn-primary btn-xs fa fa-eye', style: 'margin-top:15px;' %>
+              </div>
+            </div>
+          </div>
+      </div>
+
+      <div class="col-lg-3">
+       
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Enfants</h5>
+            </div>
+            <div class="ibox-content">
+              <h1 class="no-margins"><%= @salarie.enfants.count %></h1>
+              <div class="stat-percent text-success font-bold">
+                <%#= @total_demande.zero? ? 0 : LiquidationRetraite.count * 100 / @total_demande %>%
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Nombre d'enfants</small>
+              <div style="text-align:center">
+                <%= link_to ' Voir les enfants', salarie_enfants_path, class: 'btn btn-primary btn-xs fa fa-eye', style: 'margin-top:15px;' %>
+              </div>
+            </div>
+          </div>
+      
+      </div>
+
+      <div class="col-lg-3">
+       
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Conjoints</h5>
+            </div>
+            <div class="ibox-content">
+               <h1 class="no-margins">
+                <%= @salarie.conjoints.count %>
+              </h1>
+              <div class="stat-percent text-success font-bold">
+                <%#= @total_demande.zero? ? 0 : LiquidationRetraite.count * 100 / @total_demande %>%
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Nombre de conjoints</small>
+              <div style="text-align:center">
+                <%= link_to ' Voir les enfants', salarie_conjoints_path, class: 'btn btn-primary btn-xs fa fa-eye', style: 'margin-top:15px;' %>
+              </div>
+            </div>
+          </div>
+      
+      </div>
+  </div>
+</div>
+<div class="ibox float-e-margins">
+  <div class="ibox-content">
+    <div class="wrapper wrapper-content" >
+      <div class="table-responsive" style="margin-bottom: 40px;">
+        <table class="table table-hover no-margins">
+          <thead>
+          <tr>
+            <th scope="col">Prestations</th>
+            <th scope="col">Nombre de dossiers</th>
+            <th scope="col">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><small>Prestations familiales</small></td>
+            <td><%= DossierPrestation.count %></td>
+            <td><%= 'details' %></td>
+          </tr>
+          <tr>
+            <td><small>Liquidations retraités</small></td>
+            <td>
+              <%= LiquidationRetraite.with_soumis_state.count %>
+              <br>
+              <span class="text-navy">
+                <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_soumis_state.count * 100 / LiquidationRetraite.count %>
+                %
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              <%= LiquidationRetraite.with_dossier_valide_state.count %>
+              <br>
+              <span class="text-navy">
+                <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_dossier_valide_state.count * 100 / LiquidationRetraite.count %>
+                %
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              <%= LiquidationRetraite.with_dossier_rejete_state.count %>
+              <br>
+              <span class="text-navy">
+                <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_dossier_rejete_state.count * 100 / LiquidationRetraite.count %>
+                %
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td><small>Arrêts travails</small></td>
+            <td>
+              <%= ArretTravail.instruction.count %>
+              <br>
+              <span class="text-navy">
+                <%#= ArretTravail.count.zero? ? 0 : ArretTravail.soumis.count * 100 / ArretTravail.count %>%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              <%= ArretTravail.accepte.count %>
+              <br>
+              <span class="text-navy">
+                <%= ArretTravail.count.zero? ? 0 : ArretTravail.accepte.count * 100 / ArretTravail.count %>%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              <%= ArretTravail.rejete.count %>
+              <br>
+              <span class="text-navy">
+                <%= ArretTravail.count.zero? ? 0 : ArretTravail.rejete.count * 100 / ArretTravail.count %>%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td><small>Indemnités congés maternité</small></td>
+            <td>
+              <%= DossierMaternite.soumis.count %>
+              <br>
+              <span class="text-navy">
+                <%= DossierMaternite.count.zero? ? 0 : DossierMaternite.soumis.count * 100 / DossierMaternite.count %>
+                %
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              <%= DossierMaternite.valide.count %>
+              <br>
+              <span class="text-navy">
+                <%= DossierMaternite.count.zero? ? 0 : DossierMaternite.valide.count * 100 / DossierMaternite.count %>
+                %
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              <%= DossierMaternite.rejete.count %>
+              <br>
+              <span class="text-navy">
+                <%= DossierMaternite.count.zero? ? 0 : DossierMaternite.rejete.count * 100 / DossierMaternite.count %>
+                %
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td><small>Maladies professionnelles</small></td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td><small>Prestation extériure CAF</small></td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-levelf-up"></i>
+              </span>
+            </td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td><small>Prestation extériure IPRES</small></td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+            <td>
+              0
+              <br>
+              <span class="text-navy">
+                0%
+                <i class="fa fa-level-up"></i>
+              </span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+    
+
+    
+
+      
+
+     

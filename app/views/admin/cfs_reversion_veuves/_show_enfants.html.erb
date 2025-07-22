@@ -1,0 +1,32 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Nom salarie</th>
+    <th scope="col">Prénom salarié</th>
+    <th scope="col">Nom complet conjoint</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%# @cfs_reversion_veuve.enfants.each do |enfant| %>
+  <% @enfants.each do |enfant| %>
+    <tr>
+      <td><%= enfant.nom %></td>
+      <td><%= enfant.prenom %></td>
+      <td><%= l enfant.date_naissance %></td>
+      <td><%= enfant.nom_salarie %></td>
+      <td><%= enfant.prenom_salarie %></td>
+      <% if enfant.conjoint_id %>
+        <td><%= enfant.conjoint.full_name %></td>
+      <% else %>
+        <td></td>
+      <% end %>   
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+

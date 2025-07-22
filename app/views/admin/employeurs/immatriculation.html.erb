@@ -1,0 +1,86 @@
+<%= content_for :titre_page, "Soumission de la demande d’immatriculation  #{@immatriculation.raison_sociale}" %>
+
+<%= content_for :actions_page do %>
+
+  <h4>Etat Demande : <span class="btn btn-primary"> <%= Immatriculation.human_enum_name(:etat, @immatriculation.etat) %></span></h4>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <h2>
+              Ninea: <%= @immatriculation.ninea %>
+            </h2>
+
+            <% if @immatriculation.creation? %>
+              <% if @immatriculation.pret_pour_soumission? %>
+                <h2 class="text-info">
+                  Dossier est prêt pour soumission
+                </h2>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs">
+                <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="<%=@active_societe%>"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Information société
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @immatriculation.etat_civil_demandeur_valide? %>
+                </a></li>
+                <li class="<%=@active_representant %>"><a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Représentant légal
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @immatriculation.representant_valide?  %>
+                </a></li>
+                <li class="<%=@active_salaries %>"><a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Informations Salariés
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @immatriculation.salarie_valide? %>
+                </a></li>
+                <li class="<%=@active_document %>"><a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Documents à joindre
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @immatriculation.documents_valide? %>
+                </a></li>
+              </ul>
+              <div class="tab-content">
+
+                <div id="tab-1" class="tab-pane <%=@active_societe%>">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'admin/employeurs/show_items/show_etat_civil' %>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane <%=@active_representant%>">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'admin/employeurs/show_items/show_representant' %>
+                  </div>
+                </div>
+
+                <div id="tab-3" class="tab-pane <%=@active_salaries%>">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'admin/employeurs/show_items//show_salarie' %>
+
+                  </div>
+                </div>
+
+                <div id="tab-4" class="tab-pane <%=@active_document%>">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'admin/employeurs/show_items/show_documents' %>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

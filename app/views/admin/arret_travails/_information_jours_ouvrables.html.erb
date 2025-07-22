@@ -1,0 +1,24 @@
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th scope="col">Mois</th>
+        <th scope="col">Mois en chiffre</th>
+        <th scope="col">Nombre jour ouvrable</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% Admin::JourOuvrableAnnuel.all.each do |admin_jour_ouvrable_annuel| %>
+    <tr>
+        <td><%= admin_jour_ouvrable_annuel.mois %></td>
+        <td><%= admin_jour_ouvrable_annuel.mois_en_chiffre %></td>
+        <td><%= admin_jour_ouvrable_annuel.nombre_jour_ouvrable %></td>
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

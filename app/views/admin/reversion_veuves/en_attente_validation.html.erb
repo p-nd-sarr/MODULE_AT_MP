@@ -1,0 +1,36 @@
+<%= content_for :titre_page, "Reversions veuves:" %>
+
+<%= content_for :actions_page do %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Type</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Date naissance</th>
+        <th scope="col">Lieu naissance</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @reversion_veuves.each do |reversion_veuve| %>
+        <tr>
+          <td><%= reversion_veuve.type_ayant_droit_human %></td>
+          <td><%= reversion_veuve.prenom %></td>
+          <td><%= reversion_veuve.nom %></td>
+          <td><%= reversion_veuve.date_naissance %></td>
+          <td><%= reversion_veuve.lieu_naissance %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, reversion_veuve.allocataire, reversion_veuve], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

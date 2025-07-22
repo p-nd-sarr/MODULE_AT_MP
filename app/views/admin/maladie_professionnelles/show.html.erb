@@ -1,0 +1,148 @@
+<%= content_for :titre_page, " Dossier de maladie professionnelle " %>
+  
+<%= content_for :actions_page do %>
+    <%= link_to 'Soumettre le dossier', '#' , class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeIn">
+  <div class="row m-t-lg">
+    <div class="col-lg-12 col-md-12">
+      <div class="ibox">
+        <div class="ibox-content">
+          <div class="tabs-container">        
+            <ul class="nav nav-tabs">
+              <li class="nav-item active">
+                <a data-toggle="tab" href="#tab-1">Information salarié
+                      
+                </a>
+              </li>
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-2">Information employeur
+                      
+                </a>
+              </li>
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-3">Détails maladie
+                      
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-5">Documents
+                      
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-6">Frais engagés et indemnités
+                      
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content">
+          
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll" style="padding: 10px;">
+                  <%= render 'details_info_salarie' %>
+                </div>
+              </div>
+
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <%= render 'information_employeur' %>
+                </div>
+              </div>
+
+              <div id="tab-3" class="tab-pane ">
+                <div class="full-height-scroll">
+                  <%= render 'information_maladie' %>
+                </div>
+              </div>
+            
+              <div id="tab-5" class="tab-pane " style="padding-top: 10px;">
+                <div class="full-height-scroll">
+                  <div class="col-md-9">
+                    
+                  </div>
+                  <div class="col-md-3" style="text-align: right; margin-bottom: 20px;">
+                    <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#docMP">Ajouter document</button>
+                  </div>
+                  <div class="modal inmodal" id="docMP" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                      <%= bootstrap_form_for(@mp_document, url: "/admin/maladie_professionnelles/#{@demande_maladie_professionnelle.id}", method: :put, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                      <div class="modal-content animated fadeIn">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal">
+                            <span aria-hidden="true">x</span>
+                            <span class="sr-only">Close</span>
+                          </button>
+                          <h4 class="modal-title">Ajouter document</h4>
+                        </div>
+                        <div class="modal-body">
+                          <div class="row" style="margin-top: 25px">
+                            <div class="col-sm-12">
+                              <div class="col-sm-12">
+                                <%=hidden_field_tag :custom_page, 'information_document'%>
+                              </div>
+                              <div class="col-sm-12">
+                                <%=f.hidden_field :maladie_professionnelle_id, value: @demande_maladie_professionnelle.id%>
+                              </div>
+                              <div class="col-sm-12">
+                                <%= f.select :type_document, MpDocument::TYPE_DOCUMENT.keys.collect { |type_document| [type_document, type_document] }, label: 'Type' %>
+                              </div>
+                              <div class="col-sm-12">
+                                <h4 style="font-weight: bold;">Document *</h4>
+                                <div class="btn-file">
+                                  <label> 
+                                    <%= f.file_field :document, hide_label: true, label: '.', required: true, id:'label-doc'%>
+                                    <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                                      <span class="fa fa-upload"></span> Choisir un fichier
+                                    </div>
+                                  </label>
+                                </div>
+                                <small id="document-name"></small>
+                              </div>
+                              <div class="col-sm-12" style="margin-top: 10px">
+                                <%= f.text_area :description, label: 'Description' %>
+                              </div>                  
+                            </div>
+                          </div>
+                        </div>
+                        <div class="modal-footer form-group">
+                          <%= link_to 'Annuler', (@demande_maladie_professionnelle.persisted? ? [:admin, @demande_maladie_professionnelle] : admin_maladie_professionnelles_path), class: 'btn btn-default' %>
+                            <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+                        </div>
+                      </div>
+                      <% end %>
+                    </div>
+                  </div>
+                   <%= render 'information_document' %>
+                </div>
+              </div>
+
+              <div id="tab-6" class="tab-pane ">
+                <div class="full-height-scroll">
+                   <%= render 'information_frais' %>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div> <!--End ibox content-->
+      </div> <!--End ibox-->
+    </div><!--End col-lg-12-->
+  </div><!--End row-->
+</div><!--END wrapper wrapper-content"-->
+
+
+<script type="text/javascript">
+      var input=document.getElementById('label-doc');
+      var infoArea=document.getElementById('document-name');
+      input.addEventListener('change', showFileName);
+      function showFileName(event){
+        var input=event.srcElement;
+        var fileName=input.files[0].name;
+        infoArea.textContent=fileName;
+      }
+</script>
+

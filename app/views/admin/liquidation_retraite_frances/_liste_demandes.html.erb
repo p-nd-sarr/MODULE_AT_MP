@@ -1,0 +1,45 @@
+<%= paginate @demande_liquidations %>
+
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">N° dossier</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Gestionnaire compte allocataire</th>
+    <th scope="col">Gestionnaire compte salarié</th>
+    <th scope="col">Etat</th>
+    <th colspan="2"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @demande_liquidations.each do |demande_liquidation| %>
+    <tr>
+      <td>
+        <% if demande_liquidation.num_dossier.nil? %>
+          <%= demande_liquidation.numero_affiliation %>
+        <% else %>
+          <%= demande_liquidation.num_dossier %>
+        <% end %>
+      </td>
+      <td><%= demande_liquidation.prenom %></td>
+      <td><%= demande_liquidation.nom %></td>
+      <td><%= demande_liquidation.affecter_allocataire.full_name unless demande_liquidation.affecter_allocataire.nil? %></td>
+      <td><%= demande_liquidation.affecter_salarie.full_name unless demande_liquidation.affecter_salarie.nil?%></td>
+      <td><%= LiquidationRetraiteFrance.workflow_spec.states[demande_liquidation.workflow_state.to_sym].meta[:label] %></td>
+
+      <td style="width: 75px">
+        <%= (link_to 'Details', admin_liquidation_retraite_france_path(demande_liquidation), class: 'btn btn-outline btn-primary btn-xs') %>
+      </td>
+      <td>
+        <% if demande_liquidation.date_soumission? %>
+          <%= link_to 'Récépissé', admin_liquidation_retraite_france_show_facture_path(demande_liquidation.id, format: :pdf), class: "btn btn-outline btn-success btn-xs my-2 my-sm-0", target: '_blank' %>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<%= paginate @demande_liquidations %>

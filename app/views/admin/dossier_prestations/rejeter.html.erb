@@ -1,0 +1,22 @@
+<%= content_for :titre_page, "Motif du rejet du dossier de prestation" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= bootstrap_form_for(@dossier_prestation, url: admin_dossier_prestation_rejeter_create_path(@dossier_prestation), layout: :horizontal) do |f| %>
+      <%= f.text_area :motif_rejet, label: 'Motif du rejet' %>
+
+      <div class="hr-line-dashed"></div>
+
+      <div class="form-group row">
+        <div class="col-sm-9 col-sm-offset-3" style="text-align:right">
+          <%= link_to 'Annuler', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white' %>
+          <%= f.button 'Rejeter', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+</div>
+</div>

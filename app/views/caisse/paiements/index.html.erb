@@ -1,0 +1,95 @@
+<% content_for :titre_page do %>
+  Liste des factures à payer
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+      <div class="row">
+        <div class="col-sm-6">
+          <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+          <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-6">
+          <%= f.label :ipres_ancien_matric_cont, 'Ancien numéro IPRES' %>
+          <%= f.search_field :ipres_ancien_matric_cont, class: 'form-control' %>
+        </div>
+
+        <div class="col-sm-6">
+          <%= f.label :allocataire_adresse_ville_cont, 'Ville' %>
+          <%= f.search_field :allocataire_adresse_ville_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-6">
+          <%= f.label :etat_eq, 'Etat' %>
+          <%= f.select :etat_eq, Caisse::Paiement.etats.to_a.map { |w| [Caisse::Paiement.human_enum_name(:etat, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+      <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+    <% end %>
+
+    <br>
+
+    <b>Nombre de lignes retournées : <%= format_entier @nombre_lignes %>.
+      <%= "<span class='text-danger'>Merci d'affiner la recherche</span>".html_safe if @nombre_lignes_depasse %></b> <br><br>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Ville</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Payé sur PSRM?</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @paiements.each do |paiement| %>
+        <tr>
+          <td><%= paiement.prenom %></td>
+          <td><%= paiement.nom %></td>
+          <td><%= paiement.allocataire.try(:adresse_ville) %></td>
+          <td><%= paiement.etat_human %></td>
+          <td><%= state_yes_no paiement.paye_sur_psrm? %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', paiement, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= caisse_paiements_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= caisse_paiements_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

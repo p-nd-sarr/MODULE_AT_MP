@@ -1,0 +1,593 @@
+<%= content_for :titre_page, "Liste des déclarations manquantes" %>
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', employer_declarations_path, class: 'btn btn-white fa fa-arrow-left' %>
+<% end %>
+<div class="wrapper wrapper-content">
+
+  <% unless @ligne_declarations.empty? %>
+
+    <div class="row" style="margin-bottom:20px">
+      <div class="ibox-content">
+        <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+          <thead>
+          <tr>
+            <th scope="col">NOMBRE DE SALARIES DECLARES</th>
+            <th scope="col">TOTAL SALAIRES</th>
+            <th scope="col">COTISATIONS DUES</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><span class="label label-primary"> <%= @ligne_declarations.count %></span></td>
+            <td> <%= format_cfa @ligne_declarations.sum(:salaire_soumis) %></td>
+            <% if @declaration.regime == "2" %>
+              <td> <%= format_cfa @ligne_declarations.sum(:salaire_soumis) * 0.06 %></td>
+            <% else %>
+              <td> <%= format_cfa @ligne_declarations.sum(:salaire_soumis) * 0.14 %></td>
+            <% end %>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-sm-12" style="padding-left: 0%">
+      <div class="ibox">
+        <h5>Déclaration par autre fichier</h5>
+        <% if @declaration.document.attached? %>
+          <a href="<%= url_for(@declaration.document) %>" target="_blank">
+            <%= image_tag @declaration.document.preview(resize: "300x300>"), class: "m-t-xs img-responsive" %>
+          </a>
+          <br>
+          <%= (link_to ' Supprimer', employer_missing_declaration_delete_document_path(@declaration), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm fa fa-check') unless @declaration.valide? %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12" style="padding-left: 0%">
+      <div class="ibox">
+        <div class="ibox-title">
+          <div class="accordion-heading" class="ibox-title">
+            <h5>Ligne déclaration: Année manquante <%= @declaration.exercice %></h5>
+            <div class="ibox-tools">
+              <% if (not @ligne_declarations.empty?) or @declaration.document.attached? %>
+                <%= (link_to ' VALIDER', employer_missing_declaration_valider_path(@declaration), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm fa fa-check') unless @declaration.valide? %>
+              <% end %>
+              <% unless @declaration.valide? %>
+                <div class="btn-group">
+                  <button data-toggle="dropdown" class="btn btn-success btn-sm dropdown-toggle" aria-expanded="false">
+                    <span class="fa fa-plus"></span> AJOUTER SALARIE
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <% unless @declaration.document.attached? %>
+                      <li>
+                        <a data-toggle="modal" data-target="#declaration-one-modal" id="declaration_id">
+                          Ajouter salarié
+                        </a>
+                      </li>
+                      <li>
+                        <a data-toggle="modal" data-target="#ajoutSalarie" id="dd_hover">Ajouter salariés par chargement
+                          de fichier</a>
+                      </li>
+                    <% end %>
+
+                    <% if @ligne_declarations.empty?  %>
+                    <li>
+                      <a data-toggle="modal" data-target="#soumettre" id="soumettre_declaration_id">
+                        Dépôt de déclaration par autre fichier
+                      </a>
+                    </li>
+                      <% end %>
+                  </ul>
+                </div>
+
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <div class="ibox-content">
+
+          <% unless ErrorMissingLigne.where(missing_declaration_id: @declaration.id).empty? %>
+            <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+              <tr>
+                <td>Matricule</td>
+                <td>Nom</td>
+                <td>Prenom</td>
+                <td>message</td>
+              </tr>
+
+              <% ErrorMissingLigne.where(missing_declaration_id: @declaration.id).each do |ligne_error| %>
+                <tr style="color: red">
+                  <td><%= ligne_error.matricule %></td>
+                  <td><%= ligne_error.nom %></td>
+                  <td><%= ligne_error.prenom %></td>
+                  <td><%= ligne_error.message %></td>
+                </tr>
+              <% end %>
+
+            </table>
+            <hr>
+          <% end %>
+
+          <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+            <tr>
+              <td>Matricule</td>
+              <td>Nom</td>
+              <td>Prenom</td>
+              <td>Regime</td>
+              <td>Date Debut Periode</td>
+              <td>Date Fin Période</td>
+              <td>Salaire Soumis</td>
+              <td>Salaire Réel</td>
+              <td>Date Naissance</td>
+              <td>Lieu Naissance</td>
+              <td>Etat</td>
+              <td>Actions</td>
+            </tr>
+
+            <% @ligne_declarations.each do |ligne_declaration| %>
+              <tr>
+                <td><%= ligne_declaration.matricule %></td>
+                <td><%= ligne_declaration.nom.upcase %></td>
+                <td><%= ligne_declaration.prenom.upcase %></td>
+                <td><%= (ligne_declaration.type_regime.description) unless ligne_declaration.type_regime.nil? %></td>
+                <td><%= l ligne_declaration.date_entree %></td>
+                <td><%= l ligne_declaration.date_sortie %></td>
+                <td><%= format_cfa ligne_declaration.salaire_soumis %></td>
+                <td><%= format_cfa ligne_declaration.salaire_reel %></td>
+                <td><%= l ligne_declaration.date_naissance %></td>
+                <td><%= ligne_declaration.lieu_naissance %></td>
+                <td><%= ligne_declaration.etat %></td>
+                <td width="90px" class="dropdown">
+
+                  <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Actions
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu" style="background-color:rgb(240,240,240)">
+                    <li>
+                      <a class="dc_hover" data-toggle="modal" data-target="#declaration-details-modal" id="button_details_ligne_<%= ligne_declaration.id %>">
+                        Details</a>
+                    </li>
+                    <% unless ligne_declaration.valide? %>
+                      <li>
+                        <%= link_to 'Retirer', employer_missing_ligne_declaration_path(ligne_declaration), 'data-confirm': 'Vous confirmez cette action ?', id: 'dr_hover', :method => :delete %>
+                      </li>
+                      <li>
+                        <a class="dc_hover" data-toggle="modal" data-target="#declaration-update-modal" id="button_ligne_declaration_<%= ligne_declaration.id %>">
+                          Modifier</a>
+                      </li>
+                    <% end %>
+                  </ul>
+
+                </td>
+              </tr>
+            <% end %>
+          </table>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal inmodal" id="declaration-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <%= bootstrap_form_for(@ligne_declaration, url: employer_missing_ligne_declarations_path(@ligne_declaration), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Déclaration </h4>
+          <small class="font-bold">Ajouter Salarie : <%= @declaration.regime == "1" ? "GENERAL" : "CADRE" %></small>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <%= f.text_field :exercice, label: 'Exercice', value: @declaration.exercice, disabled: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :matricule, label: 'Matricule interne', required: true, :pattern => '^[0-9]{11}$', help: "Matricule c'est 11 chiffres" %>
+            </div>
+            <div class="col-lg-12">
+            </div>
+            <div class="col-lg-6">
+              <%= f.select :sexe,
+                           MissingLigneDeclaration::SEXE.keys.collect { |sexe| [MissingLigneDeclaration.human_enum_name(:sexe, sexe), sexe] },
+                           label: "Sexe" %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :prenom, label: 'Prénom' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :nom, label: 'Nom' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.date_select :date_naissance, label: "Date de naissance",
+                                start_year: (Date.today - 100.year).year, end_year: (Date.current - 0.years).year %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.collection_select :nationalite_id, Admin::Country.all, :id, :description, label: 'Nationalité', tag: 'Nationalite', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :numero_identite, label: "Numéro d'identité", required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.date_select :date_entree, label: "Date début période", discard_year: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.date_select :date_sortie, label: "Date fin période", discard_year: true, id: 'date_sortie' %>
+            </div>
+            <div class="col-lg-6" id="motif_sortie">
+              <%= f.select :motif_sortie,
+                           MissingLigneDeclaration::MOTIF.keys.collect { |motif_sortie| [MissingLigneDeclaration.human_enum_name(:motif_sortie, motif_sortie), motif_sortie] },
+                           label: "Motif de sortie", include_blank: true %>
+            </div>
+
+            <div class="col-lg-12"></div>
+            <div class="col-lg-6">
+              <%= f.collection_select :profession_id, Admin::Profession.all, :id, :description, include_blank: true, label: 'Profession', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :salaire_reel, label: 'Salaire réel' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.hidden_field :missing_declaration_id, value: @declaration.id %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<!-- <div class="modal inmodal" id="declaration-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@ligne_declaration, url: employer_missing_ligne_declarations_path(@ligne_declaration), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Déclaration </h4>
+          <small class="font-bold">Ajouter Salarie</small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :exercice, label: 'Exercice', value: @declaration.exercice, disabled: true %>
+  <%= f.text_field :nom, label: 'Nom' %>
+  <%= f.text_field :prenom, label: 'Prenom' %>
+  <%= f.text_field :matricule, label: 'Matricule' %>
+  <%= f.collection_select :regime, Admin::TypeRegime.all, :id, :description, include_blank: true, label: 'Type Regime', tag: 'type_regime', required: true %>
+
+  <%= f.date_select :date_entree, label: "Date Début Période", discard_year: true %>
+
+  <%= f.date_select :date_sortie, label: "Date fin Période", discard_year: true %>
+
+  <%= f.text_field :motif_sortie, label: 'Motif de Sortie' %>
+  <%= f.number_field :salaire_soumis, label: 'Salaire Soumis' %>
+  <%= f.number_field :salaire_reel, label: 'Salaire Réel' %>
+  <%= f.text_field :numero_identite, label: 'Numéro d identité' %>
+  <%= f.date_select :date_naissance, label: "Date de Naissance",
+                    start_year: (Date.today - 100.year).year, end_year: (Date.current - 0.years).year %>
+
+  <%= f.text_field :lieu_naissance, label: 'Lieu de Naissance' %>
+
+  <%= f.collection_select :profession_id, Admin::Profession.all, :id, :description, include_blank: true, label: 'Profession', required: true %>
+
+  <%= f.collection_select :nationalite_id, Admin::Country.all, :id, :description, label: 'Nationalite', tag: 'Nationalite', required: true %>
+
+  <%= f.hidden_field :missing_declaration_id, value: @declaration.id %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+-->
+
+<div class="modal inmodal" id="ajoutSalarie" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+
+    <div class="modal-content animated fadeIn">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Ajouter salarié par chargement de fichier</h4>
+        <h5>  <%= link_to ' Télécharcher le template ICI', employer_missing_declaration_download_csv_path(@declaration), class: 'btn btn-primary btn-outline fa fa-file' %>
+        </h5>
+      </div>
+      <%= form_tag import_employer_missing_declaration_missing_ligne_declarations_path(@declaration), multipart: true do %>
+        <div class="modal-body" style="height:150px">
+          <div class="col-sm-4 col-lg-offset-4">
+            <div class="btn-file">
+              <label>
+                <%= file_field_tag :file, hide_label: true, label: '.', class: '', id: 'label_file' %>
+                <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                  <span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-12" style="text-align:center">
+            <h4 id="file_name" class="text-success">Aucun fichier choisi</h4>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= submit_tag "Importer fichier salarié", class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal inmodal" id="declaration-update-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <% @ligne_declarations.each do |ligne_declaration| %>
+
+      <div id="<%= "ligne_declaration_#{ligne_declaration.id}" %>" style="background-color: #fff">
+        <%= bootstrap_form_for(ligne_declaration, url: employer_missing_ligne_declaration_path(ligne_declaration), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <i class="fa fa-laptop modal-icon"></i>
+              <h4 class="modal-title">Déclaration </h4>
+              <small class="font-bold">Modification Salarie
+                : <%= @declaration.regime == "1" ? "GENERAL" : "CADRE" %></small>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-lg-6">
+                  <%= f.text_field :exercice, label: 'Exercice', value: @declaration.exercice, disabled: true %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :matricule, label: 'Matricule interne' %>
+                </div>
+                <div class="col-lg-12">
+                </div>
+                <div class="col-lg-6">
+                  <%= f.select :sexe,
+                               MissingLigneDeclaration::SEXE.keys.collect { |sexe| [MissingLigneDeclaration.human_enum_name(:sexe, sexe), sexe] },
+                               label: "Sexe" %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :prenom, label: 'Prénom' %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :nom, label: 'Nom' %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.date_select :date_naissance, label: "Date de naissance",
+                                    start_year: (Date.today - 100.year).year, end_year: (Date.current - 0.years).year %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :nationalite_id, Admin::Country.all, :id, :description, label: 'Nationalité', tag: 'Nationalite', required: true %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :numero_identite, label: "Numéro d'identité" %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.date_select :date_entree, label: "Date Début Période", discard_year: true %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.date_select :date_sortie, label: "Date Fin Période", discard_year: true, id: 'date_sortie' %>
+                </div>
+                <div class="col-lg-6" id="motif_sortie">
+                  <%= f.select :motif_sortie,
+                               MissingLigneDeclaration::MOTIF.keys.collect { |motif_sortie| [MissingLigneDeclaration.human_enum_name(:motif_sortie, motif_sortie), motif_sortie] },
+                               label: "Motif de sortie", include_blank: true %>
+                </div>
+                <div class="col-lg-12"></div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :profession_id, Admin::Profession.all, :id, :description, include_blank: true, label: 'Profession', required: true %>
+                </div>
+
+                <div class="col-lg-6">
+                  <%= f.number_field :salaire_reel, label: 'Salaire réel' %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.hidden_field :missing_declaration_id, value: @declaration.id %>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+              <button type="submit" class="btn btn-primary">Modifier</button>
+
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<div class="modal inmodal" id="declaration-details-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <% @ligne_declarations.each do |ligne_declaration| %>
+
+      <div id="<%= "details_ligne_#{ligne_declaration.id}" %>" style="background-color: #fff">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Déclaration </h4>
+            <small class="font-bold">Details Salarie : <%= @declaration.regime == "1" ? "GENERAL" : "CADRE" %></small>
+          </div>
+          <div class="modal-body">
+
+            <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+              <tr>
+                <td>Exercice</td>
+                <td><%= @declaration.exercice %></td>
+              </tr>
+              <tr>
+                <td>Matricule</td>
+                <td><%= ligne_declaration.matricule %></td>
+              </tr>
+              <tr>
+                <td>Sexe</td>
+                <td><%= ligne_declaration.sexe %></td>
+              </tr>
+              <tr>
+                <td>Nom</td>
+                <td><%= ligne_declaration.nom %></td>
+              </tr>
+
+              <tr>
+                <td>Prénom</td>
+                <td><%= ligne_declaration.prenom %></td>
+              </tr>
+
+              <tr>
+                <td>Date Naissance</td>
+                <td><%= l ligne_declaration.date_naissance %></td>
+              </tr>
+
+              <tr>
+                <td>Lieu de Naissance</td>
+                <td><%= ligne_declaration.lieu_naissance %></td>
+              </tr>
+              <tr>
+                <td>Nationalité</td>
+                <td><%= ligne_declaration.admin_nationalite.description unless ligne_declaration.admin_nationalite.nil? %></td>
+              </tr>
+
+              <tr>
+                <td>Profession</td>
+                <td><%= ligne_declaration.admin_profession.description unless ligne_declaration.admin_profession.nil? %></td>
+              </tr>
+              <tr>
+                <td>Date Début Période</td>
+                <td><%= l ligne_declaration.date_entree %></td>
+              </tr>
+
+              <tr>
+                <td>Date Fin Période</td>
+                <td><%= l ligne_declaration.date_sortie %></td>
+              </tr>
+
+              <tr>
+                <td>Salaire Soumis</td>
+                <td><%= format_cfa ligne_declaration.salaire_soumis %></td>
+              </tr>
+
+              <tr>
+                <td>Salaire Réel</td>
+                <td><%= format_cfa ligne_declaration.salaire_reel %></td>
+              </tr>
+
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<div class="modal inmodal" id="soumettre" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@declaration, url: employer_missing_declaration_soumettre_path(@declaration), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Soumission Demande déclaration </h4>
+          <small class="font-bold">Saisir un commentaire</small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :commentaire, label: 'Commentaire' %>
+
+          <%= f.file_field :document, label: '&nbsp;'.html_safe %>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Soumettre</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        showMotifSortie();
+        var input = document.getElementById('label_file');
+        var infoArea = document.getElementById('file_name');
+        input.addEventListener('change', showFileName);
+
+        $('#missing_ligne_declaration_date_sortie_3i , #missing_ligne_declaration_date_sortie_2i').change(
+            function () {
+                showMotifSortie();
+            }
+        )
+
+        function showFileName(event) {
+            var input = event.srcElement;
+            var fileName = input.files[0].name;
+            infoArea.textContent = fileName;
+        }
+
+        function showMotifSortie() {
+            if ($('#missing_ligne_declaration_date_sortie_3i').val() != 31 || $('#missing_ligne_declaration_date_sortie_2i').val() != 12) {
+                $('#motif_sortie').show();
+            } else $('#motif_sortie').hide();
+        }
+    })
+</script>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+          <% @ligne_declarations.each do |ligne_declaration| %>
+
+          $('#ligne_declaration_<%=ligne_declaration.id %>').hide();
+          $('#details_ligne_<%=ligne_declaration.id %>').hide();
+
+          <% end %>
+
+          $("a").click(function () {
+              $('#' + this.id.replace("button_", "")).show();
+          });
+      })
+  </script>
+<% end %>

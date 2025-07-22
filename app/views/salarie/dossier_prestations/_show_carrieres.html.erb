@@ -1,0 +1,14 @@
+
+<div class="row" style="margin-left: 20%;">
+  <div class="col-sm-8">
+    <p style="margin-top: 3%;">
+      <span style="font-weight: bold; text-align: right; margin-right: 2%;"> Date d'embauche : </span>
+      <%= l current_participant.date_premiere_embauche %>
+    </p> <br>
+    <p style="margin-top: 1%; margin-bottom: 5%">
+      <span style="font-weight: bold; text-align: right; margin-right: 2%;"> Durée de travail : </span>
+      <%= current_participant.nb_jours_travail %> jours = <%= current_participant.nb_mois_travail %> mois
+    </p>
+
+  </div>
+</div>

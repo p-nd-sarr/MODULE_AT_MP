@@ -1,0 +1,83 @@
+<%= content_for :titre_page, "Recommandations en attente de réponses" %>
+
+<div class="wrapper wrapper-content">
+  <div class="row" style="">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h3>Listes des recommandations</h3>
+          <div class="ibox-tools" style="margin-top: -30px">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="text-right">
+
+            </div>
+            <div class="row p-sm">
+              <%= paginate @activity_recs %>
+              <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Ajouté par</th>
+                  <th scope="col">Affecté à</th>
+                  <th scope="col">Date de création à</th>
+                  <th scope="col">Options</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @activity_recs.each do |activity_rec| %>
+                  <tr>
+                    <td><%= activity_rec.id %></td>
+                    <td><%= activity_rec.ajoute_par.full_name unless activity_rec.ajoute_par.nil? %>
+                      (<%= activity_rec.ajoute_par.type_profil.humanize unless activity_rec.ajoute_par.nil? %>)
+                    </td>
+                    <td><%= activity_rec.affecte_a.full_name unless activity_rec.affecte_a.nil? %>
+                      (<%= activity_rec.affecte_a.type_profil.humanize unless activity_rec.affecte_a.nil? %>)
+                    </td>
+                    <td><%= l activity_rec.created_at %></td>
+                    <td style="width: 75px" class="dropdown">
+                      <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                        Options
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+                        <li>
+                          <a class="fa btn btn-success btn-outline" data-toggle="modal" data-target="#show_rec<%= activity_rec.id %>">
+                            Détails de la recommandation
+                          </a>
+                        </li>
+                        <li>
+                          <%= link_to "Détails de l'activité", admin_dossier_audit_activity_details_path(activity_rec.dossier_audit_activity.dossier_audit, activity_rec.dossier_audit_activity), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+                        </li>
+                        <li>
+                          <a class="fa btn btn-success btn-outline" data-toggle="modal" data-target="#update_recommandation<%= activity_rec.id %>">
+                            Ajouter une réponse
+                          </a>
+                        </li>
+                      </ul>
+                      <%= render 'admin/dossier_audits/show_recommandation', :object => activity_rec %>
+                      <%= render 'admin/dossier_audits/update_recommandation', :object => activity_rec %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @activity_recs %>
+            </div>
+            <div class="hr-line-dashed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

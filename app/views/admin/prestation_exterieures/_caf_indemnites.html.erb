@@ -1,0 +1,255 @@
+<div class="row" style="padding: 20px; font-size: 12px">
+  <% if !@prestation_exterieure.indemnite_valid? and (current_user.admin? or current_user.gestionnaire_compte_allocataire?) %>
+    <h3 style="font-weight: bold;"> Enregistrer une nouvelle allocation</h3>
+    <br>
+    <div class="row" style="margin-bottom: 100px">
+      <div class="col-sm-6">
+        <div class="panel panel-info">
+          <div class="panel-body">
+            <%= bootstrap_form_for([:admin, @indemnites_prestation], url: admin_prestation_exterieure_ajouter_indemnites_path(@prestation_exterieure.id), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+              <%= render 'layouts/errors', object: @indemnites_prestation %>
+              <%= f.date_select :date_debut, { :discard_day => true, start_year: Date.today.year - 5, end_year: Date.today.year } %>
+              <%= f.date_select :date_fin, { :discard_day => true, start_year: Date.today.year - 5, end_year: Date.today.year, end_month: Date.today.month } %>
+
+              <div class="hr-line-dashed"></div>
+              <br>
+              <ul class="nav nav-tabs">
+                <li class="active">
+                  <a class="btn btn-w-m btn-outline btn-success active-link" data-toggle="tab" href="#indemnite-tab-1">
+                    Enfants eligibles</a>
+                </li>
+                <li>
+                  <a class="btn btn-w-m btn-outline btn-success" data-toggle="tab" href="#indemnite-tab-2">
+                    Enfants eligibles avec document valide</a>
+                </li>
+              </ul>
+
+              <div class="tab-content">
+                <div id="indemnite-tab-1" class="row tab-pane active" style="padding: 20px">
+                  <ul class="enfants_eligibles">
+
+                  </ul>
+                </div>
+
+                <div id="indemnite-tab-2" class="row tab-pane" style="padding: 20px">
+                  <ul class="enfants_eligibles_document">
+
+                  </ul>
+                </div>
+              </div>
+
+              <div class="hr-line-dashed"></div>
+
+              <div class="col-sm-4 col-sm-offset-2">
+                <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <% unless @prestation_exterieure.indemnites_prestation_exterieures.length <= 0 %>
+
+    <h3 style="font-weight: bold;"> Liste des allocations
+      <%= link_to 'Tout liquider', admin_prestation_exterieure_liquider_x_indemnites_ges_cpt_path(@prestation_exterieure), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if @prestation_exterieure.has_initialized_indemnities? and current_user.gestionnaire_compte_allocataire? %>
+      <%= link_to 'Tout valider', admin_prestation_exterieure_valider_x_indemnites_chef_grp_path(@prestation_exterieure), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if @prestation_exterieure.has_liquidated_indemnites? and current_user.chef_groupe_caf? %>
+      <%= link_to 'Tout valider', admin_prestation_exterieure_valider_x_indemnites_chef_sub_path(@prestation_exterieure), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if @prestation_exterieure.has_validated_chef_grp_indemnites? and current_user.chef_subdivision_caf? %>
+      <%= link_to 'Valider paiement', admin_prestation_exterieure_valider_x_indemnites_chef_cpt_path(@prestation_exterieure), data: { confirm: 'En êtes vous sûr?' }, 'data-turbolinks': false, class: 'btn btn-outline btn-danger btn-xs' if @prestation_exterieure.has_validated_chef_sub_indemnites? and current_user.comptable? %>
+    </h3>
+
+    <br>
+    <div class="row" style="margin-bottom: 100px">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th align="center">Période allocations</th>
+          <th align="center">Date liquidation</th>
+          <th align="center">Etat</th>
+          <th align="center">Montant allocations</th>
+          <th align="center">Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @indemnities.each do |indemnite| %>
+          <tr>
+            <td><%= indemnite.date_debut.strftime('%d/%m/%Y') %> - <%= indemnite.date_fin.strftime('%d/%m/%Y') %></td>
+            <td><%= indemnite.date_liquidation.strftime('%d/%m/%Y') unless indemnite.date_liquidation.nil? %></td>
+            <td>
+              <% if indemnite.init? %>
+                Initialisation
+              <% end %>
+              <% if indemnite.liquidation? %>
+                Liquidée
+              <% end %>
+              <% if indemnite.validation_dt_chef_grp? %>
+                Validée par chef groupe CAF
+              <% end %>
+              <% if indemnite.validation_dt_chef_sub? %>
+                Validée par chef subdivision CAF
+              <% end %>
+              <% if indemnite.droit_valide? %>
+                Validée
+              <% end %>
+              <% if indemnite.droit_rejete? %>
+                Rejetée
+              <% end %>
+              <% unless indemnite.retourne_par.nil? %>
+                (retourné)
+              <% end %>
+            </td>
+            <td>
+              <% if indemnite.current_state >= :liquidation %>
+                <%= format_cfa_not_rounded indemnite.montant %>
+              <% else %>
+                <%= format_cfa_not_rounded indemnite.get_solde %>
+                <% if indemnite.get_solde == 0 %>
+                  <i class="fa fa-exclamation-triangle fa-1x"></i>
+                <% end %>
+
+              <% end %>
+            </td>
+            <td style="width: 75px" class="dropdown">
+              <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+                <% unless indemnite.retourne_par.nil? %>
+                  <li>
+                    <a class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#detail_retour">Voir
+                      motif de retour
+                    </a>
+                    <%= render 'modal_detail_retour', object: indemnite %>
+                  </li>
+                <% end %>
+                <% if indemnite.current_state >= :liquidation and indemnite.current_state < :droit_valide and indemnite.can_display(current_user) %>
+                  <li>
+                    <a class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#motif">Retourner
+                      indemnité
+                    </a>
+                    <%= render 'modal_retour', object: indemnite %>
+                  </li>
+                <% end %>
+                <% unless @prestation_exterieure.indemnite_valid %>
+                  <li>
+                    <%= link_to 'Liquider', admin_prestation_exterieure_liquider_indemnites_path(@prestation_exterieure, indemnite.id), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if indemnite.init? and (current_user.admin? or current_user.gestionnaire_compte_allocataire?) %>
+                    <%= link_to 'Valider', admin_prestation_exterieure_valider_indemnites_chef_grp_path(@prestation_exterieure, indemnite.id), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if indemnite.liquidation? and current_user.chef_groupe_caf? %>
+                    <%= link_to 'Valider', admin_prestation_exterieure_valider_indemnites_chef_sub_path(@prestation_exterieure, indemnite.id), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if indemnite.validation_dt_chef_grp? and current_user.chef_subdivision_caf? %>
+                    <%#= link_to 'Valider', admin_prestation_exterieure_valider_indemnites_comptable_path(@prestation_exterieure, indemnite.id), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' if indemnite.validation_dt_chef_sub? and current_user.comptable? %>
+                  </li>
+                  <% if (current_user.admin? or current_user.gestionnaire_compte_allocataire?) and indemnite.init? %>
+
+                    <li>
+                      <a class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#modifier_indemnites<%= indemnite.id %>">Modifier</a>
+                    </li>
+                    <li>
+                      <%= link_to 'supprimer', admin_prestation_exterieure_destroy_indemnites_path(@prestation_exterieure, indemnite.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                    </li>
+                  <% end %>
+                  <li>
+                    <a class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#details_indemnites<%= indemnite.id %>">Détail</a>
+                  </li>
+                <% end %>
+              </ul>
+            </td>
+            <div class="modal inmodal" id="modifier_indemnites<%= indemnite.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-cog modal-icon"></i>
+                    <h4 class="modal-title">
+                      Modifier les indemnités de l'enfant
+                    </h4>
+
+                  </div>
+                  <div class="modal-body">
+                    <%= bootstrap_form_for([:admin, indemnite], url: admin_prestation_exterieure_modifier_indemnites_path(@prestation_exterieure.id, indemnite.id), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                      <%= f.date_select :date_debut, { :discard_day => true, start_year: Date.today.year, end_year: Date.today.year - 5 } %>
+                      <%= f.date_select :date_fin, { :discard_day => true, start_year: Date.today.year, end_year: Date.today.year - 5 } %>
+
+                      <div class="hr-line-dashed"></div>
+
+                      <div class="row" style="padding: 20px">
+                        <h5>listes des enfants eligibles</h5>
+                        <ul class="enfants_eligibles">
+
+                        </ul>
+                      </div>
+
+                      <div class="hr-line-dashed"></div>
+
+                      <div class="col-sm-4 col-sm-offset-2">
+                        <%= f.button 'Modifier', class: 'btn btn-primary' %>
+                      </div>
+                      <br>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal inmodal" id="details_indemnites<%= indemnite.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-cog modal-icon"></i>
+                    <h4 class="modal-title">
+                      Détails
+                    </h4>
+
+                  </div>
+                  <div class="modal-body">
+
+                    <div class="row" style="padding: 20px">
+                      <div class="col col-sm-6">
+                        <li>
+                          Date de début : <%= indemnite.date_debut.strftime('%d/%m/%Y') %>
+                        </li>
+                        <li>
+                          Date de fin : <%= indemnite.date_fin.strftime('%d/%m/%Y') %>
+                        </li>
+                        <li>
+                          Montant
+                          : <%= format_cfa_not_rounded indemnite.montant if indemnite.current_state >= :liquidation %> <%= format_cfa_not_rounded indemnite.get_solde if indemnite.current_state < :liquidation %>
+                        </li>
+                      </div>
+
+
+                      <div class="col col-sm-6">
+                        <h5>listes des enfants eligibles</h5>
+                        <ul class="">
+                          <% indemnite.indemnites_prestation_exterieure_assocs.each do |item| %>
+                            <li>
+                              <%= item.caf_enfant.prenom %> <%= item.caf_enfant.nom %>
+                              - <%= format_cfa_not_rounded (indemnite.montant / indemnite.paid_children) if indemnite.current_state >= :liquidation %> <%= format_cfa_not_rounded (indemnite.get_solde / indemnite.paid_children) if indemnite.current_state < :liquidation %>
+                            </li>
+                          <% end %>
+
+
+                        </ul>
+                      </div>
+
+                      <div class="hr-line-dashed"></div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+
+</div>
+
+<%= render 'numero_caf_form' %>
+<%= render 'beneficiaire_form' %>
+<%= render 'caisse_caf_form' %>
+<%= render 'piece_justificative_form' %>

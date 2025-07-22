@@ -1,0 +1,35 @@
+<ul class="text-danger">
+  <% if @dossier_maternite.documents.type_piece_demandeur.empty? %>
+    <li>Veuillez ajouter la pièce d'identité du demandeur</li>
+  <% end %>
+
+  <% if @dossier_maternite.virement? and @dossier_maternite.documents.rib.empty? %>
+    <li>Veuillez ajouter un Relevé d'Identité Bancaire (RIB) pour les paiements par virement bancaire</li>
+  <% end %>
+
+  <% if @dossier_maternite.subrogation? and @dossier_maternite.documents.attestation_maintien_salaire.empty? %>
+    <li>Veuillez ajouter l’attestation de maintien de salaire</li>
+  <% end %>
+
+  <% unless @dossier_maternite.subrogation? %>
+    <% if @dossier_maternite.documents.attestation_cess_paie.empty? %>
+      <li>Veuillez ajouter l’attestation de cessation de paiement </li>
+    <% end %>
+  <% end %>
+</ul>
+
+<%= render 'documents/liste',
+           object: @dossier_maternite,
+           documents: @dossier_maternite.documents,
+           include_add: true,
+           include_delete: true,
+           type_documents: DossierMaternite::TYPE_DOCUMENT,
+           type_documents_obligatoires: DossierMaternite::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_dossier_maternite_path(@dossier_maternite)
+%>
+
+<%= render 'documents/modal_form',
+           type_documents: DossierMaternite::TYPE_DOCUMENT,
+           document: Document.new(documentable: @dossier_maternite),
+           back_url: admin_dossier_maternite_path(@dossier_maternite)
+%>

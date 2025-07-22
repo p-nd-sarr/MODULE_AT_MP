@@ -1,0 +1,22 @@
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif du retour de la demande de regularisation_pension</h4>
+        </div>
+          <%= bootstrap_form_for(@modifier_mode_paiement, url: admin_allocataire_modifier_mode_paiement_retourner_process_path(@allocataire,@modifier_mode_paiement)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                      <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+        <%end%>
+      </div>
+  </div>
+</div>

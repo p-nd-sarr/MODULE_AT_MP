@@ -1,0 +1,148 @@
+<%= content_for :titre_page, "Détails ordre de paiement" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Historique des paiements', historiques_paiements_admin_allocataires_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Allocataire', admin_allocataire_path(@ordre_paiement.allocataire), class: 'btn btn-success btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Informations </h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <d1 class="row mb-0">
+                                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                        <dt><span class="fa fa-calendar"></span> Numero ordre:</dt>
+                                    </div>
+                                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                        <dd class="mb-1"><%= @ordre_paiement.numero %></dd>
+                                    </div>
+                                </d1>
+
+                                <d1 class="row mb-0">
+                                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                        <dt><span class="fa fa-user"></span> Numero allocataire:</dt>
+                                    </div>
+                                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                    <dd class="mb-1"><%= @ordre_paiement.numero_allocataire %></dd>
+                                  </div>
+                                </d1>
+
+                              <d1 class="row mb-0">
+                                <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                  <dt><span class="fa fa-user"></span> Prénom et Nom:</dt>
+                                </div>
+                                <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                  <dd class="mb-1"><%= @ordre_paiement.allocataire.prenom unless @ordre_paiement.allocataire.nil? %> <%= @ordre_paiement.allocataire.nom unless @ordre_paiement.allocataire.nil? %></dd>
+                                </div>
+                              </d1>
+
+                              <d1 class="row mb-0">
+                                <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                  <dt><span class="fa fa-map-marker"></span> Montant:</dt>
+                                </div>
+                                <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                  <dd class="mb-1"><%= @ordre_paiement.montant %> CFA</dd>
+                                </div>
+                                </d1>
+                                
+                            </div>
+                            <div class="col-lg-6">
+                            
+                                <d1 class="row mb-0">
+                                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                        <dt><span class="fa fa-calendar"></span> Exercice:</dt>
+                                    </div>
+                                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                        <dd class="mb-1"><%= @ordre_paiement.echeance_paiement.try(:annee) %></dd>
+                                    </div>
+                                </d1>
+
+                                <d1 class="row mb-0">
+                                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                        <dt><span class="fa fa-calendar"></span> période:</dt>
+                                    </div>
+                                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                        <dd class="mb-1"><%= @ordre_paiement.echeance_paiement.try(:periode) %></dd>
+                                    </div>
+                                </d1>
+
+                                <d1 class="row mb-0">
+                                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                        <dt><span class="fa fa-calendar"></span> Numéro période:</dt>
+                                    </div>
+                                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                        <dd class="mb-1"><%= @ordre_paiement.echeance_paiement.try(:numero_periode) %></dd>
+                                    </div>
+                                </d1>
+
+                                <d1 class="row mb-0">
+                                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                        <dt><span class="fa fa-map-marker"></span> etat:</dt>
+                                    </div>
+                                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                        <dd class="mb-1"><%= @ordre_paiement.statut %></dd>
+                                    </div>
+                                </d1>
+                                <% if @ordre_paiement.impaye? or @ordre_paiement.marque_impaye?   %>
+                                    <d1 class="row mb-0">
+                                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                                            <dt><span class="fa fa-map-marker"></span> Motif impayé:</dt>
+                                        </div>
+                                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                                            <dd class="mb-1"><%= @ordre_paiement.motif_impaye %></dd>
+                                        </div>
+                                    </d1>
+                                <% end %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Historique</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h2> Marqué impayé: </h2>
+                                <hr class="no-margins"> <br>
+
+                                <p><strong>Marqué impayé Par: </strong> <%= @ordre_paiement.impaye_ajoute_par.full_name unless @ordre_paiement.impaye_ajoute_par.nil? %></p>
+                                <p><strong>Impayé marqué le:  </strong> <%= @ordre_paiement.impaye_ajoute_le.strftime("%d/%m/%Y à %H:%M") unless @ordre_paiement.impaye_ajoute_le.nil? %></p>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <h2> Rendre impayé:  </h2>
+                                    <hr class="no-margins"> <br>
+                                <p><strong>Rendu impayé par: </strong><%= @ordre_paiement.impaye_par.full_name unless @ordre_paiement.impaye_par.nil? %></p>
+                                <p><strong>Impayé le: </strong> <%= (@ordre_paiement.impaye_le.strftime("%d/%m/%Y à %H:%M")) unless @ordre_paiement.impaye_le.nil? %> </p>
+                            </div>
+                        </div>
+
+                        <br>  <br>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h2> Régularisation impayé: </h2>
+                                <hr class="no-margins"> <br>
+
+                                <p><strong>Impayé régularisé  Par: </strong> <%= @ordre_paiement.regularise_par.full_name unless @ordre_paiement.regularise_par.nil? %></p>
+                                <p><strong>Impayé régularisé le:  </strong> <%= @ordre_paiement.regularise_le.strftime("%d/%m/%Y à %H:%M") unless @ordre_paiement.regularise_le.nil? %></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> 
+</div>     

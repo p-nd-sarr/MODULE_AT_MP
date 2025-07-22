@@ -1,0 +1,66 @@
+<%= content_for :titre_page, "Mes paiements" %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-lg-12" style="margin-top:30px">
+          <% if @paiements.count.zero? %>
+            <h1> L'historique des paiements est vide !!! </h1>
+          <% else %>
+            <table class="table table-bordered table-hover" id="paiements_id">
+              <thead>
+              <tr>
+                <th scope="col">Référence</th>
+                <th scope="col">Période</th>
+                <th scope="col">Montant net</th>
+                <th scope="col">Type paiement</th>
+                <th scope="col">Date paiement</th>
+                <th scope="col">Détails</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @paiements.each do |paiement| %>
+                <tr>
+                  <td><%= paiement.numero_paiement %></td>
+                  <td><%= paiement.periode %></td>
+                  <td><%= paiement.montant_net.round(-1) %></td>
+                  <td><%= paiement.type_paiement %></td>
+                  <td><%= paiement.date_paiement %></td>
+                  <td><%= link_to "Voir détails", allocataire_paiement_path(paiement.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          <% end %>
+          <%= paginate @paiements %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        let pickedup;
+        let paiements = [];
+
+        $("#paiements_id tr").on("click", function (event) {
+
+            let reference = $(this).find("td").eq(1).html();
+            console.log($(this).find("td").eq(0).html());
+            console.log($(this).find("td").eq(1).html());
+            console.log($(this).find("td").eq(3).html());
+
+            // get back to where it was before if it was selected :
+            if (paiements.indexOf(reference) <= -1) {
+
+            }
+
+            paiements.push(reference);
+            // $( this ).css( "background-color", "red" );
+            pickedup = $(this);
+        });
+    })
+</script>

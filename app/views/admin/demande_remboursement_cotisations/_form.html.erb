@@ -1,0 +1,125 @@
+<%= bootstrap_form_for([:admin, @demande_remboursement_cotisation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+   <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-4">
+        <%= f.text_field :numero_affiliation, label: 'Numéro affiliation' %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.text_field :prenom, label: 'Prénom', disabled: true %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.text_field :nom, label: 'Nom', disabled: true %>
+      </div>
+      <div class="col-lg-12">
+        <hr>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_naissance, label: 'Date de naissance',
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today - 18.year).year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :adresse_domicile, label: 'Adresse domicile' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.email_field :email, label: 'Email' %>
+      </div>
+     
+    
+        <div class="col-lg-6">
+          <%= f.text_field :periode_remboursement, label: 'Periode remboursement' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.select :motif_remboursement,
+                       DemandeRemboursementCotisation::MOTIF_REMBOURSEMENT.keys.collect { |motif_remboursement| [DemandeRemboursementCotisation.human_enum_name(:motif_remboursement, motif_remboursement), motif_remboursement] },
+                       label: 'Motif de revision'  %>
+        </div>
+
+        <%#= f.date_field :debut_periode, class: 'form-control'if is_active_controller('admin/liquidation_retraites') and is_active_action('ajouter_demande_remboursement')  %>
+        <%#= f.date_field :fin_periode, class: 'form-control' if is_active_controller('admin/liquidation_retraites') and is_active_action('ajouter_demande_remboursement')  %>
+      <div class="col-lg-6">
+        <%= f.text_field :adresse_reception_allocation, label: "Adresse de réception de l'allocation" %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.select :mode_paiement,
+                     MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [DemandeRemboursementCotisation.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                     include_blank: true, label: 'Mode de paiement' %>
+      </div>
+      <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_virement">
+
+        <div class="col-lg-6">
+          <%= f.text_field :compte_bancaire_nom_banque, label: 'Nom de la banque' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :compte_bancaire_code_banque, label: 'Code de la banque' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :compte_bancaire_code_guichet, label: 'Code guichet du compte' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte' %>
+        </div>
+
+      </div>
+    </div>
+    <div class="col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', (@demande_remboursement_cotisation.persisted? ? [:admin, @demande_remboursement_cotisation] : admin_demande_remboursement_cotisations_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosCompteBancaire();
+          chargerInfosParticipant();
+
+          $("#demande_remboursement_cotisation_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+          });
+
+          function chargerInfosCompteBancaire() {
+              let mode_paiement = $('#demande_remboursement_cotisation_mode_paiement').val();
+              let elem_mode_paiement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  elem_mode_paiement.show();
+              } else {
+                  elem_mode_paiement.hide();
+              }
+          }
+
+          $('#demande_remboursement_cotisation_numero_affiliation').change(function () {
+              chargerInfosParticipant();
+          })
+
+          function chargerInfosParticipant() {
+              let numero_affiliation = $('#demande_remboursement_cotisation_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#demande_remboursement_cotisation_prenom").val(data.prenom);
+                          $("#demande_remboursement_cotisation_nom").val(data.nom);
+                      } else {
+                          $("#demande_remboursement_cotisation_prenom").val('');
+                          $("#demande_remboursement_cotisation_nom").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#demande_remboursement_cotisation_prenom").val('');
+                      $("#demande_remboursement_cotisation_nom").val('');
+                  }
+              });
+          }
+      })
+  </script>
+<% end %>

@@ -1,0 +1,426 @@
+<style type="text/css">
+    #regForm {
+        background-color: #ffffff;
+        margin: 100px auto;
+        padding: 40px;
+        width: 70%;
+        min-width: 300px;
+    }
+
+    input#arret_travail_is_subrogation {
+        margin-right: 1%;
+        width: 30px;
+        height: 30px;
+        margin-top: 0;
+    }
+
+    input#arret_travail_est_journalier {
+        margin-right: 1%;
+        width: 30px;
+        height: 30px;
+        margin-top: 0;
+    }
+
+    .box_subrogation {
+        margin-top: 28px;
+        font-size: 17px;
+    }
+
+    /* Style the input fields */
+
+
+    /* Mark input boxes that gets an error on validation: */
+    input.invalid {
+        background-color: #ffdddd;
+    }
+
+    /* Hide all steps by default: */
+    .tab {
+        display: none;
+    }
+
+    /* Make circles that indicate the steps of the form: */
+    .step {
+        height: 15px;
+        width: 15px;
+        margin: 0 2px;
+        background-color: #bbbbbb;
+        border: none;
+        border-radius: 50%;
+        display: inline-block;
+        opacity: 0.5;
+    }
+
+    /* Mark the active step: */
+    .step.active {
+        opacity: 1;
+    }
+
+    /* Mark the steps that are finished and valid: */
+    .step.finish {
+        background-color: #4CAF50;
+    }
+</style>
+
+<%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <%= f.hidden_field :ajoute_par_id, value: current_user.id %>
+  <div class="ibox">
+    <div class="ibox-content">
+      <div class="tab row">
+        <div class="col-lg-12">
+          <h2><strong class="text-navy"> Etape 1:</strong> Informations personnelles</h2>
+          <div class="col-lg-6">
+            <%= f.select :has_numero_affiliation, options_for_select([["OUI", 1], ["NON", 0]], @demande_arret_travail.has_numero_affiliation), label: "Posséde un numéro d'affiliation?", required: is_required_field?(ArretTravail, 'has_numero_affiliation') %>
+          </div>
+          <div class="col-lg-6" id="numero_affiliation">
+            <%= f.text_field :numero_affiliation, label: 'Numéro affiliation', required: is_required_field?(ArretTravail, 'numero_affiliation') %>
+          </div>
+        </div>
+        <!--<div class="col-lg-6" id="numero_temporaire" >
+                    <%= f.text_field :numero_temporaire, label: 'Numéro Tempoaraire', required: true %>
+                </div>-->
+        <div class="col-lg-12">
+          <div class="col-lg-4">
+            <%= f.text_field :prenom_salarie, label: 'Prénom', required: true %>
+          </div>
+
+          <div class="col-lg-4">
+            <%= f.text_field :nom_salarie, label: 'Nom', required: true %>
+          </div>
+
+          <div class="col-lg-4">
+            <%= f.select :situation_matrimoniale_salarie,
+                         ArretTravail::SITUATION_MATRIMONIALE.keys.collect { |sit_mat| [sit_mat, sit_mat] }, label: 'Situation Matrimoniale', required: true, include_blank: 'Sélectionner' %>
+          </div>
+        </div>
+
+        <div class="col-lg-12">
+          <div class="col-lg-4">
+            <%= f.date_field :date_de_naissance_salarie, label: 'Date de naissance',
+                             start_year: (Date.today.year - 100), end_year: (Date.today).year, required: true %>
+          </div>
+
+          <div class="col-lg-4">
+            <%= f.text_field :lieu_de_naissance, label: 'Lieu de Naisance' %>
+          </div>
+
+          <div class="col-lg-4">
+            <%= f.select :sexe, ArretTravail::SEXE.keys.collect { |sexe| [ArretTravail.human_enum_name(:sexe, sexe), sexe] }, label: 'Sexe', include_blank: 'Sélectionner', required: true %>
+          </div>
+        </div>
+
+        <div class="col-lg-12">
+          <div class="col-lg-4">
+            <%= f.text_field :telephone, label: 'Téléphone' %>
+          </div>
+          <div class="col-lg-4">
+            <%= f.text_field :adresse, label: 'Adresse', required: true %>
+          </div>
+          <div class="col-lg-4">
+            <%= f.text_field :email, label: 'Email' %>
+          </div>
+        </div>
+
+        <div class="col-lg-12" style="margin-bottom:20px;">
+          <div class="col-lg-4">
+            <%= f.select :nationalite_salarie,
+                         ArretTravail::NATIONALITE_SALARIE.keys.collect { |nationalite_salarie| [ArretTravail.human_enum_name(:nationalite_salarie, nationalite_salarie), nationalite_salarie] },
+                         { include_blank: 'Sélectionner', required: true, label: 'Nationalité' } %>
+          </div>
+          <div class="col-lg-4">
+            <%= f.select :type_de_piece, ArretTravail::TYPE_DE_PIECE.keys.collect { |type_de_piece| [ArretTravail.human_enum_name(:type_de_piece, type_de_piece), type_de_piece] }, label: 'Type de piéce', include_blank: 'Sélectionner', required: true %>
+          </div>
+          <div class="col-lg-4">
+            <%= f.text_field :nin_salarie, label: 'Numéro piece', required: true %>
+          </div>
+        </div>
+
+        <div class="col-lg-12">
+          <h2><strong class="text-navy"> </strong> Informations sur l'accident</h2>
+          <hr>
+          <div class="col-lg-8">
+            <%= f.datetime_select :date_accident, label: "Date et heure de l'accident", include_blank: true,
+                                  start_year: (Date.today.year - 10), end_year: (Date.today.year + 10), required: true %>
+          </div>
+          <div class="col-lg-4 box_subrogation">
+            <%= f.check_box :is_subrogation, label: "Cocher la case si le salaire est maintenu " %>
+          </div>
+        </div>
+
+
+        <div class="col-lg-12" style="margin-bottom:20px;">
+          <div class="col-lg-6 box_subrogation">
+            <%= f.check_box :est_journalier, label: "Cocher la case si la victime est journalier" %>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="tab col-lg-12">
+        <div class="col-lg-12" style="margin-bottom:20px;">
+          <h2><strong class="text-navy"> Etape 2:</strong> Informations du déclarant</h2>
+        </div>
+        <div class="col-lg-6" style="margin-top:20px;">
+          <%= f.select :declarant, ArretTravail::DECLARANT.keys.collect { |item| [item, item] }, label: 'Déclarant', required: is_required_field?(ArretTravail, 'declarant') %>
+        </div>
+        <span class='declarant-section' id="declarant-section">
+                    <div class="col-lg-6" style="margin-top:20px;">
+                        <%= f.text_field :prenom_declarant, required: true %>
+                    </div>
+                    <div class="col-lg-6" style="margin-top:20px;">
+                        <%= f.text_field :nom_declarant, required: true %>
+                    </div>
+                    <div class="col-lg-6" id="adresse_declarant" style="margin-top:20px;">
+                        <%= f.text_field :adresse_declarant, required: true %>
+                    </div>
+                    <div class="col-lg-6" style="margin-top:20px;" id="telephone_declarant">
+                        <%= f.text_field :telephone_declarant %>
+                    </div>
+                    <div class="col-lg-6" style="margin-top:20px;" id="qualite_declarant">
+                        <%= f.text_field :qualite_declarant, required: true %>
+                    </div>
+                    <div class="col-lg-6" style="margin-top:20px;" id="date_declaration">
+                        <%= f.date_field :date_declaration, label: 'Date déclaration', required: true %>
+                    </div>
+                    <div class="col-lg-6" style="margin-top:20px;" id="date_reception">
+                        <%= f.date_field :date_reception, label: 'Date réception', required: true %>
+                    </div>
+
+                </span>
+        <div class="col-lg-6" style="margin-top:20px;" id="lieu_declaration">
+          <%= f.text_field :lieu_declaration, required: is_required_field?(ArretTravail, 'lieu_declaration') %>
+        </div>
+
+      </div>
+
+      <div class="col-lg-12">
+        <div style="overflow:auto;">
+          <div style="float:right;">
+            <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white', id: "cancelBtn" %>
+            <button type="button" id="prevBtn" class="btn btn-primary" onclick="nextPrev(-1)">Précèdent</button>
+            <button type="button" class="btn btn-success" id="nextBtn" onclick="nextPrev(1)">Suivant</button>
+            <%= f.button 'Valider', class: 'btn btn-success', id: "saveBtn" %>
+          </div>
+        </div>
+      </div>
+
+      <!-- Circles which indicates the steps -->
+      <div style="text-align:center;margin-top:50px;">
+        <span class="step"></span>
+        <span class="step"></span>
+      </div>
+
+    </div>
+  </div>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          showTab(-1);
+          load_infos_participant();
+          load_conjoints();
+          has_numero_affiliation();
+          $('#arret_travail_numero_affiliation').change(function () {
+              load_infos_participant();
+              load_conjoints();
+          });
+          $('#arret_travail_has_numero_affiliation').change(function () {
+              has_numero_affiliation();
+          });
+
+          $('#arret_travail_declarant').change(function () {
+              load_infos_participant();
+          });
+
+          function load_infos_participant() {
+              var numero_affiliation = $('#arret_travail_numero_affiliation').val();
+              var declarant = $('#arret_travail_declarant').val();
+              if (numero_affiliation) {
+                  $.ajax({
+                      url: "/admin/salaries/" + numero_affiliation + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          console.log("DATA: ", data);
+                          if (data) {
+                              $("#arret_travail_prenom_salarie").val(data.prenom);
+                              $("#arret_travail_nom_salarie").val(data.nom);
+                              $("#arret_travail_nin_salarie").val(data.numero_piece);
+                              $("#arret_travail_date_de_naissance_salarie").val(data.date_naissance);
+                              if (data.genre === 'HOMME' || data.numero_piece.slice(0, 1) == 1) {
+                                  $("#arret_travail_sexe").val('homme');
+                              } else if (data.genre === 'FEMME' || data.numero_piece.slice(0, 1) == 2) {
+                                  $("#arret_travail_sexe").val('femme');
+                              } else {
+                                  $("#arret_travail_sexe").val('');
+                              }
+                              if (data.type_piece === 'CNI') {
+                                  $("#arret_travail_type_de_piece").val('cni');
+                              } else if (data.type_piece === 'PASSPORT') {
+                                  $("#arret_travail_type_de_piece").val('passport');
+                              } else {
+                                  $("#arret_travail_type_de_piece").val('');
+                              }
+
+                              if (declarant == "salarie") {
+                                  $("#arret_travail_prenom_declarant").val(data.prenom);
+                                  $("#arret_travail_nom_declarant").val(data.nom);
+                                  // $("#adresse_declarant").hide();
+                                  // $("#telephone_declarant").hide();
+                                  // $("#qualite_declarant").hide();
+                                  // $("#lieu_declaration").hide();
+                              } else {
+                                  $("#arret_travail_prenom_declarant").val('');
+                                  $("#arret_travail_nom_declarant").val('');
+                              }
+                          } else {
+                              $("#arret_travail_prenom_salarie").val('');
+                              $("#arret_travail_nom_salarie").val('');
+                              $("#arret_travail_sexe").val('');
+                              $("#arret_travail_type_de_piece").val('');
+                              $("#arret_travail_nin_salarie").val('');
+                              $("#arret_travail_date_de_naissance_salarie").val('');
+
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#arret_travail_prenom_salarie").val('');
+                          $("#arret_travail_nom_salarie").val('');
+                          $("#arret_travail_sexe").val('');
+                          $("#arret_travail_type_de_piece").val('');
+                          $("#arret_travail_nin_salarie").val('');
+                          $("#arret_travail_date_de_naissance_salarie").val('');
+                      }
+                  });
+              }
+          }
+
+          function has_numero_affiliation() {
+              var has_numero_affiliation = $('#arret_travail_has_numero_affiliation').val();
+
+              if (has_numero_affiliation == 1) {
+                  $("#numero_affiliation").show();
+                  $("#numero_temporaire").hide();
+                  console.log("possede num_affiliation: ", has_numero_affiliation);
+              } else {
+                  //console.log("possede num_affiliation: ",has_numero_affiliation);
+                  $("#numero_affiliation").hide();
+                  $("#numero_temporaire").show();
+                  $("#arret_travail_prenom_salarie").val('');
+                  $("#arret_travail_nom_salarie").val('');
+                  $("#arret_travail_date_de_naissance_salarie_3i").val('');
+              }
+          }
+
+          function load_conjoints() {
+              var numero_affiliation = $('#arret_travail_numero_affiliation').val();
+              if (numero_affiliation) {
+                  $.ajax({
+                      url: "/admin/conjoints/valides.json?numero_affiliation=" + numero_affiliation,
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data) {
+                              html = '<option value=""></option>';
+
+                              $.each(data, function (key, conjoint) {
+                                  html += '<option value="' + conjoint.id + '">' + conjoint.full_name + '</option>';
+                              });
+
+                              $("#arret_travail_conjoint_id").html(html);
+                          } else {
+                              $("#arret_travail_conjoint_id").html('<option value=""></option>');
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#arret_travail_conjoint_id").html('<option value=""></option>');
+                      }
+                  });
+              }
+          }
+      })
+
+
+      var currentTab = 0;
+      showTab(currentTab);
+
+      function showTab(tab) {
+          var variable = document.getElementsByClassName("tab");
+          if (variable[tab]) {
+              variable[tab].style.display = "block";
+          }
+          if (tab == 0) {
+              document.getElementById("prevBtn").style.display = "none";
+              document.getElementById("cancelBtn").style.display = "none";
+              document.getElementById("saveBtn").style.display = "none";
+          } else {
+              document.getElementById("prevBtn").style.display = "inline";
+              document.getElementById("cancelBtn").style.display = "inline";
+          }
+          if (tab == (variable.length - 1)) {
+              document.getElementById("cancelBtn").style.display = "inline";
+              document.getElementById("saveBtn").style.display = "inline";
+              document.getElementById("nextBtn").style.display = "none";
+          } else {
+              document.getElementById("nextBtn").style.display = "inline";
+              document.getElementById("cancelBtn").style.display = "inline";
+              document.getElementById("saveBtn").style.display = "none";
+          }
+          fixStepIndicator(tab)
+      }
+
+      function nextPrev(n) {
+          var x = document.getElementsByClassName("tab");
+          if (n == 1 && !validateForm()) return false;
+          x[currentTab].style.display = "none";
+          currentTab = currentTab + n;
+          showTab(currentTab);
+      }
+
+      function validateForm() {
+          var x, y, i, z, valid = true;
+          x = document.getElementsByClassName("tab");
+          y = x[currentTab].querySelectorAll("input");
+          z = x[currentTab].querySelectorAll("select");
+
+          for (i = 0; i < z.length; i++) {
+              z[i].setAttribute('required', 'true');
+          }
+
+          for (i = 0; i < y.length; i++) {
+              if (y[i].hasAttribute('required') && (y[i].value == "")) {
+                  y[i].className += " invalid";
+                  valid = false;
+              }
+          }
+
+          for (i = 0; i < z.length; i++) {
+              if (z[i].hasAttribute('required') && (z[i].value == "")) {
+                  z[i].className += " invalid";
+                  z[i].style.background = '#FFDDDD'
+                  valid = false;
+              }
+          }
+
+          if (valid) {
+              document.getElementsByClassName("step")[currentTab].className += " finish";
+          }
+          return valid; // return the valid status
+      }
+
+      function fixStepIndicator(n) {
+          // This function removes the "active" class of all steps...
+          var i, x = document.getElementsByClassName("step");
+          for (i = 0; i < x.length; i++) {
+              x[i].className = x[i].className.replace(" active", "");
+          }
+          //... and adds the "active" class to the current step:
+          if (x[n]) {
+              x[n].className += " active";
+          }
+      }
+  </script>
+<% end %>

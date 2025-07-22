@@ -1,0 +1,11 @@
+<%= content_for :titre_page, 'Liste des dossiers de guérisons' %>
+
+<%= content_for :actions_page do %>
+    <%#= link_to 'Ajouter', new_at_guerison_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+     <%= render 'liste' %>
+  </div>
+</div>

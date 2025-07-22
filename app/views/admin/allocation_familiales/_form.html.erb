@@ -1,0 +1,103 @@
+<%= bootstrap_form_for([:admin, @dossier_prestation, @allocation_familiale]) do |f| %>
+<div class="row" style="margin-top:20px;">
+  <div class="col-lg-8 col-lg-offset-2">
+    <%= f.alert_message 'Erreurs: rappel de la saisie du document à joindre' %>
+    <div class="col-lg-12">
+      <%= f.select :annee, ((Date.today - 1.years).year .. Date.today.year).map{|date| [date, date]},
+                   label: 'Année', include_blank: true %>
+    </div>
+    <div class="col-lg-12">
+      <%#= f.select :trimestre, AllocationFamiliale::TRIMESTRE.keys.collect{ |trimestre|
+        [AllocationFamiliale.human_enum_name(:trimestre, trimestre), trimestre] },
+                   label: 'Trimestre', include_blank: true %>
+      <%= f.select :trimestre, [], include_blank: true, label: 'Trimestre' %>
+
+    </div>
+    <div class="content clearfix">
+      <h3>Liste des enfants éligible</h3>
+      <hr>
+      <div class="row">
+        <div class="col-sm-12 table-responsive">
+          <table class="table table-bordered">
+            <thead>
+            <tr>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date de naissance</th>
+              <th scope="col">Date d'éligibilité </th>
+            </tr>
+            </thead>
+            <tbody id="t_body_enfant">
+            <% Enfant.where(numero_affiliation: @dossier_prestation.num_affiliation).eligible_allocation_familiale.eligible_plus.each do |enfant| %>
+              <tr>
+                <td><%= enfant.prenom %></td>
+                <td><%= enfant.nom %></td>
+                <td><%= l enfant.date_naissance %></td>
+                <td><%= enfant.date_naissance.next_year(2).at_beginning_of_month.next_month.strftime("%d/%m/%Y") %></td>
+              </tr>
+            <%end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date d'ouverture des droits:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= l Conjoint.where(numero_affiliation: @dossier_prestation.num_affiliation).premiere_date_mariage.pluck(:date_mariage).first %></dd>
+      </div>
+    </d1>
+
+
+    <div class="form-group col-lg-12">
+    <hr>
+      <div class="col-lg-4 col-lg-offset-8" style="text-align:right;">
+        <%= link_to 'Annuler', admin_dossier_prestation_allocation_familiales_path(@dossier_prestation), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+          load_trimestre();
+
+          $('#allocation_familiale_annee').on('change', function() {
+              load_trimestre();
+          });
+      })
+
+      function load_trimestre(){
+          const annee = $('#allocation_familiale_annee').val();
+          $.ajax({
+              url: "/admin/dossier_prestations/" + <%=@dossier_prestation.id %> + "/allocation_familiales/carriere/" + annee + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  conjoint = data
+                  if (data) {
+                      console.log(data)
+                      html = '<option value=""></option>';
+
+                      $.each(data, function (key, carriere) {
+                          html += '<option value="' + carriere.trimestre + '">' + carriere.trimestre+ '</option>';
+                      });
+
+                      $("#allocation_familiale_trimestre").html(html);
+
+                  } else {
+                      $("#allocation_familiale_trimestre").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  console.log("Pas de donnees")
+              }
+          });
+      }
+  </script>
+<% end %>

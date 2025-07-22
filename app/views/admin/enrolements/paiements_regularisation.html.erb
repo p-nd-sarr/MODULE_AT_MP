@@ -1,0 +1,114 @@
+<%= content_for :titre_page do %>
+  Régularisation Pointage #<%= @regularisation.id %> - Paiements <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', regularisations_admin_enrolements_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+          <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :allocataire_ipres_ancien_matric_cont, 'Ancien numéro IPRES' %>
+          <%= f.search_field :allocataire_ipres_ancien_matric_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :allocataire_prenom_cont, 'Prénom' %>
+          <%= f.search_field :allocataire_prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :allocataire_nom_cont, 'Nom' %>
+          <%= f.search_field :allocataire_nom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :allocataire_categorie_eq, 'Catégorie' %>
+          <%= f.select :allocataire_categorie_eq, Allocataire.categories.to_a.map { |w| [Allocataire.human_enum_name(:categorie, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :allocataire_mode_paiement_eq, 'Mode de paiement' %>
+          <%= f.select :allocataire_mode_paiement_eq, Allocataire.mode_paiements.to_a.map { |w| [Allocataire.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+      <%#= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+    <% end %>
+
+    <br>
+
+    <b>Nombre de dossiers : <%= format_entier @nombre_dossiers %></b> <br><br>
+
+    <%= paginate @ordre_paiements %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro ordre</th>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Ancien numéro IPRES</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Mode de paiement</th>
+        <th scope="col">Détails</th>
+        <th scope="col">Montant Total</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @ordre_paiements.each do |ordre_paiement| %>
+        <tr>
+          <td><%= ordre_paiement.numero_format %></td>
+          <td><%= (ordre_paiement.allocataire.try(:umero_allocataire) || ordre_paiement.numero_allocataire) %></td>
+          <td><%= ordre_paiement.allocataire.try(:ipres_ancien_matric) %></td>
+          <td><%= ordre_paiement.allocataire.try(:prenom) %></td>
+          <td><%= ordre_paiement.allocataire.try(:nom) %></td>
+          <td><%= ordre_paiement.allocataire.try(:mode_paiement_human) %></td>
+          <td>
+            <% ordre_paiement.compta_transactions.each do |compta_transaction| %>
+              <%= compta_transaction.description %> : <%= format_cfa compta_transaction.montant, false %> <br>
+              <% unless compta_transaction.montant_subvention.nil? or compta_transaction.montant_subvention.zero? %>
+                <i>Subvention : <%= format_cfa compta_transaction.montant_subvention, false %> </i> <br>
+              <% end %>
+            <% end %>
+          </td>
+          <td align="right"><%= format_cfa ordre_paiement.montant, false %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @ordre_paiements %>
+  </div>
+</div>
+
+<%# content_for :javascript do %>
+<!--  <script type="text/javascript">-->
+<!--      $(function () {-->
+<!--          $('#action_export').click(function () {-->
+<!--              $('#formulaire_recherche').attr('action', '<%#= admin_echeance_paiement_paiements_path(format: :xlsx) %>')-->
+<!--          })-->
+<!--          $('#action_search').click(function () {-->
+<!--              $('#formulaire_recherche').attr('action', '<%#= admin_echeance_paiement_paiements_path %>')-->
+<!--          })-->
+<!--          $('#formulaire_recherche').submit(function (e) {-->
+<!--              e.preventDefault(); // dont submit multiple times-->
+<!--              this.submit(); // use native js submit-->
+
+<!--              setTimeout(function () {-->
+<!--                  $('#action_export').prop("disabled", false);-->
+<!--                  $('#action_search').prop("disabled", false);-->
+<!--              }, 500);-->
+<!--          });-->
+<!--      });-->
+<!--  </script>-->
+<%# end %>

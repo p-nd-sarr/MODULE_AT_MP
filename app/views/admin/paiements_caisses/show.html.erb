@@ -1,0 +1,143 @@
+<% content_for :titre_page do %>
+  Détails paiements à domicile #<%= @paiement.numero_ordre %> [<%= @paiement.etat_human %>]
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_paiements_caisses_path, class: 'btn btn-white btn-sm' %>
+  <% if current_user.admin? and (@paiement.paye? or @paiement.decede?) %>
+    <%= link_to 'Rendre impayée', admin_paiements_caisse_rendre_impayee_path(@paiement), class: 'btn btn-warning btn-sm', method: :post,
+                data: { confirm: "En êtes vous sûr de vouloir changer l'état de cette facture à impayé, cette action est irréversible?" } %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h1>Montant à payer : <span class="text-navy font-bold"><%= format_cfa @paiement.montant %></span></h1>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Numéro Ordre:</dt>
+          </div>
+          <div class="col-sm-8" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.numero_ordre %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Source:</dt>
+          </div>
+          <div class="col-sm-8" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.source %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Mode de paiement:</dt>
+          </div>
+          <div class="col-sm-8" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.mode_paiement_human %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Détails:</dt>
+          </div>
+          <div class="col-sm-8" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.details %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Période:</dt>
+          </div>
+          <div class="col-sm-8" style="text-align: left;">
+            <dd class="mb-1"><%= "#{ @paiement.periode_debut.strftime("%d/%m/%Y")} au #{@paiement.periode_fin.strftime("%d/%m/%Y")}" %></dd>
+          </div>
+        </d1>
+      </div>
+
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Numéro allocataire:</dt>
+          </div>
+          <div class="col-sm-8 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.numero_allocataire %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Ancien numéro IPRES:</dt>
+          </div>
+          <div class="col-sm-8 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.ipres_ancien_matric %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Prénom:</dt>
+          </div>
+          <div class="col-sm-8 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.prenom %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Nom:</dt>
+          </div>
+          <div class="col-sm-8 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.nom %></dd>
+          </div>
+        </d1>
+      </div>
+    </div>
+
+    <% unless @paiement.attente_paiement? %>
+      <hr/>
+
+      <h3>Information de traitement</h3>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <d1 class="row mb-0">
+            <div class="col-sm-4" style="text-align: right;">
+              <dt>Traité par:</dt>
+            </div>
+            <div class="col-sm-4" style="text-align: left;">
+              <dd class="mb-1"><%= @paiement.user.full_name %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-4" style="text-align: right;">
+              <dt>Agence:</dt>
+            </div>
+            <div class="col-sm-4" style="text-align: left;">
+              <dd class="mb-1"><%= @paiement.user.admin_agence.try(:description_prest) %></dd>
+            </div>
+          </d1>
+        </div>
+
+        <div class="col-lg-6">
+          <d1 class="row mb-0">
+            <div class="col-sm-4 text-sm-right" style="text-align: right;">
+              <dt>Traité le:</dt>
+            </div>
+            <div class="col-sm-4 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= l @paiement.date_paiement %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-4 text-sm-right" style="text-align: right;">
+              <dt>NIN :</dt>
+            </div>
+            <div class="col-sm-4 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= @paiement.nin %></dd>
+            </div>
+          </d1>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

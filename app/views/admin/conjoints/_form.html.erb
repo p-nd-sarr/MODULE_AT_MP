@@ -1,0 +1,781 @@
+<style type="text/css">
+
+    .no-text {
+        font-size: 0px;
+    }
+
+    .invalid-feedback {
+        font-size: 0px;
+    }
+
+    select option[disabled] {
+        display: none
+    }
+</style>
+
+<%= bootstrap_form_for([:admin, @conjoint], label_col: "col-sm-4", control_col: "col-sm-4") do |f| %>
+  <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+
+  <div class="content clearfix">
+    <h2 class="text-navy" style="font-weight:bold">Informations du salarié</h2>
+    <hr>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-4">
+          <%= f.text_field :numero_affiliation, label: 'Numéro affiliation' %>
+          <span id="num_aff_error" style="display: none; font-size: 12px; color: red; -webkit-text-stroke-width: medium;">Le numéro d'affiliation doit être numérique</span>
+        </div>
+
+        <div class="col-sm-4">
+          <%= f.text_field :prenom_salarie, label: 'Prénom salarié', readonly: true %>
+        </div>
+
+        <div class="col-sm-4">
+          <%= f.text_field :nom_salarie, label: 'Nom salarié', readonly: true %>
+        </div>
+
+        <div class="col-sm-4">
+          <%= f.text_field :nin, label: 'NIN' %>
+        </div>
+
+        <div class="col-sm-4">
+          <%= f.date_field :date_delivrance_piece_salarie, label: 'Date délivrance pièce', required: true,
+                           start_year: (Date.today - 10.year).year, end_year: (Date.today + 10.year).year %>
+        </div>
+
+        <div class="col-lg-12">
+          <hr>
+        </div>
+
+        <div class="col-sm-6" id="regime_matrimoniale">
+          <%= f.select :regime_matrimoniale, [], include_blank: true, label: 'Situation matrimoniale' %>
+        </div>
+
+        <div class="col-sm-6" id="nombre_femmes">
+          <%= f.number_field :nombre_femmes, label: 'Nombre de femmes limites', min: 2, max: 4 %>
+        </div>
+
+        <div class="col-sm-6" id="id_etat_civil">
+          <%= f.select :etat_civil,
+                       Conjoint::ETAT_CIVIL.keys.collect { |etat_civil| [Conjoint.human_enum_name(:etat_civil, etat_civil), etat_civil] },
+                       label: "Etat civil salarie", required: true %>
+        </div>
+
+        <!--<div class="col-sm-6" id="rang_conjoint">
+          <%#= f.select :rang_conjoint,
+                       Conjoint::RANG_CONJOINT.keys.collect { |rang_conjoint| [Conjoint.human_enum_name(:rang_conjoint, rang_conjoint), rang_conjoint] },
+                       label: "Rang de la conjointe", include_blank: true %>
+        </div>-->
+
+        <div class="col-sm-6" id="id_date_naissance_salarie">
+          <%= f.date_field :date_naissance_salarie, label: 'Date naissance salarie', required: true,
+                           start_year: (Date.today - 100.year).year, end_year: (Date.today - 16.year).year, :value => Time.now.strftime('%Y-%m-%d') %>
+          <!--<span id="warning_birthday_salary" style="display: none; color: red">Âge inférieur à 18 ans</span>-->
+        </div>
+
+        <d1 class="row mb-0" id="id_date_naissance_salarie_exist">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Date de naissance salarié:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: right; font-size: 15px;">
+            <dd class="mb-1 text-navy" id="date_naissance_exist"></dd>
+          </div>
+        </d1>
+      </div>
+    </div>
+    <br>
+  </div>
+  <div class="content clearfix" id="list_conjoint">
+    <h3 class="text-success">Liste conjoints existants</h3>
+    <hr>
+    <div class="row">
+      <div class="col-sm-12 table-responsive">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th scope="col">Prénom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Date de naissance</th>
+            <th scope="col">Date du mariage</th>
+            <th scope="col">Numéro pièce</th>
+            <th scope="col">Etat</th>
+            <!--<th scope="col">Rang de la conjointe</th>-->
+          </tr>
+          </thead>
+          <tbody id="t_body_conjoint">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="content clearfix">
+    <h2 class="text-navy" style="font-weight:bold">Informations du conjoint à ajouter</h2>
+    <hr>
+    <div class="row">
+      <div class="form-group" style="align-content: center">
+        <div class="col-sm-12">
+          <div class="col-sm-6">
+            <%= f.select :type_piece,
+                         Conjoint::TYPE_PIECE.keys.collect { |type_piece| [Conjoint.human_enum_name(:type_piece, type_piece), type_piece] },
+                         label: "Type de pièce" %>
+          </div>
+          <div class="col-sm-6"></div>
+
+          <div class="col-sm-6" id="id_conjoint_numero_piece">
+            <%= f.text_field :'numero_piece', label: 'Numéro piéce conjoint', :onkeydown => "if(event.keyCode==32) return false;" %>
+          </div>
+
+          <% if is_active_controller('admin/conjoints') and is_active_action('edit') and @conjoint.extrait_naissance? %>
+            <div class="col-sm-6">
+              <%= f.text_field :nin_generer, label: 'Numéro piéce généré', readonly: true %>
+            </div>
+          <% end %>
+
+          <div id="infos_etat_civile_conjoint">
+            <div class="col-sm-6">
+              <%= f.collection_select :code_etat_civil, Admin::LocaliteGrappe.all.order('localite'), :code_localite, :localite, label: 'Centre d’état civil ou code locatilié', prompt: "Choisir un code d'état civil" %>
+            </div>
+
+            <div class="col-sm-6">
+              <%= f.text_field :numero_registre, label: 'Numéro de registre' %>
+            </div>
+
+            <div class="col-lg-6">
+              <%= f.date_field :date_transcription, label: 'Date de transcription' %>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.date_field :date_delivrance_piece, label: 'Date délivrance pièce', required: true,
+                             start_year: (Date.today - 10.year).year, end_year: (Date.today + 10.year).year %>
+          </div>
+          <div class="col-sm-6">
+            <%= f.select :est_salarie, [['Non', false], ['Oui', true]], label: "Est ce que le conjoint est un salarié ?" %>
+          </div>
+
+          <div class="col-sm-6" id="conjoint_matric">
+            <%= f.text_field :matric_conjoint, label: 'Numéro affiliation conjoint', readonly: true %>
+          </div>
+        </div>
+        <div class="col-sm-12">
+          <hr>
+          <div class="col-sm-6">
+            <%= f.text_field :prenom, label: 'Prénom conjoint', required: true %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.text_field :nom, label: 'Nom conjoint', required: true %>
+          </div>
+
+          <div class="col-sm-6" id="conjoint_sex_group">
+            <%= f.select :sex, Conjoint::SEXE.keys.collect { |sex| [Conjoint.human_enum_name(:sex, sex), sex] }, label: "Genre conjoint",
+                         required: true, include_blank: true %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.date_field :date_naissance, label: 'Date de naissance',
+                             start_year: (Date.today - 100.year).year, end_year: (Date.today - 14.year).year %>
+            <div id="alert_age_conjoint" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">L'âge
+              requis pour se marier n'est pas respecter.
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.date_field :date_mariage, label: "Date de célébration du mariage",
+                             start_year: (Date.today - 80.year).year, end_year: Date.today.year %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.date_field :date_etablissement_mariage, label: "Date de constatation du mariage",
+                             start_year: (Date.today - 80.year).year, end_year: Date.today.year %>
+          </div>
+
+          <div class="col-sm-12" id="date_jugement_suppletif">
+            <div class="col-sm-6">
+              <%= f.date_field :date_jugement_suppletif, label: "Date jugement supplétif d'acte de mariage",
+                               start_year: (Date.today - 80.year).year, end_year: Date.today.year %>
+            </div>
+
+            <div class="col-sm-6">
+              <%= f.text_field :numero_jugement_mariage, label: 'Numero de jugement' %>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.select :etat_conjoint,
+                         Conjoint::ETAT_CONJOINT.keys.collect { |etat_conjoint| [Conjoint.human_enum_name(:etat_conjoint, etat_conjoint), etat_conjoint] },
+                         label: "Situation avec le conjoint", include_blank: true, required: true, :onchange => 'nombre_conjoint_femme()' %>
+          </div>
+
+          <div class="col-sm-6" id="date_divorce">
+            <%= f.date_field :date_divorce, label: 'Date de divorce' %>
+          </div>
+
+          <div class="col-sm-6" id="date_deces">
+            <%= f.date_field :date_deces, label: "Date de décès" %>
+          </div>
+
+        </div>
+        <div class="col-lg-12" style="margin-top:40px;">
+          <h2 class="text-navy" style="margin-bottom:30px; font-weight:bold">Joindre les pièces</h2>
+          <hr>
+          <div class="col-sm-4">
+            <h4 style="font-weight: bold;">Pièce d’identification *</h4>
+            <div class="btn-file">
+              <label class="no-text">
+                <%= f.file_field :extrait_naissance, hide_label: true, label: '.',
+                                 required: (not @conjoint.persisted?),
+                                 help: (@conjoint.persisted?), id: 'label-ext' %>
+
+                <%#= f.file_field :extrait_naissance, hide_label: true, label: '.',
+                               required: (not @conjoint.persisted?),
+                               help: (@conjoint.persisted? ), id:'label-ext'  if is_active_controller('admin/conjoints') and is_active_action('edit')%>
+
+                <div class="btn btn-success" style="margin-top:0px; margin-left: 1px;">
+                  <span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+            </div>
+            <small id="extrait-name"></small>
+          </div>
+          <div class="col-sm-4">
+            <h4 style="font-weight: bold;">Certificat de mariage *</h4>
+            <div class="btn-file">
+              <label class="no-text">
+                <%= f.file_field :certificat_mariage, hide_label: true, label: '.', required: (not @conjoint.persisted?), help: (@conjoint.persisted?), id: 'label-cert' %>
+
+                <%#= f.file_field :certificat_mariage, hide_label:true, label: '.',
+                               required: (not @conjoint.persisted?),
+                               help: (@conjoint.persisted?), id:'label-cert' if is_active_controller('admin/conjoints') and is_active_action('edit')  %>
+
+                <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                  <span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+            </div>
+            <small id="certeficat-name"></small>
+          </div>
+          <div class="col-sm-4" id="cert_deces">
+            <h4 style="font-weight: bold;">Certificat de décès *</h4>
+            <div class="btn-file">
+              <label class="no-text">
+                <%= f.file_field :certificat_deces, hide_label: true, label: '.', help: (@conjoint.persisted?), id: 'label-deces' %>
+
+                <%#= f.file_field :certificat_deces, hide_label:true, label: '.',
+
+                               help: (@conjoint.persisted?), id:'label-deces' if is_active_controller('admin/conjoints') and is_active_action('edit')  %>
+
+                <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                  <span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+            </div>
+            <small id="cert_deces_name"></small>
+          </div>
+
+          <div class="col-sm-4" id="cert_divorce">
+            <h4 style="font-weight: bold;">Certificat de divorce *</h4>
+            <div class="btn-file">
+              <label class="no-text">
+                <%= f.file_field :certificat_divorce, hide_label: true, label: '.', help: (@conjoint.persisted?), id: 'label-divorce' %>
+
+                <%#= f.file_field :certificat_divorce, hide_label:true, label: '.',
+
+                               help: (@conjoint.persisted?), id:'label-divorce' if is_active_controller('admin/conjoints') and is_active_action('edit')  %>
+
+                <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                  <span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+            </div>
+            <small id="cert_divorce_name"></small>
+          </div>
+
+        </div>
+        <div class="col-sm-12"></div>
+      </div>
+      <div class="form-group col-sm-12">
+        <hr>
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3" style="text-align: right;">
+          <%= link_to 'Annuler', admin_conjoints_path, class: 'btn btn-white' %>
+          <%= f.submit 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      var nombre_conjoint;
+      var conjoint;
+      var salarie;
+      $(document).ready(function () {
+
+          load_participant();
+          load_salaries();
+          tableaux_conjoint();
+          etatDivorceDeces();
+          infos_etat_civile();
+          // showHideRangConjoint();
+          showAndHideNombreFemme();
+          // $( '#conjoint_sex' ).hide();
+          $('#date_jugement_suppletif').hide();
+          //$( '#conjoint_sex_group' ).hide();
+          $('#id_etat_civil').hide();
+          $('#conjoint_matric').hide();
+          $('#infos_etat_civile_conjoint').hide();
+          $('#alert_age_conjoint').hide();
+          // $('#rang_conjoint').hide();
+          $('#list_conjoint').hide();
+          $('#nombre_femmes').hide();
+          $('#id_date_naissance_salarie_exist').hide();
+          validate_date_suppletif();
+
+          $('#conjoint_numero_affiliation').keyup(function () {
+              if (isNaN($("#conjoint_numero_affiliation").val())) {
+                  $('#num_aff_error').show();
+                  $('#submit_button').attr("disabled", true)
+              } else {
+                  $('#num_aff_error').hide();
+                  $('#submit_button').attr("disabled", false)
+              }
+          })
+
+          if ($("#conjoint_type_piece").val() == 'extrait_naissance') {
+              $('#infos_etat_civile_conjoint').show();
+          } else {
+              $('#infos_etat_civile_conjoint').hide();
+          }
+
+
+          $('#conjoint_type_piece').change(function () {
+              infos_etat_civile();
+          });
+
+          $('#conjoint_est_salarie').on('change', function () {
+
+              if ($('#conjoint_est_salarie').val() == 'true') {
+                  $('#conjoint_matric').show();
+              } else {
+                  $('#conjoint_matric').hide();
+              }
+          });
+
+          $('#conjoint_numero_affiliation').change(function () {
+              load_participant();
+              tableaux_conjoint();
+              load_salaries();
+              showAndHideNombreFemme();
+              // showHideRangConjoint();
+          });
+
+          $('#conjoint_matric_conjoint').change(function () {
+              // let cni = $('#conjoint_numero_piece').val();
+              let matric_conjoint = $('#conjoint_matric_conjoint').val();
+              $.ajax({
+                  // url: "/admin/salaries/cni/" + cni + ".json",
+                  url: "/admin/salaries/" + matric_conjoint + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#conjoint_prenom").val(data.prenom);
+                          $("#conjoint_nom").val(data.nom);
+                          $("#conjoint_matric_conjoint").val(data.matric);
+                      } else {
+                          $("#conjoint_prenom").val('');
+                          $("#conjoint_nom").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#conjoint_prenom").val('');
+                      $("#conjoint_nom").val('');
+                  }
+              });
+          });
+
+          $('#conjoint_numero_piece').change(function () {
+              let numero_piece = $('#conjoint_numero_piece').val();
+              $.ajax({
+                  url: "/admin/conjoints/conjoint/" + numero_piece + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          console.log("log conjoint ", data)
+                          if (Object.keys(data).length > 0 && data.prenom !== null) {
+                              $("#conjoint_prenom").val(data.prenom);
+                              // $("#conjoint_prenom").attr("disabled", true)
+                          } else {
+                              $("#conjoint_prenom").val('');
+                              // $("#conjoint_prenom").attr("disabled", false)
+                          }
+
+                          if (Object.keys(data).length > 0 && data.nom !== null) {
+                              $("#conjoint_nom").val(data.nom);
+                              // $("#conjoint_nom").attr("disabled", true)
+                          } else {
+                              $("#conjoint_nom").val('');
+                              //  $("#conjoint_nom").attr("disabled", false)
+                          }
+
+                          if (Object.keys(data).length > 0 && data.date_naissance !== null) {
+                              $("#conjoint_date_naissance").val(data.date_naissance);
+                              // $("#conjoint_date_naissance").attr('readOnly', 'true')
+                          } else {
+                              $("#conjoint_date_naissance").val(new Date());
+                              // $("#conjoint_date_naissance").attr('readOnly', 'false')
+                          }
+
+                          if (Object.keys(data).length > 0 && data.matric !== null) {
+                              $("#conjoint_matric_conjoint").val(data.matric);
+                              $("#conjoint_est_salarie").val('true');
+                              $("#conjoint_matric").show()
+                          } else {
+                              $("#conjoint_matric_conjoint").val('');
+                              $("#conjoint_est_salarie").val('false');
+                              $("#conjoint_matric").hide()
+                          }
+
+                      } else {
+                          console.log("ERROR")
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+                  }
+              });
+          });
+
+          $('#conjoint_regime_matrimoniale').on('change', function () {
+              //showHideRangConjoint();
+              showAndHideNombreFemme();
+          });
+
+          $('#conjoint_etat_conjoint').on('change', function () {
+              etatDivorceDeces();
+          })
+      });
+
+      var input = document.getElementById('label-ext');
+      var infoArea = document.getElementById('extrait-name');
+      input.addEventListener('change', showFileName);
+
+      function showFileName(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea.textContent = fileName;
+      }
+
+      var input2 = document.getElementById('label-cert');
+      var infoArea2 = document.getElementById('certeficat-name');
+      input2.addEventListener('change', showFileName2);
+
+      function showFileName2(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea2.textContent = fileName;
+      }
+
+      var input3 = document.getElementById('label-deces');
+      var infoArea3 = document.getElementById('cert_deces_name');
+      input3.addEventListener('change', showFileName3);
+
+      function showFileName3(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea3.textContent = fileName;
+      }
+
+      var input4 = document.getElementById('label-divorce');
+      var infoArea4 = document.getElementById('cert_divorce_name');
+      input4.addEventListener('change', showFileName4);
+
+      function showFileName4(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea4.textContent = fileName;
+      }
+
+      /* $('#conjoint_date_etablissement_mariage').change(
+           function (){
+               if (new Date().getFullYear() - new Date($('#conjoint_date_etablissement_mariage').val()).getFullYear() < 18 ){
+                   $('#warning_birthday_salary').show();
+               }else {
+                   $('#warning_birthday_salary').hide();
+               }
+           }
+       )*/
+
+      function dateDiff(d1, d2) {
+          ecart_time = (d2 - d1);
+          ecart_day = ecart_time/(1000 *3600*24);
+          return ecart_day <= 0 ? 0 : ecart_day;
+          
+      }
+
+      function validate_date_suppletif() {
+          d1 = new Date($('#conjoint_date_mariage').val()).getTime()
+          d2 = new Date($('#conjoint_date_etablissement_mariage').val()).getTime()
+          if (dateDiff(d1,d2) >= 180) {
+              $('#date_jugement_suppletif').show();
+          } else {
+              $('#date_jugement_suppletif').hide();
+          }
+      }
+
+      $('#conjoint_date_etablissement_mariage, #conjoint_date_mariage').change(
+          function () {
+              validate_date_suppletif()
+          }
+      )
+
+      $('#conjoint_date_naissance_1i, #conjoint_date_naissance_2i, #conjoint_date_naissance_3i').change(
+          function () {
+              if ((new Date($('#conjoint_date_mariage_1i').val() + '-' + $('#conjoint_date_mariage_2i').val() + '-' + $('#conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#conjoint_date_naissance_1i').val() + '-' + $('#conjoint_date_naissance_2i').val() + '-' + $('#conjoint_date_naissance_3i').val()).getFullYear()) < 16 && conjoint.genre === 'HOMME'
+                  || (new Date($('#conjoint_date_mariage_1i').val() + '-' + $('#conjoint_date_mariage_2i').val() + '-' + $('#conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#conjoint_date_naissance_1i').val() + '-' + $('#conjoint_date_naissance_2i').val() + '-' + $('#conjoint_date_naissance_3i').val()).getFullYear()) < 18 && conjoint.genre === 'FEMME'
+                  || new Date($('#conjoint_date_naissance_1i').val() + '-' + $('#conjoint_date_naissance_2i').val() + '-' + $('#conjoint_date_naissance_3i').val()) > new Date($('#conjoint_date_mariage_1i').val() + '-' + $('#conjoint_date_mariage_2i').val() + '-' + $('#conjoint_date_mariage_3i').val())) {
+                  $('#alert_age_conjoint').show();
+              } else {
+                  $('#alert_age_conjoint').hide();
+              }
+
+          }
+      )
+
+      $('#conjoint_date_mariage_1i, #conjoint_date_mariage_2i, #conjoint_date_mariage_3i').change(
+          function () {
+              if ((new Date($('#conjoint_date_mariage_1i').val() + '-' + $('#conjoint_date_mariage_2i').val() + '-' + $('#conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#conjoint_date_naissance_1i').val() + '-' + $('#conjoint_date_naissance_2i').val() + '-' + $('#conjoint_date_naissance_3i').val()).getFullYear()) < 16 && conjoint.genre === 'HOMME'
+                  || (new Date($('#conjoint_date_mariage_1i').val() + '-' + $('#conjoint_date_mariage_2i').val() + '-' + $('#conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#conjoint_date_naissance_1i').val() + '-' + $('#conjoint_date_naissance_2i').val() + '-' + $('#conjoint_date_naissance_3i').val()).getFullYear()) < 18 && conjoint.genre === 'FEMME'
+                  || new Date($('#conjoint_date_naissance_1i').val() + '-' + $('#conjoint_date_naissance_2i').val() + '-' + $('#conjoint_date_naissance_3i').val()) > new Date($('#conjoint_date_mariage_1i').val() + '-' + $('#conjoint_date_mariage_2i').val() + '-' + $('#conjoint_date_mariage_3i').val())) {
+                  $('#alert_age_conjoint').show();
+              } else {
+                  $('#alert_age_conjoint').hide();
+              }
+
+          }
+      )
+
+      function etatDivorceDeces() {
+          if ($('#conjoint_etat_conjoint').val() == 'divorcer') {
+              $('#date_divorce').show();
+              $('#cert_divorce').show();
+              $('#date_deces').hide();
+              $('#cert_deces').hide();
+          } else if ($('#conjoint_etat_conjoint').val() == 'deceder') {
+              $('#date_deces').show();
+              $('#cert_deces').show();
+              $('#date_divorce').hide();
+              $('#cert_divorce').hide();
+          } else {
+              $('#date_deces').hide();
+              $('#date_divorce').hide();
+              $('#cert_divorce').hide();
+              $('#cert_deces').hide();
+          }
+      }
+
+      function showAndHideNombreFemme() {
+          if ($('#conjoint_regime_matrimoniale').val() == 'polygame') {
+              $('#nombre_femmes').show();
+          } else {
+              $('#nombre_femmes').hide();
+          }
+      }
+
+      function showHideRangConjoint() {
+          //if ($('#conjoint_regime_matrimoniale').val()=='polygame' && conjoint.genre === 'HOMME'){
+          if ($('#conjoint_regime_matrimoniale').val() == 'polygame') {
+              $('#rang_conjoint').show();
+              $('#nombre_femmes').show();
+          } else {
+              $('#rang_conjoint').hide();
+              $('#nombre_femmes').hide();
+          }
+      }
+
+      function convertDate(inputFormat) {
+          function pad(s) {
+              return (s < 10) ? '0' + s : s;
+          }
+
+          var d = new Date(inputFormat)
+          return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+      }
+
+      function load_salaries() {
+          const numero_affiliation = $('#conjoint_numero_affiliation').val();
+          $.ajax({
+              url: "/admin/conjoints/listsalaries/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      console.log("== salarie ==", data)
+                      html = '<option value=""></option>';
+                      html += '<option value="monogame">Monogamie</option>';
+                      html += '<option value="polygame">Polygamie</option>';
+                      $("#conjoint_regime_matrimoniale").html(html);
+
+                      if (data.nombre_femme != null) {
+                          $("#conjoint_nombre_femmes").val(data.nombre_femme);
+                      }
+
+                      if (data.date_naissance != null) {
+                          $("#id_date_naissance_salarie").hide()
+                          $("#date_naissance_exist").text(convertDate(data.date_naissance))
+                          $("#id_date_naissance_salarie_exist").show()
+
+                      } else {
+                          $("#id_date_naissance_salarie").show()
+                          $("#id_date_naissance_salarie_exist").hide()
+                      }
+
+                      if (data.nin !== null) {
+                          $("#conjoint_nin").val(data.nin);
+                      }
+                  }
+              }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  console.log(errorThrown)
+              }
+          });
+      }
+
+      function load_participant() {
+          const numero_affiliation = $('#conjoint_numero_affiliation').val();
+          $.ajax({
+              url: "/admin/conjoints/salaries/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  conjoint = data
+                  console.log("Objet participant", data[0])
+                  if (data) {
+                      $("#conjoint_prenom_salarie").val(data[0].prenom);
+                      $("#conjoint_nom_salarie").val(data[0].nom);
+                      $("#conjoint_nin").val(data[0].numero_piece);
+                      $("#conjoint_sex").val(data[0].genre);
+
+                      /*if ( Object.keys(data[0]).length === 0){
+                          return
+                      }else if ( data[0].numero_piece !== null ) {
+                          $("#conjoint_nin").val(data[0].numero_piece);
+                          //$("#conjoint_nin").attr('readOnly', 'true' );
+                          return
+                      }*/
+
+                      if (data[0].genre === 'FEMME') {
+                          $('#id_etat_civil').show();
+                      } else {
+                          $('#id_etat_civil').hide();
+                      }
+                      /*console.log("log log ",data[0].genre)
+                      if (data[0].genre === 'undefined' || data[0].genre == null){
+                          $( '#conjoint_sex_group' ).hide()
+                          $( "#conjoint_sex" ).hide();
+                      }else {
+                          $( '#conjoint_sex_group' ).show()
+                          $( "#conjoint_sex" ).show();
+                      }*/
+                  } else {
+                      $("#conjoint_prenom_salarie").val('');
+                      $("#conjoint_nom_salarie").val('');
+                      $("#conjoint_nin").val('');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#conjoint_prenom_salarie").val('');
+                  $("#conjoint_nom_salarie").val('');
+                  $("#conjoint_nin").val('');
+              }
+          });
+      }
+
+
+      function tableaux_conjoint() {
+          const numero_affiliation = $('#conjoint_numero_affiliation').val();
+
+          $.ajax({
+              url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+
+              success: function (data) {
+                  if (data) {
+                      nombre_conjoint = data.length
+                      if (data.length >= 1) {
+                          $('#list_conjoint').show();
+                      } else {
+                          $('#list_conjoint').hide();
+                      }
+                      html = ' ';
+                      $.each(data, function (key, conjoint) {
+                          html += '<tr></tr>';
+                          html += '<td>' + conjoint.prenom + '</td>';
+                          html += '<td>' + conjoint.nom + '</td>';
+                          html += '<td>' + conjoint.date_naissance + '</td>';
+                          html += '<td>' + conjoint.date_mariage + '</td>';
+                          html += '<td>' + conjoint.numero_piece + '</td>';
+                          html += '<td>' + conjoint.etat_conjoint + '</td>';
+                          /*if (conjoint.regime_matrimoniale === 'monogame' && conjoint.etat_conjoint === 'union'){
+                              html += '<td>' + "premiere" + '</td>';
+                          }else if (conjoint.regime_matrimoniale === 'polygame'  && conjoint.etat_conjoint === 'union'){
+                              html += '<td>' + conjoint.rang_conjoint + '</td>';
+                              var x=document.getElementById('conjoint_rang_conjoint');
+                              for(var i=0; i < x.options.length; i++){
+                                  if(x.options[i].value == conjoint.rang_conjoint){
+                                      x.options[i].disabled = true;
+                                  }
+                              }
+                          }else {
+                              html += '<td>' + "pas de rang" + '</td>';
+                          }*/
+                      });
+                      $("#t_body_conjoint").html(html);
+
+                      data.forEach(function (item) {
+
+                          if (item.date_delivrance_piece_salarie == null){
+                              $("#conjoint_date_delivrance_piece_salarie").val(new Date())
+                              $("#conjoint_date_delivrance_piece_salarie").attr('readOnly', 'false' );
+                          }else {
+                              $("#conjoint_date_delivrance_piece_salarie").val(item.date_delivrance_piece_salarie)
+                              $("#conjoint_date_delivrance_piece_salarie").attr('readOnly', 'true' );
+                              return;
+                          }
+
+                          if (item.date_delivrance_piece != null || !item.date_delivrance_piece.empty()){
+                              $("#conjoint_date_delivrance_piece").val(item.date_delivrance_piece)
+                              return;
+                          }else {
+                              $("#conjoint_date_delivrance_piece").val(new Date())
+                          }
+
+                      });
+
+                  } else {
+                      $('#list_conjoint').hide();
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  console.log('ERROR')
+              }
+          });
+      }
+
+      function infos_etat_civile() {
+
+          if ($("#conjoint_type_piece").val() == 'extrait_naissance') {
+              $('#id_conjoint_numero_piece').hide();
+              $('#infos_etat_civile_conjoint').show();
+          } else {
+              $('#id_conjoint_numero_piece').show();
+              $('#infos_etat_civile_conjoint').hide();
+          }
+      }
+
+  </script>
+<% end %>

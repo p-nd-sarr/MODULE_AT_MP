@@ -1,0 +1,321 @@
+<%= bootstrap_form_for([:admin, @demande_liquidation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Une erreur est survenue lors de l'enregistrement." %>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-4">
+        <%= f.text_field :numero_affiliation, label: 'Numéro affiliation' %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.text_field :prenom, label: 'Prénom', disabled: true %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.text_field :nom, label: 'Nom', disabled: true %>
+      </div>
+      <div class="col-lg-12">
+        <hr>
+      </div>
+      <div class="col-lg-6">
+        <%= f.select :sexe,
+                     LiquidationRetraite::SEXE.keys.collect { |sexe| [LiquidationRetraite.human_enum_name(:sexe, sexe), sexe] },
+                     label: "Sexe" %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_naissance, label: 'Date de naissance',
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today - 18.year).year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.select :zone,
+                         ZONE.keys.collect { |zone| [LiquidationRetraite.human_enum_name(:zone, zone), zone] },
+                         include_blank: false, label: 'Zone' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.collection_select :admin_region_id, Admin::Country.find_by(code: 'SEN').admin_regions.order('designation'),
+                                    :id, :designation, label: 'Région', include_blank: true %>
+          </div>
+        </div>
+        <%#= f.text_field :adresse_domicile, label: 'Adresse domicile' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.email_field :email, label: 'Email' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_cessation_activite, label: "Date de céssation d'activité",
+                          start_year: (Date.today - 50.year).year, end_year: (Date.today + 42.year).year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.select :type_retraite,
+                     LiquidationRetraite::TYPE_RETRAITE.keys.collect { |type_retraite| [LiquidationRetraite.human_enum_name(:type_retraite, type_retraite), type_retraite] },
+                     label: 'Type de retraite' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :adresse_reception_allocation, label: "Adresse de résidence", required: true %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.select :mode_paiement,
+                     MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [LiquidationRetraite.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                     include_blank: true, label: 'Mode de paiement' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.phone_field :telephone, label: 'Téléphone', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+      </div>
+
+      <% if is_active_controller('admin/liquidation_retraites') and is_active_action('new') %>
+        <div class="col-lg-6">
+          <%= f.check_box :dossier_cip_exist, label: "Dossier CIP existe ?" %>
+        </div>
+
+        <div id="cip">
+          <div class="col-lg-6">
+            <%= f.text_field :cip_id, label: 'ID dossier CIP' %>
+            <div class="badge">
+              <span id="cip_exist"></span>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="col-lg-6">
+        <%= f.text_area :commentaire, label: 'Observations' %>
+      </div>
+      <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_virement">
+        <div class="col-lg-6">
+          <%= f.collection_select :admin_banque_agence_id,
+                                  Admin::BanqueAgence.all, :id, :nom_complet,
+                                  label: 'Banque',
+                                  include_blank: true %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte' %>
+          <%#= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+        </div>
+      </div>
+      <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_caisse">
+        <div class="col-lg-6">
+          <%= f.collection_select :admin_agence_id,
+                                  Admin::Agence.ipres, :id, :description_prest,
+                                  label: 'Agence de paiement',
+                                  include_blank: true %>
+        </div>
+
+        <div class="col-lg-6" id="adresse_paiement">
+          <%= f.text_field :adresse_paiement, label: 'Adresse de paiement' %>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-12 form-group">
+      <div class="row">
+        <div class="col-lg-12" style="margin-top: 30px">
+          <div class="panel-body">
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                      <span class="fa fa-folder"></span> Documents obligatoires
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "CNI" %> CNI <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Formulaire de la demande" %> Formulaire de la
+                    demande <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "certificat de travail" %> Certificat de
+                    travail <br>
+                  </div>
+                </div>
+              </div> <!-- End panel default conjoint -->
+
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                      <span class="fa fa-folder"></span> Autres documents
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Certificat médical" %> Certificat médical
+                        <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Bulletin de salaire" %> Bulletin de
+                        salaire <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Certificat de mariage" %> Certificat de
+                        mariage <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Certificat emploi salaire" %> Certificat
+                        emploi salaire <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "RIB" %> RIB <br>
+
+                      </div>
+
+                      <div class="col-md-6">
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Protocole accord branche" %>
+                        protocole_accord_branche <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Declaration sur honneur" %> Declaration
+                        sur honneur <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "certificat vie collectif" %> Certificat
+                        vie collectif <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "certificat vie individuel" %> certificat
+                        vie individuelle <br>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- End panel default enfant -->
+            </div>
+          </div>
+        </div> <!-- End col -->
+      </div> <!-- End row -->
+    </div>
+    <div class="col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', (@demande_liquidation.persisted? ? [:admin, @demande_liquidation] : admin_liquidation_retraites_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+      </div>
+    </div>
+
+  </div>
+
+<% end %>
+
+
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosCompteBancaire();
+          chargerInfosParticipant();
+          chargerRegions();
+          chargerInfosCip();
+
+          $('#liquidation_retraite_cip_id').change(function () {
+              const cip_id = $('#liquidation_retraite_cip_id').val();
+              const label_to_show = document.getElementById('cip_exist')
+              $.ajax({
+                  url: "/admin/cips/get_one/" + cip_id + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      console.log(data.created_at)
+                      if (data && data.created_at !== undefined) {
+                          label_to_show.textContent = 'Date de création du dossier CIP : ' + data.created_at
+                          $('#submit_button').attr("disabled", false)
+                      } else {
+                          label_to_show.textContent = "Dossier CIP introuvable"
+                          $('#submit_button').attr("disabled", true)
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      label_to_show.textContent = "Dossier CIP introuvable"
+                      $('#submit_button').attr("disabled", true)
+                  }
+              });
+          });
+
+
+          $("#liquidation_retraite_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+          });
+
+          $("#liquidation_retraite_dossier_cip_exist").change(function () {
+              chargerInfosCip()
+          });
+
+          function chargerInfosCip() {
+              let cip = $('#cip')
+              if (liquidation_retraite_dossier_cip_exist.checked == true) {
+                  cip.show()
+                  $('#liquidation_retraite_cip_id').attr('disabled', false)
+              } else {
+                  cip.hide()
+                  $('#liquidation_retraite_cip_id').val('')
+                  $('#liquidation_retraite_cip_id').attr('disabled', true)
+                  document.getElementById('cip_exist').textContent = ''
+                  $('#submit_button').attr("disabled", false)
+              }
+          }
+
+          function chargerInfosCompteBancaire() {
+              let mode_paiement = $('#liquidation_retraite_mode_paiement').val();
+              let elem_mode_paiement_virement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  $('#liquidation_retraite_admin_banque_agence_id').attr('disabled', false);
+                  $('#liquidation_retraite_compte_bancaire_numero_compte').attr('disabled', false);
+                  $('#liquidation_retraite_compte_bancaire_cle_rib').attr('disabled', false);
+                  elem_mode_paiement_virement.show();
+              } else {
+                  elem_mode_paiement_virement.hide();
+                  $('#liquidation_retraite_admin_banque_agence_id').attr('disabled', true);
+                  $('#liquidation_retraite_compte_bancaire_numero_compte').attr('disabled', true);
+                  $('#liquidation_retraite_compte_bancaire_cle_rib').attr('disabled', true);
+              }
+              let elem_mode_paiement_caisse = $('#mode_paiement_caisse')
+              if (mode_paiement === 'caisse_ipres' || mode_paiement === 'paiement_a_domicile') {
+                  $('#liquidation_retraite_admin_agence_id').attr('disabled', false);
+                  elem_mode_paiement_caisse.show();
+              } else {
+                  elem_mode_paiement_caisse.hide();
+                  $('#liquidation_retraite_admin_agence_id').attr('disabled', true);
+              }
+              let elem_adresse_paiement = $('#adresse_paiement')
+              if (mode_paiement === 'paiement_a_domicile') {
+                  $('#liquidation_retraite_adresse_paiment').attr('disabled', false);
+                  elem_adresse_paiement.show();
+              } else {
+                  elem_adresse_paiement.hide();
+                  $('#liquidation_retraite_adresse_paiment').attr('disabled', true);
+              }
+          }
+
+          $('#liquidation_retraite_numero_affiliation').change(function () {
+              chargerInfosParticipant();
+          })
+
+          function chargerInfosParticipant() {
+              let numero_affiliation = $('#liquidation_retraite_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#liquidation_retraite_prenom").val(data.prenom);
+                          $("#liquidation_retraite_nom").val(data.nom);
+                      } else {
+                          $("#liquidation_retraite_prenom").val('');
+                          $("#liquidation_retraite_nom").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#liquidation_retraite_prenom").val('');
+                      $("#liquidation_retraite_nom").val('');
+                  }
+              });
+          }
+
+          $("#liquidation_retraite_zone").change(function () {
+              chargerRegions()
+          });
+
+          function chargerRegions() {
+              let zone = $('#liquidation_retraite_zone').val();
+
+              if (zone === 'senegal') {
+                  $('#liquidation_retraite_admin_region_id').attr("disabled", false);
+              } else {
+                  $('#liquidation_retraite_admin_region_id').val('').attr("disabled", true);
+              }
+          }
+      })
+  </script>
+<% end %>

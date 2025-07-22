@@ -1,0 +1,47 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'NUMERO ORDRE',
+      'NUMERO ALLOCATAIRE',
+      'ANCIEN NUMERO IPRES',
+      'PRENOM',
+      'NOM',
+      'TELEPHONE',
+      'NIN',
+      'MODE DE PAIEMENT',
+      'SOURCE',
+      'PERIODE',
+      'DETAILS',
+      'MONTANT TOTAL',
+      'AGENCE',
+      'TRAITÉ PAR',
+      'DATE TRAITEMENT',
+      'ETAT',
+      'PAYE SUR PSRM',
+  ]
+  sheet.add_row titre, :b => true
+  @paiements.each do |paiement|
+    sheet.add_row [
+                      paiement.numero_ordre,
+                      paiement.numero_allocataire,
+                      paiement.ipres_ancien_matric,
+                      paiement.prenom,
+                      paiement.nom,
+                      unless paiement.numero_allocataire.nil?
+                        Allocataire.find_by_numero_allocataire(paiement.numero_allocataire).try(:telephone)
+                      end,
+                      paiement.nin,
+                      paiement.mode_paiement_human,
+                      paiement.source,
+                      paiement.periode,
+                      paiement.details,
+                      paiement.montant,
+                      paiement.user.try(:admin_agence).try(:description_prest),
+                      paiement.user.try(:full_name),
+                      paiement.date_paiement,
+                      paiement.etat_human,
+                      paiement.paye_sur_psrm?,
+                  ], :types => [:string, :string, :string]
+  end
+end

@@ -1,0 +1,2 @@
+json.extract! indemnite_conges_maternite, :id, :dossier_prestation_id, :date_soumission, :date_validation, :valide_par_id, :user_id, :ajoute_par_id, :traite_le, :traite_par_id, :motif_rejet, :montant_paiement, :paiement, :etat, :tranche_paiement, :debut_grossesse, :debut_conges, :date_accouchement, :date_reprise_service, :created_at, :updated_at
+json.url indemnite_conges_maternite_url(indemnite_conges_maternite, format: :json)

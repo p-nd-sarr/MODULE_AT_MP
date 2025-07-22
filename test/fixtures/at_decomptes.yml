@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  periode_indemnise: MyString
+  nombre_jour: 1
+  demi_salaire: 1
+  deux_tier_salaire: 1
+  montant: MyString
+  date_validation: 2020-06-20
+  date_liquidation: 2020-06-20
+  date_paiement: 2020-06-20
+  est_valide: false
+
+two:
+  periode_indemnise: MyString
+  nombre_jour: 1
+  demi_salaire: 1
+  deux_tier_salaire: 1
+  montant: MyString
+  date_validation: 2020-06-20
+  date_liquidation: 2020-06-20
+  date_paiement: 2020-06-20
+  est_valide: false

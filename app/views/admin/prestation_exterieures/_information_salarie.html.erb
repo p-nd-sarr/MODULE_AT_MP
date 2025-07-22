@@ -1,0 +1,69 @@
+<div class="row" style="margin-top: 30px">
+  <div class="col-lg-3"></div>
+  <div class="col-lg-6">
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <h5>
+          <strong>Prénom:</strong> &nbsp;  <%= @prestation_exterieure.prenom %>
+        </h5>
+        <h5>
+          <strong>Nom:</strong> &nbsp;  <%= @prestation_exterieure.nom %>
+        </h5>
+        <% if @prestation_exterieure.feminin? %>
+          <h5>
+            <strong>Nom de jeune
+              fille:</strong> &nbsp;  <%= (@prestation_exterieure.nom_jeune_fille) unless @prestation_exterieure.nom_jeune_fille.nil? %>
+          </h5>
+        <% end %>
+        <h5>
+          <strong>Date de
+            naissance:</strong> &nbsp;   <%= l(@prestation_exterieure.date_naissance) unless @prestation_exterieure.date_naissance.nil? %>
+        </h5>
+        <h5>
+          <strong>Lieu de naissance:</strong> &nbsp;  <%= @prestation_exterieure.lieu_naissance %>
+        </h5>
+        <h5>
+          <strong>Sexe
+            salarié:</strong> &nbsp;<%= PrestationExterieure.human_enum_name(:sexe_salarie, @prestation_exterieure.sexe_salarie) unless @prestation_exterieure.sexe_salarie.nil? %>
+        </h5>
+        <h5>
+          <strong>Type de
+            pièce:</strong> &nbsp;  <%= PrestationExterieure.human_enum_name(:type_piece, @prestation_exterieure.type_piece) unless @prestation_exterieure.type_piece.nil? %>
+        </h5>
+        <h5>
+          <strong>Numéro de pièce:</strong> &nbsp;  <%= @prestation_exterieure.nin_salarie %>
+        </h5>
+        <h5>
+          <strong>Situation matrimoniale
+            salarié:</strong> &nbsp;  <%= PrestationExterieure.human_enum_name(:situation_matrimoniale_salarie, @prestation_exterieure.situation_matrimoniale_salarie) %>
+        </h5>
+        <h5>
+          <strong>Nationalité salarié:</strong> &nbsp;  <%= @prestation_exterieure.nationalite_salarie %>
+        </h5>
+        <h5>
+          <strong>Pays prestation exterieure CAF:</strong>
+
+          &nbsp; <%= @prestation_exterieure.getPays(@prestation_exterieure.admin_country_id).description %>
+        </h5>
+        <h5>
+          <strong>Numero sécurité sociale:</strong> &nbsp;  <%= @prestation_exterieure.numero_secu_social %>
+        </h5>
+        <h5>
+          <strong>Adresse dans le pays d'origine:</strong> &nbsp;  <%= @prestation_exterieure.adresse_pays_origine %>
+        </h5>
+        <h5>
+          <strong>Adresse dans le pays d'emploi:</strong> &nbsp;  <%= @prestation_exterieure.adresse_pays_emploi %>
+        </h5>
+        <h5>
+          <strong>Téléphone:</strong> &nbsp;  <%= @prestation_exterieure.telephone unless @prestation_exterieure.telephone.nil? %>
+        </h5>
+        <h5>
+          <strong>Adresse mail:</strong> &nbsp;  <%= @prestation_exterieure.email unless @prestation_exterieure.email.nil?%>
+        </h5>
+      </div>
+      <div class="panel-footer" style="text-align: center;">
+        <%= link_to 'Modifier les informations', edit_admin_prestation_exterieure_path(@prestation_exterieure.id), class: 'btn btn-danger btn-xs' unless @prestation_exterieure.information_valid? %>
+      </div>
+    </div>
+  </div>
+</div>

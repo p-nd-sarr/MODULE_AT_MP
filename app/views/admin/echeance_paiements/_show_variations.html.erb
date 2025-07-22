@@ -1,0 +1,166 @@
+<div class="row">
+
+  <div class="col-lg-12">
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_primo_pensionnes_path(@echeance_paiement) do %>
+        <div class="ibox" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>PRIMO PENSIONNES</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= Allocataire.actif.periode_activation(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_primo_pensionnes_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_regularisations_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>REGULARISATION</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= RegularisationPension.with_validation_inspection_state.periode(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Détails', admin_echeance_paiement_regularisations_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_revisions_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>REVISION</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= RevisionPension.with_valider_revision_state.periode(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_revisions_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_suspensions_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>SUSPENSION</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= Allocataire.suspendus.periode(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_suspensions_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_extinctions_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>EXTINCTION</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= Allocataire.eteint.periode(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_extinctions_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_sortie_majorations_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>SORTIE DE MAJORATION</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= Allocataire.actif.sortie_majorations(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count%></h2>
+            <div class="stat-percent text-success font-bold">
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_sortie_majorations_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_changement_infos_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>CHANGEMENT INFORMATIONS</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"> <br> <%#= AllocataireSuiviModification.periode(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_changement_infos_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+     <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_pension_alimentaires_path(@echeance_paiement) do %>
+        <div class="ibox " style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>PENSION ALIMENTAIRE</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= PensionAlimentaire.validation_directeur.periode(@echeance_paiement.periode_variation_debut, @echeance_paiement.periode_variation_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_pension_alimentaires_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+  </div>
+
+</div>

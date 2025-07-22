@@ -1,0 +1,441 @@
+<style type="text/css">
+  select option[disabled]{
+    display:none
+  }
+</style>
+
+<%= bootstrap_form_for([:allocataire, @enfant], label_col: "col-sm-6", control_col: "col-sm-6") do |f| %>
+  <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+
+  <div class="content clearfix">
+      <h2 class="text-navy" style="font-weight:bold">Informations sur les parents</h2>
+      <hr>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-sm-6" style="height: 60px;">
+            <%= f.text_field :numero_affiliation, label: 'Numéro affiliation salarié' %>
+          </div>
+          <div class="col-sm-6" style="height: 60px;">
+            <%= f.select :conjoint_id, [], include_blank: true, label: 'Conjoint' if is_active_controller('admin/enfants') and is_active_action('new') %>
+            <%= f.collection_select :conjoint_id, Conjoint.where(id: @enfant.conjoint), :id, :full_name, label: 'Conjoint'  if is_active_controller('admin/enfants') and is_active_action('edit') %>
+          </div>
+          <div class="col-sm-6" style="height: 60px; margin-top: 20px;" >
+            <%= f.text_field :prenom_salarie, label: 'Prénom salarié', readonly: true %>
+          </div>
+          <div class="col-sm-6" style="height: 60px; margin-top: 20px;" >
+            <%= f.text_field :nom_salarie, label: 'Nom salarié', readonly: true%>
+          </div>
+        </div>
+      </div>
+  <br>
+  </div>
+  <br>
+  <div class="content clearfix" id="list_enfant_salarie">
+      <h3 class="text-success">Liste des enfants du salarié</h3>
+      <hr>
+      <div class="row">
+        <div class="col-sm-12 table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Date de naissance</th>
+                <th scope="col">Origine enfant</th>
+              </tr>
+            </thead>
+            <tbody id="t_body_enfant">
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+  <div class="content clearfix">
+      <h2 class="text-navy" style="font-weight:bold">Informations de l'enfant à ajouter</h2>
+      <hr>
+      <div class="row">
+          <div class="form-group">
+              <div class="col-sm-6" style="height: 60px;">
+                 <%= f.text_field :prenom, label: 'Prénom' %>
+              </div>
+              <div class="col-sm-6" style="height: 60px;">
+                <%= f.text_field :nom, label: 'Nom', :onkeyup => 'verifNomEnfant()' %>
+                <div id="alert_nom_enfant" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">L'enfant et le pére doivent avoir le même nom de famille</div>
+              </div>
+              <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                <%= f.select :origine_enfant,
+                   Enfant::ORIGINE_ENFANT.keys.collect { |origine_enfant| [Enfant.human_enum_name(:origine_enfant, origine_enfant), origine_enfant] },
+                   label: "Origine de l'enfant", :onchange => 'verifNomEnfant()', include_blank: true %>
+              </div>
+            <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+              <%= f.date_select :date_naissance, label: "Date de naissance",
+                                start_year: (Date.today - 50.year).year, end_year: Date.today.year, end_month: Date.today.month, html_options: { onchange: 'check_date_naissance(this.id);' } %>
+              <div id="alert_age_enfant" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">La date de mariage doit être antérieur à la date de naissance  </div>
+            </div>
+            <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+              <%= f.text_field :lieu_naissance, label: "Lieu de naissance"%>
+            </div>
+              <div id="mere_naturel">
+                <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                  <%= f.text_field :nom_mere_naturel, label: 'Nom de la mère' %>
+                </div>
+                <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                  <%= f.text_field :prenom_mere_naturel, label: 'Prénom de la mère' %>
+                </div>
+              </div>
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+              <%= f.select :sexe,
+                           Enfant::SEXE.keys.collect { |sexe| [Enfant.human_enum_name(:sexe, sexe), sexe] },
+                           label: "Sexe de l'enfant" %>
+              </div>
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                <%= f.select :type_piece,
+                   Enfant::TYPE_PIECE.keys.collect { |type_piece| [Enfant.human_enum_name(:type_piece, type_piece), type_piece] },
+                   label: "Type de pièce" %>
+              </div>
+
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;" id="num_piece">
+                <%= f.text_field :numero_piece, label: 'Numéro piéce', :onkeyup => 'verifNin()' %>
+                 <div id="alert_lenght_nin" class="alert-danger" style="width: 175px; border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">Le NIN doit etre compris entre 13 et 14 chiffres</div>
+                 <div id="alert_message" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px; padding-left: 10px">Le NIN doit commencer par (1) pour Masculin et par (2) pour Féminin</div>
+              </div>
+
+              <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                <%= f.date_select :date_delivrance_piece, label: "Date de délivrance de la pièce",
+                                  start_year: (Date.today - 10.year).year, end_year: Date.today.year, html_options: { onchange: 'check_date_naissance(this.id);' } %>
+              </div>
+            
+              <div id="infos_enfant">
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                <%#= f.text_field :'code_etat_civil', label: 'Code d’état civil ou code locatilié' %>
+                <%= f.collection_select :code_etat_civil, Admin::LocaliteGrappe.all.order('localite'), :code_localite, :localite, label: 'Code d’état civil ou code locatilié', prompt: "Choisir un code d'état civil" %>
+              </div>
+
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                <%= f.text_field :numero_registre, label: 'Numéro de registre', :onkeyup => 'verifNumRegistre()' %>
+                <div id="alert_numero_registre" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">Le
+                  numéro de régistre doit etre numérique
+                </div>
+             </div>
+
+            <div class="col-lg-6" style="height: 60px;  margin-top: 30px;">
+              <%= f.date_field :date_transcription, label: 'Date de transcription'%>
+            </div>
+           </div>
+            <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                  <h4 style="font-weight: bold;">Pièce d’identification *</h4>
+                  <div class="btn-file">
+                    <label>
+                      <%= f.file_field :extrait_naissance, hide_label:true, label: '.',
+                       required: (not @enfant.persisted?),
+                       help: (@enfant.persisted?), id:'label-ext'  %>
+                      <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+                      </div>
+                    </label>
+                  </div>
+                  <small id="certeficat-name"></small>
+             </div>
+      </div>
+      <div class="form-group col-sm-12" style="margin-top: 50px;">
+        <hr>
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3" style="text-align: right;">
+          <%= link_to 'Annuler', admin_enfants_path, class: 'btn btn-white' %>
+          <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      var conjoint;
+      var salarie;
+      $(document).ready(function () {
+          load_conjoints();
+
+          $('#alert_nom_enfant').hide();
+          $('#mere_naturel').hide();
+          $('#alert_age_enfant').hide();
+          $('#alert_numero_registre').hide();
+          $('#alert_lenght_nin').hide();
+          $('#list_enfant_salarie').hide();
+          $('#list_conjoint_salarie').hide();
+          $('#num_piece').hide();
+          $('#alert_message').hide();
+
+
+          $('#enfant_date_naissance_1i, #enfant_date_naissance_2i, #enfant_date_naissance_3i').change(
+              function () {
+                  for (let i = 0; i < conjoint.length; i++) {
+                      if (conjoint[i].id == $('#enfant_conjoint_id').val() && $('#enfant_origine_enfant').val().trim() === "mariage") {
+                          if (new Date(conjoint[i].date_mariage) < new Date(($('#enfant_date_naissance_1i').val() + '-' + $('#enfant_date_naissance_2i').val() + '-' + $('#enfant_date_naissance_3i').val()))) {
+                              $('#alert_age_enfant').hide();
+                              $('#submit_button').attr("disabled", false)
+                          } else {
+                              $('#alert_age_enfant').show();
+                              $('#submit_button').attr("disabled", true)
+                          }
+                      }
+                  }
+              }
+          )
+
+          $('#enfant_type_piece').change(
+              function () {
+                  if ($("#enfant_type_piece").val() != 'extrait_naissance') {
+                      $('#infos_enfant').hide();
+                      $('#num_piece').show();
+                  } else {
+                      $('#infos_enfant').show();
+                      $('#num_piece').hide();
+                  }
+              }
+          )
+
+          $('#enfant_numero_piece').change(
+              function () {
+                  if ($("#enfant_numero_piece").val().length <= 0 ) {
+                      $('#alert_message').hide();
+                  }
+              }
+          )
+
+          $('#enfant_numero_affiliation').change(function () {
+              let numero_affiliation = $('#enfant_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          salarie = data
+                          console.log('=====>>>', salarie)
+                          $("#enfant_prenom_salarie").val(data.prenom);
+                          $("#enfant_nom_salarie").val(data.nom);
+                      } else {
+                         alert("There is an error with AJAX!");
+                          $("#enfant_prenom_salarie").val('');
+                          $("#enfant_nom_salarie").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert("There is an error with AJAX!");
+                      $("#enfant_prenom_salarie").val('');
+                      $("#enfant_nom_salarie").val('');
+                  }
+                
+              });
+
+              // $.ajax({
+              //     url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+              //     method: 'get',
+              //     dataType: "json",
+              //     success: function (data) {
+              //         if (data) {
+              //             $('#list_conjoint_salarie').show();
+              //             html = ' ';
+              //             $.each(data, function (key, conjoint) {
+              //                 html += '<tr></tr>';
+              //                 html += '<td>' + conjoint.prenom_conjoint + '</td>';
+              //                 html += '<td>' + conjoint.nom_conjoint + '</td>';
+              //                 html += '<td>' + conjoint.date_naissance + '</td>';
+              //                 html += '<td>' + conjoint.date_mariage + '</td>';
+              //                 html += '<td>' + conjoint.numero_piece + '</td>';
+              //                 html += '<td>' + conjoint.etat + '</td>';
+              //             });
+              //             $("#t_body_conjoint").html(html);
+              //         } else {
+              //             $('#list_conjoint_salarie').hide();
+              //             console.log('data not found');
+              //         }
+              //     },
+              //     error: function (XMLHttpRequest, textStatus, errorThrown) {
+              //         console.log('ERROR')
+              //     }
+              // });
+
+              $.ajax({
+                  url: "/admin/enfants/listenfant/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          console.log(data);
+                          if (data.length >= 1) {
+                              $('#list_enfant_salarie').show();
+                          } else {
+                              $('#list_enfant_salarie').hide();
+                          }
+                          html = ' ';
+                          $.each(data, function (key, enfant) {
+                              html += '<tr></tr>';
+                              html += '<td>' + enfant.prenom + '</td>';
+                              html += '<td>' + enfant.nom + '</td>';
+                              html += '<td>' + enfant.date_naissance + '</td>';
+                              if (enfant.origine_enfant == 'adulterin')
+                                html += '<td> légitimé </td>';
+                              else if (enfant.origine_enfant == 'mariage')
+                                html += '<td> légitime </td>';
+                              else
+                                 html += '<td>'+ enfant.origine_enfant +'</td>';
+                          });
+                          $("#t_body_enfant").html(html);
+
+                      } else {
+                          console.log('data not found');
+                          ('#list_enfant_salarie').hide();
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      console.log('ERROR')
+                  }
+              });
+              load_conjoints()
+          })
+
+          $('#enfant_origine_enfant').change(function(){
+              if ($("#enfant_origine_enfant").val() == 'mariage' && salarie.genre === 'HOMME' && $("#enfant_nom").val().trim() != $("#enfant_nom_salarie").val().trim()){
+                  $('#alert_nom_enfant').show();
+                  $('#submit_button').attr("disabled", true)
+              }else if ($("#enfant_origine_enfant").val() == 'mariage' && salarie.genre === 'FEMME'){
+                  for (let i = 0; i < conjoint.length ; i++) {
+                      if ($("#enfant_nom").val().trim() != conjoint[i].nom.trim()){
+                          $('#alert_nom_enfant').show();
+                          $('#submit_button').attr("disabled", true)
+                      } else {
+                          $('#alert_nom_enfant').hide();
+                          $('#submit_button').attr("disabled", false)
+                      }
+                  }
+              } else {
+                  $('#alert_nom_enfant').hide();
+                  $('#submit_button').attr("disabled", false)
+              }
+
+              if ($("#enfant_origine_enfant").val() == 'naturel' && $("#enfant_conjoint_id").val().length <= 0 && salarie.genre === 'HOMME') {
+                  $('#mere_naturel').show();
+              } else {
+                  $('#mere_naturel').hide();
+              }
+          });
+
+      });
+
+      var input = document.getElementById('label-ext');
+      var infoArea = document.getElementById('certeficat-name');
+      input.addEventListener('change', showFileName);
+
+      function showFileName(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea.textContent = fileName;
+      }
+
+      function verifNumRegistre() {
+          if (isNaN($("#enfant_numero_registre").val())) {
+              $('#alert_numero_registre').show();
+              $('#submit_button').attr("disabled", true)
+          } else {
+              $('#alert_numero_registre').hide();
+              $('#submit_button').attr("disabled", false)
+          }
+      }
+
+      function verifNin(){
+      
+          if ($('#enfant_numero_piece').val().slice(0, 1) == 1 && $('#enfant_sexe').val() == 'feminin' && $("#enfant_type_piece").val() == 'cni'){
+              $('#alert_message').show();
+              $('#submit_button').attr("disabled", true)
+          }
+          else if ($('#enfant_numero_piece').val().slice(0, 1).slice(0, 1) == 2 && $('#enfant_sexe').val() == 'masculin' && $("#enfant_type_piece").val() == 'cni'){
+              $('#alert_message').show();
+              $('#submit_button').attr("disabled", true)
+          }else if (($('#enfant_numero_piece').val().slice(0, 1).slice(0, 1) > 2 || $('#enfant_numero_piece').val().slice(0, 1).slice(0, 1) <= 0) && $("#enfant_type_piece").val() == 'cni'){
+              $('#alert_message').show();
+              $('#submit_button').attr("disabled", true)
+          } else{
+              $('#alert_message').hide();
+              $('#submit_button').attr("disabled", false)
+          }
+      }
+
+      function disabledGenres() {
+        var x=document.getElementById('enfant_origine_enfant');
+        var marie=false;
+         if(salarie.genre === 'FEMME'){
+            for(var i=0; i<conjoint.length; i++){
+              if(conjoint[i].etat_conjoint =='union'){
+                marie=true;
+                break;
+              }
+            }
+            if(marie==false){
+              for(var i=0; i < x.options.length; i++){
+                if(x.options[i].value != "naturel" && x.options[i].value != "adoption"){
+                  x.options[i].disabled = true;
+              }
+            }                                 
+          }
+        }
+        else{
+            for(var i=0; i < x.options.length; i++){
+               x.options[i].disabled = false;
+            }
+        }
+        
+      }
+
+      function verifNomEnfant() {
+          if ($("#enfant_origine_enfant").val() == 'mariage' && salarie.genre === 'HOMME' && $("#enfant_nom").val().trim().toUpperCase() != $("#enfant_nom_salarie").val().trim().toUpperCase()) {
+              $('#alert_nom_enfant').show();
+              $('#submit_button').attr("disabled", true)
+          } else if ($("#enfant_origine_enfant").val() == 'mariage' && salarie.genre === 'FEMME') {
+              for (let i = 0; i < conjoint.length; i++) {
+                  if ($("#enfant_nom").val().trim().toUpperCase() != conjoint[i].nom.trim().toUpperCase()) {
+                      $('#alert_nom_enfant').show();
+                      $('#submit_button').attr("disabled", true)
+                  } else {
+                      $('#alert_nom_enfant').hide();
+                      $('#submit_button').attr("disabled", false)
+                  }
+              }
+          } else {
+              $('#alert_nom_enfant').hide();
+              $('#submit_button').attr("disabled", false)
+          }
+      }
+
+      function load_conjoints() {
+          var numero_affiliation = $('#enfant_numero_affiliation').val();
+          $.ajax({
+              //url: "/admin/conjoints/valides.json?numero_affiliation=" + numero_affiliation,
+              url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      console.log('=======>>>>> liste conjoint',data)
+                      conjoint = data
+                      html = '<option value=""></option>';
+
+                      $.each(data, function (key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+
+                      $("#enfant_conjoint_id").html(html);
+                      disabledGenres();
+                  } else {
+                      $("#enfant_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#enfant_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      }
+  </script>
+<% end %>

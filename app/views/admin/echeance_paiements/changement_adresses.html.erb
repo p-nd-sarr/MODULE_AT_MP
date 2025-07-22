@@ -1,0 +1,41 @@
+<%= content_for :titre_page, "Liste des modification d'adresses   [#{ @echeance_paiement.periode_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_fin.strftime("%d/%m/%Y")}]" %>
+
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Numero Dossier </th>
+        <th scope="col">Numéro Allocataire</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @modifier_adresses.each do |modifier_adresse| %>
+        <tr>
+          <td><%= modifier_adresse.id %></td>
+          <td><%= modifier_adresse.numero_dossier %></td>
+          <td><%= modifier_adresse.numero_allocataire %></td>
+          <td><%= modifier_adresse.prenom %></td>
+          <td><%= modifier_adresse.nom %></td>
+          <td><%= modifier_adresse.workflow_state %></td>
+          <td style="width: 75px">
+            <%= link_to 'dossier', [:admin, modifier_adresse.allocataire, modifier_adresse], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

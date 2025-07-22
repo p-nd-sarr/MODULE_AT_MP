@@ -1,0 +1,51 @@
+<%= content_for :titre_page, 'Liste des allocataires' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', '#', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/allocataires/search' %>
+
+    <br>
+
+    <b>Nombre de dossiers : <%= format_entier @total %></b> <br><br>
+
+    <%= paginate @allocataires %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Régime</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Date de création</th>
+        <th scope="col">Historique</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @allocataires.each do |allocataire| %>
+        <tr>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= allocataire.prenom %></td>
+          <td><%= allocataire.nom %></td>
+          <td><%= allocataire.categorie %></td>
+          <td><%= Allocataire.human_enum_name(:etat, allocataire.etat) %></td>
+          <td><%= l allocataire.created_at %></td>
+          <td></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_allocataire_path(allocataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @allocataires %>
+  </div>
+</div>

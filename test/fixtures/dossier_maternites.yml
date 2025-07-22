@@ -1,0 +1,41 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  num_affiliation: MyString
+  prenom: MyString
+  nom: MyString
+  date_naissance: 2020-02-29
+  lieu_naissance: MyString
+  adresse_domicile: MyString
+  etat_civil_demandeur_valid: false
+  carriere_valid: false
+  document_valid: false
+  user: one
+  debut_grossesse: 2020-02-29
+  etat: 1
+  date_soumission: 2020-02-29
+  ajoute_par_id: 1
+  traite_le: 2020-02-29 23:02:30
+  traite_par_id: 1
+  motif_rejet: MyString
+  num_dossier: MyString
+
+two:
+  num_affiliation: MyString
+  prenom: MyString
+  nom: MyString
+  date_naissance: 2020-02-29
+  lieu_naissance: MyString
+  adresse_domicile: MyString
+  etat_civil_demandeur_valid: false
+  carriere_valid: false
+  document_valid: false
+  user: two
+  debut_grossesse: 2020-02-29
+  etat: 1
+  date_soumission: 2020-02-29
+  ajoute_par_id: 1
+  traite_le: 2020-02-29 23:02:30
+  traite_par_id: 1
+  motif_rejet: MyString
+  num_dossier: MyString

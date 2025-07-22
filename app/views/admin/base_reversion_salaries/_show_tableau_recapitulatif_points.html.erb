@@ -1,0 +1,79 @@
+<% if @reversion_veuve_salarie.current_state >= :cotisation_valide %>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Régime Général</th>
+      <th scope="col">Régime Cadre</th>
+    </tr>
+    </thead>
+
+    <tbody>
+      <% if @reversion_veuve_salarie.allocataire.nil? %>
+        <tr>
+          <td>Points de cotisation</td>
+          <td><%= @reversion_veuve_salarie.calcul_points_regime_general %></td>
+          <td><%= @reversion_veuve_salarie.calcul_points_regime_cadre %></td>
+        </tr>
+        <tr>
+          <td>Points gratuits</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points de base</td>
+          <td><%= @reversion_veuve_salarie.calcul_points_base_regime_general %></td>
+          <td><%= @reversion_veuve_salarie.calcul_points_base_regime_cadre %></td>
+        </tr>
+
+        <tr>
+          <td>Points de minoration</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points de majoration</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points à servir</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+      <% else %>
+        <tr>
+          <td>Points de cotisation</td>
+          <td><%= @reversion_veuve_salarie.allocataire.points_rg %></td>
+          <td><%= @reversion_veuve_salarie.allocataire.points_rc %></td>
+        </tr>
+        <tr>
+          <td>Points gratuits</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points de base</td>
+          <td><%= @reversion_veuve_salarie.allocataire.points_base_rg %></td>
+          <td><%= @reversion_veuve_salarie.allocataire.points_base_rc %></td>
+        </tr>
+        <tr>
+          <td>Points de minoration</td>
+          <td><%= @reversion_veuve_salarie.allocataire.point_minoration_rg %></td>
+          <td><%= @reversion_veuve_salarie.allocataire.point_minoration_rc %></td>
+        </tr>
+        <tr>
+          <td>Points de majoration</td>
+          <td><%= @demande_liquidation.allocataire.point_majoration_rg %></td>
+          <td><%= @demande_liquidation.allocataire.point_majoration_rc %></td>
+        </tr>
+        <tr>
+          <td>Points à servir</td>
+          <td><%= @reversion_veuve_salarie.allocataire.points_servis_rg %></td>
+          <td><%= @reversion_veuve_salarie.allocataire.points_servis_rc %></td>
+        </tr>
+      <%end %>
+    </tbody>
+  </table>
+ 
+<% end %>

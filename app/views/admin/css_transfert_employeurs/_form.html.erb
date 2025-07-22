@@ -1,0 +1,77 @@
+<%= bootstrap_form_for([:admin, @css_transfert_employeur], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="">
+    <%= f.text_field :employeur_matric, label: 'Employeur actuel' %>
+  </div>
+  <%= f.collection_select :agence_source_id, Admin::Agence.css, :id, :description_prest, label: 'Agence source', class: 'form-control', include_blank: true, required: true %>
+  <%= f.collection_select :agence_destination_id, Admin::Agence.css, :id, :description_prest, label: 'Agence destination', class: 'form-control', include_blank: true, required: true %>
+
+  <%= f.date_select :date_transfert, class: 'form-control', label: 'Date transfert', required: true %>
+  <%= f.text_area :commentaire, class: 'form-control', label: 'Commentaire' %>
+
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', admin_css_transfert_employeurs_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          load_employer();
+          $('#css_transfert_employeur_employeur_matric').change(function () {
+              load_employer();
+          });
+
+          function load_employer() {
+              const fhnum = $('#css_transfert_employeur_employeur_matric').val();
+              if (fhnum) {
+                  $.ajax({
+                      url: "/admin/dossier_prestations/employeur/" + fhnum + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data && data.code_agence_css) {
+                              $.ajax({
+                                  url: "/agences/single_agence/" + data.code_agence_css + ".json",
+                                  method: 'get',
+                                  dataType: "json",
+                                  success: function (data) {
+                                      if (data && data.id) {
+                                          $('#css_transfert_employeur_agence_source_id').val(data.id)
+                                          $('#css_transfert_employeur_agence_source_id').removeAttr('disabled');
+                                      } else {
+                                          $('#css_transfert_employeur_agence_source_id').val('')
+                                          $('#css_transfert_employeur_agence_source_id').attr('disabled', 'disabled');
+                                      }
+                                  },
+                                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                      $('#css_transfert_employeur_agence_source_id').val('')
+                                      $('#css_transfert_employeur_agence_source_id').attr('disabled', 'disabled');
+                                  }
+                              });
+                          } else {
+                              $('#css_transfert_employeur_agence_source_id').val('')
+                              $('#css_transfert_employeur_agence_source_id').attr('disabled', 'disabled');
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $('#css_transfert_employeur_agence_source_id').val('')
+                          $('#css_transfert_employeur_agence_source_id').attr('disabled', 'disabled');
+                      }
+                  });
+              } else {
+                  $('#css_transfert_employeur_agence_source_id').val('')
+                  $('#css_transfert_employeur_agence_source_id').attr('disabled', 'disabled');
+              }
+          }
+
+      })
+  </script>
+<% end %>

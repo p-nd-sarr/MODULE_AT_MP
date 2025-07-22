@@ -1,0 +1,12 @@
+<%= content_for :titre_page, "Dossier Indemnité de Congés Maternité que j'ai ajoutés" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour accueil ICM', admin_dossier_maternites_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <%= link_to ' Ajouter un dossier', new_admin_dossier_maternite_path, class: 'btn btn-primary btn-sm fa fa-plus' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'liste' %>
+  </div>
+</div>

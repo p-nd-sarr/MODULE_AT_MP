@@ -1,0 +1,114 @@
+<style type="text/css">
+
+    .no-text {
+        font-size: 0px;
+    }
+
+    .invalid-feedback {
+        font-size: 0px;
+    }
+</style>
+
+<%= bootstrap_form_for([:admin, @admin_deces_salary], layout: :horizontal) do |f| %>
+
+  <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+  <div class="content clearfix">
+    <h2 class="text-navy" style="font-weight:bold">Informations sur le salarié</h2>
+    <hr>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-12">
+          <div class="col-sm-6">
+            <%= f.text_field :numero_affiliation %>
+          </div>
+          <div class="col-sm-6">
+            <%= f.text_field :prenom, readonly: true %>
+          </div>
+          <div class="col-sm-6">
+            <%= f.text_field :nom, readonly: true %>
+          </div>
+          <div class="col-sm-6">
+            <%= f.date_field :date_deces, label: "Date de décés" %>
+          </div>
+          <div class="col-sm-6">
+            <%= f.text_field :numero_piece %>
+          </div>
+
+          <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+            <h4 style="font-weight: bold;">Pièce justificatif *</h4>
+            <div class="btn-file">
+              <label class="no-text">
+                <%= f.file_field :certificat_deces, hide_label:true, label: '.',
+                                 help: (@admin_deces_salary.persisted?), id:'label-cert'  %>
+                <div class="btn btn-success" style="margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+            </div>
+            <small id="certeficat-name"></small>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <br><br>
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_deces_salaries_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+
+      $(document).ready(function () {
+          load_salarie()
+          $('#deces_salarie_numero_affiliation').change(function () {
+              load_salarie()
+          });
+      })
+
+      function load_salarie() {
+          const numero_affiliation = $('#deces_salarie_numero_affiliation').val();
+          $.ajax({
+              url: "/admin/conjoints/salaries/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  conjoint = data
+                  if (data) {
+                      $("#deces_salarie_prenom").val(data[0].prenom);
+                      $("#deces_salarie_nom").val(data[0].nom);
+                      $("#deces_salarie_numero_piece").val(data[0].numero_piece);
+
+                  } else {
+                      $("#deces_salarie_prenom").val('');
+                      $("#deces_salarie_nom").val('');
+                      $("#deces_salarie_numero_piece").val('');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#deces_salarie_prenom").val('');
+                  $("#deces_salarie_nom").val('');
+                  $("#deces_salarie_numero_piece").val('');
+
+              }
+          });
+      }
+
+      const input2 = document.getElementById('label-cert');
+      const infoArea2 = document.getElementById('certeficat-name');
+      input2.addEventListener('change', showFileName2);
+
+      function showFileName2(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea2.textContent = fileName;
+      }
+
+  </script>
+<% end %>

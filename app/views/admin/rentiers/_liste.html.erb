@@ -1,0 +1,29 @@
+<%= paginate @rentiers %>
+
+ <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro rentier</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Etat</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @rentiers.each do |rentier| %>
+        <tr>
+          <td><%= rentier.numero_rentier %></td>
+          <td><%= rentier.prenom %></td>
+          <td><%= rentier.nom %></td>
+          <td><%= rentier.etat_human %></td>
+          
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_rentier_path(rentier), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+<%= paginate @rentiers %>

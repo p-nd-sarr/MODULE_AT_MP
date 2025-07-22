@@ -1,0 +1,33 @@
+<%= content_for :titre_page, "Echeance Paiement en Attente validation " %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Annee</th>
+        <th scope="col">Periode</th>
+        <th scope="col">Numero Periode</th>
+        <th scope="col">Date</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @echeance_paiements.each do |echeance_paiement| %>
+        <tr>
+          <td><%= echeance_paiement.id %></td>
+          <td><%= echeance_paiement.annee %></td>
+          <td><%= echeance_paiement.periode %></td>
+          <td><%= echeance_paiement.numero_periode %></td>
+          <td><%= l echeance_paiement.created_at %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_echeance_paiement_path(echeance_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

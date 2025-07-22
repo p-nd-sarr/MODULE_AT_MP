@@ -1,0 +1,237 @@
+<%= content_for :titre_page, "Activité Détails" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <strong class="text-info">Date création :</strong>
+  <%= "#{ @dossier_audit.created_at.strftime('%d/%m/%Y') }" %>
+  <br>
+  État de l'activité : <%= "#{@activity.current_state.meta[:label] }" %> <br>
+  <% if @activity.soumission? %>
+    Activité soumise au chef de service par : <%= @activity.soumis_par.full_name unless @activity.soumis_par.nil? %>
+    <br>
+    <% unless @activity.date_soumission.nil? %>
+      <strong class="text-info">Date soumission :</strong>
+      <%= "#{l @activity.date_soumission}" %>
+      <br>
+    <% end %>
+  <% end %>
+  <% if @activity.validation? %>
+    Activité validée par le chef de service : <%= @activity.valide_par.full_name unless @activity.valide_par.nil? %>
+    <br>
+    <% unless @activity.date_validation.nil? %>
+      <strong class="text-info">Date validation :</strong>
+      <%= "#{l @activity.date_validation}" %>
+      <br>
+    <% end %>
+  <% end %>
+  État du dossier d'audit : <%= "#{@dossier_audit.current_state.meta[:label] }" %> <br>
+  <br>
+  <% unless @activity.motif_rejet.nil? %>
+    <strong class="text-info">Dossier retourné </strong>
+    <br>
+    <strong class="text-info">Motif de retour :</strong>
+    <%= @activity.motif_rejet %>
+    <br>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Liste des activités', admin_dossier_audit_activities_path(@dossier_audit), class: 'btn btn-white btn-sm' if current_user.auditeur? or current_user.chef_service_controle_interne? or current_user.chef_service_audit? or current_user.directeur_audit? %>
+  <%= link_to 'Liste des activités', admin_dossier_audits_recommandations_en_attente_path, class: 'btn btn-white btn-sm' unless current_user.auditeur? or current_user.chef_service_controle_interne? or current_user.chef_service_audit? or current_user.directeur_audit? %>
+  <%= link_to 'Prêt pour soumission ?', admin_dossier_audit_get_activity_ready_path(@dossier_audit, @activity), class: 'btn btn-primary btn-sm' if current_user.auditeur? and not @activity.is_ready %>
+  <br> <br>
+  <% @activity.current_state.events.values.each { |event| %>
+    <% event = event.first %>
+    <% if event.meta[:types_profils].include?(current_user.type_profil.to_sym) %>
+      <%= link_to event.meta[:label], admin_dossier_audit_change_activity_statut_path(@dossier_audit, @activity, event.name), 'data-turbolinks': false, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-primary btn-sm' if event.meta[:back] == false and @dossier_audit.validation? and @activity.is_ready %>
+      <br>
+      <%= link_to "Retourner", '#', "data-toggle" => "modal", 'data-target' => '#retourner_activity', class: 'btn btn-primary btn-sm' if event.meta[:back] == true and @dossier_audit.validation? and @activity.is_ready %>
+      <%= render 'admin/dossier_audits/activity_back_modal', object: event.name if event.meta[:back] == true %>
+    <% end %>
+  <% } %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row" style="">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h3>Détails de l'activité</h3>
+          <div class="ibox-tools" style="margin-top: -30px">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="text-right">
+              <% if current_user.auditeur? and @activity.creation? %>
+                <button type="button" class="fa fa-edit btn btn-w-m btn-success btn-outline" , style="height: 34px;" data-toggle="modal" data-target="#create_activity<%= @activity.id %>">
+                  <span></span> Modifier
+                </button>
+              <% end %>
+            </div>
+            <div class="row p-sm">
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span> État:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1"><%= "#{@activity.current_state.meta[:label] }" %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span> Description:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1"><%= @activity.description unless @activity.description.nil? %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span> Ajoutée par:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1">
+                      <%= @activity.ajoute_par.full_name unless @activity.ajoute_par.nil? %>
+                      (<%= @activity.ajoute_par.type_profil.humanize unless @activity.ajoute_par.nil? %>)
+                    </dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span> Date de creation:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1"><%= l @activity.created_at unless @activity.created_at.nil? %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span> Incident:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1"><%= @activity.incident unless @activity.incident.nil? %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span>Évolution de incident:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1"><%= @activity.evaluation_incident unless @activity.evaluation_incident.nil? %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa  fa-info"></span>Plan d'actions:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                    <dd class="mb-1"><%= @activity.plan_actions unless @activity.plan_actions.nil? %></dd>
+                  </div>
+                </d1>
+              </div>
+
+            </div>
+            <div class="hr-line-dashed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h3>Listes des recommandations</h3>
+          <div class="ibox-tools" style="margin-top: -30px">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="text-right">
+              <% if current_user.auditeur? and @activity.creation? %>
+                <button type="button" class="fa fa-plus btn btn-w-m btn-success btn-outline" , style="height: 34px;" data-toggle="modal" data-target="#create_recommandation<%= @activity_rec.id %>">
+                  <span></span> Ajouter une recommandation
+                </button>
+              <% end %>
+            </div>
+            <div class="row p-sm">
+              <%= paginate @activity_recs %>
+              <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Ajouté par</th>
+                  <th scope="col">Affecté à</th>
+                  <th scope="col">Date de création à</th>
+                  <th scope="col">Options</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @activity_recs.each do |activity_rec| %>
+                  <% if current_user.auditeur? or current_user.chef_service_controle_interne? or current_user.chef_service_audit? or current_user.directeur_audit? or (current_user == activity_rec.affecte_a) %>
+                    <tr>
+                      <td><%= activity_rec.id %></td>
+                      <td><%= activity_rec.ajoute_par.full_name unless activity_rec.ajoute_par.nil? %>
+                        (<%= activity_rec.ajoute_par.type_profil.humanize unless activity_rec.ajoute_par.nil? %>)
+                      </td>
+                      <td><%= activity_rec.affecte_a.full_name unless activity_rec.affecte_a.nil? %>
+                        (<%= activity_rec.affecte_a.type_profil.humanize unless activity_rec.affecte_a.nil? %>)
+                      </td>
+                      <td><%= l activity_rec.created_at %></td>
+                      <td style="width: 75px" class="dropdown">
+                        <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                          Options
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+                          <li>
+                            <a class="fa btn btn-success btn-outline" , data-toggle="modal" data-target="#show_rec<%= activity_rec.id %>">
+                              détails
+                            </a>
+                          </li>
+                          <li>
+                            <%= link_to 'Supprimer', admin_dossier_audit_delete_recommandation_path(@dossier_audit, activity_rec), class: 'fa btn btn-success btn-outline text-center', method: :delete, data: { confirm: 'En êtes vous sûr?' }, id: "dd_hover" if current_user.auditeur? and @activity.creation? and not activity_rec.response_file.attached? %>
+                          </li>
+                        </ul>
+                        <%= render 'admin/dossier_audits/show_recommandation', :object => activity_rec %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @activity_recs %>
+            </div>
+            <div class="hr-line-dashed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%= render 'admin/dossier_audits/create_activity', :object => @activity %>
+<%= render 'admin/dossier_audits/create_recommandation', :object => @activity_rec %>

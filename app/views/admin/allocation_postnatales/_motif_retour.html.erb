@@ -1,0 +1,26 @@
+<div class="modal inmodal" id="VoirMotifRetourModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-arrow-left modal-icon btn-white"></i>
+        <h4 class="modal-title">
+          Voir motif de retour
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <h3>
+            Motif retour : <%= object.motif_retour_volet unless object.motif_retour_volet.nil? %>
+          </h3>
+          <h4>Retourné par : <%= object.retourne_par.full_name unless object.retourne_par.nil? %> </h4>
+          <h4>Retourné le : <%= l object.date_retour unless object.date_retour.nil? %> </h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

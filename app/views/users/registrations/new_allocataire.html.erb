@@ -1,0 +1,50 @@
+<div class="loginColumns animated fadeInDown">
+  <div class="row">
+
+    <div class="col-md-6">
+      <h2 class="font-bold">Inscription</h2>
+
+      <p>
+        Veuillez remplir le formulaire pour vous inscrire
+      </p>
+
+    </div>
+    <div class="col-md-6">
+      <div class="ibox-content">
+        <%= bootstrap_form_for(resource, as: resource_name, url: users_allocataire_signup_path(resource_name)) do |f| %>
+          <%= f.text_field :numero_salarie, label: 'Numéro Allocataire', autofocus: true, required: true %>
+          <%= f.text_field :prenom, label: 'Prénom', autofocus: true %>
+          <%= f.text_field :nom, label: 'Nom' %>
+          <%= f.select :sexe,
+                       User::TYPE_SEXE.keys.collect { |sexe| [User.human_enum_name(:sexe, sexe), sexe] },
+                       label: 'Sexe' %>
+          <%= f.text_field :telephone, label: 'Téléphone', help: "Spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+          <%= f.email_field :email, label: 'Email' %>
+          <%= f.password_field :password, label: 'Mot de passe' %>
+          <%= f.password_field :password_confirmation, label: 'Confirmation du mot de passe' %>
+          <%= hidden_field_tag(:type_profil, "202") %>
+          <button type="submit" class="btn btn-primary block full-width m-b">S'inscrire</button>
+
+          <%= render "users/shared/links" %>
+
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-md-6">
+      <%= image_tag 'logo_ipres.jpg', height: 32 %>
+      <%= image_tag 'logo_css.png', height: 32 %>
+    </div>
+    <div class="col-md-6 text-right">
+      <small>© 2020</small>
+    </div>
+  </div>
+</div>
+
+<style>
+  label.required:after {
+    content: " *";
+  }
+</style>

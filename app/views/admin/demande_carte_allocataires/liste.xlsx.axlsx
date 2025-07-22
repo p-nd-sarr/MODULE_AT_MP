@@ -1,0 +1,25 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numero document',
+      'Numero allocataire',
+      'Agence enregistrement',
+      'Nom',
+      'Prenom',
+      'Date naissance',
+      'Agence retrait',
+  ]
+  sheet.add_row titre, :b => true
+  @admin_demande_carte_allocataires.each do |demande|
+    sheet.add_row [
+                      demande.numero_document,
+                      demande.allocataire.numero_allocataire,
+                      demande.agence_enregistrement.try(:description_prest),
+                      demande.nom,
+                      demande.prenom,
+                      demande.date_naissance,
+                      demande.agence_retrait.try(:description_prest),
+                  ]
+  end
+end

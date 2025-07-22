@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_type_regime" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_type_regimes_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_type_regime_path(@admin_type_regime), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter admin_type_regime', new_admin_type_regime_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Code:</strong>
+              <%= @admin_type_regime.code %>
+            </p>
+
+            <p>
+              <strong>Description:</strong>
+              <%= @admin_type_regime.description %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

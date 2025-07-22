@@ -1,0 +1,25 @@
+<%= content_for :titre_page, "Détails admin_agence" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_agences_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_agence_path(@admin_agence), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_agence', new_admin_agence_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_agence.code %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

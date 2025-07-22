@@ -1,0 +1,36 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path do |f| %>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :fhnum_eq, 'Numéro unique' %>
+      <%= f.search_field :fhnum_eq, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :ancien_num_ipres_eq, 'Ancien numéro IPRES' %>
+      <%= f.search_field :ancien_num_ipres_eq, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :ancien_num_css_eq, 'Ancien numéro CSS' %>
+      <%= f.search_field :ancien_num_css_eq, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :fhrsoc_cont, 'Raison sociale' %>
+      <%= f.search_field :fhrsoc_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :fhtel_cont, 'Téléphone' %>
+      <%= f.search_field :fhtel_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :activite_prinicipal_cont, 'Activité principale' %>
+      <%= f.search_field :activite_prinicipal_cont, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit class: 'btn btn-primary' %>
+<% end %>

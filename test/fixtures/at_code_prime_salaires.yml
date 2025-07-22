@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  designation: MyString
+  code: MyString
+  prise_en_compte: false
+  montant: 1.5
+  arret_travail: 
+
+two:
+  designation: MyString
+  code: MyString
+  prise_en_compte: false
+  montant: 1.5
+  arret_travail: 

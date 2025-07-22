@@ -1,0 +1,33 @@
+<%= paginate @regularisation_pensions %>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">N° Dossier</th>
+    <th scope="col">Matricule</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Motif</th>
+    <th scope="col">Etat</th>
+    <th colspan="2">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @regularisation_pensions.each do |regularisation| %>
+    <tr>
+      <td><%= regularisation.numero_dossier %></td>
+      <td><%= regularisation.numero_allocataire %></td>
+      <td><%= regularisation.prenom %></td>
+      <td><%= regularisation.nom %></td>
+      <td><%= regularisation.motif_regularisation_pension %></td>
+      <td><%= regularisation.workflow_state %></td>
+      <td>
+
+        <%= link_to 'détails', [:admin, regularisation.allocataire, regularisation], class: 'btn btn-outline btn-primary btn-xs' %>
+
+      </td>
+
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @regularisation_pensions %>

@@ -1,0 +1,86 @@
+<%= content_for :titre_page, "Demandes  De Validation Droits De Liquidation" %>
+
+<div class="ibox-content">
+  <div class="tab-content">
+    <div class="row">
+      <div class="col-sm-7 m-b-xs">
+        <div data-toggle="buttons" class="btn-group btn-group-toggle">
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#tous">
+            <input type="radio" id="option1" name="options"> Toutes les demandes
+          </label>
+          <label class="btn btn-sm btn-white active" data-toggle="pill" href="#en_attente">
+            <input type="radio" id="option1" name="options"> En attente de validation
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="tab-content">
+      <div id="tous" class="tab-pane fade in">
+        <%= paginate @prestation_exterieures_all %>
+        <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+          <thead>
+          <tr>
+            <th scope="col">N° Dossier</th>
+            <th align="center">Prénom</th>
+            <th align="center">Nom</th>
+            <th align="center">Date de naissance</th>
+            <th align="center">Lieu de naissance</th>
+            <th align="center">Etat</th>
+
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @prestation_exterieures_all.each do |prestation| %>
+            <tr>
+              <td><%= prestation.numero_dossier %></td>
+              <td><%= prestation.prenom %></td>
+              <td><%= prestation.nom %></td>
+              <td><%= prestation.date_naissance.strftime('%d/%m/%Y') %></td>
+              <td><%= prestation.lieu_naissance %></td>
+              <td><%= prestation.etat %></td>
+              <td style="width: 75px">
+                <%= link_to 'Ouvrir', admin_droits_liquidation_details_path(prestation), class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @prestation_exterieures_all %>
+      </div>
+      <div id="en_attente" class="tab-pane fade in active">
+        <%= paginate @prestation_exterieures %>
+        <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+          <thead>
+          <tr>
+            <th scope="col">N° Dossier</th>
+            <th align="center">Prénom</th>
+            <th align="center">Nom</th>
+            <th align="center">Date de naissance</th>
+            <th align="center">Lieu de naissance</th>
+            <th align="center">Etat</th>
+
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @prestation_exterieures.each do |prestation| %>
+            <tr>
+              <td><%= prestation.numero_dossier %></td>
+              <td><%= prestation.prenom %></td>
+              <td><%= prestation.nom %></td>
+              <td><%= prestation.date_naissance.strftime('%d/%m/%Y') %></td>
+              <td><%= prestation.lieu_naissance %></td>
+              <td><%= prestation.etat %></td>
+              <td style="width: 75px">
+                <%= link_to 'Ouvrir', admin_droits_liquidation_details_path(prestation), class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @prestation_exterieures %>
+      </div>
+    </div>
+  </div>
+</div>

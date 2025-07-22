@@ -1,0 +1,40 @@
+<%= content_for :titre_page, 'Conditions Liquidation Prestation Prénatale ' %>
+
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Liquidation de la demande  d'allocation prenatale</h5>
+        </div>
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@allocation_prenatale,
+                                 url: admin_dossier_prestation_allocation_prenatale_soumettre_path(@dossier_prestation, @allocation_prenatale),
+                                 layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Une erreur est survenue lors de la soumission." %>
+            <p>
+              En liquidant le demande j'accepte les conditions suivantes :
+            </p>
+
+            <%#= f.check_box :condition_1, label: "Condition 1 :  " %>
+            <%= f.check_box :condition_1, label: "Condition 1 :
+              #{AllocationPrenatale.human_enum_name(:volet, @allocation_prenatale.volet)} de la grossesse débutant le
+              #{l @allocation_prenatale.grossesse.date_grossesse} " %>
+            <%= f.check_box :condition_2, label: "Condition 2 : Le salarié certifie que les renseignements portés sur la présente demande
+              sont exacts." %>
+              <%#= f.check_box :condition_3, label: "Condition 3 :  " %>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row">
+              <div class="col-sm-4 col-sm-offset-4">
+                <%= link_to 'Annuler', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation), class: 'btn btn-white' %>
+                <%= f.button 'Liquider', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

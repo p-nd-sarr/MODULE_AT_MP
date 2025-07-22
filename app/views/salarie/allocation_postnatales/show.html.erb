@@ -1,0 +1,78 @@
+<%= content_for :titre_page, "Détails allocation_postnatale" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', salarie_dossier_prestation_allocation_postnatales_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+  <% if @allocation_postnatale.creation? %>
+    <%= link_to 'Modifier', edit_salarie_dossier_prestation_allocation_postnatale_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Soumettre', salarie_dossier_prestation_allocation_postnatale_soumission_form_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="contact-box" style="min-height: 180px">
+        <a href="<%= url_for(@allocation_postnatale.document) %>" target="_blank">
+          <div class="col-sm-4">
+            <div class="text-center">
+              <%= image_tag @allocation_postnatale.document.preview(resize: "500x500>"), class: "m-t-xs img-responsive" %>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <h3><strong><%= AllocationPostnatale.human_enum_name(:volet, @allocation_postnatale.volet) %></strong></h3>
+            <p>
+              <strong>Dossier prestation : </strong>
+              <%= @allocation_postnatale.dossier_prestation.num_dossier %>
+            </p>
+            <p>
+              <strong>Date accouchement : </strong>
+              <%= @allocation_postnatale.date_accouchement %>
+            </p>
+
+            <p class="text-success">
+              <strong>Enfant né :</strong>
+              <% unless @allocation_postnatale.enfant.nil? %>
+                <%= @allocation_postnatale.enfant.prenom + ' ' + @allocation_postnatale.enfant.nom %>
+              <% end %>
+            </p>
+
+            <% unless @allocation_postnatale.date_soumission.nil? %>
+              <p>
+                <strong>Date soumission : </strong>
+                <%= @allocation_postnatale.date_soumission %>
+              </p>
+            <% end %>
+
+            <% unless @allocation_postnatale.date_validation.nil? %>
+            <p>
+              <strong>Date de liquidation : </strong>
+              <%= @allocation_postnatale.date_validation %>
+            </p>
+            <% end %>
+
+            <% unless @allocation_postnatale.montant_paiement.nil? %>
+            <p>
+              <strong>Montant liquidé : </strong>
+              <%= @allocation_postnatale.montant_paiement %>
+            </p>
+            <% end %>
+
+            <% unless @allocation_postnatale.date_paiement.nil? %>
+            <p>
+              <strong>Date de paiement : </strong>
+              <%= @allocation_postnatale.date_paiement %>
+            </p>
+            <% end %>
+
+            <p>
+              <strong>Commentaire:</strong>
+              <%= @allocation_postnatale.commentaire %>
+            </p>
+          </div>
+          <div class="clearfix"></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>

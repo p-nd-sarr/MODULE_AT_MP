@@ -1,0 +1,190 @@
+<style type="text/css">
+    label[title="required"] {
+        display: none;
+    }
+
+    .invalid-feedback {
+        font-size: 0px;
+    }
+</style>
+
+<% if @demande_liquidation.retraite_anticipee_invalide? %>
+  <p></p>
+<% end %>
+<ul class="text-danger">
+  <% if @demande_liquidation.document_liquidation_retraites.where(type_document: [:cni, :attestation_travail, :certificat_mariage, :passeport, :carte_consulaire]).empty? %>
+    <li>Veuillez ajouter une copie du CNI ou passeport ou carte consulaire</li>
+  <% end %>
+
+  <% if @demande_liquidation.retraite_anticipee_invalide? and @demande_liquidation.document_liquidation_retraites.where(type_document: :certificat_mariage).empty? %>
+    <li>Veuillez ajouter une copie du Certifical Médical</li>
+  <% end %>
+
+  <% if @demande_liquidation.virement? and @demande_liquidation.document_liquidation_retraites.rib.empty? %>
+    <li>Veuillez ajouter un Relevé d'Identité Bancaire (RIB) pour les paiements par virement bancaire</li>
+  <% end %>
+</ul>
+
+<% if @demande_liquidation.creation? %>
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <h2>Liste des documents</h2>
+    </div>
+    <% unless @demande_liquidation.documents_valide? %>
+      <div class="col-lg-8">
+        <div class="alert alert-info alert-dismissable">
+          <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">x</font>
+            </font>
+          </button>
+          <font style="vertical-align: inherit;">
+            <font style="vertical-align: inherit;"><span class="fa fa-info-o"></span> Veuillez renseigner des documents
+              au format PDF</font>
+          </font>
+        </div>
+      </div>
+    <% end %>
+    <div class="col-lg-12">
+      <div class="project-list">
+        <table class="table table-hover table-bordered">
+          <thead style="text-align: center;">
+          <tr>
+            <th scope="col" style="width: 300px; text-align: center;">Type</th>
+            <th scope="col" style="width: 500px; text-align: center;">Choisir document *</th>
+            <th scope="col" style="width: 100px; text-align: center;">Action</th>
+          </tr>
+          </thead>
+          <% DocumentLiquidationRetraite::TYPE_DOCUMENT.each do |document_name| %>
+            <% if @demande_liquidation.virement? %>
+              <tbody>
+              <%= bootstrap_form_for(@document_demande_liquidation, url: admin_liquidation_retraite_create_document_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                <tr>
+                  <td class="project-title" style="text-align: center;">
+                    <%= f.hidden_field :type_document, value: document_name[0] %>
+                    <%= DocumentLiquidationRetraite.human_enum_name(:type_document, document_name.first) %>
+                  </td>
+                  <td class="project-completion">
+                    <div class="col-sm-4" style="height: 40px;">
+                      <div class="btn-file">
+                        <label>
+                          <%= f.file_field :document, hide_label: true, label: '.',
+                                           required: true, class: "document-label" %>
+                          <div class="btn btn-success btn-sm" style="margin-top: -50px; margin-left: 1px; font-size: 10px;">
+                            <span class="fa fa-upload"></span> Choisir un fichier
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-sm-8" style="margin-top: 10px; margin-left: 0px;">
+                      <small class="document-name"></small>
+                    </div>
+
+                  </td>
+                  <td class="project-actions" style="text-align: center;">
+                    <% if @demande_liquidation.document_liquidation_retraites.where(type_document: document_name.first).exists? %>
+                      <%= f.label 'Le document est soumis', class: 'label label-primary' %>
+                    <% else
+                         !@demande_liquidation != nil && !@demande_liquidation.documents_valide %>
+                      <%= f.button 'Valider', class: 'btn btn-outline btn-primary btn-sm' %>
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+              </tbody>
+            <% else %>
+              <% unless document_name[1] == 9 %>
+                <tbody>
+                <%= bootstrap_form_for(@document_demande_liquidation, url: admin_liquidation_retraite_create_document_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                  <tr>
+                    <td class="project-title" style="text-align: center;">
+                      <%= f.hidden_field :type_document, value: document_name[0] %>
+                      <%= DocumentLiquidationRetraite.human_enum_name(:type_document, document_name.first) %>
+                    </td>
+                    <td lass="project-completion">
+                      <div class="col-sm-4" style="height: 30px;">
+                        <div class="btn-file">
+                          <label>
+                            <%= f.file_field :document, hide_label: true, label: '.',
+                                             required: true, class: "document-label" %>
+                            <div class="btn btn-success btn-sm" style="margin-top: -50px; margin-left: 1px; font-size: 10px;">
+                              <span class="fa fa-upload"></span> Choisir un fichier
+                            </div>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-sm-8" style="margin-top: 10px; margin-left: 0px;">
+                        <small class="document-name"></small>
+                      </div>
+                    </td>
+                    <td class="project-actions" style="text-align: center;">
+                      <% if @demande_liquidation.document_liquidation_retraites.where(type_document: document_name.first).exists? %>
+                        <%= f.label 'Le document est soumis', class: 'label label-primary' %>
+                      <% else
+                           !@demande_liquidation != nil && !@demande_liquidation.documents_valide %>
+                        <%= f.button 'Valider', class: 'btn btn-outline btn-primary btn-sm' %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              <% end %>
+            <% end %>
+          <% end %>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#new_document_liquidation_retraite').hide();
+
+          $("#ajouter_document").click(function () {
+              $('#new_document_liquidation_retraite').show();
+              return false;
+          });
+      });
+
+      var inputDoc = document.getElementsByClassName('document-label');
+      var inputName = document.getElementsByClassName('document-name');
+
+      for (let i = 0; i < inputDoc.length; i++) {
+          inputDoc[i].addEventListener('change', function (event) {
+              showFileName(event, i, inputName);
+          });
+      }
+
+      function showFileName(event, i, array_label) {
+          let input = event.srcElement;
+          let fileName = input.files[0].name;
+          array_label[i].textContent = fileName;
+      }
+
+  </script>
+<% end %>
+
+<br/>
+<div class="row">
+  <% @demande_liquidation.document_liquidation_retraites.each do |document_demande_liquidation| %>
+    <div class="col-lg-4" style="margin-top: 10px;">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: center;height: 50px;">
+          <h5><%= DocumentLiquidationRetraite.human_enum_name(:type_document, document_demande_liquidation.type_document) unless document_demande_liquidation.type_document.nil? %></h5>
+        </div>
+        <div class="panel-body" style="min-height: 150px">
+          <div class="col-sm-6 col-sm-offset-3">
+            <div class="text-center">
+              <%= image_tag document_demande_liquidation.document.preview(resize: "400x400>"), class: "m-t-xs img-responsive" %>
+            </div>
+          </div>
+        </div>
+        <div class="panel-footer" style="text-align: center;">
+          <a href="<%= url_for(document_demande_liquidation.document) %>" target="_blank" class="btn btn-outline btn-primary btn-xs"><span class="fa fa-eye"></span>
+            voir document </a> &nbsp; &nbsp;
+          <%= (link_to " supprimer", admin_liquidation_retraite_destroy_document_path(@demande_liquidation, document_demande_liquidation.id), data: {method: :delete}, class: 'btn btn-outline btn-danger btn-xs fa fa-trash') if (not current_user.chef_section_liquidation? and not current_user.chef_service_allocation?) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

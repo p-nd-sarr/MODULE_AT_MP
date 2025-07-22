@@ -1,0 +1,39 @@
+<%= paginate @modifier_mode_paiements %>
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">N° Dossier</th>
+    <th scope="col">Matricule</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Mode paiement</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Agence création</th>
+    <th colspan="4"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @modifier_mode_paiements.each do |modifier_mode_paiement| %>
+    <tr>
+      <td><%= modifier_mode_paiement.numero_dossier %></td>
+      <td><%= modifier_mode_paiement.numero_allocataire %></td>
+      <td><%= modifier_mode_paiement.prenom %></td>
+      <td><%= modifier_mode_paiement.nom %></td>
+      <td><%= modifier_mode_paiement.mode_paiement %></td>
+      <td><%= modifier_mode_paiement.workflow_state %></td>
+      <td><%= modifier_mode_paiement.agence_creation.try(:description_prest) %></td>
+      <% unless modifier_mode_paiement.allocataire.nil? %>
+        <td>
+          <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+        <% if current_user.admin? %>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @modifier_mode_paiements %>

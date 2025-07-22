@@ -1,0 +1,74 @@
+<%= content_for :titre_page, 'Enrolement assurés KIT' %>
+
+<%= content_for :actions_page do %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :prenom_cont, 'Prénom' %>
+          <%= f.search_field :prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :nom_cont, 'Nom' %>
+          <%= f.search_field :nom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+          <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :nin_cont, 'NIN' %>
+          <%= f.search_field :nin_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @assures %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">CDAO</th>
+        <th scope="col">NIN</th>
+        <th scope="col">Sexe</th>
+        <th scope="col">Ajouté le</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @assures.each do |assure| %>
+        <tr>
+          <td><%= assure.id %></td>
+          <td><%= assure.numero_allocataire %></td>
+          <td><%= assure.prenom %></td>
+          <td><%= assure.nom %></td>
+          <td><%= assure.cdao %></td>
+          <td><%= assure.nin %></td>
+          <td><%= assure.sexe %></td>
+          <td><%= l assure.dateInsert %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_assure_path(assure), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @assures %>
+  </div>
+</div>

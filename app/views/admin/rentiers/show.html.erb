@@ -1,0 +1,138 @@
+<%= content_for :titre_page, "Détails Rentier" %>
+<%= content_for :titre_page_autres_details do %>
+  N° Rentier : <%= @rentier.numero_rentier %> <br>
+   <%= link_to "Dossier Consolidation",  admin_at_consolidation_path(@rentier.at_consolidation), class: 'btn btn-success btn-sm' %>
+ 
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Liste des rentiers', admin_rentiers_path, class: 'btn btn-white btn-sm' %> <br/><br/>
+    <% if @rentier.inactif? and current_user.directeur_at? %>
+      <td style="width: 75px">
+        <%=  (link_to 'valider', admin_rentier_valider_path(@rentier), class: 'btn btn-success btn-sm') if current_user.directeur_at? %>
+      </td>
+      <td style="width: 75px">
+      <%if current_user.directeur_at?%>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejet_rejet_allocataire">Rejeter
+      </button>
+      <%end%>
+      </td>
+    <% end %>
+    <% if @rentier.en_attente_activation? and current_user.directeur_general? %>
+      <td style="width: 75px">
+        <%=  (link_to 'activer', admin_rentier_activer_path(@rentier), class: 'btn btn-success btn-sm') %>
+      </td>
+      <td style="width: 75px">
+      <%if current_user.directeur_at?%>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejet_rejet_allocataire">Rejeter
+      </button>
+      <%end%>
+      </td>
+    <% end %>
+      <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_at_consolidation_notification_path(@rentier.at_consolidation, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <div class= "row">
+              <div class= "col-lg-12">
+                <ul class="nav nav-tabs">
+                  <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Tableau Rente
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-7"><i class="fa fa-folder"></i>Historiques paiements
+                  </a></li>
+
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane active">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <%= render 'etat_civil' %>
+
+
+                    </div>
+                  </div>
+
+                  <div id="tab-2" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <%= render 'show_epouses' %>
+
+                    </div>
+                  </div>
+
+                  <div id="tab-3" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <%= render 'show_enfants' %>
+
+                    </div>
+                  </div>
+                  <div id="tab-5" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <%#= render 'show_documents' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-6" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <%= render 'show_tableau_rente' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-7" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <%#= render 'historique' %>
+                    </div>
+                  </div>
+
+                </div> <!-- end tab content -->
+              </div> <!-- end col-lg-12 -->
+            </div> <!-- end row -->
+          </div> <!-- end div wrapper content -->
+        </div> <!-- end ibox-content -->
+      </div> <!-- end ibox -->
+    </div> <!-- end col-lg-12 -->
+  </div> <!-- end row -->
+</div> <!-- end div wrapper content -->
+
+<div class="modal inmodal" id="rejet_rejet_allocataire" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@rentier, url: admin_rentier_rejeter_path(@rentier)) do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h5 class="modal-title">Rejet Rentier
+            : <%= @rentier.numero_rentier %> </h5>
+        </div>
+        <div class="modal-body">
+          <%= f.hidden_field :etat, class: 'form-control', value: 6 %>
+          <%= f.text_area :motif_rejet, class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-danger">rejeter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

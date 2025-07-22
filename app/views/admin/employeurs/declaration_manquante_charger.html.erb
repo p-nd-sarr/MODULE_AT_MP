@@ -1,0 +1,72 @@
+<%= content_for :titre_page, "Chargement déclaration manquante pour #{@employeur.fhnum}" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_employeur_path(@employeur), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Employeur</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'information_employeur' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Déclaration manquante</h5>
+        </div>
+        <div class="ibox-content">
+          <p>
+            <strong>Exercice:</strong>
+            <%= @declaration_manquante.exercice %>
+          </p>
+          <p>
+            <strong>Regime:</strong>
+            <%= @declaration_manquante.regime %>
+          </p>
+          <p>
+            <strong>Effectif:</strong>
+            <%= @declaration_manquante.effectif %>
+          </p>
+          <p>
+            <strong>Code aggence:</strong>
+            <%= @declaration_manquante.code_agence %>
+          </p>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@declaration_chargement, url: admin_employeur_declaration_manquante_charger_create_path(@employeur, @declaration_manquante), layout: :horizontal) do |f| %>
+            <%= f.file_field :fichier, label: 'Fichier EDI' %>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row">
+              <div class="col-sm-4 col-sm-offset-2">
+                <%= link_to 'Annuler', admin_employeur_path(@employeur), class: 'btn btn-white' %>
+                <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  .invalid-feedback {
+    color: #a00e0e;
+  }
+</style>

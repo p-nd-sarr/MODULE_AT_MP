@@ -1,0 +1,68 @@
+<%= content_for :titre_page do %>
+  Liste ventes de carnets  <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <div class="text-right">
+    <%= (link_to ' AJOUTER UNE DEMANDE', new_admin_at_vente_carnet_path, class: 'fa fa-plus btn btn-w-m btn-success btn-outline', style: 'height: 34px;') if current_user.technicien_at? %>
+  </div>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :num_employeur_cont, 'Numéro rmployeur' %>
+          <%= f.search_field :num_employeur_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :num_recu_cont, 'Numéro reçu' %>
+          <%= f.search_field :num_recu_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @at_vente_carnets %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro employeur</th>
+        <th scope="col">Numéro reçu</th>
+        <th scope="col">Nombre de carnets</th>
+        <th scope="col">Date délivrance</th>
+        <th scope="col" colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @at_vente_carnets.each do |at_vente_carnet| %>
+        <tr>
+          <td><%= at_vente_carnet.num_employeur %></td>
+          <td><%= at_vente_carnet.num_recu %></td>
+          <td><%= at_vente_carnet.num_carnets %></td>
+          <td><%= l at_vente_carnet.date_delivrance unless at_vente_carnet.date_delivrance.nil? %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_at_vente_carnet_path(at_vente_carnet), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_at_vente_carnet_path(at_vente_carnet), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_at_vente_carnet_path(at_vente_carnet), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @at_vente_carnets %>
+  </div>
+</div>

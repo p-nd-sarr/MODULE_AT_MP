@@ -1,0 +1,358 @@
+<%= content_for :titre_page, " Dossier Consolidation - [#{@at_consolidation.workflow_state}]" %>
+<%= content_for :titre_page_autres_details do %>
+  Numéro Sinistre:  <%= " #{@arret_travail.num_dossier}" %> <br>
+  Etat:  <%="Initialisation" %><br>
+  Prénom et Nom: <%= @at_consolidation.arret_travail.try(:prenom_salarie) %> <%= @at_consolidation.arret_travail.try(:nom_salarie) %><br>
+  <p class="text-danger">
+    <span><%= (" Motif retour Dossier :  #{@at_consolidation.motif} ") unless @at_consolidation.motif.nil? %> </span>
+  </p>
+  <%= link_to "Dossier AT",  admin_arret_travail_path(@arret_travail), class: 'btn btn-success btn-sm' %>
+  <% if @at_consolidation.current_state >= :valide_mc %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Accord".html_safe, admin_at_consolidation_accord_ipp_path(@at_consolidation, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+  <% end %>
+  <%#= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_at_consolidation_notification_path(@at_consolidation, format: :pdf), class: 'btn btn-outline btn-info btn-xs', target: :_blank %>
+<% end %>
+
+<%= content_for :actions_page do %>
+ 
+  <% if @at_consolidation.creation? and @at_consolidation.pret_pour_soumission(current_user) %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionSalaireModal" id="soumettre_id">Soumettre</button>
+     <%= render 'soumission_form' %>
+  <%end%>
+
+  <% if @at_consolidation.soumis_chef_agence? and current_user.chef_agence?  %>
+    <%= link_to "Soumettre au médecin conseil",  admin_arret_travail_at_consolidation_soumettre_medecin_conseil_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.soumis_chef_service? and current_user.chef_division_at?  %>
+    <%= link_to "Soumettre au médecin conseil",  admin_arret_travail_at_consolidation_soumettre_medecin_conseil_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.pret_pour_validation_mc?(current_user) %>
+    <%= link_to "Valider avis", admin_arret_travail_at_consolidation_validation_mc_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+
+  <% if @at_consolidation.can_affecte_tech(current_user)%>
+  <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+    <% if @at_consolidation.affectation_technicien.nil? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+        Affecter la consolidation
+      </button>
+    <% else %>
+       <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+        Reaffecter la consolidation
+      </button>
+    <% end %>
+    <%= render 'modal_affectation_tech' %>
+  <% end %>
+
+
+  <% if @at_consolidation.tech_can_valide(current_user) %>
+    <%= link_to "Validation tableau rente",  admin_arret_travail_at_consolidation_verification_tableau_rente_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.chef_agence_can_valide(current_user) %>
+    <%= link_to "Validation chef agence",  admin_arret_travail_at_consolidation_validation_chef_agence_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.chef_service_at_can_valide(current_user) %>
+    <%= link_to "Validation chef service at",  admin_arret_travail_at_consolidation_validation_chef_service_at_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.dir_at_can_valide(current_user) %>
+    <%= link_to "Validation directeur AT",  admin_arret_travail_at_consolidation_validation_directeur_at_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.auditeur_can_valide(current_user) %>
+    <%= link_to "Validation audit",  admin_arret_travail_at_consolidation_validation_audit_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.dg_can_valide(current_user) %>
+    <%= link_to "Validation DG",  admin_arret_travail_at_consolidation_validation_directeur_general_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @at_consolidation.dossier_valide? %>
+      <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_at_consolidation_notification_path(@at_consolidation, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content animated fadeIn">
+  <div class="progressbar-wrapper">
+    <ul class="progressbar">
+      <li class="<%= ("active") if @at_consolidation.current_state >= :creation %>">Création</li>
+      <% if @at_consolidation.arret_travail.creer_en_agence?  %>
+          <li class="<%= ("active") if @at_consolidation.current_state  >= :soumis_chef_agence %>">Chef agence</li>
+      <% else %>
+        <li class="<%= ("active") if @at_consolidation.current_state  >= :soumis_chef_service %>">Chef Service</li>
+      <% end %>
+
+      <li class="<%= ("active") if @at_consolidation.current_state >= :soumis_mc %>">Medecin Conseil</li>
+
+      <% if @at_consolidation.arret_travail.creer_en_agence?  %>
+        <li class="<%= ("active") if @at_consolidation.current_state >= :valide_mc %>">Chef agence</li>
+      <% else %>
+        <li class="<%= ("active") if @at_consolidation.current_state >= :valide_mc %>">Chef service</li>
+      <% end %>
+      <li class="<%= ("active") if @at_consolidation.current_state >= :affectation_technicien %>">Traitement technicien</li>
+       <% if @at_consolidation.arret_travail.creer_en_agence?  %>
+         <li class="<%= ("active") if @at_consolidation.current_state >= :verifie_tableau_rente %>">validation chef agence</li>
+          <li class="<%= ("active") if @at_consolidation.current_state >= :chef_agence_valide %>">Validation chef service AT</li>
+       <% end %>
+         <li class="<%= ("active") if @at_consolidation.current_state >= :chef_service_valide %>">Directeur AT</li>
+      
+      <li class="<%= ("active") if @at_consolidation.current_state >= :directeur_at_valide %>">Audit</li>
+      
+      <li class="<%= ("active") if @at_consolidation.current_state >= :audit_valide %>">DG</li>
+    </ul>
+  </div><!--End ProgressBar"-->
+
+  <div class="row m-t-lg">
+    <div class="col-lg-12 col-md-12">
+      <div class="ibox">
+        <div class="ibox-content">
+          <div class="tabs-container">
+            <ul class="nav nav-tabs" id='mes_navbars' style="font-size: 11px;">
+            
+              <li class="nav-item active">
+                <a class="nav-link" data-toggle="tab" href="#tab-1">Info. Générales
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_consolidation.information_consolidation_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_consolidation.information_consolidation_valide? %>   
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-2">Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_consolidation.documents_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_consolidation.documents_valide? %>     
+                </a>
+              </li>
+
+              <% if @at_consolidation.current_state >= :soumis_mc %>
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#tab-3">Evaluation Ipp
+                    <%= '<span class="label label-warning">à valider par mc </span>'.html_safe unless @at_consolidation.decision_mc_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_consolidation.decision_mc_valide? %>     
+                  </a>
+                </li>
+              <% end %>
+              
+              <% if @at_consolidation.current_state >= :affectation_technicien %>
+
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#tab-4">Les 12 derniers salaires
+                    <%= '<span class="label label-warning">à valider par tech</span>'.html_safe unless @at_consolidation.information_salaire_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_consolidation.information_salaire_valide? %>     
+                  </a>
+                </li>
+
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#tab-5">Tableau rente
+                    <%= '<span class="label label-warning">à valider par tech</span>'.html_safe unless @at_consolidation.tableau_rente_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_consolidation.tableau_rente_valide? %> 
+                  </a>
+                </li>
+              <% end %>
+
+              <%# if @at_consolidation.current_state >= :affectation_technicien %>
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#tab-6">Historiques
+                    <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.detail_accident_valid? %>
+                    <%#= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.detail_accident_valid? %>     
+                  </a>
+                </li>
+               <%# end %>
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@at_consolidation.information_consolidation_valide?   %>
+                    <%= link_to "Validation des informations consolidation", admin_arret_travail_at_consolidation_valider_information_consolidation_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_informations' %>
+                </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                 
+                  <% if !@at_consolidation.documents_valide?   %>
+                    <%= link_to "Validation des documents", admin_arret_travail_at_consolidation_valider_documents_path(@arret_travail,@at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                     <%= render 'show_documents' %>
+                
+                </div>
+              </div>
+
+              <div id="tab-4" class="tab-pane">
+                <div class="full-height-scroll">
+                <br>
+                <% if !@at_consolidation.information_salaire_valide? and (current_user.technicien_at? || current_user.technicien_direction_at?)   %>
+                  <%= link_to "Validation des 12 derniers salaires", admin_arret_travail_at_consolidation_valider_information_salaire_path(@arret_travail,@at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                  <hr>
+                <% end %>
+                
+                <%= render 'information_12_derniers_salaires' %>
+                </div>
+              </div>
+
+              <div id="tab-3" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if @at_consolidation.current_state >= :soumis_mc  %>
+                    <% if !@at_consolidation.decision_mc_valide? and current_user.medecin_conseil?  %>
+                      <%= link_to "Valider saisie", admin_arret_travail_at_consolidation_valider_onglet_decision_mc_path(@arret_travail, @at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                     <%= render 'decision_mc_consolidation' %>
+                   
+                  <% end %>
+                </div>
+              </div>
+
+              <div id="tab-5" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@at_consolidation.tableau_rente_valide? and (current_user.technicien_at? || current_user.technicien_direction_at?)   %>
+                    <%= link_to "Validation informations du tableau", admin_arret_travail_at_consolidation_valider_onglet_tableau_rente_path(@arret_travail,@at_consolidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_tableau_recapitulatif_rente' %>
+                </div>
+              </div>
+
+               <div id="tab-6" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_historique' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!--END wrapper wrapper-content"-->
+<!-- Retour du dossier de Consolidation pour le rédacteur-->
+<div class="modal inmodal" id="retourner_dossier" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de retour du dossier Consolidation</h4>
+      </div>
+        <%= bootstrap_form_for(@at_consolidation, url: admin_at_consolidation_retourner_process_path(@at_consolidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+  .progressbar li.rejet.active:before {
+    background-color: red;
+  }
+</style>

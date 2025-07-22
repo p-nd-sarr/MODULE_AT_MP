@@ -1,0 +1,44 @@
+<h3>Critères de recherche</h3>
+<br>
+
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+      <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :date_debut_cont, 'Date début' %>
+      <%= f.date_field :date_debut_cont, class: 'form-control' %>
+    </div>
+
+  </div>
+  <br>
+  <div class="hr-line-dashed"></div>
+  <%= link_to "Annuler", request.path, class: "btn btn-white" %>
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_audits_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_audits_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

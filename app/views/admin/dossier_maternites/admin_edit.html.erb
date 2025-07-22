@@ -1,0 +1,206 @@
+<%= content_for :titre_page, "Modification Dossier Indemnité" %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= bootstrap_form_for([:admin, @dossier_maternite], url: admin_dossier_maternite_admin_edit_except_path(@dossier_maternite), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <%= f.alert_message "Une erreur est survenue lors de l'enregistrement" %>
+
+      <div class="row">
+        <div class="col-lg-12">
+          <div id="document_context">
+            <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+              <div class="content clearfix">
+                <h3 class="text-navy" style="font-weight:bold">Informations Salarié</h3>
+                <hr>
+                <div class="row">
+                  <div class="form-group" style="align-content: center">
+                    <div class="col-lg-4">
+                      <%= f.text_field :num_affiliation, label: 'N° affiliation' %>
+                    </div>
+                    <%= f.hidden_field :sexe_salarie %>
+                    <div class="col-lg-4">
+                      <%= f.text_field :prenom, label: "Prénom", readonly: true %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.text_field :nom, label: "Nom", readonly: true %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.select :type_piece,
+                                   DossierMaternite::TYPE_PIECE.keys.collect { |type_piece| [DossierMaternite.human_enum_name(:type_piece, type_piece), type_piece] },
+                                   label: "Type de pièce", required: true %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.text_field :nin, label: 'N° Identification' %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.date_field :date_naissance, label: "Date de naissance",
+                                       start_year: (Date.today - 50.year).year, end_year: (Date.today - 18.year).year %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.text_field :lieu_naissance, label: "Lieu de naissance" %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.email_field :email, label: 'Email' %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.phone_field :telephone, label: 'Téléphone', help: "spécifiez l'indicatif du pays (ex: 221770000000)" %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.text_field :adresse_domicile %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.date_select :debut_conges, label: "Date départ congés",
+                                        start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+                    </div>
+                    <div class="col-lg-4" id="subrogation_non">
+                      <%= f.date_select :date_suspension_salaire, label: "Date Suspension Salaire",
+                                        start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+                    </div>
+                    <div class="col-lg-4 box2">
+                      <%= f.check_box :subrogation, label: "Subrogation" %>
+                    </div>
+                    <div class="col-lg-4 box2">
+                      <%= f.check_box :attributaire, label: "Désigner mandataire" %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.select :mode_paiement,
+                                   MODE_PAIEMENT_CAISSE_CSS.keys.collect { |mode_paiement| [DossierMaternite.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                                   include_blank: true, label: 'Mode de paiement' %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.select :nombre_part_impot,
+                                   DossierMaternite::NOMBRE_PART_IMPOT.keys.collect { |nombre_part_impot| [DossierMaternite.human_enum_name(:nombre_part_impot, nombre_part_impot), nombre_part_impot] },
+                                   label: "Part Impot", required: true %>
+                    </div>
+                    <div class="col-lg-4">
+                      <%= f.select :part_trimf,
+                                   DossierMaternite::PART_TRIMF.keys.collect { |part_trimf| [DossierMaternite.human_enum_name(:part_trimf, part_trimf), part_trimf] },
+                                   label: "Part Trimf", required: true %>
+                    </div>
+                    <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 2px; padding: 22px;" id="mode_paiement_virement">
+                      <div class="col-lg-6">
+                        <%= f.collection_select :admin_banque_agence_id,
+                                                Admin::BanqueAgence.all, :id, :nom_complet,
+                                                label: 'Banque',
+                                                include_blank: true %>
+                      </div>
+                      <div class="col-lg-6">
+                        <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte', maxlength: 12, minlength: 12 %>
+                        <%= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+                    <div class="content clearfix">
+                      <h3 class="text-navy" style="font-weight:bold">Informations Employeur</h3>
+                      <hr>
+                      <div class="row">
+                        <div class="form-group" style="align-content: center">
+                          <div class="col-lg-4">
+                            <%= f.date_select :date_embauche, label: "Date d'embauche",
+                                              start_year: (Date.today - 65.year).year, end_year: Date.today.year %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.text_field :num_immatriculation, label: "N° Immatriculation Employeur" %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.text_field :raison_sociale, label: "Raison sociale Employeur", readonly: true %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.phone_field :tel_employeur, label: 'Téléphone Employeur', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.email_field :email_employeur, label: 'Email Employeur' %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.text_field :adresse_employeur, label: 'Adresse Employeur' %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-12" style="margin-top: 20px; padding-bottom: 2px;" id="attributaire_oui">
+                    <div class="content clearfix">
+                      <h3 class="text-navy" style="font-weight:bold">Informations mandataire</h3>
+                      <hr>
+                      <div class="row">
+                        <div class="form-group" style="align-content: center">
+                          <div class="col-lg-4">
+                            <%= f.text_field :prenom_attributaire, label: "Prénom" %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.text_field :nom_attributaire, label: "Nom" %>
+                          </div>
+                          <div class="col-lg-4">
+                            <%= f.text_field :nin_attributaire, label: 'N° Identification' %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+            <div class="content clearfix">
+              <h3 class="text-navy" style="font-weight:bold">Modification exceptionnelle</h3>
+              <hr>
+              <div class="row">
+                <div class="form-group" style="align-content: center">
+                  <div class="col-lg-4">
+                    <%= f.text_field :prenom, label: "Prénom", required: true %>
+                  </div>
+                  <div class="col-lg-4">
+                    <%= f.text_field :nom, label: "Nom", required: true %>
+                  </div>
+                  <div class="col-lg-4">
+                    <%= f.text_field :nin, label: 'N° Identification' %>
+                  </div>
+                  <div class="col-lg-4">
+                    <%= f.date_select :debut_grossesse, label: "Date début grossesse (approximative)", include_blank: true,
+                                      start_year: (Date.today - 2.year).year, end_year: (Date.today).year %>
+                  </div>
+                  <div class="col-lg-4">
+                    <%= f.date_select :date_embauche, label: "Date d'embauche", include_blank: true,
+                                      start_year: (Date.today - 65.year).year, end_year: Date.today.year %>
+                  </div>
+                  <div class="col-lg-4">
+                    <%= f.date_select :debut_conges, label: "Date départ congés", include_blank: true,
+                                      start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+                  </div>
+                  <div class="col-lg-4" id="subrogation_non">
+                    <%= f.date_select :date_suspension_salaire, label: "Date Suspension Salaire", include_blank: true,
+                                      start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+                  </div>
+                  <div class="col-lg-4">
+                    <%= f.number_field :montant_salaire, label: 'Salaire de référence' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+        </div>
+        <div class="form-group col-lg-12">
+          <hr>
+          <div class="col-lg-4 col-lg-offset-8" style="text-align:right">
+            <%= link_to 'Annuler', (@dossier_maternite.persisted? ? [:admin, @dossier_maternite] : admin_dossier_maternites_path), class: 'btn btn-white' %>
+            <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#document_context').hide();
+      })
+  </script>
+<% end %>

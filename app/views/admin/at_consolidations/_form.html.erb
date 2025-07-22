@@ -1,0 +1,30 @@
+<%= bootstrap_form_for([:admin,@arret_travail, @at_consolidation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <%= f.hidden_field :ajoute_par_id, value: current_user.id %>
+    <div class="col-lg-12">
+
+      <div class="col-lg-6">
+        <%= f.number_field :taux_ipp_medecin_traitant, label: "Taux IPP Médecin traitant:" %>
+      </div>
+
+      <div class="col-lg-6">
+        <%= f.date_field :date_consolidation_medecin_traitant, label: 'Date consolidation retenue:' %>
+      </div>
+
+      <div class="col-lg-6">
+        <%= f.date_field :date_visite, label: 'Date visite:' %>
+      </div>
+
+    </div>
+    <div class="col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-6 col-lg-offset-6" style="text-align: right;">
+        <%= link_to 'Annuler', (@at_consolidation.persisted? ? [:admin, @at_consolidation.arret_travail, @at_consolidation] : admin_arret_travails_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+

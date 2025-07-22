@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  raison_sociale: MyString
+  type_etablissement: 1
+
+two:
+  raison_sociale: MyString
+  type_etablissement: 1

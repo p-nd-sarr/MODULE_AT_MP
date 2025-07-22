@@ -1,0 +1,44 @@
+<div class="modal inmodal" id="beneficiaire" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Choisir le bénéficiaire des allocations
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th align="center">Prenom</th>
+              <th align="center">Nom</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% unless @conjoints.nil? %>
+              <% @conjoints.each do |conjoint| %>
+                <tr>
+                  <td> <%= conjoint.prenom %> </td>
+                  <td> <%= conjoint.nom_jeune_fille %> </td>
+                  <td style="width: 75px">
+                    <% if conjoint.is_beneficiary %>
+                      <span> Est bénéficiaire  <%= link_to 'Annuler', admin_prestation_exterieure_remove_beneficiary_path(conjoint.id), data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' if (current_user.admin? or current_user.gestionnaire_compte_allocataire?) %></span>
+                    <% else %>
+                      <%= link_to 'Choisir en tant que bénéficiaire', admin_prestation_exterieure_add_beneficiary_path(conjoint.id), data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' if (current_user.admin? or current_user.gestionnaire_compte_allocataire?) %>
+                    <% end %>
+                  </td>
+              </tr>
+            <% end %>
+            <% end %>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

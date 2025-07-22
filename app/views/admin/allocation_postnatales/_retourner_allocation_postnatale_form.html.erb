@@ -1,0 +1,31 @@
+<div class="modal inmodal" id="RetournerAllocationPostnataleModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-arrow-left modal-icon btn-white"></i>
+        <h4 class="modal-title">
+          Retourner allocation postnatale
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for(object, url: admin_dossier_prestation_allocation_postnatale_retour_volet_path(@dossier_prestation, object), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <%= f.text_area :motif_retour_volet, label: 'Motif retour' %>
+            <div class="form-group row">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,74 @@
+<%= content_for :titre_page, 'Liste des allocataires suspendus' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', '#', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: admin_allocataires_path do |f| %>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :numero_allocataire, 'Matricule' %>
+          <%= f.search_field :numero_allocataire, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :prenom, 'Prénom' %>
+          <%= f.search_field :prenom, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :nom, 'Nom' %>
+          <%= f.search_field :nom, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :numero_allocataire, 'Matricule de solde' %>
+          <%= f.search_field :numero_allocataire, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @allocataires %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Matricule Solde</th>
+        <th scope="col">Régime</th>
+        <th scope="col">Etat</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @allocataires.each do |allocataire| %>
+        <tr>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= allocataire.prenom %></td>
+          <td><%= allocataire.nom %></td>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= Allocataire.human_enum_name(:etat, allocataire.etat) %></td>
+         
+          <% if allocataire.etat = :suspendus and current_user.chef_service_allocation? %>
+            <td style="width: 75px">
+              <%= link_to 'Lever suspension', admin_lever_suspension_path(allocataire.numero_allocataire),
+                          class: 'btn btn-outline btn-primary btn-xs', data: {confirm: 'Voulez vous vraiment lever la suspension?'} %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @allocataires %>
+  </div>
+</div>

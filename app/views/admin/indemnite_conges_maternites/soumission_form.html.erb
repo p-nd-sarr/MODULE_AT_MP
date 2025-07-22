@@ -1,0 +1,38 @@
+<%= content_for :titre_page, 'Conditions Soumission Demande' %>
+
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Soumission de la demande </h5>
+        </div>
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@indemnite_conges_maternite,
+                                 url: admin_dossier_maternite_indemnite_conges_maternite_soumettre_path(@dossier_maternite, @indemnite_conges_maternite),
+                                 layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Une erreur est survenue lors de la soumission." %>
+            <p>
+              En soumettant le demande j'accepte les conditions suivantes :
+            </p>
+
+            <%= f.check_box :condition_1, label: "Condition 1 : Tranche :
+              #{IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement)}
+              Grossesse : #{l @dossier_maternite.debut_grossesse}" %>
+            <%= f.check_box :condition_2, label: "Condition 2 : Je certifie que les renseignements portés sur la présente demande
+              sont exactes." %>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row">
+              <div class="col-sm-4 col-sm-offset-4">
+                <%= link_to 'Annuler', admin_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite), class: 'btn btn-white' %>
+                <%= f.button 'Liquider', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

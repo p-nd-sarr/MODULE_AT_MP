@@ -1,0 +1,63 @@
+<h3>Critères de recherche</h3>
+<br>
+
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+      <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :nom_dossier_cont, 'Nom dossier' %>
+      <%= f.search_field :nom_dossier_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :objet_dossier_cont, 'Objet dossier' %>
+      <%= f.search_field :objet_dossier_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :requerent_cont, 'Requérent' %>
+      <%= f.search_field :requerent_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :admin_type_dossier_juridique_id_eq, 'Type dossier juridique' %>
+      <%= f.collection_select :admin_type_dossier_juridique_id_eq, @admin_type_dossier_juridiques, :id, :title, { include_blank: true }, { class: 'form-control' } %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :defendeur_cont, 'Défendeur' %>
+      <%= f.search_field :defendeur_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="hr-line-dashed"></div>
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_juridiques_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_juridiques_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

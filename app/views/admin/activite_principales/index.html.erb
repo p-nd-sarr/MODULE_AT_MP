@@ -1,0 +1,36 @@
+<%= content_for :titre_page, 'Admin Activite Principales' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_activite_principale_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th width="10px">ID</th>
+        <th scope="col">Secteur activite</th>
+        <th scope="col">Description</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_activite_principales.each do |admin_activite_principale| %>
+        <tr>
+          <td><%= link_to "##{admin_activite_principale.id}", admin_activite_principale %></td>
+          <td><%= admin_activite_principale.admin_secteur_activite.description %></td>
+          <td><%= admin_activite_principale.description %></td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_activite_principale_path(admin_activite_principale), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_activite_principale, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

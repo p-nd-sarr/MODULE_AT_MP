@@ -1,0 +1,223 @@
+<% if @demande_arret_travail.current_state >= :guerison_soumis and !@demande_arret_travail.dossier_rejete? %> 
+    <div class="row">
+        <div class="col-lg-4 float-lg-right" style="margin-top: 30px; float: right">
+            <%if @demande_arret_travail.annulation_guerison_soumise? && (current_user.medecin_conseil?) %>
+                <%= link_to "valider annulation de guerison",  admin_arret_travail_valider_annulation_guerison_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-success btn-sm' %>
+            <% end%>
+            <%if @demande_arret_travail.gueris? && (current_user.technicien_at? || current_user.technicien_direction_at?)  %>
+                <%= link_to "cloturer le dossier",  admin_arret_travail_cloturer_dossier_at_path(@demande_arret_travail), class: 'btn btn-success btn-sm' %>
+            <% end%>
+        </div>
+    </div>
+    <hr/>
+
+    <div class="row">
+        <div class="wrapper wrapper-content animated fadeIn">
+            <div class="progressbar-wrapper">
+                <ul class="progressbar">
+                    <li class="<%= ("active") if @demande_arret_travail.current_state >= :annulation_guerison_soumise %>">Annulation guérison soumise</li>
+                    <li class="<%= ("active") if @demande_arret_travail.current_state  == :accepte %>">Annalution guérison validée</li>
+                </ul>
+            </div><!--End ProgressBar"-->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12" style="margin-top: 30px">
+            <div class="panel-body">
+               <div class="row form-group mb-5">
+                <h2 style="text-align: left;"><span class="text-navy">Informations du dossier:</span> </h2>
+                  <div class="hr-line-dashed"></div>
+                  <div class="col-lg-6">
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                            <dt>N° Dossier: </dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                            <dd class="mb-1"><%=@demande_arret_travail.num_dossier%></dd>
+                        </div>
+                    </d1>
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date Cloture:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1">
+                                <%= !@demande_arret_travail.date_cloture_dossier.nil? ? 
+                                    @demande_arret_travail.date_cloture_dossier.strftime("%d/%m/%Y"):
+                                    "pas défini"
+                                %>
+                            </dd>
+                        </div>
+                    </d1>
+                 
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date création:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1">
+                                <%= !@demande_arret_travail.created_at.nil? ? 
+                                    @demande_arret_travail.created_at.strftime("%d/%m/%Y"):
+                                    "pas défini"
+                                %>
+                            </dd>
+                            
+                        </div>
+                    </d1>
+               
+                     <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Etat du dossier:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                           <dd class="mb-1">
+                                 <span class="label label-warning"> <strong> <%=@demande_arret_travail.workflow_state%></strong></span>
+                            </dd>
+                        </div>
+                     </d1>
+
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Motif d'annulation:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                           <dd class="mb-1">
+                                 <span> <strong> <%=@demande_arret_travail.motif_annulation_guerison%></strong></span>
+                            </dd>
+                        </div>
+                     </d1>
+                </div>
+                <div class="col-lg-6">
+  
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Numéro affiliation:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1 text-navy"><%= @demande_arret_travail.numero_affiliation %> </dd>
+                        </div>
+                    </d1>
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date accident:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.date_accident.strftime("%d/%m/%Y")%></dd>
+                        </div>
+                    </d1>
+
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Dossier créé par:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.user.email%> (<%=@demande_arret_travail.user.type_profil%>)</dd>
+                        </div>
+                    </d1>
+
+                   <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date annulation:</dt>
+                        </div>
+                        <% unless @demande_arret_travail.date_annulation_guerison.nil? %>
+                            <div class="col-sm-6" style="text-align: left;">
+                                <dd class="mb-1"><%= @demande_arret_travail.date_annulation_guerison.strftime("%d/%m/%Y")%></dd>
+                            </div>
+                        <% end %>
+                    </d1>
+                </div>
+            </div>
+            </div>
+        </div> <!-- End col -->
+    </div> <!-- End row -->
+<% end %>
+
+
+<style>
+
+  .progressbar-wrapper_clo {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 11%;
+  }
+
+  .progressbar_clo li {
+    list-style-type: none;
+    width: 22%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar_clo li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar_clo li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar_clo li:first-child:after {
+    content: none;
+  }
+
+  .progressbar_clo li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar_clo li.active:before {
+    border-color: #1ab394;
+    background: #ddaf82;
+  }
+
+  .progressbar_clo li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar1 li.active:before {
+    background: #ddaf82;
+    background-size: 60%;
+  }
+
+  .progressbar1 li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar1 {
+    counter-reset: step;
+  }
+
+  .progressbar1 li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+  .progressbar1 li.rejet.active:before {
+    background-color: red;
+  }
+</style>
+             

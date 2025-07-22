@@ -1,0 +1,56 @@
+<%= content_for :titre_page, "Détails Mandataires" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_mandataires_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_mandataire_path(@mandataire), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter un mandataire', new_admin_mandataire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Prenom:</strong>
+              <%= @mandataire.prenom unless @mandataire.prenom.nil? %>
+            </p>
+
+
+            <p>
+              <strong>Nom:</strong>
+              <%= @mandataire.nom unless @mandataire.nom.nil? %>
+            </p>
+
+            <p>
+              <strong>Sexe:</strong>
+              <%= @mandataire.sexe unless @mandataire.sexe.nil? %>
+            </p>
+
+            <p>
+              <strong>Nin:</strong>
+              <%= @mandataire.nin unless @mandataire.nin.nil? %>
+            </p>
+
+            <p>
+              <strong>Téléphone:</strong>
+              <%= @mandataire.telephone unless @mandataire.telephone.nil? %>
+            </p>
+
+            <p>
+              <strong>Email":</strong>
+              <%= @mandataire.email unless @mandataire.email.nil? %>
+            </p>
+
+            <p>
+              <strong>Eqntreprise":</strong>
+              <%= @mandataire.psrm_employeur.fhrsoc unless @mandataire.psrm_employeur.nil? or @mandataire.psrm_employeur.fhrsoc.nil? %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

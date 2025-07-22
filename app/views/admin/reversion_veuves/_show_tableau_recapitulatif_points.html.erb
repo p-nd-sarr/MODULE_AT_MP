@@ -1,0 +1,78 @@
+<p>
+  <strong>Part:</strong>
+  <%= @reversion_veuve.part %>%
+</p>
+
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">Régime Général</th>
+    <th scope="col">Régime Cadre</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr>
+    <td>Points de base</td>
+    <td><%= @reversion_veuve.calcul_points_base_rg %></td>
+    <td><%= @reversion_veuve.calcul_points_base_rc %></td>
+  </tr>
+  <tr>
+    <td>Points de majoration</td>
+    <td><%= @reversion_veuve.calcul_points_majoration_rg %></td>
+    <td><%= @reversion_veuve.calcul_points_majoration_rc %></td>
+  </tr>
+  <tr>
+    <td>Points à servir</td>
+    <td><%= @reversion_veuve.calcul_points_servis_rg %></td>
+    <td><%= @reversion_veuve.calcul_points_servis_rc %></td>
+  </tr>
+  <tr>
+    <td>Points gratuits</td>
+    <td><%= @reversion_veuve.calcul_points_gratuits_rg %></td>
+    <td><%= @reversion_veuve.calcul_points_gratuits_rc %></td>
+  </tr>
+
+  <tr>
+    <td>Points de cotisation du donneur</td>
+    <td><%= @reversion_veuve.allocataire.points_rg %></td>
+    <td><%= @reversion_veuve.allocataire.points_rc %></td>
+  </tr>
+
+  <tr>
+    <td>Points gratuit du donneur</td>
+    <td><%= @reversion_veuve.allocataire.points_gratuits_rg %></td>
+    <td><%= @reversion_veuve.allocataire.points_gratuits_rc %></td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>
+  <% if @reversion_veuve.versement_mensuel? %>
+    Pension mensuelle :
+  <% else %>
+    Versement unique :
+  <% end %>
+  <%= format_cfa @reversion_veuve.calcul_allocation %>
+</h3>
+<h3>
+  Date d'entrée en jouissance : <%= @reversion_veuve.calcul_date_jouissance.try(:strftime, "%d/%m/%Y") %>
+</h3>
+
+<% if @reversion_veuve.versement_mensuel? %>
+  <h3>
+    Montant Rappel Total: <%= format_cfa @reversion_veuve.calcul_montant_rappel %>
+  </h3>
+<% end %>
+
+<br>
+<h5 class="text-info">
+  Pourcentage de majoration : <%= @reversion_veuve.taux_majoration %>%
+</h5>
+
+<br>
+<h5 class="text-info">
+  Nombre d'épouse : <%= @reversion_veuve.allocataire.conjoints.valide.count %>
+</h5>
+

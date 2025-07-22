@@ -1,0 +1,107 @@
+<style type="text/css">
+  
+.no-text{
+  font-size:0px;
+}
+.invalid-feedback{
+  font-size:0px;
+  }
+</style>
+
+<% @enfant ||= @allocation_postnatale.enfant %>
+<%= bootstrap_form_for([:admin, @dossier_prestation, @allocation_postnatale]) do |f| %>
+<div class="row">
+  <div class="form-group" style="align-content: center">
+    <div class="col-sm-12">
+      <%= f.alert_message 'Erreurs: rappel de la saisie du document à joindre' %>
+      <%= f.hidden_field :enfant_id, value: @enfant.id %>
+      <%= f.hidden_field :date_accouchement, value: @enfant.date_naissance %>
+
+      <div id="date_visite">
+        <div class="col-sm-6">
+          <%= f.date_field :date_visite_1, label: 'Date de la première visite' %>
+        </div>
+
+        <div class="col-sm-6">
+          <%= f.date_field :date_visite_2, label: 'Date de la deuxième visite' %>
+        </div>
+
+        <div class="col-sm-6">
+          <%= f.date_field :date_visite_3, label: 'Date de la troisième visite' %>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <%= f.select :volet, @enfant.volets_eligibles.keys.collect{ |volet|
+          [AllocationPostnatale.human_enum_name(:volet, volet), volet] },
+                     label: 'N° Volet' %>
+      </div>
+
+      <div class="col-sm-6">
+        <%= f.date_field :date_reception, label: 'Date de réception', required: true %>
+      </div>
+
+      <div class="col-sm-6">
+        <%= f.date_field :date_enregistrement, :value => Time.now.strftime('%Y-%m-%d'), label: "Date d'enregistrement", readonly: true, required:true %>
+      </div>
+
+      <div class="col-sm-6">
+        <h4 style="font-weight: bold;">Document *</h4>
+        <div class="btn-file">
+          <label class= "no-text" >
+            <%= f.file_field :document, hide_label: true, label: '.',
+                             required: true, id:'label-ext'%>
+            <div class="btn btn-success" style="margin-top:-20px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+            </div>
+          </label>
+          <small id="doc-name"></small>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <%= f.text_area :commentaire, label: 'Commentaire' %>
+      </div>
+
+      <div class="form-group col-lg-12">
+        <hr>
+        <div class="col-lg-3 col-lg-offset-9" style="text-align:right;">
+          <%= link_to 'Annuler', admin_dossier_prestation_allocation_postnatales_path(@dossier_prestation), class: 'btn btn-white' %>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function(){
+        show_hide_date_visite()
+
+        $('#allocation_postnatale_volet').change(
+            function (){
+                show_hide_date_visite()
+            }
+        )
+    });
+
+    function show_hide_date_visite(){
+        if ($('#allocation_postnatale_volet').val() == "volet4"){
+            $('#date_visite').hide();
+        }else {
+            $('#date_visite').show();
+        }
+    }
+
+    const input=document.getElementById('label-ext');
+    const infoArea=document.getElementById('doc-name');
+    input.addEventListener('change', showFileName);
+    function showFileName(event){
+        const input=event.srcElement;
+        const fileName=input.files[0].name;
+        infoArea.textContent=fileName;
+    }
+
+  </script>
+<% end %>

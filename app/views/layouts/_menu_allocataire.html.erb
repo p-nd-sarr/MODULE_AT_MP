@@ -1,0 +1,58 @@
+<li class="<%= 'active' if is_active_controller('allocataire/home') %>">
+  <%= link_to allocataire_root_path do %>
+      <i class="fa fa-home"></i> <span class="nav-label">Accueil</span>
+  <% end %>
+</li>
+<li class="<%= 'active' if is_active_controller('allocataire/carrieres') %>">
+  <%= link_to allocataire_carrieres_path do %>
+      <i class="fa fa-briefcase"></i> <span class="nav-label">Ma carrière</span>
+  <% end %>
+</li>
+<li class="<%= 'active' if is_active_controller('allocataire/conjoints') or is_active_controller('allocataire/enfants') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Ma grappe familiale</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('allocataire/epouses') %>">
+    <li class="<%= 'active' if is_active_controller('allocataire/conjoints') and is_active_action('index') %>"><%= link_to 'Mes conjoints', allocataire_conjoints_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('allocataire/enfants') %>">
+    <li class="<%= 'active' if is_active_controller('allocataire/enfants') and is_active_action('index') %>"><%= link_to 'Mes enfants', allocataire_enfants_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('allocataire/Tableau récapitulatif des points') %>">
+  <%= link_to allocataire_recap_points_path do %>
+    <i class="fa fa-history"></i> <span class="nav-label">Tableau récapitulatif des points</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('allocataire/paiements') %>">
+  <%= link_to allocataire_paiements_path do %>
+    <i class="fa fa-history"></i> <span class="nav-label">Historiques paiement</span>
+  <% end %>
+</li>
+<!--<li class="<%= 'active' if is_active_controller('allocataire/epouses') or
+    is_active_controller('salarie/enfants') %>">
+  <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">Mes demandes de services</span><span class="fa arrow"></span></a>
+    <ul class="nav nav-second-level <%= is_active_controller('allocataire/services') %>">
+    <li class="<%= 'active' if is_active_controller('allocataire/grappe_familiale') %>"><%= link_to ' Mise à jour de la grappe familiale', allocataire_update_grappe_familiales_path %></li>
+  </ul>
+
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/services') %>"><%= link_to 'Demande de modification du mode de paiement', allocataire_modifier_mode_paiements_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/services') %>"><%= link_to 'Demande de modification d’adresse', allocataire_modifier_adresses_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/services') %>"><%= link_to 'Demande de régularisation de pension', allocataire_regularisation_pensions_path %></li>
+  </ul>  
+
+</li> -->
+
+<li class="<%= 'active' if is_active_controller('salarie/demande_liquidations') %>">
+  <%= link_to root_path do %>
+    <i class="fa fa-folder"></i> <span class="nav-label">Mes documents</span>
+  <% end %>
+</li>

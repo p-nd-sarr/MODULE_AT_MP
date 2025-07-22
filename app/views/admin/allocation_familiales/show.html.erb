@@ -1,0 +1,175 @@
+<%= content_for :titre_page do %>
+  Détails allocation familiale -
+  <span style="font-size: 50%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_prestation.num_dossier}", admin_dossier_prestation_path(@dossier_prestation), class: 'text-info' %>
+  </span>
+  <small>
+    <br>
+    <% unless @allocation_familiale.enfant.nil? %>
+      Pour : <%= @allocation_familiale.enfant.full_name %>
+    <% end %>
+  </small>
+  <small>
+    <br>
+    <%= "Etat allocation : #{AllocationFamiliale.human_enum_name(:etat, @allocation_familiale.etat)}" %>
+  </small>
+  <small>
+    <br>
+    Est repris? : <%= state_yes_no @allocation_familiale.est_repris %>
+  </small>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_prestation_allocation_familiales_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+  <% if @allocation_familiale.creation? and (@allocation_familiale.echeance_caisse.nil? or (not @allocation_familiale.echeance_caisse.nil? and @allocation_familiale.is_from_ech_paid?)) %>
+    <%#= link_to 'Modifier', edit_admin_dossier_prestation_allocation_familiale_path(@dossier_prestation, @allocation_familiale), class: 'btn btn-white btn-sm' if @dossier_prestation.current_state < :cloturer %>
+    <%= link_to 'Liquider', admin_dossier_prestation_allocation_familiale_soumettre_path(@dossier_prestation, @allocation_familiale), class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire? and @allocation_familiale.can_be_liquidate? and @allocation_familiale.pret_pour_soumission? and (@allocation_familiale.creation? or @allocation_familiale.echu?) and @dossier_prestation.current_state < :cloturer and @dossier_prestation.current_state > :creation %>
+    <%= link_to 'Supprimer', [:admin, @dossier_prestation, @allocation_familiale], method: :delete, data: { confirm: 'En êtes vous sûr?' }, id: 'dd_hover', class: 'btn btn-danger btn-sm' if @allocation_familiale.creation? and current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer %>
+    <br> <br>
+  <% end %>
+  <% if (@allocation_familiale.echeance_caisse.nil? or (not @allocation_familiale.echeance_caisse.nil? and @allocation_familiale.is_from_ech_paid?)) and @dossier_prestation.current_state < :cloturer %>
+    <%= (link_to 'Valider', admin_dossier_prestation_allocation_familiale_valider_path(@dossier_prestation, @allocation_familiale), class: 'btn btn-primary btn-sm') if @allocation_familiale.soumis? and current_user.chef_agence? %>
+    <% if ((@allocation_familiale.soumis? and current_user.chef_agence?) or (@allocation_familiale.valide? and current_user.comptable? and not @allocation_familiale.paiement?)) %>
+      <button class="btn btn-danger btn-sm" style="" data-toggle="modal" data-target="#RetournerAllocationFamilialeModal">
+        Retourner
+      </button>
+    <% end %>
+    <%#-= link_to 'Rejeter', admin_allocation_familiale_rejeter_path(@allocation_familiale), class: 'btn btn-primary btn-sm' if @dossier_prestation.current_state < :cloturer %>
+  <% end %>
+  <% unless @allocation_familiale.motif_retour.nil? %>
+    <button class="btn btn-white btn-sm" style="" data-toggle="modal" data-target="#RetournerAllocationFamilialeModal">
+      Voir motif retour
+    </button>
+  <% end %>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <% if @allocation_familiale.creation? %>
+              <% if @allocation_familiale.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div style="margin-top:30px">
+              <ul class="nav nav-tabs">
+                <li class="active">
+                  <a data-toggle="tab" href="#tab-1">
+                    <i class="fa fa-user"></i>
+                    Informations Générales
+                  </a>
+                </li>
+                <li class="">
+                  <a data-toggle="tab" href="#tab-2">
+                    <i class="fa fa-folder"></i>
+                    Documents
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @allocation_familiale.document_valid? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @allocation_familiale.document_valid? %>
+                  </a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div id="tab-1" class="tab-pane active" style="margin-top:50px">
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                          <dt><span class="fa fa-user"></span> Prénom & nom de l'enfant:</dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+                          <dd class="mb-1"><%= @allocation_familiale.enfant.full_name %></dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                          <dt><span class="fa fa-calendar"></span> Date de naisance de l'enfant:</dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                          <dd class="mb-1"><%= l @allocation_familiale.enfant.date_naissance %></dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                          <dt><span class="fa fa-calendar"></span> Age de l'enfant:</dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                          <dd class="mb-1"><%= @allocation_familiale.enfant.age %> ans</dd>
+                        </div>
+                      </d1>
+                      <% if @allocation_familiale.soumis? %>
+                        <d1 class="row mb-0">
+                          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                            <dt><span class="fa fa-calendar"></span> Age de l'enfant à la soumission:</dt>
+                          </div>
+                          <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                            <dd class="mb-1"><%= @allocation_familiale.age_a_la_soumission %> ans</dd>
+                          </div>
+                        </d1>
+                      <% end %>
+                    </div>
+                    <div class="col-lg-6">
+                      <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                          <dt><span class="fa fa-list"></span> Trimestre:</dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                          <dd class="mb-1"><%= AllocationFamiliale.human_enum_name(:trimestre, @allocation_familiale.trimestre) %></dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                          <dt><span class="fa fa-calendar"></span> Année:</dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                          <dd class="mb-1"><%= @allocation_familiale.annee %></dd>
+                        </div>
+                      </d1>
+                      <% unless @allocation_familiale.echeance_caisse.nil? %>
+                        <d1 class="row mb-0">
+                          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                            <dt><span class="fa fa-calendar"></span> Prise en charge dans échéance:</dt>
+                          </div>
+                          <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                            <dd class="mb-1"><%= @allocation_familiale.echeance_caisse.trimestre %> -
+                              <%= @allocation_familiale.echeance_caisse.annee %></dd>
+                          </div>
+                        </d1>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% if @allocation_familiale.valider_doucment_familiale? %>
+                      <%= link_to "Je valide tous les documents",
+                                  admin_dossier_prestation_allocation_familiale_valider_documents_path(@dossier_prestation, @allocation_familiale),
+                                  'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'retourner_allocation_familiale_form', object: @allocation_familiale %>

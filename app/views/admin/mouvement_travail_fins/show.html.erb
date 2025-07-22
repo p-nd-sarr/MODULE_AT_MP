@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_mouvement_travail_fin" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_mouvement_travail_fins_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_mouvement_travail_fin_path(@admin_mouvement_travail_fin), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_mouvement_travail_fin', new_admin_mouvement_travail_fin_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_mouvement_travail_fin.code %>
+                </p>
+
+                            <p>
+                  <strong>Description:</strong>
+                  <%= @admin_mouvement_travail_fin.description %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

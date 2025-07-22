@@ -1,0 +1,65 @@
+<h3>Plage d'extraction</h3>
+<br>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <%= f.label :date_activation_dp_gteq , "Date début:"%>
+            <%= f.date_field :date_activation_dp_gteq, class: 'form-control' %>
+        </div>
+
+        <div class="col-sm-6">
+            <%=f.label :date_activation_dp_lteq, "Date fin:" %>
+            <%= f.date_field :date_activation_dp_lteq, class: 'form-control' %>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="col-sm-4">
+        <%= f.label :mode_paiement_eq, 'Mode de paiement:' %>
+        <%= f.select :mode_paiement_eq, LiquidationRetraite.mode_paiements.to_a.map { |w| [LiquidationRetraite.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                    { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+            <%= f.label :agence_creation_id_eq, 'Agence:' %>
+            <%= f.collection_select :admin_agence_id_eq, Admin::Agence.ipres.order(:description_prest), :id, :description_prest,
+                    { :include_blank => true }, class: 'form-control' %>
+        </div>
+
+        <div class="col-sm-4">
+            <%= f.label :admin_association_allocataire_id_eq, 'Association:' %>
+            <%= f.collection_select :admin_association_allocataire_id_eq, Admin::AssociationAllocataire.all, :id, :name,
+                    { :include_blank => true }, class: 'form-control' %>
+        </div>
+    </div>
+   
+
+    <div class="col-sm-12">
+        <div class="hr-line-dashed"></div>
+        <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+        <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+        <div class="hr-line-dashed"></div>
+    </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= allocataires_actifs_admin_allocataires_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= allocataires_actifs_admin_allocataires_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

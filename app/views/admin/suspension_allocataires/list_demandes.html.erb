@@ -1,0 +1,127 @@
+<%= content_for :titre_page, 'Demandes de regularisations de pensions' %>
+
+<%= content_for :actions_page do %>
+ <%= link_to 'Allocataire', [:admin, @allocataire], class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Nouvelle demande', new_admin_allocataire_regularisation_pension_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+         <th scope="col">Motif</th>
+        <th scope="col">Etat</th>
+        <th colspan="5"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @regularisation_pensions.each do |regularisation_pension| %>
+        <tr>
+          <td><%= regularisation_pension.id %></td>
+          <td><%= regularisation_pension.numero_allocataire %></td>
+          <td><%= regularisation_pension.prenom %></td>
+          <td><%= regularisation_pension.nom %></td>
+          <td><%= regularisation_pension.motif_regularisation_pension %></td>
+          <td><%= RegularisationPension.human_enum_name(:etat, regularisation_pension.etat) %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, @allocataire, regularisation_pension], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+
+          <td style="width: 75px">
+            <%#= link_to 'modifier', edit_admin_allocataire_regularisation_pension_path(@allocataire, regularisation_pension), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+
+          <td style="width: 75px">
+            <%#= link_to 'supprimer', [:admin, @allocataire, regularisation_pension], method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+
+        <% if regularisation_pension.soumis? and current_user.chef_service_allocation? %>
+          <td style="width: 75px">
+            <button type="button" class="btn btn-outline btn-success btn-xs" data-toggle="modal" data-target="#affecter-modal<%=regularisation_pension.id%>" id="affecter_allocataire_id">
+               Affecter
+            </button>
+          </td>
+        <% end%> 
+
+        <% if regularisation_pension.affecte?  %>
+          <td style="width: 75px">
+              <%= link_to 'Valider',admin_allocataire_regularisation_pension_valider_path(@allocataire,regularisation_pension), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        <% end%>
+        
+            <% if regularisation_pension.valide?  %>
+          <td style="width: 75px">
+              <%= link_to 'Regulariser',admin_allocataire_regularisation_pension_regulariser_path(@allocataire,regularisation_pension), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        <% end%>
+
+        <% unless regularisation_pension.valide? || regularisation_pension.rejete? %> 
+          <td>
+            <button type="button" class="btn btn-outline btn-danger btn-xs" data-toggle="modal" data-target="#rejeter-modal<%=regularisation_pension.id%>" id="affecter_allocataire_id">
+              Rejeter
+            </button>
+             <%#= link_to 'Rejeter',admin_rejet_modal_modifier_mode_paiement_path(modifier_mode_paiement), class: 'btn btn-outline btn-danger btn-xs' %> 
+          </td>
+        <% end%>
+
+        </tr>
+        <% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-modal<%=regularisation_pension.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(regularisation_pension, url: admin_allocataire_regularisation_pension_affectation_path(@allocataire,regularisation_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= regularisation_pension.id %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+   <% end %>
+ <div class="modal inmodal" id="rejeter-modal<%=regularisation_pension.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(regularisation_pension, url: admin_allocataire_regularisation_pension_rejeter_path(@allocataire,regularisation_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Rejet de la demande : <%= regularisation_pension.id %> </h4>
+           
+          </div>
+          <div class="modal-body">
+              <%= f.text_field :motif_rejet, label: 'Motif du rejet' %> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-danger">Rejeter la demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

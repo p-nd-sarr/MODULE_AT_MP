@@ -1,0 +1,8 @@
+Bonjour <%= @user.prenom %>,<br><br>
+Nous avons le plaisir de vous informer que l'adresse e-mail de votre compte Prestation vient d’être modifiée avec succès.<br>
+Ancienne adresse e-mail : <%= @previous_email %> <br>
+Nouvelle adresse e-mail: <%= @user.email %> <br>
+<br>
+Vous pou‎vez vous connecter avec le lien: <%= link_to new_user_session_url, new_user_session_url %><br>
+<br>
+Cordialement,<br>

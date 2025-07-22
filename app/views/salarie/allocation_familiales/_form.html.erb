@@ -1,0 +1,18 @@
+<%= bootstrap_form_for([:salarie, @dossier_prestation, @allocation_familiale], layout: :horizontal) do |f| %>
+  <%= f.alert_message 'aa' %>
+  <%= f.collection_select :enfant_id, current_user.enfants, :id, :full_name, include_blank: true, label: 'Enfant' %>
+  <%= f.select :trimestre, AllocationFamiliale::TRIMESTRE.keys.collect{ |trimestre|
+    [AllocationFamiliale.human_enum_name(:trimestre, trimestre), trimestre] },
+               label: 'Trimestre' %>
+  <%= f.select :annee, ((Date.today - 21.years).year .. Date.today.year).map{|date| [date, date]},
+               label: 'Année' %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', salarie_dossier_prestation_allocation_familiales_path(@dossier_prestation), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

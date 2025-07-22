@@ -1,0 +1,87 @@
+ <% unless @dossier_reversion_salaries.nil?%>
+    <div class="ibox">
+      <div class="ibox-title">
+        <h3>Dossiers de réversion veufs(ves)</h3>
+      </div>
+      <div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Type</th>
+              <th scope="col">Éligible</th>
+              <th scope="col">Peut être éligible</th>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Part</th>
+              <th scope="col">Etat</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @dossier_reversion_salaries.veuve.eligibles.each do |dossier_reversion_salarie| %>
+              <tr>
+                <td><%= dossier_reversion_salarie.type_ayant_droit %></td>
+                <td><%= state_yes_no dossier_reversion_salarie.eligible %></td>
+                <td><%= state_yes_no dossier_reversion_salarie.peut_etre_eligible? %></td>
+                <td><%= dossier_reversion_salarie.prenom %></td>
+                <td><%= dossier_reversion_salarie.nom %></td>
+                <td><%= l dossier_reversion_salarie.date_naissance %></td>
+                <td><%= dossier_reversion_salarie.part %> %</td>
+                <td><%= dossier_reversion_salarie.etat %> </td> 
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin,dossier_reversion_salarie], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+      <div class="ibox">
+      <div class="ibox-title">
+        <h3>Dossiers de réversion orphelins</h3>
+      </div>
+      <div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Type</th>
+              <th scope="col">Éligible</th>
+              <th scope="col">Peut être éligible</th>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Part</th>
+              <th scope="col">Etat</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @dossier_reversion_salaries.orphelin.eligibles.each do |dossier_reversion_salarie| %>
+              <tr>
+                <td><%= dossier_reversion_salarie.type_ayant_droit %></td>
+                <td><%= state_yes_no dossier_reversion_salarie.eligible %></td>
+                <td><%= state_yes_no dossier_reversion_salarie.peut_etre_eligible? %></td>
+                <td><%= dossier_reversion_salarie.prenom %></td>
+                <td><%= dossier_reversion_salarie.nom %></td>
+                <td><%= l dossier_reversion_salarie.date_naissance %></td>
+                <td><%= dossier_reversion_salarie.part %> %</td>
+                <td><%= dossier_reversion_salarie.etat %> </td> 
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin,dossier_reversion_salarie], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+
+
+   
+
+

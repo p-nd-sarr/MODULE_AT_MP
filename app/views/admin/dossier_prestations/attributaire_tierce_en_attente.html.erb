@@ -1,0 +1,53 @@
+<%= content_for :titre_page, "La liste des attributaires en attente de validation." %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <% if @attributaire_tierces.count.zero? %>
+      <h2 style="text-align:center; margin-top:50px">
+        <hr>
+        La liste des attributaires en attente de validation est vide !!!
+      </h2>
+    <% else %>
+
+      <%= paginate @attributaire_tierces %>
+      <div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+        <table class="table table-striped">
+          <thead class="thead-primary">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">N° Prenom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">NIN</th>
+            <th scope="col">Dossier du salarié(e)</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @attributaire_tierces.each do |at| %>
+            <tr>
+              <td></td>
+              <td><%= at.prenom %></td>
+              <td><%= at.nom %></td>
+              <td><%= at.nin %></td>
+              <td>
+                <%= link_to 'Voir', admin_dossier_prestation_path(at.dossier_prestation), 'data-turbolinks': false, target: '_blank', class: 'btn btn-outline btn-primary btn-sm' %>
+              </td>
+              <td style="width: 75px">
+                <%= link_to 'Valider Attributaire', admin_dossier_prestation_valider_attributaire_tierce_path(at.dossier_prestation, at), 'data-turbolinks': false, class: 'btn btn-primary btn-sm', data: { confirm: 'En êtes vous sûr?' } %>
+              </td>
+              <td style="width: 75px">
+                <span>
+                  <a data-toggle="modal" data-target="#rejet_attributaire" id="" class="btn btn-danger btn-sm"> Rejeter attributaire </a>
+                </span>
+                <%= render 'admin/dossier_prestations/rejet_attributaire', object: at %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @attributaire_tierces %>
+      </div>
+    <% end %>
+  </div>
+</div>

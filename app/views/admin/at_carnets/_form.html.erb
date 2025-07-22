@@ -1,0 +1,16 @@
+ <%= bootstrap_form_for([:admin, @arret_travail, @at_carnet], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+    <%=f.hidden_field :arret_travail_id, value: @arret_travail.id%>
+    <%= f.text_field  :numero_carnet %>
+    <%= f.text_field  :numero_employeur %>
+    <%= f.text_field :raison_sociale, label: 'Raison Sociale', readonly: true %>
+    <%=f.date_field :date_achat, label: "Date achat carnet"%> 
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', (@arret_travail.persisted? ? [:admin, @arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

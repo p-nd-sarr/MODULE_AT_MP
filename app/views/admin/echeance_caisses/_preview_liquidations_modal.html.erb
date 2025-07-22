@@ -1,0 +1,49 @@
+<div class="modal inmodal" id="liquidations-preview" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-laptop modal-icon"></i>
+        <h4 class="modal-title">Visualiser dossiers</h4>
+        <small class="font-bold">Disponibles pour liquidation : <%= @dossiers_liq.size %></small>
+      </div>
+      <div class="modal-body" style="height: 300px; overflow-y: scroll;">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <!--            <th scope="col"></th>-->
+            <th scope="col">Numéro</th>
+            <th scope="col">Prenom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Montant</th>
+            <th colspan="2"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @dossiers_liq.each do |dossier| %>
+            <tr>
+              <!--              <td>-->
+              <%#= link_to admin_dossier_prestation_path(dossier.dossier_prestation_id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' do %>
+              <!--                  <i class="fa fa-trash"></i>-->
+              <%# end  %>
+              <!--              </td>-->
+              <td><%= dossier.num_affiliation %></td>
+              <td><%= dossier.prenom %></td>
+              <td><%= dossier.nom %></td>
+              <td><%= format_cfa dossier.get_unpaid_amount %></td>
+              <td style="width: 75px">
+                <%= link_to "dossier AF", admin_dossier_prestation_path(dossier.dossier_prestation_id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>

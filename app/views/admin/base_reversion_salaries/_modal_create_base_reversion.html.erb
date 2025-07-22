@@ -1,0 +1,136 @@
+<div class="modal inmodal" id="modal-<%= demandeur.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" style="width:800px;">
+    <%= bootstrap_form_for(@base_reversion_salarie, url: admin_reversion_veuve_salary_soumettre_base_reversion_path(@reversion_veuve_salarie, base_reversion_id: demandeur.id),  label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter dossier reversion  </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+             <div class="col-lg-12">
+             <%= f.hidden_field :conjoint_id, value:demandeur.conjoint_id if demandeur.conjoint_id %>
+             <%= f.hidden_field :enfant_id, value:demandeur.enfant_id if demandeur.enfant_id%>
+                <div class="col-lg-6">
+                    <%= f.text_field :prenom, required: true,  value:demandeur.prenom if demandeur  %>
+                </div>
+
+                 <div class="col-lg-6">
+                     <%= f.text_field :nom, required: true,  value:demandeur.nom if demandeur  %>
+                </div>
+                <div class="col-lg-6">
+                      <%= f.text_field :adresse, label: 'Adresse' %>
+                </div>
+
+                <div class="col-lg-6">
+                       <%= f.text_field :adresse_reception_allocation, label: "Adresse de réception de l'allocation" %>
+                </div>
+                <div class="col-lg-6">
+                      <%= f.select :mode_paiement,
+                                   MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [LiquidationRetraite.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                                  include_blank: true, label: 'Mode de paiement' %>
+                </div>
+                <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_virement<%= demandeur.id %>">
+                    <div class="col-lg-6">
+                      <%= f.text_field :compte_bancaire_nom_banque, label: 'Nom de la banque' %>
+                    </div>
+                    <div class="col-lg-6">
+                      <%= f.text_field :compte_bancaire_code_banque, label: 'Code de la banque' %>
+                    </div>
+                    <div class="col-lg-6">
+                      <%= f.text_field :compte_bancaire_code_guichet, label: 'Code guichet du compte' %>
+                    </div>
+                    <div class="col-lg-6">
+                      <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte' %>
+                    </div>
+
+                  </div>
+                  </div>
+                </div>
+                 <div class="col-lg-6">
+                 <%= f.text_field :email, label: "Adresse Email" %>
+                 </div>
+                  <div class="col-lg-6">
+                 <%= f.text_field :phone, label: "Telephone" %>
+                 </div>
+          
+          
+
+                <div class="hr-line-dashed"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Valider</button>
+          </div>
+      </div>
+    <% end %>
+
+    <% content_for :javascript do %>
+      <script type="text/javascript">
+          $(document).ready(function () {
+              chargerInfosCompteBancaire();
+              chargerInfosVeuve();
+
+              $("#base_reversion_salarie_mode_paiement").change(function () {
+                  chargerInfosCompteBancaire()
+              });
+
+              function chargerInfosCompteBancaire() {
+                  let mode_paiement = $('#base_reversion_salarie_mode_paiement').val();
+                  console.log(mode_paiement);
+                  let elem_mode_paiement = $('#mode_paiement_virement<%= demandeur.id %>')
+                  if (mode_paiement === 'virement') {
+                      elem_mode_paiement.show();
+                  } else {
+                      elem_mode_paiement.hide();
+                  }
+              }
+
+              $("#reversion_veuve_type_ayant_droit").change(function () {
+                  chargerInfosVeuve()
+              });
+
+              function chargerInfosVeuve() {
+                  let type_ayant_droit = $('#reversion_veuve_type_ayant_droit').val();
+                  let elem_conjoint = $('#conjoint')
+                  let elem_infos_orphelin = $('#infos_orphelin')
+                  if (type_ayant_droit === 'veuve') {
+                      elem_conjoint.show();
+                      elem_infos_orphelin.hide();
+                      $('#reversion_veuve_nom_tuteur').val('')
+                      $('#reversion_veuve_prenom_tuteur').val('')
+                  } else {
+                      elem_conjoint.hide();
+                      elem_infos_orphelin.show();
+                  }
+              }
+
+              $('#reversion_veuve_numero_affiliation').change(function () {
+                  var numero_affiliation = $('#reversion_veuve_numero_affiliation').val();
+                  $.ajax({
+                      url: "/admin/salaries/" + numero_affiliation + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data) {
+                              $("#reversion_veuve_prenom").val(data.prenom);
+                              $("#reversion_veuve_nom").val(data.nom);
+                          } else {
+                              $("#reversion_veuve_prenom").val('');
+                              $("#reversion_veuve_nom").val('');
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#reversion_veuve_prenom").val('');
+                          $("#reversion_veuve_nom").val('');
+                      }
+                  });
+              })
+          })
+      </script>
+    <% end %>
+
+  </div>
+</div>

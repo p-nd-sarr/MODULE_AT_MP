@@ -1,0 +1,86 @@
+<%= content_for :titre_page, "Ajout Css Transfert Employeur" %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Info employeur </h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/css_transfert_employeurs/info_dossier' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Formulaire d'ajout</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          load_employer();
+          $('#css_transfert_employeur_employeur_matric').change(function () {
+              load_employer();
+          });
+
+          function load_employer() {
+              const fhnum = $('#css_transfert_employeur_employeur_matric').val();
+              const label_to_show_fhrsoc = document.getElementById('employeur_fhrsoc')
+              const label_to_show_fhnum = document.getElementById('employeur_fhnum')
+              const label_to_show_code = document.getElementById('employeur_code')
+              const label_to_show_ancien_num_css = document.getElementById('employeur_ancien_num_css')
+              const label_to_show_ancien_num_ipres = document.getElementById('employeur_ancien_num_ipres')
+              if (fhnum) {
+                  $.ajax({
+                      url: "/admin/dossier_prestations/employeur/" + fhnum + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data && data.fhrsoc !== undefined) {
+                              label_to_show_fhrsoc.textContent = data.fhrsoc
+                              label_to_show_fhnum.textContent = data.fhnum
+                              label_to_show_code.textContent = data.code_agence_css
+                              label_to_show_ancien_num_css.textContent = data.ancien_num_css
+                              label_to_show_ancien_num_ipres.textContent = data.ancien_num_ipres
+                              $('#submit_button').attr("disabled", false)
+                          } else {
+                              label_to_show_fhrsoc.textContent = "Raison sociale introuvable"
+                              label_to_show_fhnum.textContent = ''
+                              label_to_show_code.textContent = ''
+                              label_to_show_ancien_num_css.textContent = ''
+                              label_to_show_ancien_num_ipres.textContent = ''
+                              $('#submit_button').attr("disabled", true)
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          label_to_show_fhrsoc.textContent = "Raison sociale introuvable"
+                          label_to_show_fhnum.textContent = ''
+                          label_to_show_code.textContent = ''
+                          label_to_show_ancien_num_css.textContent = ''
+                          label_to_show_ancien_num_ipres.textContent = ''
+                          $('#submit_button').attr("disabled", true)
+                      }
+                  });
+              } else {
+                  label_to_show_fhrsoc.textContent = ""
+                  label_to_show_fhnum.textContent = ''
+                  label_to_show_code.textContent = ''
+                  label_to_show_ancien_num_css.textContent = ''
+                  label_to_show_ancien_num_ipres.textContent = ''
+                  $('#submit_button').attr("disabled", true)
+              }
+          }
+      })
+  </script>
+<% end %>

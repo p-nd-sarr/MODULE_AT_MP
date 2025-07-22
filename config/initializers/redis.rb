@@ -1,0 +1,1 @@
+$redis = Redis::Namespace.new(:prestation, redis: Redis.new(host: ENV['REDIS_HOST']))

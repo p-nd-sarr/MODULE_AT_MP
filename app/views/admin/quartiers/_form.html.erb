@@ -1,0 +1,14 @@
+<%= bootstrap_form_for(@admin_quartier, layout: :horizontal) do |f| %>
+  <%= f.collection_select :admin_commune_id, Admin::Commune.all, :id, :designation, label: 'Commune', required: true %>
+  <%= f.text_field :code %>
+  <%= f.text_field :designation %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_quartiers_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,953 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Date de mariage</th>
+    <!--    <th scope="col">NIN</th>-->
+    <th scope="col">Liens</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%# CfsConjoint.all.each do |conjoint| %>
+  <% @demande_liquidation.cfs_conjoints.each do |conjoint| %>
+    <tr>
+      <td><%= conjoint.nom %></td>
+      <td><%= conjoint.prenom %></td>
+      <td><%= l conjoint.date_naissance %></td>
+      <td><%= l conjoint.date_mariage %></td>
+      <!--      <td><%#= conjoint.numero_securite_sociale %></td>-->
+      <td style="width: 170px">
+        <%= link_to 'supprimer', admin_liquidation_retraite_france_destroy_cfs_conjoint_path(@demande_liquidation, conjoint.id),
+                    method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                    class: 'btn btn-outline btn-danger btn-xs' unless @demande_liquidation.epouses_valide? and @demande_liquidation.enfants_valide? %>
+        <%#= link_to 'détails', admin_liquidation_retraite_france_details_cfs_conjoint_path(@demande_liquidation, conjoint), 'data-turbolinks': false, class: 'btn btn-outline btn-primary btn-xs' %>
+        <button class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#cfs_conjoint_details">
+          détails
+        </button>
+      </td>
+    </tr>
+
+
+    <div class="modal inmodal" id="cfs_conjoint_details" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog" style="width: 85%;">
+
+        <div class="modal-content animated fadeIn">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">x</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">
+              Détails
+              <% if conjoint.homme? %>
+                du conjoint
+              <% elsif conjoint.femme? %>
+                de la conjointe
+              <% end %>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="wrapper wrapper-content">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="ibox">
+                    <div class="ibox-title text-success">
+                      <h5> Informations sur le salarié </h5>
+                    </div>
+                    <div class="ibox-content" style="padding-left: 1%;">
+                      <d1 class="row mb-0">
+                        <div class="col-sm-8">
+                          <dt>Numéro affiliation:</dt>
+                        </div>
+                        <div class="col-sm-4">
+                          <dd class="mb-1"><%= conjoint.numero_affiliation unless conjoint.numero_affiliation.nil? %></dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-8">
+                          <dt>N° Sécurité Sociale:</dt>
+                        </div>
+                        <div class="col-sm-4">
+                          <dd class="mb-1"><%= @demande_liquidation.numero_securite_sociale unless @demande_liquidation.numero_securite_sociale.nil? %></dd>
+                        </div>
+                      </d1>
+                      <% unless conjoint.date_delivrance_piece_salarie.nil? %>
+                        <d1 class="row mb-0">
+                          <div class="col-sm-8">
+                            <dt>Date de délivrance pièce:</dt>
+                          </div>
+                          <div class="col-sm-4">
+                            <dd class="mb-1"><%= conjoint.date_delivrance_piece_salarie.strftime("%d/%m/%Y") unless conjoint.date_delivrance_piece_salarie.nil? %></dd>
+                          </div>
+                        </d1>
+                      <% end %>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-8">
+                          <dt>Prénom du salarié:</dt>
+                        </div>
+                        <div class="col-sm-4">
+                          <dd class="mb-1 text-navy"><%= conjoint.prenom_salarie %> </dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-8">
+                          <dt>Nom du salarié:</dt>
+                        </div>
+                        <div class="col-sm-4">
+                          <dd class="mb-1 text-navy"><%= conjoint.nom_salarie %></dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-8">
+                          <dt>Date de naissance:</dt>
+                        </div>
+                        <div class="col-sm-4">
+                          <dd class="mb-1"><%= @demande_liquidation.date_naissance %></dd>
+                        </div>
+                      </d1>
+                      <d1 class="row mb-0">
+                        <div class="col-sm-8">
+                          <dt>Option matrimoniale:</dt>
+                        </div>
+                        <div class="col-sm-4">
+                          <dd class="mb-1"><%= CfsConjoint.human_enum_name(:regime_matrimoniale, conjoint.regime_matrimoniale) unless conjoint.regime_matrimoniale.nil? %></dd>
+                        </div>
+                      </d1>
+                      <% unless conjoint.nombre_femmes.nil? %>
+                        <d1 class="row mb-0">
+                          <div class="col-sm-8">
+                            <dt>Nombre de femmes:</dt>
+                          </div>
+                          <div class="col-sm-4">
+                            <dd class="mb-1 text-navy"><%= conjoint.nombre_femmes %></dd>
+                          </div>
+                        </d1>
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-8">
+                  <div class="ibox">
+                    <div class="ibox-title text-success">
+                      <h5> Informations sur
+                        <% if conjoint.homme? %>
+                          le conjoint
+                        <% elsif conjoint.femme? %>
+                          la conjointe
+                        <% end %>
+                      </h5>
+                      <div class="ibox-tools">
+                        <%# if conjoint.incomplete? and current_user.chef_agence? %>
+                        <%#= (link_to ' Rendre complet', admin_conjoint_set_complete_path(conjoint), data: { confirm: 'En êtes vous sûr?' }, 'data-turbolinks': false, class: 'btn btn-success btn-outline btn-xs fa fa-edit') if conjoint.can_be_completed? %>
+                        <%#= (link_to ' Fiabiliser', admin_conjoint_edit_incomplete_path(conjoint), 'data-turbolinks': false, class: 'btn btn-success btn-outline btn-xs fa fa-edit') %>
+                        <%# end %>
+                        <%# if CfsConjoint.find_by_conjoint_id(conjoint.id).nil? and not conjoint.incomplete? %>
+                        <%#= (link_to ' Modifier', edit_admin_conjoint_path(conjoint), class: 'btn btn-success btn-outline btn-xs fa fa-edit') %>
+                        <%# end %>
+                      </div>
+                    </div>
+                    <div class="ibox-content">
+                      <div class="wrapper wrapper-content">
+                        <div class="row">
+                          <div class="col-lg-6">
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Prénom du conjoint:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1 text-navy"><%= conjoint.prenom %> </dd>
+                              </div>
+                            </d1>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Nom du conjoint:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1 text-navy"><%= conjoint.nom %></dd>
+                              </div>
+                            </d1>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Date de naissance:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= conjoint.date_naissance.strftime("%d/%m/%Y") %></dd>
+                              </div>
+                            </d1>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Date de célébration du mariage:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= conjoint.date_mariage.strftime("%d/%m/%Y") %></dd>
+                              </div>
+                            </d1>
+                            <% unless conjoint.date_etablissement_mariage.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Date d'établissement du mariage:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.date_etablissement_mariage.strftime("%d/%m/%Y") %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <% unless conjoint.date_jugement_suppletif.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Date jugement supplétif d'acte de mariage:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.date_jugement_suppletif.strftime("%d/%m/%Y") %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+
+                            <!--  <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Régime matrimonial:</dt>
+                  </div>
+                  <div class="col-sm-6" >
+                    <dd class="mb-1"><%#= Conjoint.human_enum_name(:regime_matrimoniale, conjoint.regime_matrimoniale) unless conjoint.regime_matrimoniale.nil? %></dd>
+                  </div>
+                </d1> -->
+
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Est un salarié ?:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= state_yes_no conjoint.est_salarie? %></dd>
+                              </div>
+                            </d1>
+                            <% if conjoint.numero_salarie != nil %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Numéro salarié:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.numero_salarie %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <% unless conjoint.matric_conjoint.nil? %>
+                              <% if conjoint.matric_conjoint.length > 0 %>
+                                <d1 class="row mb-0">
+                                  <div class="col-sm-8">
+                                    <dt>Numéro affiliation conjoint:</dt>
+                                  </div>
+                                  <div class="col-sm-4">
+                                    <dd class="mb-1"><%= conjoint.matric_conjoint %></dd>
+                                  </div>
+                                </d1>
+                              <% end %>
+                            <% end %>
+
+                            <% unless conjoint.rang_conjoint.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Rang conjoint:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= CfsConjoint.human_enum_name(:rang_conjoint, conjoint.rang_conjoint) unless conjoint.rang_conjoint.nil? %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Est supprimé?</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= state_yes_no conjoint.deleted %></dd>
+                              </div>
+                            </d1>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Est incomplet?</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= state_yes_no conjoint.incomplete %></dd>
+                              </div>
+                            </d1>
+                          </div>
+                          <div class="col-lg-6">
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Situation avec le conjoint:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= CfsConjoint.human_enum_name(:etat_conjoint, conjoint.etat_conjoint) unless conjoint.etat_conjoint.nil? %></dd>
+                              </div>
+                            </d1>
+                            <% unless conjoint.date_divorce.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Date de divorce:</dt>
+                                </div>
+                                <div class="col-sm-4 text-warning">
+                                  <dd class="mb-1"><%= conjoint.date_divorce %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <% unless conjoint.date_deces.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Date de décès:</dt>
+                                </div>
+                                <div class="col-sm-4 text-danger">
+                                  <dd class="mb-1"><%= conjoint.date_deces %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Type de pièce:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1">
+                                  <%= CfsConjoint.human_enum_name(:type_piece, conjoint.type_piece) unless conjoint.type_piece.nil? %>
+                                </dd>
+                              </div>
+                            </d1>
+                            <% unless conjoint.numero_piece.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Numéro de la pièce:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.numero_piece %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <% unless conjoint.date_transcription.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Date de transcription:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.date_transcription.strftime("%d/%m/%Y") %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <% unless conjoint.numero_jugement_mariage.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Numero de jugement:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.numero_jugement_mariage %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Date de délivrance de la pièce:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"> <%= conjoint.date_delivrance_piece.strftime("%d/%m/%Y") unless conjoint.date_delivrance_piece.nil? %></dd>
+                              </div>
+                            </d1>
+                            <% unless conjoint.date_expiration_piece.nil? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Date d'expiration de la pièce:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.date_expiration_piece.strftime("%d/%m/%Y") unless conjoint.date_expiration_piece.nil? %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <% if conjoint.nin_generer? %>
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Numero d'identification générer:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= conjoint.nin_generer %></dd>
+                                </div>
+                              </d1>
+                            <% end %>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Date de création conjoint:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= conjoint.created_at.strftime("%d/%m/%Y") %></dd>
+                              </div>
+                            </d1>
+                            <d1 class="row mb-0">
+                              <div class="col-sm-8">
+                                <dt>Conjoint créé par:</dt>
+                              </div>
+                              <div class="col-sm-4">
+                                <dd class="mb-1"><%= conjoint.ajoute_par.try :prenom %> <%= conjoint.ajoute_par.try :nom %></dd>
+                              </div>
+                            </d1>
+                          </div>
+                          <div class="col-lg-12">
+                            <hr>
+
+                            <h3>Liste des documents fournis:</h3>
+                            <div class="col-sm-6">
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Pièce d'identification:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"><%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), conjoint.extrait_naissance, target: :_blank if conjoint.extrait_naissance.attached? %></dd>
+                                </div>
+                              </d1>
+                            </div>
+                            <div class="col-sm-6">
+                              <d1 class="row mb-0">
+                                <div class="col-sm-8">
+                                  <dt>Certificat de mariage:</dt>
+                                </div>
+                                <div class="col-sm-4">
+                                  <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), conjoint.certificat_mariage, target: :_blank if conjoint.certificat_mariage.attached? %></dd>
+                                </div>
+                              </d1>
+                            </div>
+                            <% if conjoint.certificat_deces.attached? %>
+                              <div class="col-sm-6">
+                                <d1 class="row mb-0">
+                                  <div class="col-sm-8">
+                                    <dt>Certificat de décès:</dt>
+                                  </div>
+                                  <div class="col-sm-4">
+                                    <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), conjoint.certificat_deces, target: :_blank %></dd>
+                                  </div>
+                                </d1>
+                              </div>
+                            <% end %>
+                            <% if conjoint.certificat_divorce.attached? %>
+                              <div class="col-sm-6">
+                                <d1 class="row mb-0">
+                                  <div class="col-sm-8">
+                                    <dt>Certificat de divorce:</dt>
+                                  </div>
+                                  <div class="col-sm-4">
+                                    <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), conjoint.certificat_divorce, target: :_blank %></dd>
+                                  </div>
+                                </d1>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <p>
+              <strong>Prénom : </strong>
+              <%= conjoint.prenom %>
+            </p>
+            <p>
+              <strong>Nom : </strong>
+              <%= conjoint.nom %>
+            </p>
+            <p>
+              <strong>Date de naissance : </strong>
+              <%= l conjoint.date_naissance %>
+            </p>
+            <!--            <p>-->
+            <!--              <strong>Lieu de naissance : </strong>-->
+            <%#= conjoint.lieu_naissance %>
+            <!--            </p>-->
+            <!--            <p>-->
+            <!--              <strong>Nationalite : </strong>-->
+            <%#= conjoint.nationalite.description %>
+            <!--            </p>-->
+            <!--            <p>-->
+            <!--              <strong>Prénom du père : </strong>-->
+            <%#= conjoint.prenom_pere %>
+            <!--            </p>-->
+            <!--            <p>-->
+            <!--              <strong>Nom du père: </strong>-->
+            <%#= conjoint.nom_pere %>
+            <!--            </p>-->
+            <!--            <p>-->
+            <!--              <strong>Prénom du mère : </strong>-->
+            <%#= conjoint.prenom_mere %>
+            <!--            </p>-->
+            <!--            <p>-->
+            <!--              <strong>Nom du mère: </strong>-->
+            <%#= conjoint.nom_mere %>
+            <!--            </p>-->
+            <p>
+              <strong>N° Immatriculation: </strong>
+              <%= conjoint.numero_securite_sociale %>
+            </p>
+            <p>
+              <strong>Date du mariage : </strong>
+              <%= l conjoint.date_mariage %>
+            </p>
+            <% if conjoint.situation? %>
+              <p>
+                <strong>Date du décès : </strong>
+                <%= l conjoint.date_deces %>
+              </p>
+            <% end %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+  </tbody>
+</table>
+
+
+<div class="modal inmodal" id="conjoint_form" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-11" style="margin-left: -8%;">
+          <%= bootstrap_form_for(@cfs_conjoint, url: admin_liquidation_retraite_france_ajouter_cfs_conjoint_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-6", control_col: "col-sm-6") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>
+            <% puts "LAME +++++++++++++++++++" %>
+            <% puts f.alert_message "Please fix the errors below." %>
+
+            <div class="modal-content animated fadeIn">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">x</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Ajouter un(e) conjoint(e)</h4>
+              </div>
+              <div class="modal-body">
+                <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+
+
+                <div class="content clearfix">
+
+                  <div class="row">
+                    <div class="form-group" style="align-content: center">
+                      <div class="col-sm-12">
+                        <div class="col-sm-6">
+                          <%= f.select :type_piece,
+                                       CfsConjoint::TYPE_PIECE.keys.collect { |type_piece| [CfsConjoint.human_enum_name(:type_piece, type_piece), type_piece] },
+                                       label: "Type de pièce" %>
+                        </div>
+
+                        <div class="col-sm-6"></div>
+
+                        <div class="col-sm-6" id="id_conjoint_numero_piece">
+                          <%= f.text_field :'numero_piece', label: 'Numéro piéce conjoint', :onkeydown => "if(event.keyCode==32) return false;" %>
+                        </div>
+
+                        <% if is_active_controller('admin/liquidation_retraite_frances') and is_active_action('edit') and @cfs_conjoint.extrait_naissance? %>
+                          <div class="col-sm-6">
+                            <%= f.text_field :nin_generer, label: 'Numéro piéce généré', readonly: true %>
+                          </div>
+                        <% end %>
+
+                        <div id="infos_etat_civile_conjoint">
+                          <div class="col-sm-6">
+                            <%= f.collection_select :code_etat_civil, Admin::LocaliteGrappe.all.order('localite'), :code_localite, :localite, label: 'Centre d’état civil ou code locatilié', prompt: "Choisir un code d'état civil" %>
+                          </div>
+
+                          <div class="col-sm-6">
+                            <%= f.text_field :numero_registre, label: 'Numéro de registre' %>
+                          </div>
+
+                          <div class="col-lg-6">
+                            <%= f.date_field :date_transcription, label: 'Date de transcription' %>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <%= f.date_field :date_delivrance_piece, label: 'Date délivrance pièce', required: true,
+                                           start_year: (Date.today - 10.year).year, end_year: (Date.today + 10.year).year %>
+                        </div>
+                        <div class="col-sm-6">
+                          <%= f.select :est_salarie, [['Non', false], ['Oui', true]], label: "Est ce que le conjoint est un salarié ?" %>
+                        </div>
+
+                        <div class="col-sm-6" id="conjoint_matric">
+                          <%= f.text_field :matric_conjoint, label: 'Numéro affiliation conjoint', readonly: true %>
+                        </div>
+                      </div>
+                      <div class="col-sm-12">
+                        <hr>
+                        <div class="col-sm-6">
+                          <%= f.text_field :prenom, label: 'Prénom conjoint', required: true %>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <%= f.text_field :nom, label: 'Nom conjoint', required: true %>
+                        </div>
+
+                        <div class="col-sm-6" id="conjoint_sex_group">
+                          <%= f.select :sex, CfsConjoint::SEXE.keys.collect { |sex| [CfsConjoint.human_enum_name(:sex, sex), sex] }, label: "Genre conjoint",
+                                       required: true, include_blank: true%>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <%= f.date_field :date_naissance, label: 'Date de naissance',
+                                           start_year: (Date.today - 100.year).year, end_year: (Date.today - 14.year).year %>
+                          <div id="alert_age_conjoint" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">
+                            L'âge requis pour se marier n'est pas respecté.
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <%= f.date_field :date_mariage, label: "Date de célébration du mariage",
+                                           start_year: (Date.today - 80.year).year, end_year: Date.today.year %>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <%= f.date_field :date_etablissement_mariage, label: "Date de constatation du mariage",
+                                           start_year: (Date.today - 80.year).year, end_year: Date.today.year %>
+                        </div>
+
+                        <div class="col-sm-12" id="date_jugement_suppletif">
+                          <div class="col-sm-6">
+                            <%= f.date_field :date_jugement_suppletif, label: "Date jugement supplétif d'acte de mariage",
+                                             start_year: (Date.today - 80.year).year, end_year: Date.today.year %>
+                          </div>
+
+                          <div class="col-sm-6">
+                            <%= f.text_field :numero_jugement_mariage, label: 'Numero de jugement' %>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <%= f.select :etat_conjoint,
+                                       CfsConjoint::ETAT_CONJOINT.keys.collect { |etat_conjoint| [CfsConjoint.human_enum_name(:etat_conjoint, etat_conjoint), etat_conjoint] },
+                                       label: "Situation avec le conjoint", required: true, :onchange => 'nombre_conjoint_femme()' %>
+                        </div>
+
+                        <div class="col-sm-6" id="date_divorce">
+                          <%= f.date_field :date_divorce, label: 'Date de divorce' %>
+                        </div>
+
+                        <div class="col-sm-6" id="date_deces">
+                          <%= f.date_field :date_deces, label: "Date de décès" %>
+                        </div>
+
+                      </div>
+                      <div class="col-lg-12" style="margin-top:4px;">
+                        <h2 class="text-navy" style="margin-bottom:3px; font-weight:bold">Joindre les pièces</h2>
+                        <hr>
+                        <div class="col-sm-4">
+                          <h4 style="font-weight: bold;">Pièce d’identification *</h4>
+                          <div class="btn-file">
+                            <label class="no-text">
+                              <%= f.file_field :extrait_naissance, hide_label: true, label: '.',
+                                               required: (not @cfs_conjoint.persisted?),
+                                               help: (@cfs_conjoint.persisted?), id: 'label-ext' %>
+
+                              <div class="btn btn-success" style="margin-top:0px; margin-left: 1px;">
+                                <span class="fa fa-upload"></span> Choisir un fichier
+                              </div>
+                            </label>
+                          </div>
+                          <small id="extrait-name"></small>
+                        </div>
+                        <div class="col-sm-4">
+                          <h4 style="font-weight: bold;">Certificat de mariage *</h4>
+                          <div class="btn-file">
+                            <label class="no-text">
+                              <%= f.file_field :certificat_mariage, hide_label: true, label: '.', required: (not @cfs_conjoint.persisted?), help: (@cfs_conjoint.persisted?), id: 'label-cert' %>
+
+                              <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                                <span class="fa fa-upload"></span> Choisir un fichier
+                              </div>
+                            </label>
+                          </div>
+                          <small id="certeficat-name"></small>
+                        </div>
+                        <div class="col-sm-4" id="cert_deces">
+                          <h4 style="font-weight: bold;">Certificat de décès *</h4>
+                          <div class="btn-file">
+                            <label class="no-text">
+                              <%= f.file_field :certificat_deces, hide_label: true, label: '.', help: (@cfs_conjoint.persisted?), id: 'label-deces' %>
+
+                              <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                                <span class="fa fa-upload"></span> Choisir un fichier
+                              </div>
+                            </label>
+                          </div>
+                          <small id="cert_deces_name"></small>
+                        </div>
+
+                        <div class="col-sm-4" id="cert_divorce">
+                          <h4 style="font-weight: bold;">Certificat de divorce *</h4>
+                          <div class="btn-file">
+                            <label class="no-text">
+                              <%= f.file_field :certificat_divorce, hide_label: true, label: '.', help: (@cfs_conjoint.persisted?), id: 'label-divorce' %>
+
+                              <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;">
+                                <span class="fa fa-upload"></span> Choisir un fichier
+                              </div>
+                            </label>
+                          </div>
+                          <small id="cert_divorce_name"></small>
+                        </div>
+
+                      </div>
+                      <div class="col-sm-12"></div>
+                    </div>
+                    <!--              <div class="form-group col-sm-12">-->
+                    <!--                <hr>-->
+                    <!--                <div class="col-sm-9"></div>-->
+                    <!--                <div class="col-sm-3" style="text-align: right;">-->
+                    <%#= link_to 'Annuler', admin_conjoints_path, class: 'btn btn-white' %>
+                    <%#= f.submit 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+                    <!--                </div>-->
+                    <!--              </div>-->
+                  </div>
+                </div>
+
+              </div>
+              <div class="modal-footer form-group">
+                <%#= link_to 'Annuler', admin_conjoints_path, class: 'btn btn-white' %>
+                <%= f.button 'Valider', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      var nombre_conjoint;
+      var conjoint;
+      var salarie;
+
+      $(document).ready(function () {
+          // chargerInfosConjoint();
+          //
+          // $("#cfs_conjoint_situation").change(function () {
+          //     chargerInfosConjoint()
+          // });
+          //
+          // $('#cfs_conjoint_date_deces_3i').prop("disabled", true).val('');
+          // $('#cfs_conjoint_date_deces_2i').prop("disabled", true).val('');
+          // $('#cfs_conjoint_date_deces_1i').prop("disabled", true).val('');
+          //
+          // function chargerInfosConjoint() {
+          //     elem_infos_conjoint = $('#infos_conjoint')
+          //     if (cfs_conjoint_situation.checked === true) {
+          //         elem_infos_conjoint.show();
+          //
+          //         $('#cfs_conjoint_date_deces_3i').prop("disabled", false).val('');
+          //         $('#cfs_conjoint_date_deces_2i').prop("disabled", false).val('');
+          //         $('#cfs_conjoint_date_deces_1i').prop("disabled", false).val('');
+          //     } else {
+          //         elem_infos_conjoint.hide();
+          //
+          //         $('#cfs_conjoint_date_deces_3i').prop("disabled", true).val('');
+          //         $('#cfs_conjoint_date_deces_2i').prop("disabled", true).val('');
+          //         $('#cfs_conjoint_date_deces_1i').prop("disabled", true).val('');
+          //     }
+          // }
+
+
+          etatDivorceDeces();
+          infos_etat_civile();
+          showAndHideNombreFemme();
+          $('#date_jugement_suppletif').hide();
+          // $('#cfs_conjoint_matric').hide();
+          $('#infos_etat_civile_conjoint').hide();
+          $('#alert_age_conjoint').hide();
+          $('#nombre_femmes').hide();
+          validate_date_suppletif();
+
+
+          if ($("#cfs_conjoint_type_piece").val() == 'extrait_naissance') {
+              $('#infos_etat_civile_conjoint').show();
+          } else {
+              $('#infos_etat_civile_conjoint').hide();
+          }
+
+          $('#cfs_conjoint_type_piece').change(function () {
+              infos_etat_civile();
+          });
+          $('#cfs_conjoint_regime_matrimoniale').on('change', function () {
+              showAndHideNombreFemme();
+          });
+          $('#cfs_conjoint_etat_conjoint').on('change', function () {
+              etatDivorceDeces();
+          })
+
+      })
+
+
+      var input = document.getElementById('label-ext');
+      var infoArea = document.getElementById('extrait-name');
+      input.addEventListener('change', showFileName);
+
+      function showFileName(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea.textContent = fileName;
+      }
+
+      var input2 = document.getElementById('label-cert');
+      var infoArea2 = document.getElementById('certeficat-name');
+      input2.addEventListener('change', showFileName2);
+
+      function showFileName2(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea2.textContent = fileName;
+      }
+
+      var input3 = document.getElementById('label-deces');
+      var infoArea3 = document.getElementById('cert_deces_name');
+      input3.addEventListener('change', showFileName3);
+
+      function showFileName3(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea3.textContent = fileName;
+      }
+
+      var input4 = document.getElementById('label-divorce');
+      var infoArea4 = document.getElementById('cert_divorce_name');
+      input4.addEventListener('change', showFileName4);
+
+      function showFileName4(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea4.textContent = fileName;
+      }
+
+      function dateDiff(d1, d2) {
+          ecart_time = (d2 - d1);
+          ecart_day = ecart_time / (1000 * 3600 * 24);
+          return ecart_day <= 0 ? 0 : ecart_day;
+
+      }
+
+      function validate_date_suppletif() {
+          d1 = new Date($('#cfs_conjoint_date_mariage').val()).getTime()
+          d2 = new Date($('#cfs_conjoint_date_etablissement_mariage').val()).getTime()
+          if (dateDiff(d1, d2) >= 180) {
+              $('#date_jugement_suppletif').show();
+          } else {
+              $('#date_jugement_suppletif').hide();
+          }
+      }
+
+      $('#cfs_conjoint_date_etablissement_mariage, #cfs_conjoint_date_mariage').change(
+          function () {
+              validate_date_suppletif()
+          }
+      )
+
+      $('#cfs_conjoint_date_naissance_1i, #cfs_conjoint_date_naissance_2i, #cfs_conjoint_date_naissance_3i').change(
+          function () {
+              if ((new Date($('#cfs_conjoint_date_mariage_1i').val() + '-' + $('#cfs_conjoint_date_mariage_2i').val() + '-' + $('#cfs_conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#cfs_conjoint_date_naissance_1i').val() + '-' + $('#cfs_conjoint_date_naissance_2i').val() + '-' + $('#cfs_conjoint_date_naissance_3i').val()).getFullYear()) < 16 && conjoint.genre === 'HOMME'
+                  || (new Date($('#cfs_conjoint_date_mariage_1i').val() + '-' + $('#cfs_conjoint_date_mariage_2i').val() + '-' + $('#cfs_conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#cfs_conjoint_date_naissance_1i').val() + '-' + $('#cfs_conjoint_date_naissance_2i').val() + '-' + $('#cfs_conjoint_date_naissance_3i').val()).getFullYear()) < 18 && conjoint.genre === 'FEMME'
+                  || new Date($('#cfs_conjoint_date_naissance_1i').val() + '-' + $('#cfs_conjoint_date_naissance_2i').val() + '-' + $('#cfs_conjoint_date_naissance_3i').val()) > new Date($('#cfs_conjoint_date_mariage_1i').val() + '-' + $('#cfs_conjoint_date_mariage_2i').val() + '-' + $('#cfs_conjoint_date_mariage_3i').val())) {
+                  $('#alert_age_conjoint').show();
+              } else {
+                  $('#alert_age_conjoint').hide();
+              }
+
+          }
+      )
+
+      $('#cfs_conjoint_date_mariage_1i, #cfs_conjoint_date_mariage_2i, #cfs_conjoint_date_mariage_3i').change(
+          function () {
+              if ((new Date($('#cfs_conjoint_date_mariage_1i').val() + '-' + $('#cfs_conjoint_date_mariage_2i').val() + '-' + $('#cfs_conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#cfs_conjoint_date_naissance_1i').val() + '-' + $('#cfs_conjoint_date_naissance_2i').val() + '-' + $('#cfs_conjoint_date_naissance_3i').val()).getFullYear()) < 16 && conjoint.genre === 'HOMME'
+                  || (new Date($('#cfs_conjoint_date_mariage_1i').val() + '-' + $('#cfs_conjoint_date_mariage_2i').val() + '-' + $('#cfs_conjoint_date_mariage_3i').val()).getFullYear() - new Date($('#cfs_conjoint_date_naissance_1i').val() + '-' + $('#cfs_conjoint_date_naissance_2i').val() + '-' + $('#cfs_conjoint_date_naissance_3i').val()).getFullYear()) < 18 && conjoint.genre === 'FEMME'
+                  || new Date($('#cfs_conjoint_date_naissance_1i').val() + '-' + $('#cfs_conjoint_date_naissance_2i').val() + '-' + $('#cfs_conjoint_date_naissance_3i').val()) > new Date($('#cfs_conjoint_date_mariage_1i').val() + '-' + $('#cfs_conjoint_date_mariage_2i').val() + '-' + $('#cfs_conjoint_date_mariage_3i').val())) {
+                  $('#alert_age_conjoint').show();
+              } else {
+                  $('#alert_age_conjoint').hide();
+              }
+
+          }
+      )
+
+      function etatDivorceDeces() {
+          if ($('#cfs_conjoint_etat_conjoint').val() == 'divorcer') {
+              $('#date_divorce').show();
+              $('#cert_divorce').show();
+              $('#date_deces').hide();
+              $('#cert_deces').hide();
+          } else if ($('#cfs_conjoint_etat_conjoint').val() == 'deceder') {
+              $('#date_deces').show();
+              $('#cert_deces').show();
+              $('#date_divorce').hide();
+              $('#cert_divorce').hide();
+          } else {
+              $('#date_deces').hide();
+              $('#date_divorce').hide();
+              $('#cert_divorce').hide();
+              $('#cert_deces').hide();
+          }
+      }
+
+      function showAndHideNombreFemme() {
+          if ($('#cfs_conjoint_regime_matrimoniale').val() == 'polygame') {
+              $('#nombre_femmes').show();
+          } else {
+              $('#nombre_femmes').hide();
+          }
+      }
+
+      function showHideRangConjoint() {
+          if ($('#cfs_conjoint_regime_matrimoniale').val() == 'polygame') {
+              $('#rang_conjoint').show();
+              $('#nombre_femmes').show();
+          } else {
+              $('#rang_conjoint').hide();
+              $('#nombre_femmes').hide();
+          }
+      }
+
+      function convertDate(inputFormat) {
+          function pad(s) {
+              return (s < 10) ? '0' + s : s;
+          }
+
+          var d = new Date(inputFormat)
+          return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/')
+      }
+
+
+      function infos_etat_civile() {
+
+          if ($("#cfs_conjoint_type_piece").val() == 'extrait_naissance') {
+              $('#id_conjoint_numero_piece').hide();
+              $('#infos_etat_civile_conjoint').show();
+          } else {
+              $('#id_conjoint_numero_piece').show();
+              $('#infos_etat_civile_conjoint').hide();
+          }
+      }
+  </script>
+<% end %>
+
+<style type="text/css">
+
+    .no-text {
+        font-size: 0px;
+    }
+
+    .invalid-feedback {
+        font-size: 0px;
+    }
+
+    select option[disabled] {
+        display: none
+    }
+</style>

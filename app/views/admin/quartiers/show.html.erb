@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_quartier" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_quartiers_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_quartier_path(@admin_quartier), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_quartier', new_admin_quartier_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Admin commune:</strong>
+                  <%= @admin_quartier.admin_commune %>
+                </p>
+
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_quartier.code %>
+                </p>
+
+                            <p>
+                  <strong>Designation:</strong>
+                  <%= @admin_quartier.designation %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

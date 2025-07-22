@@ -1,0 +1,69 @@
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%=I18n.t('module_arret_travail.admin_menu.arret_travail_label')%></span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+      <%= link_to "Accueil", admin_arret_travails_path %>
+      <%#= link_to I18n.t('module_arret_travail.admin_menu.ajouter_dossier'), new_admin_arret_travail_path %>
+    </li>
+      <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente avis medecin', en_attente_avis_medecin_admin_arret_travails_path %></li>
+     <li class="<%#= 'active' if is_active_controller('admin/arret_travails') %>"><%#= link_to 'En attente confirmation taux incapacite', en_attente_confirmation_taux_ipp_admin_arret_travails_path %></li>
+     <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation rechute', en_attente_validation_rechutes_mc_admin_arret_travails_path %></li>
+      <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%#= link_to 'En attente validation medecin', en_attente_validation_medecin_admin_arret_travails_path %></li>
+      <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation medecin des ij', en_attente_validation_mc_ij_admin_arret_travails_path %></li>
+     <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation des frais', en_attente_validation_mc_frais_admin_arret_travails_path %></li>
+     <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente annulation guérison', en_attente_annulation_guerison_admin_arret_travails_path %></li>
+
+  
+
+      
+      
+  </ul>
+</li>
+
+<!-- Rechute-->
+<li class="<%= 'active' if is_active_controller('admin/at_rechutes') or is_active_controller('admin/at_rechutes')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Rechute</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_rechutes') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/at_rechutes') %>">
+        <%= link_to 'Toutes les dossiers', admin_at_rechutes_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/at_rechutes') %>">
+      <%= link_to 'En attente avis medecin', en_attente_avis_mc_admin_at_rechutes_path %>
+    </li>
+    
+  </ul>
+</li>
+
+<!-- Consolidation-->
+<li class="<%= 'active' if is_active_controller('admin/arret_travails/at_consolidations') or is_active_controller('admin/allocataires/at_consolidations')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Consolidation</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_consolidations') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+        <%= link_to 'Tous les dossiers', admin_at_consolidations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+      <%= link_to 'En attente validation', en_attente_validation_mc_admin_at_consolidations_path %>
+    </li>
+
+  </ul>
+</li>
+<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
+    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+      <%= link_to 'Accueil', admin_maladie_professionnelles_path %>
+      <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
+    </li>
+  </ul>
+</li>
+
+<style>
+  li.consolidations {
+      padding-left: 20px;
+  }
+</style>
+

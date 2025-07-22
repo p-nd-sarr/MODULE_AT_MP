@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_motif_sortie" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_motif_sorties_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_motif_sortie_path(@admin_motif_sortie), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_motif_sortie', new_admin_motif_sortie_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_motif_sortie.code %>
+                </p>
+
+                            <p>
+                  <strong>Description:</strong>
+                  <%= @admin_motif_sortie.description %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

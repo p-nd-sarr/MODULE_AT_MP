@@ -1,0 +1,95 @@
+<style>
+.modal-dialog.modal-800 {
+    width: 850px;
+    margin: 30px auto;
+    font-size: 12px;
+}
+
+</style>
+<div class="modal inmodal" id="historiques" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-800"> 
+      <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">x</span>
+                </button>
+                 <h4 class="modal-title">
+                    Historiques de traitement 
+                </h4>
+                
+            </div>
+            <div class="modal-body">
+                <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon red-bg">
+                             <i class="fa fa-folder"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Soumission et Instruction du dossier</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">Soumis au chef agence
+                                        par:</strong><br> <%= @demande_arret_travail.soumis_par.full_name unless @demande_arret_travail.soumis_par.nil? %></h5>
+                                        <h5><strong class="text-navy">Soumis le
+                                        :</strong><br> <%= @demande_arret_travail.date_soumission.strftime("%d/%m/%Y à %H:%M") unless @demande_arret_travail.date_soumission.nil? %></h5>
+                                    </div> 
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">Soumis au chef div at
+                                         par:</strong><br> <%= @demande_arret_travail.soumis_chef_div_at_par.full_name unless @demande_arret_travail.soumis_chef_div_at_par.nil? %></h5>
+                                        <h5><strong class="text-navy">
+                                        soumis le:</strong><br> <%= @demande_arret_travail.date_soumission_chef_service.strftime("%d/%m/%Y à %H:%M") unless @demande_arret_travail.date_soumission_chef_service.nil?  %></h5>
+                                    </div> 
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">Rédacteur affecté:
+                                        </strong><br> <%= @demande_arret_travail.affecter_redacteur.full_name unless @demande_arret_travail.affecter_redacteur.nil? %></h5>
+                                        <h5><strong class="text-navy">
+                                        Affecté le:</strong><br> <%= @demande_arret_travail.date_affectation_redacteur.strftime("%d/%m/%Y à %H:%M") unless @demande_arret_travail.date_affectation_redacteur.nil? %></h5>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon red-bg">
+                                <i class="fa fa-folder"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Acception du dossier</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                 
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">Soumis au Directeur AT
+                                         par:</strong><br> <%= @demande_arret_travail.soumis_dir_at_par.full_name unless @demande_arret_travail.soumis_dir_at_par.nil? %></h5>
+                                        <h5><strong class="text-navy">Date
+                                        soumission:</strong><br> <%= @demande_arret_travail.date_soumission_dir_at.strftime("%d/%m/%Y à %H:%M") unless @demande_arret_travail.date_soumission_dir_at.nil? %></h5>
+                                    </div> 
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">Dossier acepté par
+                                         par:</strong><br> <%= @demande_arret_travail.accepte_par.full_name unless @demande_arret_travail.accepte_par.nil? %></h5>
+                                        <h5><strong class="text-navy">Date
+                                        acceptation:</strong><br> <%= @demande_arret_travail.date_acceptation.strftime("%d/%m/%Y à %H:%M") unless @demande_arret_travail.date_acceptation.nil? %></h5>
+                                    </div>
+                                       <div class="col-lg-4">
+                                        <h5><strong class="text-navy">Technicien affecté:
+                                        </strong><br> <%= @demande_arret_travail.affectation_at unless @demande_arret_travail.affectation_at.nil? %></h5>
+                                        <h5><strong class="text-navy">
+                                        Affecté le:</strong><br> <%= @demande_arret_travail.date_affectation_tech.strftime("%d/%m/%Y à %H:%M") unless @demande_arret_travail.date_affectation_tech.nil? %></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                    </div>
+                </div>
+            </div>
+      </div>
+  </div>
+</div>

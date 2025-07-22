@@ -1,0 +1,226 @@
+<%= content_for :titre_page, "Prestation exterieure / Détails enfant" %>
+
+<%= content_for :titre_page_autres_details do %>
+  statut dossier: <%= @prestation_exterieure.get_status? ? 'Complet' : 'Incomplet' %>
+  <br>
+  Salarié : <%= @prestation_exterieure.prenom unless @prestation_exterieure.nil? %> <%= @prestation_exterieure.nom unless @prestation_exterieure.nil? %>
+  <br>
+  Etat du dossier : <%= "#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}" %>
+  <br>
+  Crée le : <%= l(@prestation_exterieure.created_at) %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_prestation_exterieure_grappe_familliale_path(@prestation_exterieure), class: 'btn btn-white btn-xs' %>
+  <% unless @enfant.has_indemnities? %>
+    <br><br>
+    <%= link_to 'Ajouter', admin_prestation_exterieure_add_enfant_path(@prestation_exterieure), class: 'btn btn-primary btn-xs' %>
+    <%= link_to 'Modifier', admin_prestation_exterieure_edit_enfant_path(@prestation_exterieure, @enfant), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'supprimer', admin_prestation_exterieure_delete_caf_enfant_path(@prestation_exterieure.id, @enfant.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5 class="text-success">Informations sur les parents</h5>
+        </div>
+        <div class="ibox-content">
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Numéro pièce salarié:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1"><%= @enfant.caf_conjoint.prestation_exterieure.nin_salarie %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Prénom & nom du salarié:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1"><%= @enfant.caf_conjoint.prestation_exterieure.prenom %> <%= @enfant.caf_conjoint.prestation_exterieure.nom %></dd>
+            </div>
+          </d1>
+          <% if @enfant.caf_conjoint %>
+            <d1 class="row mb-0">
+              <div class="col-sm-6 text-sm-right">
+                <dt>Nom complet conjoint(e):</dt>
+              </div>
+              <div class="col-sm-6 text-sm-left">
+                <dd class="mb-1"><%= @enfant.caf_conjoint.full_name %></dd>
+              </div>
+            </d1>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+
+      <div class="ibox float-e-margins">
+        <div class="ibox-title" style="cursor: pointer;" onclick="setCollapse()" data-toggle="collapse" data-target="#accordion-infos">
+          <h5 class="text-success">Informations sur l'enfant</h5>
+          <div class="ibox-tools">
+            <%#= (link_to ' Modifier', edit_admin_enfant_path(@enfant), class: 'btn btn-success btn-outline btn-xs fa fa-edit') unless @enfant.incomplete? %>
+          </div>
+        </div>
+        <div class="ibox-content collapse div_to_collapse" id="accordion-infos">
+          <div class="row">
+            <div class="col-lg-6">
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Prénom & nom de l'enfant:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.prenom %> <%= @enfant.nom %></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Date de naissance:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= l @enfant.date_naissance %></dd>
+                </div>
+              </d1>
+              <% if @enfant.lieu_naissance? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Lieu de naissance:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @enfant.lieu_naissance unless @enfant.lieu_naissance.nil? %></dd>
+                  </div>
+                </d1>
+              <% end %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Sexe:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= CafEnfant.human_enum_name(:sexe, @enfant.sexe) unless @enfant.sexe.nil? %></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Origine de l'enfant:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= CafEnfant.human_enum_name(:lien_parente, @enfant.lien_parente) unless @enfant.lien_parente.nil? %></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Type de pièce:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= CafEnfant.human_enum_name(:type_piece, @enfant.type_piece) unless @enfant.type_piece.nil? %></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Numéro de la pièce:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.numero_piece %></dd>
+                </div>
+              </d1>
+            </div>
+            <div class="col-lg-6">
+              <% unless @enfant.created_at.nil? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Date de création:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @enfant.created_at.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+              <% end %>
+              <% if @enfant.est_repris? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Date expiration (migration):</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @enfant.migrated_document_exp_date.strftime("%d/%m/%Y") unless @enfant.migrated_document_exp_date.nil? %></dd>
+                  </div>
+                </d1>
+              <% end %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Créé par :</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.ajoute_par.full_name unless @enfant.ajoute_par.nil? %></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Est repris?:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= state_yes_no @enfant.est_repris %></dd>
+                </div>
+              </d1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ibox float-e-margins">
+        <div class="ibox-title" style="cursor: pointer;" onclick="setCollapse()" data-toggle="collapse" data-target="#accordion-documents">
+          <h5 class="text-success">Documents</h5>
+        </div>
+        <div class="ibox-content collapse div_to_collapse" id="accordion-documents">
+          <div class="row">
+            <% if @enfant.date_naissance < 14.years.ago %>
+              <%= render 'documents/liste',
+                         object: @enfant,
+                         documents: @enfant.documents,
+                         include_add: @enfant,
+                         include_delete: @enfant,
+                         include_edit: @enfant,
+                         type_documents: CafEnfant::TYPE_DOCUMENT,
+                         type_documents_obligatoires: CafEnfant::TYPE_DOCUMENT_OBLIGATOIRE,
+                         back_url: admin_prestation_exterieure_show_enfant_path(@prestation_exterieure, @enfant)
+              %>
+              <%= render 'documents/modal_form',
+                         type_documents: CafEnfant::TYPE_DOCUMENT,
+                         document: Document.new(documentable: @enfant),
+                         back_url: admin_prestation_exterieure_show_enfant_path(@prestation_exterieure, @enfant)
+              %>
+            <% elsif @enfant.date_naissance > 14.years.ago %>
+              <%= render 'documents/liste',
+                         object: @enfant,
+                         documents: @enfant.documents,
+                         include_add: @enfant,
+                         include_delete: @enfant,
+                         include_edit: @enfant,
+                         type_documents: CafEnfant::TYPE_DOCUMENT_1,
+                         type_documents_obligatoires: CafEnfant::TYPE_DOCUMENT_OBLIGATOIRE,
+                         back_url: admin_prestation_exterieure_show_enfant_path(@prestation_exterieure, @enfant)
+              %>
+              <%= render 'documents/modal_form',
+                         type_documents: CafEnfant::TYPE_DOCUMENT_1,
+                         document: Document.new(documentable: @enfant),
+                         back_url: admin_prestation_exterieure_show_enfant_path(@prestation_exterieure, @enfant)
+              %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      function setCollapse() {
+          $('.div_to_collapse').each(function () {
+              $(this).collapse('hide')
+          });
+      }
+  </script>
+<% end %>

@@ -1,0 +1,118 @@
+<% content_for :titre_page do %>
+  Dossier reversion <%= " #{@dossier_reversion_salarie.numero_dossier} - [#{@dossier_reversion_salarie.etat}]" %>
+<% end %>
+
+<%= content_for :titre_page_autres_details do %>
+
+  <% if not @dossier_reversion_salarie.motif_rejet_allocataire.nil? and @dossier_reversion_salarie.creation? %>
+    <h3 style="color: red"> <u>Motif rejet allocataire: </u></h3>
+    <div class="rejet_allocataire">
+      <p class="text-warning"><%= (" #{@dossier_reversion_salarie.motif_rejet_allocataire} ") unless @dossier_reversion_salarie.motif_rejet_allocataire.nil? %> </p>
+    </div>
+  <% end %>
+<% end %>
+
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', [:admin,@reversion_veuve_salarie],class: 'btn btn-white btn-sm'%>
+    <!-- Rendre elligible un demandeur de reversion-->
+    <% if !@dossier_reversion_salarie.eligible? and @dossier_reversion_salarie.pret_pour_soumission? %>
+      <%= link_to "Rendre éligible", admin_dossier_reversion_salary_est_eligible_path(@dossier_reversion_salarie), class: 'btn btn-primary btn-sm'  %>
+    <% end %>
+
+    <!-- Ne pas rendre elligible un demandeur de reversion-->
+    <% if @dossier_reversion_salarie.eligible?  %>
+      <%= link_to "Suspendre l'éligibilité", admin_dossier_reversion_salary_pas_eligible_path(@dossier_reversion_salarie), class: 'btn btn-danger btn-sm'  %>
+    <% end %>
+    <!-- Soumission dossier reversion -->
+    <% if @dossier_reversion_salarie.complete? and @dossier_reversion_salarie.pret_pour_soumission? %>
+      <%= link_to "Soumettre Dossier", admin_dossier_reversion_salary_soumettre_dossier_path(@dossier_reversion_salarie), class: 'btn btn-primary btn-sm' if @dossier_reversion_salarie.eligible? %>
+    <% end %>
+    <!-- Soumission Tableau Récap -->
+    <% if @dossier_reversion_salarie.soumis? and @dossier_reversion_salarie.eligible? and @reversion_veuve_salarie.cotisation_valide?  %>
+      <%= link_to "Soumettre Récap", admin_dossier_reversion_salary_soumettre_recap_path(@dossier_reversion_salarie), class: 'btn btn-primary btn-sm' if @reversion_veuve_salarie.affecter_allocataire == current_user %>
+    <% end %>
+    <!-- Validation Recap -->
+    <% if @dossier_reversion_salarie.recap_soumis?  and current_user.chef_section_liquidation? %>
+      <%= link_to "Valider Récap", admin_dossier_reversion_salary_valider_recap_path(@dossier_reversion_salarie), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+   <!-- Validation dossier -->
+    <% if @reversion_veuve_salarie.liquidation_valide? and @dossier_reversion_salarie.recap_valide?%>
+      <%= link_to "Valider dossier", admin_dossier_reversion_salary_valider_dossier_path(@dossier_reversion_salarie), class: 'btn btn-primary btn-sm' if @dossier_reversion_salarie.pret_pour_valider_dossier? %>
+      <%#= link_to "lettre", admin_base_reversion_salary_lettre_notification1_path(@base_reversion_salarie, format: :pdf), class: 'btn btn-primary btn-sm' if @base_reversion_salarie.valide?  %>
+       <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_dossier_reversion_salary_lettre_notification1_path(@dossier_reversion_salarie, format: :pdf), class: 'btn btn-outline btn-default btn-xs' if @dossier_reversion_salarie.valide? %>
+    <% end %>
+     <!-- Voire lettre de notification -->
+    <% if @dossier_reversion_salarie.valide?%>
+      <%#= link_to "lettre", admin_base_reversion_salary_lettre_notification1_path(@base_reversion_salarie, format: :pdf), class: 'btn btn-primary btn-sm' if @base_reversion_salarie.valide?  %>
+       <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_dossier_reversion_salary_lettre_notification1_path(@dossier_reversion_salarie, format: :pdf), class: 'btn btn-outline btn-default btn-xs' if @dossier_reversion_salarie.valide? %>
+    <% end %>
+<% end %>
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="row" style="margin-top:10px;">
+      <div class="col-lg-12"> 
+        <div class="ibox float-e-margins">
+          <div class="ibox-content">
+            <ul class="nav nav-tabs">
+              <li class="active">
+                <a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Informations sur l'ayant droit
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_reversion_salarie.etat_ayant_droit_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_reversion_salarie.etat_ayant_droit_valide? %>
+                </a>
+              </li>
+              <li class="">
+                <a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_reversion_salarie.documents_valide?%>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_reversion_salarie.documents_valide? %>
+                </a>
+              </li>
+              <li class="">
+                <a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Tableau récapitulatif des points
+                  <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.documents_valide? %>
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <div class="ibox">
+                    <div class="ibox-content">
+                      <br>
+                      <% if !@dossier_reversion_salarie.etat_ayant_droit_valide? and @dossier_reversion_salarie.complete?  %>
+                        <%= link_to "Je valide les informations sur l'ayant droit", admin_dossier_reversion_salary_etat_ayant_droit_valide_path(@dossier_reversion_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_info_ayant_droit' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <div class="ibox">
+                    <div class="ibox-content">
+                      <br>
+                      <% if !@dossier_reversion_salarie.documents_valide?  %>
+                          <%= link_to "Je valide les documents", admin_dossier_reversion_salary_documents_valide_path(@dossier_reversion_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                          <hr>
+                      <% end %>
+                      <%= render 'documents' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="tab-3" class="tab-pane">
+                <div class="ibox">
+                  <div class="ibox-content">
+                    <%= render 'show_tableau_recapitulatif_points' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

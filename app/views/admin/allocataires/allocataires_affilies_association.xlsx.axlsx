@@ -1,0 +1,28 @@
+wb = xlsx_package.workbook
+wb.add_worksheet(name: "Allocataires actifs") do |sheet|
+  title = wb.styles.add_style(b: true, bg_color: "395870", fg_color: "FFFFFF",
+                              alignment: {horizontal: :center})
+  sheet.add_row [
+    "Ancien numéro IPRES",
+    "Numéro unique", 
+    "Prénom", 
+    "Nom", 
+    "Adresse",
+    "Ville",
+    "Téléphone",
+    "Association",
+ ], style: title
+
+  @allocataires.each do |allocataire|
+    sheet.add_row [
+      allocataire.ipres_ancien_matric, 
+      allocataire.numero_allocataire, 
+      allocataire.prenom, 
+      allocataire.nom, 
+      allocataire.try(:adresse_rue),
+      allocataire.try(:adresse_ville),
+      allocataire.telephone, 
+      allocataire.admin_association_allocataire.try(:name),
+ ]
+  end
+end

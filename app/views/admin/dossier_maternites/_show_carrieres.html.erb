@@ -1,0 +1,253 @@
+<style type="text/css">
+  .no-text {
+    font-size: 0px;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+<div class="row">
+  <div class="col-lg-12" style="text-align:right">
+    <% if @dossier_maternite.creation? %>
+      <%= link_to ' Modifier', edit_admin_dossier_maternite_path(@dossier_maternite), class: "btn btn-white fa fa-edit" %>
+    <% end %>
+  </div>
+  <div class="col-lg-12">
+    Délai de stage : <span class="label label-success" style="font-size:13px"><%= @dossier_maternite.delai unless @dossier_maternite.delai_stage.nil? %></span>
+  </div>
+  <div class="col-lg-12">
+    <div class="col-lg-7">
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-id-badge"></span> N° immatriculation employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.num_immatriculation unless @dossier_maternite.num_immatriculation.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-id-badge"></span> Raison sociale employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.raison_sociale unless @dossier_maternite.raison_sociale.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-phone"></span> Téléphone employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.tel_employeur unless @dossier_maternite.tel_employeur.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-envelope"></span> Email employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.email_employeur unless @dossier_maternite.email_employeur.nil? %>
+        </div>
+      </d1>
+    </div>
+
+    <div class="col-lg-5">
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-address-card"></span> Adresse employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.adresse_employeur unless @dossier_maternite.adresse_employeur.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Date embauche :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <dd class="mb-1"><%= l(@dossier_maternite.date_embauche) unless @dossier_maternite.date_embauche.nil? %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Subrogation :</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <% unless @dossier_maternite.subrogation.nil? %>
+            <% if @dossier_maternite.subrogation? %>
+              Oui
+            <% else %>
+              Non
+            <% end %>
+          <% end %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-money"></span> Salaire :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.salaire_reference unless @dossier_maternite.salaire_reference.nil? %>
+        </div>
+      </d1>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <hr>
+  </div>
+  <% unless @carriere_dossier_maternites.nil? or @carriere_dossier_maternites.empty? %>
+    <div class="col-lg-12">
+      <div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+        <table class="table table-striped">
+          <thead class="thead-primary">
+          <tr>
+            <th scope="col">Année</th>
+            <th scope="col">Trimestre</th>
+            <th scope="col">1er mois</th>
+            <th scope="col">2eme mois</th>
+            <th scope="col">3eme mois</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @carriere_dossier_maternites.each do |tdp| %>
+            <tr>
+              <% if tdp.presence_en_heure? %>
+                <% unite = 'h' %>
+              <% else %>
+                <% unite = 'jrs' %>
+              <% end %>
+              <td><%= tdp.annee %></td>
+              <td><%= CarriereDossierMaternite.human_enum_name(:trimestre, tdp.trimestre) %></td>
+              <td><%= tdp.premier_mois.to_s + ' ' + unite %></td>
+              <td><%= tdp.deuxiem_mois.to_s + ' ' + unite %></td>
+              <td><%= tdp.troisiem_mois.to_s + ' ' + unite %></td>
+
+              <td style="width: 75px">
+                <%= link_to 'détails', admin_dossier_maternite_path(@dossier_maternite), class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+              <td style="width: 75px">
+                <%= link_to "supprimer", admin_dossier_maternite_destroy_carriere_path(@dossier_maternite, tdp.id),
+                            method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'},class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+<!--<div class="row" style="margin-top:20px">-->
+<!--  <div class="col-lg-12" style="text-align:center;">-->
+<!--    <button type="button" class="btn btn-outline btn-success" data-toggle="modal" data-target="#tdp">Renseigner le temps-->
+<!--      de présence-->
+<!--    </button>-->
+<!--  </div>-->
+<!--</div>-->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ajouter_document_tdp").click(function () {
+            $('#ajouter_document_tdp').hide();
+            $('#new_carriere_dossier_maternite').show();
+            return false;
+        });
+    })
+</script>
+<!-- modal tdp -->
+<% unless @dossier_maternite.carriere_valid? %>
+<div class="modal inmodal" id="tdp" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Renseigner le temps de présence</h4>
+      </div>
+        <%= bootstrap_form_for(@carriere_dossier_maternite, url: admin_dossier_maternite_create_document_tdp_path(@dossier_maternite), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <div class="modal-body">
+
+            <div class="row">
+              <%= f.alert_message '' %>
+              <div class="col-lg-12">
+                <div class="col-sm-4">
+                  <%= f.number_field :annee, min: 2000, max: 2500, label: 'Année' %>
+                </div>
+                <div class="col-sm-4">
+                  <%= f.select :trimestre, CarriereDossierMaternite::TRIMESTRE.keys.collect { |trimestre|
+                    [CarriereDossierMaternite.human_enum_name(:trimestre, trimestre), trimestre] }, label: 'Trimestre' %>
+                </div>
+                <div class="col-sm-4"style="padding-top:3%">
+                  <%= f.check_box :presence_en_heure, label: 'Présence en h' %>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="col-sm-4">
+                  <%= f.number_field :premier_mois, min: 0, label: 'Deuxième mois' %>
+                </div>
+                <div class="col-sm-4">
+                  <%= f.number_field :deuxiem_mois, min: 0, label: 'Deuxième mois' %>
+                </div>
+                <div class="col-sm-4">
+                  <%= f.number_field :troisiem_mois, min: 0, label: 'Troisième mois' %>
+                </div>
+              </div>
+              <div class="col-sm-4">
+                <h4 style="font-weight: bold;">Document *</h4>
+                <div class="btn-file">
+                  <label class="no-text">
+                    <%= f.file_field :document, hide_label: true, label: '.',
+                                     required: true, id: 'label-ext' %>
+                    <div class="btn btn-success" style="margin-top:-20px; margin-left: 1px;">
+                      <span class="fa fa-upload"></span> Choisir un fichier
+                    </div>
+                  </label>
+                  <small id="doc-name"></small>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <%= f.date_select :date_document, label: "Fait le ",
+                                  start_year: (Date.today - 1.year).year, end_year: (Date.today + 1.year).year %>
+
+              </div>
+            </div>
+
+          </div> <!--modal body-->
+
+          <div class="modal-footer form-group">
+            <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+            <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+    </div> <!--modal content -->
+  </div> <!--modal dialog-->
+</div>  <!--modal-->
+<% end %>
+<!-- Fin modal tdp -->
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+          var input = document.getElementById('label-ext');
+          var infoArea = document.getElementById('doc-name');
+          input.addEventListener('change', showFileName);
+
+          function showFileName(event) {
+              var input = event.srcElement;
+              var fileName = input.files[0].name;
+              infoArea.textContent = fileName;
+          }
+      });
+  </script>
+<% end %>

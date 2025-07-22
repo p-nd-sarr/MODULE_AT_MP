@@ -1,0 +1,36 @@
+<h3 style="font-weight: bold;">Indemnités & ordres de paiement </h3>
+<br>
+
+<div class="wrapper wrapper-content">
+  <% if @payment_orders.nil? or @payment_orders.empty? %>
+    <h2>Pas de Paiements à afficher</h2>
+  <% else %>
+    <h2>Paiements</h2>
+    <%= paginate @payment_orders %>
+    <table class="table table-bordered table-condensed table-hover" id="paiements_id">
+      <tr>
+        <td>Numéro ordre</td>
+        <td>Dossier</td>
+        <td>Montant Net</td>
+        <td>Mode Paiement</td>
+        <td>Date paiement</td>
+        <td>Etat</td>
+        <td>Voir Ordre</td>
+      </tr>
+
+      <% @payment_orders.each do |paiement| %>
+        <tr>
+          <td><%= paiement.numero_format %></td>
+          <td><%= paiement.dossier_type %>#<%= paiement.dossier_id %></td>
+          <td><%= paiement.compta_transactions.sum(:montant) %></td>
+          <td><%= paiement.compta_transactions.first.mode_paiement_human unless paiement.compta_transactions.first.nil? %></td>
+          <td><%= paiement.created_at %></td>
+          <td><%= paiement.statut_human %></td>
+          <td><%= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_paiement_generer_paiement_caf_path(paiement.id, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>
+

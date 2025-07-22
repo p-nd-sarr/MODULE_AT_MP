@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="ibox-content">
+        <%= bootstrap_form_for(@moratoire, url: employer_moratoires_path(@immatriculation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+    <%= f.alert_message "Please fix the errors below." %>
+
+        <%= f.collection_select :references, @factures , :reference_facture, :description, {}, {multiple: true} %>
+
+        <%= f.number_field :nombre_echeance, label: 'Nombre échéance' %>
+        <%= f.date_field :date_debut, label: 'Date debut' %>
+        <%= f.number_field :premier_montant, label: 'Montant première échéance' %>
+
+        <h5>NB : la date de fin correspond à la date de début ajoutée du nombre d'échéance en mois </h5>
+
+        <div class="hr-line-dashed"></div>
+
+        <div class="form-group row">
+          <div class="col-sm-4 col-sm-offset-4">
+            <%= link_to 'Annuler', admin_users_path, class: 'btn btn-white' %>
+            <%= f.button 'Valider', class: 'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

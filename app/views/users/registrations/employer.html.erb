@@ -1,0 +1,65 @@
+<div class="loginColumns animated fadeInDown">
+  <div class="row" style="background: #fff; padding: 5%">
+
+    <h2 class="font-bold">Inscription Employeur</h2>
+    <p>
+      Veuillez remplir le formulaire pour vous inscrire en tant qu'employeur
+    </p>
+    <hr>
+    <%= bootstrap_form_for(resource, as: resource_name, url: users_employer_signup_path(resource_name),) do |f| %>
+      <h3>Informations sur l'entreprise</h3>
+      <div class="col-md-12">
+
+        <div class="col-md-6">
+          <%= f.collection_select :type_employeur, Admin::TypeEmployeur.all, :id, :description, label: 'Type Structure', required: true, include_blank: true %>
+          <%= f.text_field :raison_sociale, label: 'Raison sociale',  required: true %>
+          <%= f.text_field :ninea, label: 'Ninea', required: true, :pattern => '^[0-9]{9}$', help: "Ninéa c'est 9 chiffres" %>
+
+        </div>
+        <div class="col-md-6">
+          <%= f.text_field :num_ipres, label: 'Numero IPRES' %>
+          <%= f.text_field :num_css, label: 'Numéro CSS' %>
+          <%= f.text_field :numero_unique, label: 'Numéro unique IPRES-CSS' %>
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <hr>
+        <h3>Informations sur le représentant</h3>
+
+        <div class="col-md-6">
+          <%= f.text_field :nom, label: 'Nom', required: true %>
+          <%= f.text_field :prenom, label: 'Prénom', required: true %>
+          <%= f.text_field :telephone, label: 'Téléphone', help: "Spécifier l'indicatif du pays", required: true %>
+          <%= f.email_field :email, label: 'Email', required: true %>
+        </div>
+
+        <div class="col-md-6">
+          <%= f.text_field :fonction, label: 'Fonction' , help: "Responsabilité dans l'entreprise" %>
+          <%= f.password_field :password, label: 'Mot de passe' %>
+          <%= f.password_field :password_confirmation, label: 'Confirmation du mot de passe' %>
+          <%= hidden_field_tag(:type_profil, 203) %>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary block full-width m-b">S'inscrire</button>
+
+      <%= render "users/shared/links" %>
+    <% end %>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-md-6">
+      <%= image_tag 'logo_ipres.jpg', height: 32 %>
+      <%= image_tag 'logo_css.png', height: 32 %>
+    </div>
+    <div class="col-md-6 text-right">
+      <small>© 2020</small>
+    </div>
+  </div>
+</div>
+
+<style>
+  label.required:after {
+    content: " *";
+  }
+</style>

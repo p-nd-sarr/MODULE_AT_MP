@@ -1,0 +1,171 @@
+<%= content_for :titre_page do %>
+  Détails Allocation Postnatale -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_prestation.num_dossier}", admin_dossier_prestation_path(@dossier_prestation), class: 'text-info' %>
+  </span>
+  <br>
+  <small>
+    <% unless @allocation_postnatale.motif_retour_volet.nil? %>
+      Allocation retournée !
+    <% end %>
+  </small>
+<% end %>
+<%#= content_for :titre_page, "Détails allocation_postnatale" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_prestation_allocation_postnatales_path(@dossier_prestation), class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <%= (link_to 'Modifier', edit_admin_dossier_prestation_allocation_postnatale_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-white btn-sm') if @allocation_postnatale.creation? and @dossier_prestation.current_state < :cloturer %>
+  <%= (link_to 'Liquider', admin_dossier_prestation_allocation_postnatale_soumettre_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-primary btn-sm') if @allocation_postnatale.creation? and current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer %>
+  <%= link_to 'Supprimer', [:admin, @dossier_prestation, @allocation_postnatale], method: :delete, data: { confirm: 'En êtes vous sûr?' }, id: 'dd_hover', class: 'btn btn-danger btn-sm' if @allocation_postnatale.creation? and current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer %>
+  <br> <br>
+  <% if (@allocation_postnatale.soumis? and current_user.chef_agence?) or (@allocation_postnatale.valide? and current_user.comptable?) and @dossier_prestation.current_state < :cloturer %>
+    <%= (link_to 'Valider', admin_dossier_prestation_allocation_postnatale_valider_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-primary btn-sm') if @allocation_postnatale.soumis? and current_user.chef_agence? and @dossier_prestation.current_state < :cloturer and DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, conjoint_id: nil, etat: :valide) %>
+    <%#= link_to 'Rejeter', admin_allocation_postnatale_rejeter_path(@allocation_postnatale), class: 'btn btn-danger btn-sm' if @allocation_postnatale.soumis? and current_user.chef_agence?%>
+    <%#= link_to 'Retourner volet',admin_dossier_prestation_allocation_postnatale_retour_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-warning btn-sm' if @allocation_postnatale.soumis? and current_user.chef_agence? and @dossier_prestation.current_state < :cloturer%>
+    <% unless @allocation_postnatale.paiement? %>
+      <button class="btn btn-danger btn-sm" style="" data-toggle="modal" data-target="#RetournerAllocationPostnataleModal">
+        Retourner
+      </button>
+    <% end %>
+  <% end %>
+  <% if not @allocation_postnatale.motif_retour_volet.nil? %>
+    <button class="btn btn-white btn-sm" style="" data-toggle="modal" data-target="#VoirMotifRetourModal">
+      Voir motif retour
+    </button>
+  <% end %>
+  <%#= link_to 'Retourner volet',admin_dossier_prestation_allocation_postnatale_retour_path(@dossier_prestation, @allocation_postnatale), class: 'btn btn-warning btn-sm' if @allocation_postnatale.valide? and current_user.comptable? and @dossier_prestation.current_state < :cloturer%>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content">
+  <div class="row" style="margin-top:20px;">
+    <div class="col-lg-6 col-lg-offset-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2><%= AllocationPostnatale.human_enum_name(:volet, @allocation_postnatale.volet) %></h2>
+        </div>
+        <div class="feed-activity-list" style="padding:20px;">
+
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Dossier prestation: </strong><%= @allocation_postnatale.dossier_prestation.num_dossier %>
+              </div>
+            </div>
+
+            <div class="feed-element">
+              <div class="media-body text-navy">
+                <strong>Enfant: </strong> <% unless @allocation_postnatale.enfant.nil? %>
+                  <%= @allocation_postnatale.enfant.prenom + ' ' + @allocation_postnatale.enfant.nom %>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de naissance:</strong> <%= l @allocation_postnatale.date_accouchement %>
+              </div>
+            </div>
+
+          <% unless @allocation_postnatale.date_visite_1.nil? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date première visite:</strong> <%= l @allocation_postnatale.date_visite_1 unless @allocation_postnatale.date_visite_1.nil?%>
+              </div>
+            </div>
+          <% end %>
+
+          <% unless @allocation_postnatale.date_visite_2.nil? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date deuxième visite:</strong> <%= l @allocation_postnatale.date_visite_2 unless @allocation_postnatale.date_visite_2.nil?%>
+              </div>
+            </div>
+          <% end %>
+
+          <% unless @allocation_postnatale.date_visite_3.nil? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date troisième visite:</strong> <%= l @allocation_postnatale.date_visite_3 unless @allocation_postnatale.date_visite_3.nil?%>
+              </div>
+            </div>
+          <% end %>
+
+          <% unless @allocation_postnatale.date_reception.nil? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de réception:</strong> <%=  @allocation_postnatale.date_reception unless @allocation_postnatale.date_reception.nil?%>
+              </div>
+            </div>
+          <% end %>
+
+          <% unless @allocation_postnatale.date_enregistrement.nil? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date d'enregistrement:</strong> <%=  @allocation_postnatale.date_enregistrement unless @allocation_postnatale.date_enregistrement.nil?%>
+              </div>
+            </div>
+          <% end %>
+
+            <% unless @allocation_postnatale.date_soumission.nil? %>
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Date de liquidation:</strong> <%= l @allocation_postnatale.date_soumission %>
+                </div>
+              </div>
+            <% end %>
+
+            <% unless @allocation_postnatale.date_validation.nil? %>
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Date de validation:</strong> <%= l @allocation_postnatale.date_validation %>
+                </div>
+              </div>
+            <% end %>
+
+            <% unless @allocation_postnatale.date_soumission.nil? %>
+            <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Montant liquidé:</strong> <%= @allocation_postnatale.montant_paiement%>
+                </div>
+              </div>
+            <% end %>
+            <% unless @allocation_postnatale.date_paiement.nil? %>
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Date de paiement:</strong> <%= l @allocation_postnatale.date_paiement%>
+                </div>
+              </div>
+            <% end %>
+          <div class="feed-element">
+            <div class="media-body ">
+              <strong>Est repris? :</strong> <%= state_yes_no @allocation_postnatale.est_repris %>
+            </div>
+          </div>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Commentaire:</strong>
+                  <p>
+                    <%= @allocation_postnatale.commentaire %>
+                  </p>
+              </div>
+            </div>
+
+            <div class="feed-element">
+              <div class="media-body">
+                <div style="text-align:center;">
+                  <a href="<%= url_for(@allocation_postnatale.document) %>" target="_blank">
+                    <%= image_tag 'missing_logo.png', size: "500x500>", class: "m-t-xs img-responsive" %>
+                    <%#= image_tag @allocation_postnatale.document.preview(resize: "500x500>"), class: "m-t-xs img-responsive" %>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%= render 'retourner_allocation_postnatale_form', object: @allocation_postnatale %>
+<%= render 'admin/allocation_postnatales/motif_retour', object: @allocation_postnatale %>

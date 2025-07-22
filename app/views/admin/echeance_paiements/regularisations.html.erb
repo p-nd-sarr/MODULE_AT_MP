@@ -1,0 +1,41 @@
+<%= content_for :titre_page, "Liste des pensions régularisées  [#{ @echeance_paiement.periode_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_fin.strftime("%d/%m/%Y")}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/regularisation_pensions/search' %>
+    <br>
+
+<%= paginate @regularisation_pensions %>
+<table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">N° Dossier</th>
+    <th scope="col">Matricule</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Motif</th>
+    <th colspan="5"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @regularisation_pensions.each do |regularisation_pension| %>
+    <tr>
+      <td><%= regularisation_pension.numero_dossier %></td>
+      <td><%= regularisation_pension.numero_allocataire %></td>
+      <td><%= regularisation_pension.prenom %></td>
+      <td><%= regularisation_pension.nom %></td>
+      <td><%= regularisation_pension.motif_regularisation_pension %></td>
+      <td style="width: 75px">
+        <%= link_to 'détails', [:admin, regularisation_pension.allocataire, regularisation_pension], class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @regularisation_pensions %>
+  </div>
+  </div>

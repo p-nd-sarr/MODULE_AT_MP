@@ -1,0 +1,11 @@
+<li class="<%= 'active' if is_active_controller('admin/prestation_exterieures') %>">
+  <a href="#"><i class="fa fa-folder"></i> <span class="nav-label">Prestation exterieures CAF</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/prestation_exterieures') and is_active_action('etats_famille') %>">
+      <%= link_to 'Etats de famillles', admin_etats_famille_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/prestation_exterieures') and is_active_action('droits_liquidation') %>">
+      <%= link_to "Droits liquidés", admin_droits_liquidation_path %>
+    </li>
+  </ul>
+</li>

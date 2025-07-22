@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="ibox">
+    <div class="ibox-title">
+      <h5>Historiques du dossier de modification mode paiement</h5>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-lg-6">
+          <h5>Ouvert Par: <%= @modifier_mode_paiement.ajoute_par.full_name %></h5>
+          <h5>Date de création: <%= @modifier_mode_paiement.created_at.strftime("%d/%m/%Y") %></h5>
+        </div>
+
+        <div class="col-lg-6">
+          <h5>Soumis à l'instruction: <%= @modifier_mode_paiement.soumis_par.try(:full_name) unless @modifier_mode_paiement.soumis_par.nil? %></h5>
+          <h5>Date de
+            soumission:  <%= (@modifier_mode_paiement.date_soumission.strftime("%d/%m/%Y")) unless @modifier_mode_paiement.date_soumission.nil? %> </h5>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+          <div class="col-lg-3">
+            <h5>Validée Par
+              : <%= (@modifier_mode_paiement.valider_par.try(:full_name)) unless @modifier_mode_paiement.valider_par.nil? %> </h5>
+            <h5>Date de validation
+              : <%= (@modifier_mode_paiement.date_validation.strftime("%d/%m/%Y")) unless @modifier_mode_paiement.date_validation.nil? %></h5>
+          </div>
+
+          <div class="col-lg-3">
+            <h5>Rejetée Par
+              : <%= (@modifier_mode_paiement.traite_par.try(:full_name)) unless @modifier_mode_paiement.traite_par.nil? %> </h5>
+            <h5>Date de rejet
+              : <%= (@modifier_mode_paiement.traite_le.strftime("%d/%m/%Y")) unless @modifier_mode_paiement.traite_le.nil? %></h5>
+          </div>
+            
+
+        <div class="col-lg-3">
+          <h5>Gestionnaire
+            allocataire: <%= (@modifier_mode_paiement.affecter_allocataire.full_name) unless @modifier_mode_paiement.affecter_allocataire.nil? %> </h5>
+          <h5>Date
+            Affectation: <%= (@modifier_mode_paiement.affectation_allocataire_date.strftime("%d/%m/%Y")) unless @modifier_mode_paiement.affectation_allocataire_date.nil? %></h5>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>

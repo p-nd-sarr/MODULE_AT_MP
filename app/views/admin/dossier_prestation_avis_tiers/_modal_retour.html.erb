@@ -1,0 +1,25 @@
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif </h4>
+      </div>
+      <%= bootstrap_form_for(@dossier_prestation_avis_tier, url: admin_dossier_prestation_dossier_prestation_avis_tier_retourner_path(@dossier_prestation, @dossier_prestation_avis_tier)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif_retour, label: 'Motif de retour', required: true, disabled: !@dossier_prestation_avis_tier.retourne_par.nil? %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <% if !@dossier_prestation_avis_tier.creation? and @dossier_prestation_avis_tier.retourne_par.nil? %>
+            <%= f.button 'Valider', class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

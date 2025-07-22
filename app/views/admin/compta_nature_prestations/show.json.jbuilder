@@ -1,0 +1,1 @@
+json.partial! "admin_compta_nature_prestations/admin_compta_nature_prestation", admin_compta_nature_prestation: @admin_compta_nature_prestation

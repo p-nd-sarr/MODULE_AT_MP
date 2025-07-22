@@ -1,0 +1,120 @@
+<%= bootstrap_form_for([:admin, @dossier_prestation, @dossier_prestation_avis_tier], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+  <%= f.select :type_avis,
+               DossierPrestationAvisTier::TYPE_AVIS.keys.collect { |type_avis| [DossierPrestationAvisTier.human_enum_name(:type_avis, type_avis), type_avis] }, label: 'Type Avis', required: true %>
+  <%= f.select :nature_avis,
+               DossierPrestationAvisTier::NATURE_AVIS.keys.collect { |nature_avis| [DossierPrestationAvisTier.human_enum_name(:nature_avis, nature_avis), nature_avis] }, label: 'Nature Avis', required: true %>
+  <%= f.number_field :montant_avis, class: 'form-control', label: 'Montant Avis', required: true %>
+  <div id="trop_percu">
+    <%= f.number_field :montant_echeance, class: 'form-control', label: 'Montant Échéance', required: true %>
+  </div>
+  <div id="af">
+    <%= f.select :trimestre, DossierPrestationAvisTier::TRIMESTRE.keys.collect { |trimestre|
+      [DossierPrestationAvisTier.human_enum_name(:trimestre, trimestre), trimestre] },
+                 label: 'Trimestre' %>
+    <%= f.select :annee, (Date.today.year - 1..Date.today.year), class: 'form-control', label: 'Année' %>
+
+  </div>
+  <div id="pre">
+    <%= f.select :volet_pre, DossierPrestationAvisTier::VOLET_PRE.keys.collect { |volet_pre|
+      [DossierPrestationAvisTier.human_enum_name(:volet_pre, volet_pre), volet_pre] },
+                 label: 'volet' %>
+    <%= f.collection_select :conjoint_id, Conjoint.where(numero_affiliation: @dossier_prestation.num_affiliation), :id, :full_name, label: 'Conjoint', class: 'form-control' %>
+  </div>
+  <div id="post">
+    <%= f.select :volet_post, DossierPrestationAvisTier::VOLET_POST.keys.collect { |volet_post|
+      [DossierPrestationAvisTier.human_enum_name(:volet_post, volet_post), volet_post] },
+                 label: 'volet' %>
+    <%= f.collection_select :enfant_id, Enfant.where(numero_affiliation: @dossier_prestation.num_affiliation).not_deleted.not_incomplete, :id, :full_name, label: 'Enfant', class: 'form-control' %>
+  </div>
+  <%= f.text_field :numero_liquidation, class: 'form-control', label: 'Numéro liquidation', required: true %>
+  <%= f.date_field :date_liquidation, class: 'form-control', label: 'Date liquidation', required: true %>
+
+  <%= f.text_area :motif, class: 'form-control', label: 'Motif Avis', required: true %>
+
+
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', (@dossier_prestation_avis_tier.persisted? ? [:admin, @dossier_prestation, @dossier_prestation_avis_tier] : admin_dossier_prestation_dossier_prestation_avis_tiers_path(@dossier_prestation)), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          charger_trop_percu_info();
+          charger_nature_avis_info();
+
+
+          $("#dossier_prestation_avis_tier_type_avis").change(function () {
+              charger_trop_percu_info()
+          });
+
+          $("#dossier_prestation_avis_tier_nature_avis").change(function () {
+              charger_nature_avis_info()
+          });
+
+          function charger_trop_percu_info() {
+              let type_avis = $('#dossier_prestation_avis_tier_type_avis');
+              let section_trop_percu = $('#trop_percu')
+              if (type_avis.val() == 'trop_percu') {
+                  section_trop_percu.show();
+                  $('#dossier_prestation_avis_tier_montant_echeance').attr("disabled", false)
+                  $('#dossier_prestation_avis_tier_montant_echeance').attr("required", true)
+              } else {
+                  section_trop_percu.hide();
+                  $('#dossier_prestation_avis_tier_montant_echeance').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_montant_echeance').attr("required", false)
+              }
+          }
+
+          function charger_nature_avis_info() {
+              let nature_avis = $('#dossier_prestation_avis_tier_nature_avis');
+              let section_af = $('#af');
+              let section_pre = $('#pre');
+              let section_post = $('#post');
+
+              if (nature_avis.val() == 'af') {
+                  section_af.show();
+                  section_pre.hide();
+                  section_post.hide();
+                  $('#dossier_prestation_avis_tier_trimestre').attr("disabled", false)
+                  $('#dossier_prestation_avis_tier_annee').attr("disabled", false)
+                  $('#dossier_prestation_avis_tier_enfant_id').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_conjoint_id').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_volet_pre').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_volet_post').attr("disabled", true)
+
+              } else if (nature_avis.val() == 'pre') {
+                  section_af.hide();
+                  section_pre.show();
+                  section_post.hide();
+                  $('#dossier_prestation_avis_tier_trimestre').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_annee').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_enfant_id').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_conjoint_id').attr("disabled", false)
+                  $('#dossier_prestation_avis_tier_volet_pre').attr("disabled", false)
+                  $('#dossier_prestation_avis_tier_volet_post').attr("disabled", true)
+              } else if (nature_avis.val() == 'post') {
+                  section_af.hide();
+                  section_pre.hide();
+                  section_post.show();
+                  $('#dossier_prestation_avis_tier_trimestre').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_annee').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_enfant_id').attr("disabled", false)
+                  $('#dossier_prestation_avis_tier_conjoint_id').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_volet_pre').attr("disabled", true)
+                  $('#dossier_prestation_avis_tier_volet_post').attr("disabled", false)
+              }
+          }
+
+      })
+  </script>
+<% end %>

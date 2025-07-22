@@ -1,0 +1,584 @@
+<!--
+<li class="<%= 'active' if is_active_controller('admin/carrieres') %>">
+  <%= link_to admin_carrieres_path do %>
+    <i class="fa fa-users"></i> <span class="nav-label">Carrières</span>
+  <% end %>
+</li>
+-->
+
+<li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Salariés</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/salaries') %>">
+    <li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+      <%= link_to 'Liste', admin_salaries_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Employeurs</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/employeurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+      <%= link_to 'Liste des employeurs', admin_employeurs_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/allocataires') or is_active_controller('admin/bordereaux_regularisations') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Allocataires</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/allocataires') %>">
+      <li class="<%= 'active' if is_active_controller('admin/allocataires') and is_active_action('toutes_les_demandes') %>">
+        <%= link_to 'Accueil', toutes_les_demandes_admin_allocataires_path unless !current_user.chef_service_allocation? %>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/allocataires') and is_active_action('index') %>">
+        <%= link_to 'Liste des allocataires', admin_allocataires_path %>
+      </li>
+
+      
+      <li class="<%= 'active' if is_active_controller('admin/allocataires/modifier_mode_paiements') or is_active_controller('admin/allocataires/modifier_mode_paiements')%>">
+        <a href="#"><i class=""></i> <span class="nav-label">Modification mode paiement</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level <%= is_active_controller('admin/allocataires/modifier_mode_paiements') %>">
+          
+          <li class="modifier_mode_paiement">
+            <%= link_to 'Toutes les demandes en agence', toutes_les_demandes_en_agence_admin_modifier_mode_paiements_path %>
+          </li>
+         
+
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente validation en agence', en_attente_validation_agence_admin_modifier_mode_paiements_path %>
+          </li>
+
+          <li>
+            <%#= link_to 'En attente verification', en_attente_verification_admin_allocataire_modifier_mode_paiements_path %>
+          </li>
+        </ul>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/allocataires/modifier_mode_paiements') or is_active_controller('admin/allocataires/suspension_allocataires')%>">
+        <a href="#"><i class=""></i> <span class="nav-label">Modification d'adresse</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level <%= is_active_controller('admin/allocataires/modifier_adresses') %>">
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente affectation', en_attente_affectation_admin_modifier_adresses_path %>
+          </li>
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente validation', en_attente_validation_admin_modifier_adresses_path %>
+          </li>
+
+          <li>
+            <%#= link_to 'En attente verification', en_attente_verification_admin_allocataire_modifier_mode_paiements_path %>
+          </li>
+        </ul>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/allocataires/suspension_allocataires') or is_active_controller('admin/allocataires/suspension_allocataires')%>">
+        <a href="#"><i class=""></i> <span class="nav-label">Suspension</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level <%= is_active_controller('admin/allocataires/suspension_allocataires') %>">
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente affectation', en_attente_affectation_admin_suspension_allocataires_path %>
+          </li>
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente validation', en_attente_validation_admin_suspension_allocataires_path %>
+          </li>
+
+          <li>
+            <%#= link_to 'En attente verification', en_attente_verification_admin_allocataire_modifier_mode_paiements_path %>
+          </li>
+        </ul>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/allocataires/extinction_allocataires') or is_active_controller('admin/allocataires/extinction_allocataires')%>">
+        <a href="#"><i class=""></i> <span class="nav-label">Extinction</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level <%= is_active_controller('admin/allocataires/extinction_allocataires') %>">
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente affectation', en_attente_affectation_admin_extinction_allocataires_path %>
+          </li>
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente validation', en_attente_validation_admin_extinction_allocataires_path %>
+          </li>
+
+          <li>
+            <%#= link_to 'En attente verification', en_attente_verification_admin_allocataire_modifier_mode_paiements_path %>
+          </li>
+        </ul>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/allocataires/regularisation_pensions') or is_active_controller('admin/allocataires/regularisation_pensions')%>">
+        <a href="#"><i class=""></i> <span class="nav-label">Régularisation de pension</span><span class="fa arrow"></span></a>
+        <ul class="nav nav-second-level <%= is_active_controller('admin/allocataires/regularisation_pensions') %>">
+         
+          <li class="modifier_mode_paiement">
+            <%= link_to 'Liste', toutes_les_demandes_admin_regularisation_pensions_path %>
+          </li> 
+         
+          <li class="modifier_mode_paiement">
+            <%= link_to 'En attente validation', en_attente_validation_chef_agence_admin_regularisation_pensions_path %>
+          </li>
+
+           <li class="<%= 'active' if is_active_controller('admin/allocataires') and is_active_action('index') %>">
+            <%= link_to 'Historiques de paiements', historiques_paiements_admin_allocataires_path %>
+           </li>
+        </ul>
+      </li>
+
+
+  
+     <!-- <li class="<%= 'active' if is_active_controller('admin/bordereaux_regularisations') and is_active_action('index') %>">
+      <%= link_to 'Bordereaux de paiements de suspension', admin_bordereaux_regularisations_path %>
+    </li>-->
+
+    <!-- <li class="<%= 'active' if is_active_controller('admin/allocataires') and is_active_action('historiques_suivi') %>">
+      <%#= link_to 'Historiques Suivi', historiques_suivi_admin_allocataires_path %>
+    </li> -->
+
+    <li class="<%#= 'active' if is_active_controller('admin/allocataires') %>">
+      <%#= link_to 'En attente de suspension', admin_allocataire_suspension_soumis_path %>
+    </li>
+    <li class="<%#= 'active' if is_active_controller('admin/allocataires') %>">
+      <%#= link_to 'suspendus', admin_allocataires_suspendus_path %>
+    </li>
+  </ul>
+</li>
+
+
+
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%=I18n.t('module_arret_travail.admin_menu.arret_travail_label')%></span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+      <%= link_to 'Accueil', admin_arret_travails_path %>
+      <%#= link_to I18n.t('module_arret_travail.admin_menu.ajouter_dossier'), new_admin_arret_travail_path %>
+      
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente Instruction', en_attente_soumis_chef_agence_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente affectation dossiers acceptés', en_attente_affectation_technicien_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation des ij', en_attente_validation_ij_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation des frais', en_attente_validation_frais_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente affectation dossiers rechutes', en_attente_affectation_dossoer_rechute_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
+      <%= link_to "Origine GED AT", admin_arret_travail_geds_path(est_mp: false) %>
+    </li>      
+    <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
+      <%= link_to "Origine GED MP", admin_arret_travail_geds_path(est_mp: true) %>
+    </li> 
+  </ul>
+</li>
+
+<!--Guérisons-->
+<li class="<%= 'active' if is_active_controller('admin/at_guerisons') or is_active_controller('admin/at_guerisons')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Guérison</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_guerisons') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/at_guerisons') %>">
+        <%= link_to 'Tous les dossiers', admin_at_guerisons_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/at_guerisons') %>">
+        <%= link_to 'En attente validation', soumis_chef_agence_admin_at_guerisons_path %>
+    </li>
+  </ul>
+</li>
+
+<!--Rechute-->
+<li class="<%= 'active' if is_active_controller('admin/at_rechutes') or is_active_controller('admin/at_rechutes')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Rechute</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_rechutes') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/at_rechutes') %>">
+        <%= link_to 'Tous les dossiers', admin_at_rechutes_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/at_rechutes') %>">
+      <%= link_to 'En attente validation', en_attente_validation_agence_admin_at_rechutes_path %>
+    </li>
+    
+  </ul>
+</li>
+
+  <li class="<%= 'active' if is_active_controller('admin/arret_travails/at_consolidations') or is_active_controller('admin/allocataires/at_consolidations')%>">
+    <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Consolidation</span><span class="fa arrow"></span></a>
+    <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails/at_consolidations') %>">
+      
+      <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+          <%= link_to 'Toutes les consolidations', admin_at_consolidations_path %>
+      </li>
+      
+       <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+        <%= link_to 'En instruction', consolidations_soumises_chef_agence_admin_at_consolidations_path %>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+        <%= link_to 'En attente Affectation tech', en_attente_affectation_tech_admin_at_consolidations_path %>
+      </li>
+
+      <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+        <%= link_to 'En attente validation', en_attente_validation_chef_agence_admin_at_consolidations_path %>
+      </li>
+      
+    </ul>
+  </li>
+
+  <!--Rente Famille-->
+<li class="<%= 'active' if is_active_controller('admin/at_rente_familles') or is_active_controller('admin/at_consolidations')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Rente famiile</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_consolidations') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+        <%= link_to 'Tous les dossiers', admin_at_rente_familles_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+      <%= link_to 'En instruction', soumis_chef_agence_admin_at_rente_familles_path %>
+    </li>
+  </ul>
+</li>
+
+  <li class="<%= 'active' if is_active_controller('admin/rentiers') %>">
+    <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Rentiers</span><span class="fa arrow"></span></a>
+    <ul class="nav nav-second-level <%= is_active_controller('admin/rentiers') %>">
+      <li class="<%= 'active' if is_active_controller('admin/rentiers') and is_active_action('index') %>">
+        <%= link_to 'Liste des rentiers', admin_rentiers_path %>
+      </li>
+    </ul>
+  </li>
+
+<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
+    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+      <%= link_to 'Tous les demandes', admin_maladie_professionnelles_path %>
+      <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/prestation_retraite') %>">
+  <%= link_to admin_prestation_retraite_index_path do %>
+    <i class="fa fa-folder"></i> <span class="nav-label">Prestations retraite</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/liquidation_retraites') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Liquidation Retraite</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/liquidation_retraites') and is_active_action('index') %>">
+      <%= link_to 'Toutes les demandes', admin_liquidation_retraites_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/liquidation_retraites') and is_active_action('en_attente') %>">
+      <%= link_to 'En attente instruction', en_attente_admin_liquidation_retraites_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/reversion_veuve_salaries') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Reversion avant liquidation</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+     <li class="<%= 'active' if is_active_controller('admin/demande_remboursement_cotisations') and is_active_action('index') %>">
+      <%= link_to 'Toutes les demandes', admin_base_reversion_salaries_path %>
+    </li>
+     <li class="<%= 'active' if is_active_controller('admin/reversion_veuve_salaries') %>">
+        <%= link_to 'En attente instruction', en_attente_instruction_admin_base_reversion_salaries_path %>
+    </li>
+  </ul>
+</li>
+
+
+
+
+
+<li class="<%= 'active' if is_active_controller('admin/revision_pensions') or
+  is_active_controller('admin/enfants') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Revision Pension</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/revision_pensions') %>">
+    <li class="<%= 'active' if is_active_controller('admin/revision_pensions') %>"><%= link_to 'En attente instruction', en_attente_instruction_admin_revision_pensions_path %></li>
+  </ul>
+</li>
+
+
+<li class="<%= 'active' if is_active_controller('admin/reversion_veuves') or
+  is_active_controller('admin/reversion_veuves') %>">
+  <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Reversion après liquidation</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/reversion_veuves') %>">
+    <li class="<%= 'active' if is_active_controller('admin/revision_pensions') %>"><%= link_to 'Toutes les demandes', toutes_demandes_admin_reversion_veuves_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/revision_pensions') %>"><%= link_to 'En attente instruction', en_attente_instruction_admin_reversion_veuves_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/css_annulation_paiements') %>">
+  <a href="#"><i class="fa fa-sitemap"></i>
+    <span class="nav-label">Annulation Paiement </span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/css_annulation_paiements') %>">
+    <li class="<%= 'active' if is_active_controller('admin/css_annulation_paiements') and is_active_action('en_attente_validation_impayes') %>">
+      <%= link_to 'En attente validation des impayés', en_attente_validation_impayes_admin_css_annulation_paiements_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/css_transfert_employeurs') %>">
+  <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Transfert CSS</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/css_transfert_employeurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/css_transfert_employeurs') and is_active_action('index') %>">
+      <%= link_to 'Transfert allocataire', admin_css_transfert_allocataires_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/css_transfert_employeurs') and is_active_action('new') %>">
+      <%= link_to "Transfert employeur", admin_css_transfert_employeurs_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/dossier_prestations') || is_active_controller('admin/allocataire_pf') ||
+  is_active_controller('admin/traitement_collectifs') ||
+  is_active_controller('admin/mandataires') %>">
+  <a href="#"><i class="fa fa-folder"></i>
+    <span class="nav-label">Prestation Familiale</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('index') %>">
+      <%= link_to 'Accueil', admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('incomplete_dossiers') %>">
+      <%= link_to "Dossiers incomplets", incomplete_dossiers_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('anciens_dossiers') %>">
+      <%= link_to "Anciens dossiers", anciens_dossiers_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('nouveaux_dossiers') %>">
+      <%= link_to "Nouveaux dossiers", nouveaux_dossiers_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('en_attente') %>">
+      <%= link_to 'Dossiers en attente validation', en_attente_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('attente_validation_postnatale') %>">
+      <%= link_to 'Allocation pré/postnatale en attente validation', attente_validation_postnatale_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('attente_validation_familiale') %>">
+      <%= link_to 'Allocation familiale en attente validation', attente_validation_familiale_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('clotures_requests') %>">
+      <%= link_to 'Dossiers en attente de clôture', clotures_requests_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('attributaire_tierce_en_attente') %>">
+      <%= link_to 'Attributaires tierces en attente de validation', attributaire_tierce_en_attente_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('allocation_en_attente') %>">
+      <%= link_to "Demandes d'allocations", allocation_en_attente_admin_dossier_prestations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/allocataire_pf') and is_active_action('index') %>">
+      <%= link_to 'Liste des allocataires PF', admin_allocataire_pf_index_path %>
+    </li>
+
+    <!--<li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('en_attente') %>">
+      <%#= link_to 'En attente de validation', en_attente_admin_dossier_prestations_path %>
+    </li> -->
+    <!--<li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('ajoutee') %>">
+      <%= link_to "Que j'ai ajoutés", ajoutee_admin_dossier_prestations_path %>
+    </li> -->
+    <!--    <li class="<%#= 'active' if is_active_controller('admin/traitement_collectifs') and is_active_action('options_list') %>">
+      <%#= link_to "Traitement collectif", admin_options_list_path %>
+    </li>
+    <li class="<%#= 'active' if is_active_controller('admin/traitement_collectifs') and is_active_action('en_attente') %>">
+      <%#= link_to "Traitement collectif (Af) en attente de validation", admin_tr_en_attente_path %>
+    </li>
+    <li class="<%#= 'active' if is_active_controller('admin/traitement_collectifs') and is_active_action('tr_veuves_en_attente') %>">
+      <%#= link_to admin_tr_veuves_en_attente_path do %>
+        Traitement veuves en attente de validation
+        (<%#= AllocationFamiliale.all.en_agence(current_user.admin_agence.id).soumis.count %>)
+      <%# end %>
+    </li>-->
+    <li class="<%= 'active' if is_active_controller('admin/mandataires') and is_active_action('index') %>">
+      <%= link_to "Listes des mandataires", admin_mandataires_path %>
+    </li>
+    <!--    <li class="<%#= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('new') %>">-->
+    <%#= link_to "Ajouter une demande", new_admin_dossier_prestation_path %>
+    <!--    </li>-->
+    <li class="<%= 'active' if is_active_controller('admin/dossier_prestation_geds') %>">
+      <%= link_to "Origine GED", admin_dossier_prestation_geds_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/echeance_caisses') or
+  is_active_controller('admin/echeance_caisses') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Échéance CSS</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/echeance_caisses') %>">
+    <li class="<%= 'active' if is_active_controller('admin/echeance_caisses') and is_active_action('index') %>"><%= link_to 'Liste des Echeances', admin_echeance_caisses_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/echeance_caisses') and is_active_action('en_attente') %>"><%= link_to 'En attente de validation', en_attente_admin_echeance_caisses_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/echeance_veuves_caisses') or
+  is_active_controller('admin/echeance_veuves_caisses') %>">
+  <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Échéance veuves CSS
+      <span> <% unless EcheanceVeuvesCaisse.en_attente_validation_ca.empty? %> <i class="fa fa-clock-o" style="font-size:16px"></i> <% end %> </span>
+      </span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/echeance_veuves_caisses') %>">
+    <li class="<%= 'active' if is_active_controller('admin/echeance_veuves_caisses') %>"><%= link_to 'Liste des Echeances', admin_echeance_veuves_caisses_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/dossier_maternites') %>">
+  <a href="#"><i class="fa fa-briefcase"></i>
+    <span class="nav-label">Indemnités Congés Maternité</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/dossier_maternites') and is_active_action('index') %>">
+      <%= link_to 'Accueil', admin_dossier_maternites_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/dossier_maternites') and is_active_action('en_attente') %>">
+      <%= link_to 'En attente de validation', en_attente_admin_dossier_maternites_path %>
+    </li>
+    <!--<li class="<%#= 'active' if is_active_controller('admin/dossier_maternites') and is_active_action('ajoutee') %>">
+      <%#= link_to "Que j'ai ajoutées", ajoutee_admin_dossier_maternites_path %>
+    </li>
+    <li class="<%#= 'active' if is_active_controller('admin/dossier_maternites') and is_active_action('new') %>">
+      <%#= link_to "Ajouter une demande", new_admin_dossier_maternite_path %>
+    </li>-->
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/conjoints') or
+    is_active_controller('admin/enfants') or
+    is_active_controller('admin/ascendants') or
+    is_active_controller('admin/etats_familles_salaries') or
+    is_active_controller('admin/declaration_divorce_ou_deces_conjoints') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Grappe familiale</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/conjoints') %>">
+    <li class="<%= 'active' if is_active_controller('admin/conjoints') %>"><%= link_to 'Conjoints', admin_conjoints_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/enfants') %>">
+    <li class="<%= 'active' if is_active_controller('admin/enfants') %>"><%= link_to 'Enfants', admin_enfants_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/ascendants') %>">
+    <li class="<%= 'active' if is_active_controller('admin/ascendants') %>"><%= link_to 'Ascendants', admin_ascendants_salaries_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/declaration_divorce_ou_deces_conjoints') %>">
+    <li class="<%= 'active' if is_active_controller('admin/declaration_divorce_ou_deces_conjoints') %>"><%= link_to 'Déclaration divorce ou décés', admin_declaration_divorce_ou_deces_conjoints_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/etats_familles_salaries') %>">
+    <li class="<%= 'active' if is_active_controller('admin/etats_familles_salaries') %>"><%= link_to 'Etats de famille', admin_etats_familles_salaries_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/paiements_caisses') or
+  is_active_controller('admin/paiements_caisses') %>">
+  <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Paiements à domicile</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/echeance_paiements') %>">
+    <li class="<%= 'active' if is_active_controller('admin/echeance_paiements') %>"><%= link_to 'Liste', admin_paiements_caisses_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/activite_principales') or
+    is_active_controller('admin/convention_collectives') or
+    is_active_controller('admin/statut_juridiques') or
+    is_active_controller('admin/type_employeurs') or
+    is_active_controller('admin/professions') or
+    is_active_controller('admin/countries') or
+    is_active_controller('admin/mouvement_travail_fins') or
+    is_active_controller('admin/mouvement_travails') or
+    is_active_controller('admin/temps_travails') or
+    is_active_controller('admin/sites') or
+    is_active_controller('admin/type_regimes') or
+    is_active_controller('admin/baremes') or
+    is_active_controller('admin/bareme_pensions') or
+    is_active_controller('admin/type_contrat_salaries') or
+    is_active_controller('admin/motif_sorties') or
+    is_active_controller('admin/type_statut_juridiques') or
+    is_active_controller('admin/type_etat_civils') or
+    is_active_controller('admin/type_etablissement_publiques') or
+    is_active_controller('admin/type_etablissement_diplomatiques') or
+    is_active_controller('admin/type_etablissements') or
+    is_active_controller('admin/type_piece_identifications') or
+    is_active_controller('admin/secteur_activites') or
+    is_active_controller('montant_mensualite_volets') %>">
+  <a href="#"><i class="fa fa-cog"></i> <span class="nav-label">Configurations</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/baremes') %>">
+      <%= link_to 'Barêmes', admin_baremes_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/bareme_pensions') %>">
+      <%= link_to 'Barêmes pension', admin_bareme_pensions_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('montant_mensualite_volets') %>">
+      <%= link_to 'Mensualités Volets', admin_montant_mensualite_volets_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/activite_principales') %>">
+      <%= link_to 'Activités principales', admin_activite_principales_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/convention_collectives') %>">
+      <%= link_to 'Convention collectives', admin_convention_collectives_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/secteur_activites') %>">
+      <%= link_to "Secteurs d'activité", admin_secteur_activites_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/statut_juridiques') %>">
+      <%= link_to "Statut juridiques", admin_statut_juridiques_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_employeurs') %>">
+      <%= link_to "Types employeur", admin_type_employeurs_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/professions') %>">
+      <%= link_to "Professions", admin_professions_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/countries') %>">
+      <%= link_to "Pays", admin_countries_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/mouvement_travail_fins') %>">
+      <%= link_to "Mouvement de travail sortie", admin_mouvement_travail_fins_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/mouvement_travails') %>">
+      <%= link_to "Mouvement de travail", admin_mouvement_travails_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/temps_travails') %>">
+      <%= link_to "Temps de travail", admin_temps_travails_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/sites') %>">
+      <%= link_to "Sites", admin_sites_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_regimes') %>">
+      <%= link_to "Type de régime", admin_type_regimes_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_contrat_salaries') %>">
+      <%= link_to "Type de contrat salarié", admin_type_contrat_salaries_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_contrat_salaries') %>">
+      <%= link_to "Motif de sortie", admin_motif_sorties_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_statut_juridiques') %>">
+      <%= link_to "Type statut juridique", admin_type_statut_juridiques_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_etat_civils') %>">
+      <%= link_to "Type d'état civil", admin_type_etat_civils_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_etablissement_publiques') %>">
+      <%= link_to "Type d'établissement publiques", admin_type_etablissement_publiques_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_etablissement_diplomatiques') %>">
+      <%= link_to "Type d'établissement diplomatique", admin_type_etablissement_diplomatiques_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_etablissements') %>">
+      <%= link_to "Type d'établissement", admin_type_etablissements_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/type_piece_identifications') %>">
+      <%= link_to "Type de pièce d'identification", admin_type_piece_identifications_path %>
+    </li>
+  </ul>
+</li>
+
+
+
+<style>
+  li.modifier_mode_paiement {
+      padding-left: 20px;
+  }
+</style>

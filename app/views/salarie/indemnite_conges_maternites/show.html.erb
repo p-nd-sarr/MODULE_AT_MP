@@ -1,0 +1,133 @@
+<%= content_for :titre_page, 'Indemnités De Congés Maternité' %>
+
+<%= content_for :titre_page_autres_details do %>
+  Tranche : <%= "#{IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement)}" %><br>
+  Etat : <%= "#{IndemniteCongesMaternite.human_enum_name(:etat, @indemnite_conges_maternite.etat)}" %>
+  <% unless @indemnite_conges_maternite.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @indemnite_conges_maternite.date_soumission}" %>
+  <%end %>
+<% end %>
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', salarie_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite), class: 'btn btn-white btn-sm' %>
+  <% if @indemnite_conges_maternite.creation? %>
+    <%= link_to 'Modifier', edit_salarie_dossier_maternite_indemnite_conges_maternite_path(@dossier_maternite, @indemnite_conges_maternite), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Soumettre', salarie_dossier_maternite_indemnite_conges_maternite_soumission_form_path(@dossier_maternite, @indemnite_conges_maternite), class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="contact-box" style="min-height: 180px">
+        <% if @indemnite_conges_maternite.avant_acouchement? %>
+          <h3><strong> <%=  IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement) %> </strong></h3>
+          <p>
+            <strong>Dossier maternite : </strong>
+            <%= @indemnite_conges_maternite.dossier_maternite.num_dossier %>
+          </p>
+          <% unless @indemnite_conges_maternite.debut_conges.nil? %>
+            <p>
+              <strong>Debut des conges:</strong>
+              <%= l @indemnite_conges_maternite.debut_conges %>
+            </p>
+          <%end %>
+          <% unless @indemnite_conges_maternite.date_soumission.nil? %>
+            <p class="text-success">
+              <strong>Date de soumission : </strong>
+              <%= l @indemnite_conges_maternite.date_soumission %>
+            </p>
+          <%end %>
+
+          <% unless @indemnite_conges_maternite.montant_paiement.nil? %>
+            <p>
+              <strong>Montant liquidé : </strong>
+              <%= @indemnite_conges_maternite.montant_paiement %>
+            </p>
+          <%end %>
+          <% unless @indemnite_conges_maternite.date_liquidation.nil? %>
+            <p>
+              <strong>Date de liquidation : </strong>
+              <%= l @indemnite_conges_maternite.date_liquidation %>
+            </p>
+          <%end %>
+          <% unless @indemnite_conges_maternite.date_paiement.nil? %>
+            <p>
+              <strong>Date de paiement : </strong>
+              <%= l @indemnite_conges_maternite.date_paiement %>
+            </p>
+          <%end %>
+        <%end %>
+        <% unless @indemnite_conges_maternite.avant_acouchement? %>
+        <div class="col-sm-4">
+          <div class="text-center">
+            <% if @indemnite_conges_maternite.apres_acouchement? %>
+              <p>
+                <strong>Attestation accouchement :</strong>
+                <%= link_to image_tag('missing_logo.png', size: "200x200>",
+                                      class: "m-t-xs img-responsive"), @indemnite_conges_maternite.attestation_accouchement, target: :_blank %>
+              </p>
+            <%elsif @indemnite_conges_maternite.apres_reprise?%>
+              <p>
+                <strong>Certificat de reprise :</strong>
+                <%= link_to image_tag('missing_logo.png', size: "300x300>",
+                                      class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_reprise, target: :_blank %>
+              </p>
+            <%end %>
+          </div>
+        </div>
+        <div class="col-sm-8">
+          <h3><strong> <%=  IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement) %> </strong></h3>
+          <p>
+            <strong>Dossier maternite : </strong>
+            <%= @indemnite_conges_maternite.dossier_maternite.num_dossier %>
+          </p>
+
+          <% unless @indemnite_conges_maternite.date_accouchement.nil? %>
+            <p>
+              <strong>Date d'accouchement:</strong>
+              <%= l @indemnite_conges_maternite.date_accouchement %>
+            </p>
+          <%end %>
+
+          <% unless @indemnite_conges_maternite.date_reprise_service.nil? %>
+            <p>
+              <strong>Date de reprise:</strong>
+              <%= l @indemnite_conges_maternite.date_reprise_service %>
+            </p>
+          <%end %>
+
+          <% unless @indemnite_conges_maternite.date_soumission.nil? %>
+            <p class="text-success">
+              <strong>Date de soumission : </strong>
+              <%= l @indemnite_conges_maternite.date_soumission %>
+            </p>
+          <%end %>
+
+          <% unless @indemnite_conges_maternite.montant_paiement.nil? %>
+            <p>
+              <strong>Montant liquidé : </strong>
+              <%= @indemnite_conges_maternite.montant_paiement %>
+            </p>
+          <%end %>
+          <% unless @indemnite_conges_maternite.date_liquidation.nil? %>
+            <p>
+              <strong>Date de liquidation : </strong>
+              <%= l @indemnite_conges_maternite.date_liquidation %>
+            </p>
+          <%end %>
+          <% unless @indemnite_conges_maternite.date_paiement.nil? %>
+            <p>
+              <strong>Date de paiement : </strong>
+              <%= l @indemnite_conges_maternite.date_paiement %>
+            </p>
+          <%end %>
+        </div>
+          <%end %>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+
+  </div>
+</div>

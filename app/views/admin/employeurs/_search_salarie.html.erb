@@ -1,0 +1,38 @@
+  <div class="row form-group">
+  <h3>Critères de recherche</h3>
+  <br>
+  <%= search_form_for @q, url: request.path do |f| %>
+  <div class="row form-group">
+
+    <div class="col-sm-4">
+      <%= f.label :matric_cont, 'Numéro unique' %>
+      <%= f.search_field :matric_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prenom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+
+
+  </div>
+  <div class="row form-group">
+    <div class="col-sm-4">
+      <%= f.label :date_debut_periode_cotisation_gteq, 'Date debut cotisation >=' %>
+      <%= f.datetime_field :date_debut_periode_cotisation_gteq, class: 'form-control', max: DateTime.now.end_of_day %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :date_fin_periode_contisation_lteq, 'Date fin cotisation <=' %>
+      <%= f.datetime_field :date_fin_periode_cotisation_gteq, class: 'form-control', max: DateTime.now.end_of_day %>
+    </div>
+
+  </div>
+  <div class="hr-line-dashed"></div>
+  <%= f.submit class: 'btn btn-primary' %>
+<% end %>
+</div>

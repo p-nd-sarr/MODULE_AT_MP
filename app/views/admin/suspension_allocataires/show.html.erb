@@ -1,0 +1,154 @@
+<%= content_for :titre_page, "Details suspension  allocataire" %>
+
+<%= content_for :actions_page do %>
+  <% if @suspension_allocataire.creation? and current_user.gestionnaire_compte_allocataire?%>
+    <%= link_to 'soumettre',admin_allocataire_suspension_allocataire_soumettre_path(@allocataire,@suspension_allocataire), class: 'btn btn-primary btn-sm' %>
+  <%end%>
+  <% if @suspension_allocataire.soumis? and current_user.chef_service_allocation? and @suspension_allocataire.affectation_allocataire.nil? %>
+    <button type="button" class="btn btn-outline btn-success btn-sm" data-toggle="modal" data-target="#affecter-modal" id="affecter_allocataire_id">
+      Affecter 
+    </button>
+    <%#= render 'affectation_allocataire', locals: { suspension: suspension_allocataire } %>
+  <% end%> 
+  <% if @suspension_allocataire.affecter? and current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Valider la verification',admin_allocataire_suspension_allocataire_verifier_path(@allocataire,@suspension_allocataire), class: 'btn btn-primary btn-sm' %>
+  <%end%>
+  <% if @suspension_allocataire.verifie? and current_user.chef_service_allocation? %>
+    <%= link_to 'Valider la suspension',admin_allocataire_suspension_allocataire_valider_path(@allocataire,@suspension_allocataire), class: 'btn btn-primary btn-sm' %>
+  <%end%>
+  <% if @suspension_allocataire.verifie? and current_user.chef_service_allocation? %>     
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejeter-modal<%=@suspension_allocataire.id%>" id="affecter_allocataire_id">
+      Rejeter
+    </button>
+        <%#= link_to 'Rejeter',admin_rejet_modal_modifier_mode_paiement_path(modifier_mode_paiement), class: 'btn btn-outline btn-danger btn-xs' %>    
+  <% end%>
+<% end %>
+<div class="modal inmodal" id="affecter-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@suspension_allocataire, url: admin_allocataire_suspension_allocataire_affecter_path(@allocataire, @suspension_allocataire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Affectation la demande : <%= @suspension_allocataire.id %> </h4>
+          <small class="font-bold">Choisir le gestionnaire</small>
+        </div>
+        <div class="modal-body">
+         <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+        </div>
+      </div>
+    <%end %>
+  </div>
+</div>
+<div class="modal inmodal" id="rejeter-modal<%=@suspension_allocataire.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@suspension_allocataire, url: admin_allocataire_suspension_allocataire_rejeter_path(@allocataire,@suspension_allocataire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Rejet de la demande : <%= @suspension_allocataire.id %> </h4>
+        
+        </div>
+        <div class="modal-body">
+            <%= f.text_field :motif_rejet, label: 'Motif du rejet' %> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-danger">Rejeter la demande</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+          <div class="ibox">
+            <div class="ibox-title">
+              <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+            </div>
+            <div class="ibox-content">
+              <%= render 'admin/suspension_allocataires/infos_allocataire' %>
+            </div>
+          </div>
+        
+    </div>
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+            <h5>Details demandes de suspension allocataire</h5>
+        </div>
+        <div class="ibox-content">
+          <p>
+            <strong>Etat :</strong>
+            <%= @suspension_allocataire.workflow_state %>
+          </p>
+          <p>
+            <strong>Motif suspension :</strong>
+            <%= @suspension_allocataire.motif_suspension %>
+          </p>
+         <% unless @suspension_allocataire.motif_rejet.nil?%>
+          <p>
+            <strong>Motif Rejet :</strong>
+            <%= @suspension_allocataire.motif_rejet %>
+          </p>
+         <% end %>
+        </div>
+      </div>
+        <div class="ibox">
+            <div class="ibox-title">
+              <h5>Historique</h5>
+            </div>
+            <div class="ibox-content">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h5>Créer Par
+                    : <%= @suspension_allocataire.ajoute_par.try(:full_name) unless @suspension_allocataire.ajoute_par.nil? %> </h5>
+                  <h5>Date de création
+                    : <%= @suspension_allocataire.created_at.strftime("%d/%m/%Y") unless @suspension_allocataire.created_at.nil? %></h5>
+                  <h5>Date de soumission
+                    : <%= @suspension_allocataire.date_soumission.strftime("%d/%m/%Y") unless @suspension_allocataire.date_soumission.nil? %></h5>
+                  <hr>
+                  <h5>Affecter
+                    à: <%= @suspension_allocataire.affecter_allocataire.full_name unless @suspension_allocataire.affectation_allocataire.nil? %> </h5>
+                  <h5>Date
+                    Affectation: <%= @suspension_allocataire.affectation_allocataire_date.strftime("%d/%m/%Y") unless @suspension_allocataire.affectation_allocataire_date.nil? %></h5>
+                  <hr>
+                  <h5>Verifié Par
+                    : <%= @suspension_allocataire.verifie_par.try(:full_name) unless @suspension_allocataire.verifie_par.nil? %> </h5>
+                  <h5>Date de vérification
+                    : <%= @suspension_allocataire.date_verification.strftime("%d/%m/%Y") unless @suspension_allocataire.date_verification.nil? %></h5>
+
+                  <hr>
+                  <h5>Validé Par
+                    : <%= @suspension_allocataire.valider_par.try(:full_name) unless @suspension_allocataire.valider_par.nil? %> </h5>
+                  <h5>Date de validation
+                    : <%= @suspension_allocataire.date_validation.strftime("%d/%m/%Y") unless @suspension_allocataire.date_validation.nil? %></h5>
+                  <hr>
+                  <h5>Rejeté
+                    par: <%= @suspension_allocataire.traite_par.full_name unless @suspension_allocataire.traite_par.nil? %> </h5>
+                  <h5>Date
+                    rejet: <%= @suspension_allocataire.traite_le.strftime("%d/%m/%Y") unless @suspension_allocataire.traite_le.nil? %></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</div>
+
+
+    
+
+      
+
+     

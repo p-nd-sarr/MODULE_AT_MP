@@ -1,0 +1,13 @@
+<%= content_for :titre_page, 'Historique de paiements CSS' %>
+<%= content_for :actions_page do %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/css_annulation_paiements/search' %>
+    <br>
+    <%= paginate @css_annulation_paiements %>
+    <%= render 'admin/css_annulation_paiements/liste' %>
+    <%= paginate @css_annulation_paiements %>
+  </div>
+</div>

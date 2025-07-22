@@ -1,0 +1,150 @@
+<% unless @demande_arret_travails.empty? %>
+  <% if @demande_arret_travails.first.chef_division_at_peut_affecter_redacteur?(current_user)  %>
+    <button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#motif">
+        Affectation multiple rédacteur
+    </button>
+
+    <div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <%= form_tag  affectation_multiple_admin_arret_travails_path, method: :post do %>
+        <div class="modal-dialog">
+          <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Affectation multiple </h4>
+            </div>
+            <div class="modal-body">
+                <label>Choisis un rédacteur</label>
+                <%= select_tag 'user_id', options_for_select(User.redacteur.collect{ |u| [u.email, u.id] }), class: 'form-control' %> <br>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th data-sort-ignore="true"><input type="checkbox" id="selectAll"></input></th>
+                  <th scope="col">Numéro Sinistre</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                   <th scope="col">Agence</th>
+                  <th scope="col">Etat</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @demande_arret_travails.each do |at| %>
+                  <tr>
+                    <td><%= check_box_tag "at_ids[]", at.id, false, class: 'selectable' %></td>
+                    <td><%=at.num_dossier%></td>
+                    <td><%=at.prenom_salarie%></td>
+                    <td><%=at.nom_salarie%></td>
+                    <td><%=at.user.agence.description_prest%></td> 
+                    <td><%=at.etat%></td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+              <%= submit_tag "affecter", class: "btn btn-primary btn-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end%>
+  <% if @demande_arret_travails.first.chef_division_at_peut_affecter_tech?(current_user) %>
+    <button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#motif">
+        Affectation multiple technicien
+    </button>
+
+    <div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <%= form_tag  affectation_multiple_admin_arret_travails_path, method: :post do %>
+        <div class="modal-dialog">
+          <div class="modal-content animated bounceInRight">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">x</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Affectation multiple </h4>
+              </div>
+             <div class="modal-body">
+             <% if @demande_arret_travails.first.creer_en_agence? %>
+                <label>Choisis un technicien</label>
+                <%= select_tag 'user_id', options_for_select(User.technicien_at.collect{ |u| [u.email, u.id] }), class: 'form-control' %>
+              <% else %>
+                <label>Choisis un technicien</label>
+                <%= select_tag 'user_id', options_for_select(User.technicien_direction_at.collect{ |u| [u.email, u.id] }), class: 'form-control' %>
+              <% end%>
+                <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                  <tr>
+                    <th data-sort-ignore="true"><input type="checkbox" id="selectAll"></input></th>
+                    <th scope="col">Numéro Sinistre</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Etat</th>
+                    
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @demande_arret_travails.each do |at| %>
+                    <tr>
+                      <td><%= check_box_tag "at_ids[]", at.id, false, class: 'selectable' %></td>
+                      <td><%=at.num_dossier%></td>
+                      <td><%=at.prenom_salarie%></td>
+                      <td><%=at.nom_salarie%></td>
+                      <td><%=at.workflow_state%></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+             </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+              <%= submit_tag "affecter", class: "btn btn-primary btn-sm" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end%>
+
+<% end %>
+
+<br>
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">Numéro Sinistre</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Etat</th>
+    <th colspan="3">Actions </th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @demande_arret_travails.each do |at| %>
+      <tr>
+        <td><%=at.num_dossier%></td>
+        <td><%=at.prenom_salarie%></td>
+        <td><%=at.nom_salarie%></td>
+         <td><%=at.workflow_state%></td>
+        <td style="width: 75px">
+          <%= link_to 'Détails', admin_arret_travail_path(at), class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+   $(document).ready(function () {
+     console.log(at_ids_);
+   });
+  </script>
+<% end%>
+

@@ -1,0 +1,1 @@
+json.partial! "montant_mensualite_volets/montant_mensualite_volet", montant_mensualite_volet: @montant_mensualite_volet

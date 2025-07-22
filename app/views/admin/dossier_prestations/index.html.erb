@@ -1,0 +1,154 @@
+<%= content_for :titre_page, 'Dossier De Prestation' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Liste des allocataires PF', admin_allocataire_pf_index_path, class: "btn btn-primary btn-outline btn-sm fa fa-list" if current_user.gestionnaire_compte_allocataire? || current_user.chef_agence? || current_user.comptable? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <!--
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h3>Dossiers de prestation</h3>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins"><%#= DossierPrestation.where(conjoint_id: nil).count %></h1>
+          <small>Nombre de demande</small>
+          <div style="text-align:center; margin-top:20px;">
+            <%#= link_to 'En attente validation paiement', valider_ordre_admin_dossier_prestations_path, class: "btn btn-xs btn-primary", style: "margin-right:10px" %>
+            <%#= link_to 'En attente de validation', en_attente_admin_dossier_prestations_path, class:"btn btn-xs btn-primary",  style:"margin-right:10px" %>
+            <%#= link_to "Que j'ai ajoutées", ajoutee_admin_dossier_prestations_path, class: "btn btn-xs btn-success" %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h3>Demande liquidation de prestation</h3>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins">0</h1>
+          <small>Nombre de demande</small>
+          <div style="text-align:center; margin-top:20px;">
+            <a href="#" class="btn btn-xs btn-primary" style="margin-right:10px;">En attente de
+              validation</a><%#= link_to 'En attente de validation', en_attente_admin_liquidation_retraites_path, class:"btn btn-xs btn-primary" %>
+            <a href="#" class="btn btn-xs btn-success">Que j'ai
+              ajoutées</a><%#= link_to "Que j'ai ajoutées", ajoutee_admin_liquidation_retraites_path, class:"btn btn-xs btn-success" %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Evolution des demandes de prestation</h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-9">
+              <%#= area_chart DossierPrestation.group_by_month(:created_at).count, height: "200px" %>
+            </div>
+            <div class="col-lg-3">
+              <ul class="stat-list">
+                <li>
+                  <h2 class="no-margins"><%#= DossierPrestation.workflow_etat(:soumis).count %></h2>
+                  <small>Soumis</small>
+                  <div class="stat-percent">
+                    <%#= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:soumis).count * 100 / DossierPrestation.count %>
+                    %
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%#= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:soumis).count * 100 /DossierPrestation.count %>%" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins"><%#= DossierPrestation.workflow_etat(:valide).count %></h2>
+                  <small>Validé</small>
+                  <div class="stat-percent">
+                    <%#= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:valide).count * 100 / DossierPrestation.count %>
+                    %
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%#= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:valide).count * 100 /DossierPrestation.count %>%" class="progress-bar">
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins"><%#= DossierPrestation.workflow_etat(:rejete).count %></h2>
+                  <small>Rejeté</small>
+                  <div class="stat-percent">
+                    <%#= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:rejete).count * 100 / DossierPrestation.count %>
+                    %
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%#= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:rejete).count * 100 /DossierPrestation.count %>%" class="progress-bar">
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="m-t-md">
+            <small class="float-right" style="float: right;">
+              <i class="fa fa-clock-o"></i>
+              Update on 16.12.2020
+            </small>
+            <small>
+              <strong>Analysis of sales</strong>
+              the value has been change over time and last month reach a level
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+-->
+  <div class="row" style="margin-top: -50px;">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Dossiers de prestation </h5>
+          <span class="label label-warning">Total demande <%= current_user.admin_agence.nil? ? DossierPrestation.count : DossierPrestation.en_agence(current_user.admin_agence.id).count %></span>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <% if current_user.gestionnaire_compte_allocataire? %>
+            <div class="text-right">
+              <%= (link_to ' AJOUTER UNE DEMANDE', new_admin_dossier_prestation_path, class: 'fa fa-plus btn btn-w-m btn-success btn-outline', style: 'height: 34px;') unless current_user.comptable? %>
+            </div>
+          <% end %>
+          <br>
+          <div class="tab-content">
+            <div id="tous" class="tab-pane fade in active">
+              <%= render 'admin/dossier_prestations/search' %>
+              <br>
+              <%= render 'liste_dossiers' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

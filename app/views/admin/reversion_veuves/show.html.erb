@@ -1,0 +1,339 @@
+<% content_for :titre_page do %>
+  Dossier reversion <%= " #{@reversion_veuve.numero_dossier} - [#{@reversion_veuve.workflow_state}]" %>
+<% end %>
+
+<%= content_for :titre_page_autres_details do %>
+
+  <% if not @reversion_veuve.motif_rejet_allocataire.nil? and @reversion_veuve.creation? %>
+    <h3 style="color: red"><u>Motif rejet allocataire: </u></h3>
+    <div class="rejet_allocataire">
+      <p class="text-warning"><%= (" #{@reversion_veuve.motif_rejet_allocataire} ") unless @reversion_veuve.motif_rejet_allocataire.nil? %> </p>
+    </div>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= (link_to 'Base réversion', admin_allocataire_base_reversions_path(@reversion_veuve.allocataire), class: 'btn btn-white   btn-xs') unless @reversion_veuve.allocataire.nil? %>
+  <% if @reversion_veuve.ajoute_par == current_user %>
+    <%= (link_to 'Modifier', edit_admin_allocataire_reversion_veuve_path(@reversion_veuve.allocataire, @reversion_veuve), class: 'btn btn-white   btn-xs') if @reversion_veuve.creation? %>
+    <%= (link_to 'Supprimer', admin_allocataire_reversion_veuve_path(@reversion_veuve.allocataire, @reversion_veuve), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn btn-danger   btn-xs') if @reversion_veuve.creation? %>
+  <% end %>
+  <% if @reversion_veuve.current_state < :soumis %>
+    <% if @reversion_veuve.eligible? %>
+      <%= link_to "N'est pas éligible", admin_allocataire_reversion_veuve_pas_eligible_path(@reversion_veuve.allocataire, @reversion_veuve), class: 'btn btn-warning   btn-xs' %>
+    <% else %>
+      <% if @reversion_veuve.veuve? and @reversion_veuve.base_reversion.nombre_veuve_eligible_atteint? %>
+        <h5 style="color: red">Vous avez atteint le nombre max de veuves éligible</h5>
+      <% elsif @reversion_veuve.peut_etre_eligible? %>
+        <%= link_to "Rendre éligible", admin_allocataire_reversion_veuve_est_eligible_path(@reversion_veuve.allocataire, @reversion_veuve), class: 'btn btn-primary   btn-xs' %>
+      <% else %>
+        <h5 style="color: red">Cet ayant droit n'est pas éligible</h5>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if @reversion_veuve.valide? %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_allocataire_reversion_veuve_lettre_notification_path(@reversion_veuve.allocataire, @reversion_veuve, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+  <% end %>
+
+
+  <% if @reversion_veuve.creation? and @reversion_veuve.pret_pour_soumission? and @reversion_veuve.eligible %>
+    <br> <br>
+    <%= (link_to 'Soumettre Dossier', admin_allocataire_reversion_veuve_soumettre_path(@reversion_veuve.allocataire, @reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary   btn-xs') if current_user.can_allocataire? and (current_user == @reversion_veuve.ajoute_par or current_user == @reversion_veuve.affecte_a) %>
+  <% end %>
+  <% if current_user.chef_service_allocation? and @reversion_veuve.creation? %>
+    <br> <br>
+    <span>
+          <a data-toggle="modal" data-target="#affectation_agent" id="" class="btn btn-primary  btn-xs"> Affectation dossier </a>
+    </span>
+  <% end %>
+
+
+  <% if @reversion_veuve.soumis? %>
+    <% if current_user.chef_section_instruction? or current_user.can_instruction? %>
+      <%= (link_to 'Instruire Dossier', admin_allocataire_reversion_veuve_instruire_path(@reversion_veuve.allocataire, @reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary   btn-xs') %>
+      <button type="button" class="btn btn-danger   btn-xs" data-toggle="modal" data-target="#motif"> RETOUR DOSSIER
+      </button>
+
+    <% end %>
+  <% end %>
+
+  <% if @reversion_veuve.instruit? and current_user.chef_section_liquidation? %>
+    <%= (link_to 'Liquider', admin_allocataire_reversion_veuve_liquider_path(@reversion_veuve.allocataire, @reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary   btn-xs') %>
+
+    <button type="button" class="btn btn-danger   btn-xs" data-toggle="modal" data-target="#motif">RETOUR DOSSIER
+    </button>
+  <% end %>
+
+  <% if @reversion_veuve.liquide? and current_user.chef_service_allocation? %>
+    <%= (link_to 'Valider', admin_allocataire_reversion_veuve_valider_path(@reversion_veuve.allocataire, @reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary   btn-xs') %>
+    <%= (link_to 'Rejeter', admin_allocataire_reversion_veuve_rejeter_path(@reversion_veuve.allocataire, @reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger   btn-xs') %>
+
+    <button type="button" class="btn btn-danger   btn-xs" data-toggle="modal" data-target="#motif">RETOUR DOSSIER
+    </button>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Allocataire <%= link_to @reversion_veuve.allocataire.numero_allocataire, [:admin, @reversion_veuve.allocataire] %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/reversion_veuves/infos_allocataire' %>
+        </div>
+      </div>
+
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Historique</h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+
+              <h5>Date de création de la base de réversion
+                : <%= @reversion_veuve.base_reversion.created_at.strftime("%d/%m/%Y") unless @reversion_veuve.base_reversion.created_at.nil? %></h5>
+
+
+              <h5>Date de création du dossier de réversion
+                : <%= @reversion_veuve.created_at.strftime("%d/%m/%Y") unless @reversion_veuve.created_at.nil? %><br/>
+                par: <%= @reversion_veuve.ajoute_par.try(:full_name) unless @reversion_veuve.ajoute_par.nil? %></h5>
+
+              <hr>
+              <h5>Date de soumission du dossier de réversion
+                : <%= @reversion_veuve.date_soumis.strftime("%d/%m/%Y") unless @reversion_veuve.date_soumis.nil? %><br/>
+                par: <%= @reversion_veuve.ajoute_par.try(:full_name) unless @reversion_veuve.ajoute_par.nil? %></h5>
+
+              <hr>
+
+              <h5>Date d’instruction du dossier de réversion
+                : <%= @reversion_veuve.instruit_le.strftime("%d/%m/%Y") unless @reversion_veuve.instruit_le.nil? %><br/>
+                par: <%= @reversion_veuve.instruit_par.full_name unless @reversion_veuve.instruit_par.nil? %></h5>
+
+              <hr>
+
+              <h5>Date de liquidation du dossier de réversion
+                : <%= @reversion_veuve.traite_le.strftime("%d/%m/%Y") unless @reversion_veuve.traite_le.nil? %><br/>
+                par: <%= @reversion_veuve.traite_par.try(:full_name) unless @reversion_veuve.traite_par.nil? %> </h5>
+
+              <hr>
+
+              <h5>Date de validation du dossier de réversion
+                : <%= @reversion_veuve.valider_le.strftime("%d/%m/%Y") unless @reversion_veuve.valider_le.nil? %><br/>
+                par: <%= @reversion_veuve.valider_par.full_name unless @reversion_veuve.valider_par.nil? %> </h5>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Informations sur l'ayant droit</h5>
+        </div>
+        <div class="ibox-content">
+
+          <p>
+            <strong>Peut être éligible :</strong>
+            <%= state_yes_no @reversion_veuve.peut_etre_eligible? %>
+          </p>
+
+          <p>
+            <strong>Est éligible :</strong>
+            <%= state_yes_no @reversion_veuve.eligible %>
+          </p>
+
+          <% unless @reversion_veuve.peut_etre_eligible? %>
+            <p>
+              <strong>Motif non éligibilité :</strong>
+              <%= @reversion_veuve.motif %>
+            </p>
+          <% end %>
+
+          <p>
+            <strong>Type :</strong>
+            <%= @reversion_veuve.type_ayant_droit_human %>
+          </p>
+
+          <p>
+            <strong>Prenom:</strong>
+            <%= @reversion_veuve.prenom %>
+          </p>
+
+          <p>
+            <strong>Nom:</strong>
+            <%= @reversion_veuve.nom %>
+          </p>
+
+          <p>
+            <strong>Lieu de naissance de l'ayant droit:</strong>
+            <%= @reversion_veuve.allocataire.lieu_naissance %>
+          </p>
+
+          <p>
+            <strong>Ville de naissance de l'ayant droit:</strong>
+            <%= @reversion_veuve.allocataire.adresse_ville %>
+          </p>
+
+          <% if @reversion_veuve.orphelin? %>
+            <p>
+              <strong>Prénom du tuteur:</strong>
+              <%= @reversion_veuve.prenom_tuteur %>
+            </p>
+
+            <p>
+              <strong>Nom du tuteur:</strong>
+              <%= @reversion_veuve.nom_tuteur %>
+            </p>
+
+            <p>
+              <strong>Lieu de naissance:</strong>
+              <%= @reversion_veuve.lieu_naissance %>
+            </p>
+
+            <p>
+              <strong>Date majorité:</strong>
+              <%= (@reversion_veuve.enfant.date_fin_mineur.strftime("%d/%m/%Y")) unless @reversion_veuve.enfant.date_fin_mineur.nil? %>
+            </p>
+          <% end %>
+
+          <p>
+            <strong>Date naissance:</strong>
+            <%= l @reversion_veuve.date_naissance %>
+          </p>
+
+          <p>
+            <strong>Lieu naissance:</strong>
+            <%= @reversion_veuve.lieu_naissance %>
+          </p>
+
+          <p>
+            <strong>Mode de paiement:</strong>
+            <%= ReversionVeuve.human_enum_name(:mode_paiement, @reversion_veuve.mode_paiement) unless @reversion_veuve.mode_paiement.nil? %>
+          </p>
+
+          <% if @reversion_veuve.virement? %>
+            <p>
+              <strong>Numéro compte bancaire:</strong>
+              <%= @reversion_veuve.try(:compte_bancaire_numero_compte) %>
+            </p>
+          <% end %>
+
+          <% if @reversion_veuve.caisse_ipres? %>
+            <strong>Agence de paiement:</strong>
+            <%= @reversion_veuve.admin_agence.try(:code_psrm) %>
+          <% end %>
+
+          <d1 class="row mb-0">
+            <div class="col-sm-12" style="text-align: left; font-size: 11px; color: rgb(50, 50 50);">
+              <% if @reversion_veuve.virement? %>
+                <div class="notes">
+                  <p><strong style="font-style: italic;" class="text-info">Nom banque
+                    :</strong> <%= @reversion_veuve.compte_bancaire_nom_banque %></p>
+
+                  <p><strong style="font-style: italic;" class="text-info">Code SWIFT
+                    :</strong> <%= @reversion_veuve.compte_bancaire_code_swift %></p>
+                  <!--<p><strong style="font-style: italic;" class="text-info">RIB :</strong> <%= @reversion_veuve.rib %></p> -->
+                </div>
+              <% end %>
+            </div>
+          </d1>
+        </div>
+      </div>
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Tableau récapitulatif des points</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/reversion_veuves/show_tableau_recapitulatif_points' %>
+        </div>
+      </div>
+
+      <% if @reversion_veuve.veuve? %>
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Enfants à charge</h5>
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/enfants/liste', enfants: @reversion_veuve.conjoint.enfants.mariage.mineurs %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Documents</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'documents' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-reversion-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@reversion_veuve, url: admin_allocataire_reversion_veuve_affecter_allocataire_path(@reversion_veuve.allocataire, @reversion_veuve), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @reversion_veuve.numero_allocataire %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affecter_a, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+
+<!-- Retour du dossier de liquidation -->
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de retour du dossier de liquidation retraite</h4>
+      </div>
+      <%= bootstrap_form_for(@reversion_veuve, url: admin_allocataire_reversion_veuve_retourner_process_path(@reversion_veuve.allocataire, @reversion_veuve)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%= render 'affectation_agent' %>

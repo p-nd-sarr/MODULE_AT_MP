@@ -1,0 +1,39 @@
+<div class="col-sm-8" style="padding-left: 20%">
+
+  <div class="ibox">
+    <div class="ibox-title" style="background: #1ab394; color: #fff">
+      <div class="accordion-heading" class="ibox-title" >
+        <h5>Adresse Personnelle du représentant</h5>
+        <div class="ibox-tools">
+          <a class="accordion-toggle collapse-link"
+             data-toggle="collapse"
+             data-parent="#accordion2"
+             href="#collapseOne" style="background: #1ab394; color: #fff">
+            <i class="fa fa-chevron-down" style="color: #fff"></i>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+      <%= f.collection_select :region, @regions,:id,:designation, include_blank: true, label: 'Region', tag: 'region', required: true  %>
+
+      <%= f.collection_select :departement, @departements,:id,:designation, label: 'Departement' , required: true %>
+
+      <%= f.collection_select :ville, @villes,:id,:designation, label: 'Arrondissement', required: true  %>
+
+      <%= f.collection_select :commune, @communes,:id,:designation, label: 'Commune', required: true  %>
+
+      <%= f.collection_select :quartier, @quartiers,:id,:designation, label: 'Quartier', required: true  %>
+
+      <%= f.text_field :address, label: 'Adresse', required: true  %>
+
+      <%= f.text_field :mobile_number, label: 'Telephone', placeholder: '00221' %>
+
+      <%= f.text_field :email, label: 'Email' %>
+    </div>
+  </div>
+</div>

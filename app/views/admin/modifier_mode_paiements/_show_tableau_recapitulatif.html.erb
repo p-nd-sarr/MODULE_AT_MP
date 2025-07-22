@@ -1,0 +1,119 @@
+<!-- ANCIEN MODE PAIEMENT -->
+  <div class="row">
+  <br>
+  <div class="col-lg-6">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+           ANCIEN <i class="fa fa-warning fa-2x"></i> 
+        </div>
+        <div class="panel-body">
+          <p>
+            <strong>Mode paiement:</strong>
+            <%= @allocataire.mode_paiement %>
+          </p>
+          <% if @allocataire.mode_paiement=="virement" %>
+            <p><strong style="font-style: italic;" class="text-info">Nom de la Banque
+              :</strong> <%= @allocataire.admin_banque_agence.try(:nom_complet) %></p>
+            <p><strong style="font-style: italic;" class="text-info">Numéro Compte 
+              :</strong> <%= @allocataire.compte_bancaire_numero_compte %></p>
+          <% end %>
+          <% if @allocataire.mode_paiement=="caisse_ipres" %>
+              <p>
+                <strong>Agence de paiement:</strong>
+                <%= @allocataire.admin_agence.try(:code_psrm) %>
+              </p>
+          <% end %>
+          <% if @allocataire.mode_paiement=="mandant_postal" %>
+              <p>
+                <strong>Adresse domicile:</strong>
+                <%= @allocataire.adresse_rue %>
+              </p>
+              <p>
+                <strong>Téléphone:</strong>
+                <%= @allocataire.telephone %>
+              </p>
+              <p>
+                <strong>Date début changement:</strong>
+                <%= @allocataire.date_debut_changement.strftime("%d/%m/%Y") unless @allocataire.date_debut_changement.nil?   %>
+              </p>
+          <% end %>
+          <% if @allocataire.mode_paiement=="adresse_domicile" %>
+            <p>
+              <strong>Adresse domicile:</strong>
+              <%= @allocataire.adresse_rue %>
+            </p>
+            <p>
+              <strong>Téléphone:</strong>
+              <%= @allocataire.telephone %>
+            </p>
+          <% end %>
+        </div>
+    </div>
+  </div>
+
+
+<!-- NOUVEAU MODE  PAIEMENT -->
+    <div class="col-lg-6">
+     <div class="panel panel-primary">
+        <div class="panel-heading">
+           NOUVEAU <i class="fa fa-check-circle fa-2x"></i> 
+        </div>
+        <div class="panel-body">
+            <p>
+            <strong>Mode paiement:</strong>
+            <%= @modifier_mode_paiement.mode_paiement %>
+          </p>
+          
+          <p>
+            <strong>Téléphone:</strong>
+            <%= @modifier_mode_paiement.telephone %>
+          </p>
+          <% if @modifier_mode_paiement.mode_paiement=="virement" %>
+            <% if @modifier_mode_paiement.admin_banque_agence_id? %>
+              <p>
+                <strong>Nom de la banque:</strong>
+                <%= @modifier_mode_paiement.compte_bancaire_nom_banque %>
+              </p>
+              <p>
+                <strong>Numero du compte:</strong>
+                <%= @modifier_mode_paiement.compte_bancaire_numero_compte %>
+              </p>
+            <% end %>
+          <% end %>
+
+          <% if @modifier_mode_paiement.mode_paiement=="caisse_ipres" %>
+            <p>
+              <strong>Agence de paiement:</strong>
+              <%= @modifier_mode_paiement.admin_agence.try(:code_psrm) %>
+            </p>
+          <% end %>
+
+          <% if @modifier_mode_paiement.mandant_postal? %>
+            <p>
+              <strong>Adresse domicile:</strong>
+              <%= @modifier_mode_paiement.adresse_domicile %>
+            </p>
+          
+            <p>
+              <strong>Date début changement:</strong>
+              <%= @modifier_mode_paiement.date_debut_changement.try(:date_debut_changement) %>
+            </p>
+          <% end %>
+
+          <% if @modifier_mode_paiement.adresse_domicile? %>
+            <p>
+              <strong>Adresse domicile:</strong>
+              <%= @modifier_mode_paiement.adresse_domicile %>
+            </p>
+            <p>
+              <strong>Téléphone:</strong>
+              <%= @modifier_mode_paiement.telephone %>
+            </p>
+          <% end %>
+
+        </div>
+    </div>
+  </div>
+  </div>  
+
+  

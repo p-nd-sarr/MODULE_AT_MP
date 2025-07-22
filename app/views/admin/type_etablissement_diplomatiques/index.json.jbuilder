@@ -1,0 +1,1 @@
+json.array! @admin_type_etablissement_diplomatiques, partial: "admin_type_etablissement_diplomatiques/admin_type_etablissement_diplomatique", as: :admin_type_etablissement_diplomatique

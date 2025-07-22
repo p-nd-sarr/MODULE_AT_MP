@@ -1,0 +1,234 @@
+<%= content_for :titre_page, "Allocataires #{DossierCnav.human_enum_name(:type_convention, @dossier_cnav.type_convention)}" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_cnav_path(@dossier_cnav), class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <%# if current_user.gestionnaire_compte_allocataire? or current_user.chef_section_liquidation? %>
+  <% if @dossier_cnav.creation? and current_user == @dossier_cnav.ajoute_par %>
+    <%= link_to 'Tout Supprimer', admin_dossier_cnav_supprimer_allocataires_path(@dossier_cnav), 'data-turbolinks': false, data: { confirm: 'Etes vous sûr de vouloir tout supprimer?' },
+                class: 'btn btn-danger btn-sm ' unless @dossier_cnav.allocataire_cnavs.creation.empty? %>
+  <% end %>
+  <% if current_user.chef_section_liquidation? %>
+    <%#= link_to 'Ajouter', new_admin_dossier_cnav_allocataire_cnav_path(@dossier_cnav), class: 'btn btn-primary btn-sm fa fa-plus' unless @dossier_cnav.valide? %>
+    <%= link_to 'Tout Liquider', admin_dossier_cnav_liquider_allocataires_path(@dossier_cnav), 'data-turbolinks': false, data: { confirm: 'Etes vous sûr de vouloir tout liquider?' },
+                class: 'btn btn-info btn-sm ' unless @dossier_cnav.allocataire_cnavs.creation.empty? %>
+  <% elsif current_user.chef_service_prest_ext? %>
+    <%= (link_to 'Valider Liquid.', admin_dossier_cnav_valider_liquid_allocataires_path(@dossier_cnav), 'data-turbolinks': false, data: { confirm: 'Etes vous sûr de vouloir valider toute la liquidation ?' },
+                 class: 'btn btn-info btn-sm') unless @dossier_cnav.allocataire_cnavs.soumis.empty? %>
+  <% elsif current_user.directeur_prestation? %>
+    <%= (link_to 'Tout Valider', admin_dossier_cnav_valider_allocataires_path(@dossier_cnav), 'data-turbolinks': false, data: { confirm: 'Etes vous sûr de vouloir tout valider?' },
+                 class: 'btn btn-info btn-sm') unless @dossier_cnav.allocataire_cnavs.valide_liquidation.empty? %>
+  <% elsif current_user.inspection? %>
+    <%= (link_to 'Tout Valider', admin_dossier_cnav_valider_inspec_allocataires_path(@dossier_cnav), 'data-turbolinks': false, data: { confirm: 'Etes vous sûr de vouloir tout valider?' },
+                 class: 'btn btn-info btn-sm') unless @dossier_cnav.allocataire_cnavs.valide.empty? %>
+  <% end %>
+
+  <% if current_user.comptable? %>
+    <% if @dossier_cnav.attente_paiement? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#PaiementModal" id="soumettre_id">
+        Valider Paiement
+      </button>
+    <% end %>
+  <% end %>
+
+  <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#DeltaModal" id="delta_id">
+    Delta
+  </button>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="ibox volet1">
+        <div class="ibox-title">
+          <span class="label label-success float-right"></span>
+          <h3>
+            <% if @dossier_cnav.trimestre.nil? %>
+              <%= DossierCnav.human_enum_name(:mois, @dossier_cnav.mois) %>
+            <% else %>
+              <%= DossierCnav.human_enum_name(:trimestre, @dossier_cnav.trimestre)%> trimestre
+            <% end %>
+            <%= @dossier_cnav.annee %>
+          </h3>
+        </div>
+        <div class="ibox-content">
+          <h2 class="no-margins">
+            <%#= format_cfa m1 = @dossier_maternite.indemnite_conges_maternites.avant_acouchement.valide.sum(&:montant_paiement) %>
+          </h2>
+          <small>Ouverture
+            : <%= l @dossier_cnav.date_ouverture %> </small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet2">
+        <div class="ibox-title">
+          <h3>Effectifs</h3>
+        </div>
+        <div class="ibox-content">
+          <h3 style="font-weight: normal;" class="no-margins">
+            <%= @totaux.count %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet3">
+        <div class="ibox-title">
+          <h3>Montant </h3>
+        </div>
+        <div class="ibox-content">
+          <h3 style="font-weight: normal;" class="no-margins">
+            <%= format_cfa @totaux.sum(&:montant) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title" style="border-bottom:1px solid #1ab394;">
+          <h3><strong class="text-navy">Montant à payer</strong></h3>
+        </div>
+        <div class="ibox-content">
+          <h3 style="font-weight: normal;" class="no-margins">
+            <strong><%= format_cfa @totaux.visible_valide_montant.sum(&:montant) %> </strong>
+          </h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="ibox-content">
+
+    <div class="tab-content">
+      <div id="tous" class="tab-pane fade in active">
+        <% unless @allocataire_cnavs.empty? %>
+          <%= render 'admin/allocataire_cnavs/search' %>
+          <br>
+          <%= paginate @allocataire_cnavs %>
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Numero</th>
+              <th scope="col">Allocataire</th>
+              <th scope="col">Region</th>
+              <th scope="col">Montant (F. CFA)</th>
+              <!--              <th scope="col">Origine</th>-->
+              <th scope="col">Compte</th>
+<!--              <th scope="col">Caisse bk</th>-->
+              <th scope="col">Etat</th>
+              <!--          <th scope="col">Mode</th>-->
+              <!--          <th scope="col">Numero liquidation</th>-->
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @allocataire_cnavs.each do |allocataire_cnav| %>
+              <tr>
+                <td>
+                  <% if allocataire_cnav.ancien? %>
+                    <!--                    <i class="fa fa-circle text-info"></i>-->
+                  <% elsif allocataire_cnav.nouveau? %>
+                    <i class="fa fa-circle text-warning"></i>
+                  <% end %>
+                  <%= allocataire_cnav.numero %>
+                </td>
+                <td><%= allocataire_cnav.full_name %></td>
+                <td><%= allocataire_cnav.admin_region.designation unless allocataire_cnav.admin_region.nil? %></td>
+                <td align="right"><%= format_entier allocataire_cnav.montant %></td>
+                <!--                <td><%#= allocataire_cnav.origine %></td>-->
+                <td><%= allocataire_cnav.compte unless allocataire_cnav.compte.nil? %></td>
+<!--                <td>-->
+                  <%#= allocataire_cnav.admin_banque.code_swift unless allocataire_cnav.admin_banque.nil? %>
+<!--                </td>-->
+                <td><%= AllocataireCnav.human_enum_name(:etat, allocataire_cnav.etat) %></td>
+                <!--            <td><%#= allocataire_cnav.mode_paiement %></td>-->
+                <!--            <td><%#= allocataire_cnav.numero_liquidation %></td>-->
+
+
+                <td style="width: 75px">
+                  <%= link_to 'Détails', [:admin, @dossier_cnav, allocataire_cnav], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+
+                <%# unless (allocataire_cnav.valide? or allocataire_cnav.rejete?) %>
+                <td style="width: 75px" class="dropdown">
+                  <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+
+                    <% if allocataire_cnav.creation? and current_user == allocataire_cnav.ajoute_par %>
+                      <li>
+                        <%#= link_to 'Modifier', edit_admin_dossier_cnav_allocataire_cnav_path(@dossier_cnav, allocataire_cnav), class: 'btn btn-outline btn-info btn-xs', id: "dd_hover" %>
+                        <%= link_to 'Supprimer', [:admin, @dossier_cnav, allocataire_cnav], method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                                    class: 'btn btn-outline btn-danger btn-xs', id: "dd_hover" %>
+                      </li>
+                    <% end %>
+                    <%# if allocataire_cnav.soumis? and @dossier_cnav.valide? and current_user.chef_service_prest_ext? %>
+                    <% if allocataire_cnav.soumis? and current_user.chef_service_prest_ext? %>
+                      <li>
+                        <%= (link_to 'Valider Liquidation', admin_dossier_cnav_allocataire_cnav_valider_liquidation_path(@dossier_cnav, allocataire_cnav),
+                                     class: 'btn btn-outline btn-success btn-xs') %>
+                      </li>
+                      <li>
+                        <%= (link_to 'Rejeter Liquidation', admin_dossier_cnav_allocataire_cnav_rejeter_liquidation_path(@dossier_cnav, allocataire_cnav),
+                                     class: 'btn btn-outline btn-danger btn-xs') %>
+                      </li>
+                    <% end %>
+                    <%# if allocataire_cnav.valide_liquidation? and @dossier_cnav.valide? and current_user.directeur_prestation? %>
+                    <% if allocataire_cnav.valide_liquidation? and current_user.directeur_prestation? %>
+                      <li>
+                        <%= (link_to 'Valider', admin_dossier_cnav_allocataire_cnav_valider_path(@dossier_cnav, allocataire_cnav),
+                                     class: 'btn btn-outline btn-success btn-xs') %>
+                      </li>
+                      <li>
+                        <%= (link_to 'Rejeter', admin_dossier_cnav_allocataire_cnav_rejeter_path(@dossier_cnav, allocataire_cnav),
+                                     class: 'btn btn-outline btn-danger btn-xs') %>
+                      </li>
+                    <% end %>
+                    <%# if allocataire_cnav.valide? and @dossier_cnav.valide? and current_user.inspection? %>
+                    <% if allocataire_cnav.valide? and current_user.inspection? %>
+                      <li>
+                        <%= (link_to 'Valider', admin_dossier_cnav_allocataire_cnav_valider_inspection_path(@dossier_cnav, allocataire_cnav),
+                                     class: 'btn btn-outline btn-success btn-xs') %>
+                      </li>
+                      <li>
+                        <%= (link_to 'Rejeter', admin_dossier_cnav_allocataire_cnav_rejeter_inspection_path(@dossier_cnav, allocataire_cnav),
+                                     class: 'btn btn-outline btn-danger btn-xs') %>
+                      </li>
+                    <% end %>
+                    <% if allocataire_cnav.creation? %>
+                      <%# if current_user.gestionnaire_compte_allocataire? or current_user.chef_section_liquidation? %>
+                      <% if current_user.chef_section_liquidation? %>
+                        <li>
+                          <%= link_to 'Liquider', admin_dossier_cnav_allocataire_cnav_soumettre_path(@dossier_cnav, allocataire_cnav),
+                                      class: 'btn btn-outline btn-success btn-xs', id: "dd_hover" %>
+                        </li>
+                      <% end %>
+                    <% end %>
+
+                  </ul>
+                </td>
+                <%# end %>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <%= paginate @allocataire_cnavs %>
+        <% else %>
+          <div>
+            <h2> Liste vide </h2>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<%= render 'valider_paiement' %>
+<%= render 'consulter_delta' %>

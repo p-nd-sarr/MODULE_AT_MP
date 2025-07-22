@@ -1,0 +1,815 @@
+<%= content_for :titre_page, "Détails de la demande de liquidation [#{@demande_liquidation.workflow_state}]" %>
+<%= content_for :titre_page_autres_details do %>
+
+  <% unless @demande_liquidation.motif_rejet_allocataire.nil? and @demande_liquidation.creation? %>
+    <h3 style="color: red"><u>Motif rejet allocataire: </u></h3>
+    <div class="rejet_allocataire">
+      <p class="text-warning"><%= (" #{@demande_liquidation.motif_rejet_allocataire} ") unless @demande_liquidation.motif_rejet_allocataire.nil? %> </p>
+    </div>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <% if @demande_liquidation.can_affecte_gestionnaire? and @demande_liquidation.affectation_allocataire.nil? and current_user.chef_section_liquidation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+      Affecter la Demande Allocation
+    </button>
+  <% end %>
+
+  <% if @demande_liquidation.can_affecte_ges_allocataire_again? and current_user.chef_section_liquidation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="reaffecter_allocataire_id">
+      Ré-affecter la Demande Allocation
+    </button>
+  <% end %>
+
+  <% if @demande_liquidation.instruit? and @demande_liquidation.affectation_salarie.nil? and current_user.chef_service_cotisation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-gestionnaire" id="affecter_salarie_id">
+      Affecter Validation fiche Carrière
+    </button>
+  <% end %>
+
+  <% if @demande_liquidation.can_affecte_ges_salarie_again? and current_user.chef_service_cotisation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-gestionnaire" id="reaffecter_salarie_id">
+      Ré-affecter Validation fiche Carrière
+    </button>
+  <% end %>
+
+  <%= link_to ' Retour', admin_liquidation_retraite_frances_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+
+  <% if @demande_liquidation.creation? %>
+    <%= link_to 'Editer', edit_admin_liquidation_retraite_france_path(@demande_liquidation), class: 'btn btn-white btn-sm' %>
+    <%= (link_to 'Supprimer', admin_liquidation_retraite_france_path(@demande_liquidation), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn btn-danger btn-sm') %>
+
+    <% if @demande_liquidation.pret_pour_soumission? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre
+        à l'instruction
+      </button>
+    <% end %>
+  <% end %>
+
+  <% if @demande_liquidation.soumis? %>
+    <% if (current_user.chef_section_instruction? or current_user.can_instruction?) %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation1">Valider
+        l'instruction
+      </button>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">RETOUR DOSSIER
+      </button>
+
+    <% end %>
+<%#= (link_to 'Retourner Dossier', admin_liquidation_retraite_france_retour_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_section_instruction? %>
+  <% end %>
+
+  <% if @demande_liquidation.instruit? and @demande_liquidation.affecter_salarie == current_user and (@demande_liquidation.carrieres_prestation.traite.size == @demande_liquidation.carrieres_prestation.size) and !@demande_liquidation.not_completed? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation2">Soumettre
+      la validation des carrières
+    </button>
+
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="margin-top: 5px;">RETOUR
+      DOSSIER
+    </button>
+<%#= (link_to 'Retour Dossier', admin_liquidation_retraite_france_retour_path(@demande_liquidation), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+  <% if @demande_liquidation.carriere_soumis? and (@demande_liquidation.carrieres_prestation.traite.size == @demande_liquidation.carrieres_prestation.size) %>
+<%#= (link_to 'Retourner Dossier', admin_liquidation_retraite_france_retour_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_service_cotisation? %>
+    <% if current_user.chef_service_cotisation? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation3">VALIDER
+        CARRIERE
+      </button>
+
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">RETOUR DOSSIER
+      </button>
+    <% end %>
+  <% end %>
+
+  <% if @demande_liquidation.cotisation_valide? and @demande_liquidation.affecter_allocataire == current_user %>
+    <% unless @demande_liquidation.affecter_allocataire.nil? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation4">Soumettre
+        la validation du tableau
+      </button>
+    <% end %>
+
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="margin-top:5px;">
+      RETOUR DOSSIER
+    </button>
+  <% end %>
+
+  <% if @demande_liquidation.recap_soumis? %>
+    <% if current_user.chef_section_liquidation? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation5">Valider
+        Tableau Recapitulatif
+      </button>
+
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">RETOUR DOSSIER
+      </button>
+    <% end %>
+    <%#= (link_to 'Retourner Dossier', admin_liquidation_retraite_france_retour_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_section_liquidation? %>
+  <% end %>
+
+  <% if (not @demande_liquidation.versement_mensuel?) and @demande_liquidation.retraite_anticipee_valide? %>
+    <h5 style="color: red"> Ne peut pas faire une anticipation pour un paiement unique</h5>
+  <% else %>
+    <% if @demande_liquidation.liquidation_valide? and current_user.chef_service_prest_ext? %>
+      <% unless @demande_liquidation.traite? %>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation6">Valider
+        </button>
+
+        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejet">Rejeter
+        </button>
+      <% end %>
+      <% unless @demande_liquidation.traite? %>
+        <!--<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejet"style="float: right; margin-left: 3px;">REJETER</button>-->
+        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right; margin-left: 3px;">RETOUR
+          DOSSIER
+        </button>
+      <% end %>
+    <% end %>
+  <% end %>
+
+  <% if @demande_liquidation.dossier_valide? %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_liquidation_retraite_france_lettre_notification_path(@demande_liquidation, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+  <% end %>
+
+  <% if current_user.chef_service_prest_ext? and @demande_liquidation.creation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-salarie" id="reaffecter_gestionnaire_id">
+      Ré-affecter dossier
+    </button>
+  <% end %>
+
+<% end %>
+
+<!-- Retour du dossier de liquidation -->
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de retour du dossier de liquidation retraite CFS</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_retourner_process_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="modal inmodal" id="rejet" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de rejet du dossier de liquidation retraite CFS</h4>
+      </div>
+      <% bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_rejeter_process_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Rejeter Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <%# if @demande_liquidation.affilie? %>
+  <div class="row">
+    <p>
+      <span style="color: red"><%= (" Motif :  #{@demande_liquidation.motif} ") unless @demande_liquidation.motif.nil? %> </span>
+    </p>
+    <div class="progressbar-wrapper">
+      <ul class="progressbar">
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :creation %>">Création</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :soumis %>">Soumission</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :instruit %>">Instruction</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :carriere_soumis %>">Soumission Carrière
+        </li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :cotisation_valide %>">Validation
+          Carrière
+        </li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :recap_soumis %>">Soumission Recap</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :liquidation_valide %>">Validation Recap
+        </li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :dossier_valide %>">Validation Dossier</li>
+      </ul>
+    </div>
+  </div>
+  <%# else %>
+  <!--    <div class="row">-->
+  <!--      <p>-->
+  <!--        <span style="color: red"><%#= (" Motif :  #{@demande_liquidation.motif} ") unless @demande_liquidation.motif.nil? %> </span>-->
+  <!--      </p>-->
+  <!--      <div class="progressbar-wrapper">-->
+  <!--        <ul class="progressbar">-->
+  <!--          <li class="<%#= ("active") if @demande_liquidation.current_state >= :creation %>">Création</li>-->
+  <!--          <li class="<%#= ("active") if @demande_liquidation.current_state >= :soumis %>">Soumission</li>-->
+  <!--          <li class="<%#= ("active") if @demande_liquidation.current_state >= :instruit %>">Instruction</li>-->
+  <!--          <li class="<%#= ("active") if @demande_liquidation.current_state >= :carriere_soumis %>">Soumission Carrière-->
+  <!--          </li>-->
+  <!--          <li class="<%#= ("active") if @demande_liquidation.current_state >= :cotisation_valide %>">Validation-->
+  <!--            Carrière-->
+  <!--          </li>-->
+  <!--          <li class="<%#= ("active") if @demande_liquidation.current_state >= :dossier_valide %>">Cloture Dossier</li>-->
+  <!--        </ul>-->
+  <!--      </div>-->
+  <!--    </div>-->
+  <%# end %>
+
+  <div class="row" style="margin-top:10px;">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content" style="margin-bottom:50px;">
+            <div class="col-md-6">
+              <h4>
+                N°
+                Affiliation: <%= @demande_liquidation.numero_affiliation unless @demande_liquidation.numero_affiliation.nil? %>
+              </h4>
+              <h4>
+                N° Sécurité Sociale: <%= @demande_liquidation.numero_securite_sociale %>
+              </h4>
+              <% unless @demande_liquidation.num_dossier.nil? %>
+                <h4>
+                  N° Dossier: <%= @demande_liquidation.num_dossier %>
+                </h4>
+              <% end %>
+            </div>
+            <!-- Signaler dossiers incomplets-->
+            <%= render 'action_dossiers_incomplets' %>
+          </div>
+
+          <div class="wrapper wrapper-content">
+            <% if @demande_liquidation.creation? %>
+              <% if @demande_liquidation.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs" style="font-size:10px">
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil Demandeur
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.etat_civil_demandeur_valide? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Grappe familiale
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.epouses_valide? and @demande_liquidation.enfants_valide? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-3">
+                    <i class="fa fa-folder"></i>Documents
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.documents_valide? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>Carrière SN
+                    <% if @demande_liquidation.current_state < :carriere_soumis %>
+                      <%= '<span class="label label-warning">à valider par un Gestionnaire Salarié</span>'.html_safe unless @demande_liquidation.carriere_valide? %>
+                    <% end %></a>
+                </li>
+
+                <!--                <li class="tab-link-top"><a data-toggle="tab" href="#tab-5"><i class="fa fa-briefcase"></i>Carrière FR-->
+                <%# if @demande_liquidation.current_state < :carriere_soumis %>
+                <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.activite_prof_valid? %>
+                <%# end %>
+                <!--                </a></li>-->
+
+                <!--                <li class="tab-link-top"><a data-toggle="tab" href="#tab-6"><i class="fa fa-briefcase"></i>Périodes Assur. FR-->
+                <%# if @demande_liquidation.current_state < :carriere_soumis %>
+                <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.assur_residence_valid? %>
+                <%# end %>
+                <!--                </a></li>-->
+
+                <!--                <li class="tab-link-top">-->
+                <!--                  <a data-toggle="tab" href="#tab-8"><i class="fa fa-folder"></i>Ressources Conjoint-->
+                <%# if @demande_liquidation.current_state < :recap_soumis %>
+                <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.ressources_conjoint_valid? %>
+                <%# end %>
+                <!--                  </a>-->
+                <!--                </li>-->
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-9"><i class="fa fa-folder"></i>Tableau récapitulatif des points
+                    <% if @demande_liquidation.current_state < :recap_soumis %>
+                      <%= '<span class="label label-warning">à valider par un Gestionnaire Allocataire</span>'.html_safe unless @demande_liquidation.recap_point_valide? %>
+                    <% end %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-7"><i class="fa fa-briefcase"></i>Périodes Assur. SN
+                    <% if @demande_liquidation.current_state < :carriere_soumis %>
+                      <%= '<span class="label label-warning">à valider par le Chef de Section Liquidation</span>'.html_safe unless @demande_liquidation.assur_second_pays_valid? %>
+                    <% end %>
+                  </a></li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-10">
+                    <i class="fa fa-folder"> </i>
+                    Historiques
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-11">
+                    <i class="fa fa-comments"> </i>
+                    Correspondances
+                  </a>
+                </li>
+
+              </ul>
+              <div class="tab-content">
+
+                <div id="tab-1" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% if !@demande_liquidation.etat_civil_demandeur_valide? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                      <%= link_to "Je valide les informations sur l'état civil", admin_liquidation_retraite_france_valider_etat_civil_demandeur_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_etat_civil' %>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane tab-pane-section">
+                  <div class="row">
+                    <div class="col-lg-12" style="margin-top: 30px">
+
+                      <div class="panel-body">
+                        <div class="panel-group" id="accordion">
+
+
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                              <h5 class="panel-title">
+                                <div class="row">
+                                  <div class="col-lg-9">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                                      <span style="color: black;" class="fa fa-users"></span>
+                                      <span style="color: black;"> Conjoints </span>
+                                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.epouses_valide? %>
+                                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_liquidation.epouses_valide? %>
+                                    </a>
+                                  </div>
+                                  <div class="col-lg-3" style="text-align: right;">
+                                    <% unless @demande_liquidation.epouses_valide? %>
+                                      <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#conjoint_form">
+                                        <span class="fa fa-plus"></span>
+                                        Ajouter un conjoint
+                                      </button>
+                                    <% end %>
+                                  </div>
+                                </div>
+                              </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="conjoint" style="padding-top: -5px">
+                              <div class="full-height-scroll">
+                                <br>
+                                <% if !@demande_liquidation.epouses_valide? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                                  <%= link_to "Je valide les informations sur les conjoints", admin_liquidation_retraite_france_valider_epouses_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                                <% end %>
+                                <hr>
+                                <%= render 'show_epouses' %>
+                                <% if @demande_liquidation.creation? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                                  <%= link_to 'Modifier les informations sur les conjoints', admin_conjoints_path %>
+                                <% end %>
+                              </div>
+                            </div>
+                          </div> <!-- End panel default enfant -->
+
+
+
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                              <h5 class="panel-title">
+                                <div class="row">
+                                  <div class="col-lg-9">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                                      <span style="color: black;" class="fa fa-users"></span>
+                                      <span style="color: black;"> Enfants à charge </span>
+                                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.enfants_valide? %>
+                                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_liquidation.enfants_valide? %>
+                                    </a>
+                                  </div>
+                                  <div class="col-lg-3" style="text-align: right;">
+                                    <% unless @demande_liquidation.enfants_valide? %>
+                                      <button class="btn btn-xs btn-info" data-toggle="modal" data-target="#enfant_form">
+                                        <span class="fa fa-plus"></span>
+                                        Ajouter un enfant CFS
+                                      </button>
+                                    <% end %>
+                                  </div>
+                                </div>
+                              </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="enfant" style="padding-top: -5px">
+                              <div class="full-height-scroll">
+                                <br>
+                                <% if !@demande_liquidation.enfants_valide? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                                  <%= link_to "Je valide les informations sur les enfants", admin_liquidation_retraite_france_valider_enfants_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                                <% end %>
+                                <hr>
+                                <%= render 'show_enfants' %>
+                                <% if @demande_liquidation.creation? and current_user.gestionnaire_compte_allocataire? %>
+                                  <%= link_to 'Modifier les informations sur les enfants', admin_enfants_url %>
+                                <% end %>
+                              </div>
+                            </div>
+                          </div> <!-- End panel default enfant -->
+                        </div>
+                      </div>
+                    </div> <!-- End col -->
+                  </div> <!-- End row -->
+                </div> <!-- End tab-2 -->
+
+                <div id="tab-3" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% if !@demande_liquidation.documents_valide? and current_user.can_allocataire? %>
+                      <%= link_to "Je valide tous les documents", admin_liquidation_retraite_france_valider_documents_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+
+                <div id="tab-4" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'show_carrieres_prestation' %>
+                    <% if @demande_liquidation.creation? %>
+                      <%= link_to "Faire une demande d'intégration de carrière", admin_carrieres_path %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <!--                <div id="tab-5" class="tab-pane tab-pane-section">-->
+                <!--                  <div class="full-height-scroll">-->
+                <!--                    <br>-->
+                <%# unless @demande_liquidation.activite_prof_valid? %>
+                <%#= link_to "Je valide les informations ", admin_liquidation_retraite_france_valider_activite_prof_valid_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                <!--                      <hr>-->
+                <%# end %>
+                <%#= render 'activites_professionnelles_france' %>
+                <!--                  </div>-->
+                <!--                </div>-->
+
+                <!--                <div id="tab-6" class="tab-pane tab-pane-section">-->
+                <!--                  <div class="full-height-scroll">-->
+                <!--                    <br>-->
+                <%# unless @demande_liquidation.assur_residence_valid? %>
+                <%#= link_to "Je valide les informations ", admin_liquidation_retraite_france_valider_assur_residence_valid_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                <!--                      <hr>-->
+                <%# end %>
+                <%#= render 'show_per_ass_pays_resid' %>
+                <!--                  </div>-->
+                <!--                </div>-->
+
+                <!--                <div id="tab-8" class="tab-pane tab-pane-section">-->
+                <!--                  <div class="full-height-scroll">-->
+                <!--                    <br>-->
+                <%# unless @demande_liquidation.ressources_conjoint_valid? %>
+                <%#= link_to "Je valide les informations ", admin_liquidation_retraite_france_valider_ressources_conjoint_valid_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                <!--                      <hr>-->
+                <%# end %>
+                <%#= render 'show_ressource_conjoint' %>
+                <!--                  </div>-->
+                <!--                </div>-->
+
+                <div id="tab-9" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'show_tableau_recapitulatif_points' %>
+                  </div>
+                </div>
+
+                <div id="tab-7" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @demande_liquidation.assur_second_pays_valid? %>
+                      <%= link_to "Je valide les informations ", admin_liquidation_retraite_france_valider_assur_second_pays_valid_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_per_ass_sec_pays' %>
+                  </div>
+                </div>
+
+                <div id="tab-10" class="tab-pane tab-pane-section">
+                  <%= render 'historique_dossier' %>
+                </div>
+
+                <div id="tab-11" class="tab-pane tab-pane-section">
+                  <%= render 'correspondances' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'soumission_form' %>
+
+
+
+<div class="modal inmodal" id="enfant_form" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@cfs_enfant, url: admin_liquidation_retraite_france_ajouter_cfs_enfant_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <%= f.alert_message "Please fix the errors below." %>
+      <div class="modal-content animated fadeIn">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">x</span>
+            <span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">Ajouter un enfant</h4>
+        </div>
+        <div class="modal-body">
+          <%= f.hidden_field :liquidation_retraite_france_id, value: @demande_liquidation.id %>
+          <%= f.select :filiation, CfsEnfant::FILIATION.keys.collect { |filiation|
+            [CfsEnfant.human_enum_name(:filiation, filiation), filiation] }, include_blank: true, label: 'Filiation' %>
+          <%= f.text_field :prenom, label: 'Prénom' %>
+          <%= f.text_field :nom, label: 'Nom' %>
+          <%= f.date_select :date_naissance, label: "Date de naissance",
+                            start_year: (Date.today - 30.year).year, end_year: (Date.today).year %>
+          <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+          <%= f.check_box :situation, label: "Est-il décédé ?" %>
+          <div style="background-color: rgba(240,240,240,1); padding-top: 20px; padding-bottom: 20px;" id="infos_enfant" hidden>
+            <%= f.date_select :date_deces, label: "Date du décès",
+                              start_year: (Date.today - 80.year).year, end_year: (Date.today).year %>
+          </div>
+
+        </div>
+        <div class="modal-footer form-group">
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+
+
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_affecter_allocataire_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @demande_liquidation.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+            <%= f.text_area :commentaire_affectation_allocataire, label: 'Commentaire' %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-one-salarie" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_affecter_allocataire_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @demande_liquidation.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :ajoute_par_id, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+            <%= f.text_area :commentaire_affectation_allocataire, label: 'Commentaire' %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Réaffectation demande</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+
+<% unless @gestionnaires_salaries.nil? %>
+  <div class="modal inmodal" id="affecter-one-gestionnaire" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_affecter_salarie_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @demande_liquidation.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_salarie, @gestionnaires_salaries, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+            <%= f.text_area :commentaire_affectation_salaire, label: 'Commentaire' %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%= render 'action_commentaire' %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          // chargerInfosConjoint();
+          chargerInfosEnfant();
+
+          // $("#cfs_conjoint_situation").change(function () {
+          //     chargerInfosConjoint()
+          // });
+          $("#cfs_enfant_situation").change(function () {
+              chargerInfosEnfant()
+          });
+
+          $('#cfs_conjoint_date_deces_3i').prop("disabled", true).val('');
+          $('#cfs_conjoint_date_deces_2i').prop("disabled", true).val('');
+          $('#cfs_conjoint_date_deces_1i').prop("disabled", true).val('');
+
+          $('#cfs_enfant_date_deces_3i').prop("disabled", true).val('');
+          $('#cfs_enfant_date_deces_2i').prop("disabled", true).val('');
+          $('#cfs_enfant_date_deces_1i').prop("disabled", true).val('');
+
+          // function chargerInfosConjoint() {
+          //     elem_infos_conjoint = $('#infos_conjoint')
+          //     if (cfs_conjoint_situation.checked === true) {
+          //         elem_infos_conjoint.show();
+          //
+          //         $('#cfs_conjoint_date_deces_3i').prop("disabled", false).val('');
+          //         $('#cfs_conjoint_date_deces_2i').prop("disabled", false).val('');
+          //         $('#cfs_conjoint_date_deces_1i').prop("disabled", false).val('');
+          //     } else {
+          //         elem_infos_conjoint.hide();
+          //
+          //         $('#cfs_conjoint_date_deces_3i').prop("disabled", true).val('');
+          //         $('#cfs_conjoint_date_deces_2i').prop("disabled", true).val('');
+          //         $('#cfs_conjoint_date_deces_1i').prop("disabled", true).val('');
+          //     }
+          // }
+
+          function chargerInfosEnfant() {
+              elem_infos_enfant = $('#infos_enfant')
+              if (cfs_enfant_situation.checked === true) {
+                  elem_infos_enfant.show();
+
+                  $('#cfs_enfant_date_deces_3i').prop("disabled", false).val('');
+                  $('#cfs_enfant_date_deces_2i').prop("disabled", false).val('');
+                  $('#cfs_enfant_date_deces_1i').prop("disabled", false).val('');
+              } else {
+                  elem_infos_enfant.hide();
+
+                  $('#cfs_enfant_date_deces_3i').prop("disabled", true).val('');
+                  $('#cfs_enfant_date_deces_2i').prop("disabled", true).val('');
+                  $('#cfs_enfant_date_deces_1i').prop("disabled", true).val('');
+              }
+          }
+
+      })
+  </script>
+<% end %>
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 10%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+
+    .rejet_allocataire {
+        border: 1px solid red;
+        border-radius: 10px;
+        padding: 10px;
+        width: 400px;
+    }
+</style>
+

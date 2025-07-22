@@ -1,0 +1,76 @@
+
+<div class="row">
+ <div class="col-lg-12" style="text-align: right;">
+    <%= link_to ' Modifier', edit_admin_at_consolidation_path(@demande_arret_travail.at_consolidation.id), class:"btn btn-outline btn-white fa fa-edit"  %>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Taux ipp medecin traitant: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%=@demande_arret_travail.at_consolidation.taux_incapacite%>%</dd>
+      </div>
+    </d1>
+    <% unless @demande_arret_travail.at_consolidation.motif_changement_taux_ipp.nil? %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>: </dt>
+      </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%=@demande_arret_travail.at_consolidation.motif_changement_taux_ipp  %></dd>
+        </div>
+    </d1>
+    <%end%>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Etat demande consolidation: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%=@demande_arret_travail.at_consolidation.current_state%></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt>Date de consolidation:</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <dd class="mb-1"><%= @demande_arret_travail.at_consolidation.date_consolidation %> </dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+          <div class="col-sm-6" style="text-align: right;">
+              <dt>Date de naissance:</dt>
+          </div>
+          <div class="col-sm-6" style="text-align: left;">
+              <dd class="mb-1"><%= @demande_arret_travail.date_de_naissance_salarie.strftime("%d/%m/%Y")%></dd>
+          </div>
+      </d1>
+  </div>
+    <div class="col-lg-6">
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt>taux IPP Médecin Conseil:</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <dd class="mb-1"><%= @demande_arret_travail.at_consolidation.taux_ipp_mc %> </dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+          <div class="col-sm-6" style="text-align: right;">
+              <dt>Avis Médecin Conseil:</dt>
+          </div>
+          <div class="col-sm-6" style="text-align: left;">
+              <dd class="mb-1"><%= @demande_arret_travail.at_consolidation.avis_mc%></dd>
+          </div>
+      </d1>
+  </div>
+</div>
+
+
+
+
+
+

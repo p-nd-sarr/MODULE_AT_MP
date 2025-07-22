@@ -1,0 +1,335 @@
+<% if @immatriculation != nil && @immatriculation.etat_civil_demandeur_valide? %>
+  <div class="row">
+    <div class="col-lg-4">
+
+      <h2 style="color: #1ab394">Identification</h2>
+      <p>
+        <strong>Numéro unique de sécurité sociale:</strong>
+        <%= "" %>
+      </p>
+
+      <p>
+        <strong>Ancien numéro IPRES :</strong>
+        <%= current_user.num_ipres %>
+      </p>
+
+      <p>
+        <strong>Ancien numéro CSS:</strong>
+        <%= current_user.num_css %>
+      </p>
+
+      <p>
+        <strong>Ninéa :</strong>
+        <%= @immatriculation.ninea %>
+      </p>
+      <% unless @immatriculation.hdqt? %>
+        <p>
+          <strong>Ninet:</strong>
+          <%= @immatriculation.ninet %>
+        </p>
+      <% end %>
+
+      <p>
+        <strong>COFI:</strong>
+        <%= @immatriculation.code_identification_fiscale %>
+      </p>
+
+      <p>
+        <strong>Registre de commerce:</strong>
+        <%= @immatriculation.registre_commerce %>
+      </p>
+
+      <p>
+        <strong>Raison sociale:</strong>
+        <%= @immatriculation.raison_sociale %>
+      </p>
+
+      <p>
+        <strong>Numéro Demande:</strong>
+        <%= @immatriculation.id %>
+      </p>
+
+      <% if @immatriculation.soumis? or @immatriculation.valide? %>
+        <p>
+          <strong>Numéro Process flow:</strong>
+          <%= @immatriculation.process_flow_id %>
+        </p>
+      <% end %>
+
+    </div>
+
+    <div class="col-lg-4">
+
+      <h2 style="color: #1ab394">Catégorie d’entreprise</h2>
+      <p>
+        <strong>Type d’établissement:</strong>
+        <%= Immatriculation.human_enum_name(:type_etablissement, @immatriculation.type_etablissement) %>
+      </p>
+
+      <p>
+        <strong>Statut juridique:</strong>
+        <%= @immatriculation.admin_statut_juridique.description %>
+      </p>
+
+      <p>
+        <strong>Activité principale:</strong>
+        <%= @immatriculation.admin_activite_principale.description %>
+      </p>
+
+      <p>
+        <strong>Secteur d’activité :</strong>
+        <%= @immatriculation.admin_secteur_activite.description %>
+      </p>
+
+    </div>
+
+
+    <div class="col-lg-4">
+
+      <h2 style="color: #1ab394">Adresse - Siège social</h2>
+      <p>
+        <strong>Région:</strong>
+        <%= @immatriculation.reprise_region.designation %>
+      </p>
+
+      <p>
+        <strong>Ville:</strong>
+        <%= @immatriculation.reprise_ville.designation %>
+      </p>
+
+      <p>
+        <strong>Commune:</strong>
+        <%= @immatriculation.reprise_commune.designation %>
+      </p>
+
+      <p>
+        <strong>Quartier :</strong>
+        <%= @immatriculation.reprise_quartier.designation %>
+      </p>
+
+      <p>
+        <strong>Adresse :</strong>
+        <%= @immatriculation.adresse %>
+      </p>
+
+      <p>
+        <strong>Email :</strong>
+        <%= @immatriculation.email %>
+      </p>
+
+      <p>
+        <strong>Telephone :</strong>
+        <%= @immatriculation.mobileNumber %>
+      </p>
+
+    </div>
+
+  </div>
+  <div class="hr-line-dashed"></div>
+
+  <% unless @immatriculation == nil or @immatriculation.soumis? %>
+    <button class="btn btn-primary" id="show_civil"> Modifier les informations de l'état civil</button>
+  <% end %>
+<% end %>
+
+<% unless @immatriculation.id == nil or @immatriculation.etat_civil_demandeur_valide? %>
+  <%= link_to "Je valide les informations sur la Structure", employer_immatriculation_structure_prive_valider_infos_societe_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="row" id="update_etat_civil">
+
+  <%= bootstrap_form_for([:employer, @immatriculation], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+    <div class="col-sm-8" style="padding-left: 20%">
+      <div class="ibox">
+        <div class="ibox-title" style="background: #1ab394; color: #fff">
+          <h5>Catégorie Structure</h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up" style="color: #fff"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content" style="">
+
+          <div class="form-group row">
+            <label class="col-form-label col-sm-4" for="immatriculation_type_etablissement">Type
+              etablissement</label>
+            <div class="col-sm-8">
+              <input required="required" class="form-control" type="text" value="<%= current_user.admin_type_employeur.description unless current_user.admin_type_employeur.nil? %>" name="immatriculation[sigle]" id="type_employeur" disabled>
+            </div>
+          </div>
+
+          <%= f.select :type_etablissement,
+                       Immatriculation::TYPE_ETABLISSEMENT.keys.collect { |type_etablissement| [Immatriculation.human_enum_name(:type_etablissement, type_etablissement), type_etablissement] }, label: 'Type etablissement' %>
+
+          <%= f.collection_select :statut_juridique, @statut_juridiques, :id, :description, label: 'Statut Juridique', required: true %>
+
+          <%= f.collection_select :secteur_activite, @secteurs, :id, :description, label: 'Secteur Activite', required: true %>
+
+          <%= f.collection_select :activite_principale, @activites, :id, :description, label: 'Activite Principale', required: true %>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8" style="padding-left: 20%" id="identite_structure">
+
+      <div class="ibox">
+        <div class="ibox-title" style="background: #1ab394; color: #fff">
+          <div class="accordion-heading" class="ibox-title">
+            <h5>Identité Structure</h5>
+            <div class="ibox-tools">
+              <a class="accordion-toggle collapse-link"
+                 data-toggle="collapse"
+                 data-parent="#accordion2"
+                 href="#collapseOne" style="background: #1ab394; color: #fff">
+                <i class="fa fa-chevron-down" style="color: #fff"></i>
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+
+
+        <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+          <%= f.text_field :raison_sociale, label: 'Raison sociale', required: true, disabled: true %>
+
+          <%= f.text_field :sigle, label: 'Sigle', required: true %>
+
+          <%= f.text_field :ninea, label: 'Ninea', required: true, :pattern => '^[0-9]{9}$', help: "Ninéa c'est 9 chiffres", disabled: true %>
+
+          <div id="ninet">
+            <%= f.number_field :ninet, label: 'Ninet', required: true, :pattern => '^[0-9]{13}$', help: "Ninet c'est 13 chiffres" %>
+          </div>
+          <%= f.text_field :code_identification_fiscale, label: 'Code identification Fiscale', :pattern => '^[0-9]+[a-zA-Z]+[0-9]$', help: "COFI c'est 3 caractères" %>
+
+          <%= f.date_select :date_identification_fiscale, label: "Date identification Registre de Commerce",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year %>
+
+          <%= f.text_field :registre_commerce, label: 'Registre de commerce' %>
+
+          <%= f.date_select :date_identification_rc, label: "Date identification",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year %>
+
+          <%= f.text_field :siege_social, label: 'Siege social' %>
+
+          <%= f.date_select :date_ouverture, label: "Date ouverture Etablissement",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year %>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8" style="padding-left: 20%" id="adresse_societe">
+      <div class="ibox">
+        <div class="ibox-title" style="background: #1ab394; color: #fff">
+          <div class="accordion-heading" class="ibox-title">
+            <h5>Adresse Structure</h5>
+            <div class="ibox-tools">
+              <a class="accordion-toggle collapse-link"
+                 data-toggle="collapse"
+                 data-parent="#accordion2"
+                 href="#collapseTwo" style="background: #1ab394; color: #fff">
+                <i class="fa fa-chevron-down" style="color: #fff"></i>
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+
+
+        <div id="collapseTwo" class="accordion-body collapse ibox-content">
+
+          <%= f.collection_select :region, @regions, :id, :designation, include_blank: true, label: 'Region', tag: 'region', required: true %>
+
+          <%= f.collection_select :departement, @departements, :id, :designation, include_blank: true, label: 'Departement', required: true %>
+
+          <%= f.collection_select :ville, @villes, :id, :designation, include_blank: true, label: 'Arrondissement', required: true %>
+
+          <%= f.collection_select :commune, @communes, :id, :designation, include_blank: true, label: 'Commune', required: true %>
+
+          <%= f.collection_select :quartier, @quartiers, :id, :designation, include_blank: true, label: 'Quartier', required: true %>
+
+          <%= f.text_field :adresse, label: 'Adresse', required: true %>
+
+          <%= f.text_field :email, label: 'Email', required: true %>
+
+          <%= f.text_field :mobileNumber, label: 'Telephone', required: true , placeholder: '00221'%>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="form-group row" style="padding-left: 20%">
+      <div class="col-sm-4 col-sm-offset-2">
+        <button type="submit" class="btn btn-primary block full-width m-b">Enregister</button>
+      </div>
+    </div>
+
+  <% end %>
+
+</div>
+
+<% if @immatriculation != nil && @immatriculation.etat_civil_demandeur_valide? %>
+
+  <script type="text/javascript">
+
+      $(document).ready(function () {
+
+          $('#update_etat_civil').hide();
+
+          $("#show_civil").click(function () {
+              $('#update_etat_civil').show();
+              return false;
+          });
+      });
+
+  </script>
+
+<% end %>
+
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+
+        console.log('load etat civil');
+        $('#ninet').hide();
+        $('#immatriculation_ninet').attr("value", "0000000000000");
+
+        $("#immatriculation_type_etablissement").change(function () {
+
+            var e = document.getElementById("immatriculation_type_etablissement");
+            var strUser = e.options[e.selectedIndex].text;
+
+            console.log(strUser);
+            switch (strUser) {
+                case "agence/succursale":
+                    $('#ninet').show();
+                    break;
+                case "chantier":
+                    $('#ninet').show();
+                    break;
+                default:
+                    $('#ninet').hide();
+
+                    alert('0000000000000');
+                    $('#immatriculation_ninet').attr("value", "0000000000000");
+            }
+
+            return false;
+        });
+
+    })
+</script>
+
+<style>
+  label.required:after {
+    content: " *";
+  }
+</style>

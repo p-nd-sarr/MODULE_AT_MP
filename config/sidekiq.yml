@@ -1,0 +1,13 @@
+staging:
+  :concurrency: 20
+recette:
+  :concurrency: 20
+production:
+  :concurrency: 30
+:max_retries: 2
+:queues:
+  - [mailers, 3]
+  - [default, 1]
+  - [comptabilite, 2]
+  - [echeance, 1]
+  - [my_queue, 1]

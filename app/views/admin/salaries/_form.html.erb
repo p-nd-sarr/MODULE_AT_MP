@@ -1,0 +1,57 @@
+<%= bootstrap_form_for([@salarie], url: admin_salarie_update_path(@salarie.matric), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="ibox ">
+    <div class="ibox-title">
+      <h5 style="text-decoration: underline;"> Modification salarié </h5>
+      <div class="ibox-tools">
+        <a class="collapse-link">
+          <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-lg-6">
+          <%= f.text_field :prenom, label: 'Prénom' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :nom, label: 'Nom' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :numero_piece, label: 'Numéro pièce' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.date_field :date_naissance, label: 'Date de naissance', value: @salarie.date_naissance,
+                           start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :addr, label: 'Adresse' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.text_field :profession, label: 'Profession' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.phone_field :phone, label: 'Téléphone' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.select :genre, options_for_select([['HOMME', 'HOMME'], ['FEMME', 'FEMME']], @salarie.genre), label: 'Genre' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="row form-group">
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', admin_salarie_path(@salarie.matric), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+
+
+<% end %>

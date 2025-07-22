@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+
+<br>
+Bonjour <%= @resource.full_name %>,<br>
+Votre souscription est réceptionnée.<br>
+Nous vous prions de confirmer votre adresse e-mail en vue de sa validation à travers ce lien: <%= link_to 'confirmation e-mail', user_confirmation_url(confirmation_token: @token) %><br>
+<br>
+Merci.<br>
+
+</body>
+</html>

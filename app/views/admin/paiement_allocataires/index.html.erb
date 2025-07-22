@@ -1,0 +1,62 @@
+<%= content_for :titre_page, "Paiements, allocataire : #{@allocataire.numero_allocataire}" %>
+
+<%= content_for :actions_page do %>
+<%= link_to 'Allocataire', [:admin, @allocataire], class: 'btn btn-white btn-sm' %>
+  <%= (link_to 'Nouveau paiement', new_admin_allocataire_paiement_allocataire_path(@allocataire), class: 'btn btn-primary btn-sm')if current_user.chef_service_allocation? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+        <tr>
+          <td>Référence</td>
+          <td>Allocataire</td>
+          <td>Période</td>
+          <td>Montant Net</td>
+         
+          <td>Date paiement</td>
+          <td>Etat</td>
+          <td>Voir Ordre</td>
+           <td>Action</td>
+        </tr>
+      </thead>
+        <% @paiements.each do |paiement| %>
+          <tr>
+            <td><%= paiement.code %></td>
+            <td><%= paiement.numero_allocataire %></td>
+            <td><%= paiement.periode %></td>
+            <td><%= paiement.montant_net.round(-1) %></td>
+            
+            <td><%= paiement.date_paiement %></td>
+            <td><%= paiement.etat %></td>
+            <td><%= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_paiement_generer_paiement_path(paiement, format: :pdf), class: 'btn btn-outline btn-default btn-xs' %></td>
+            <td style="width: 75px">
+              <%= (link_to 'Retourner', admin_allocataire_paiement_allocataire_retourner_path(@allocataire,paiement), class: 'btn btn-outline btn-primary btn-xs') %>
+            </td>
+          </tr>
+        <% end %>
+    </table>
+  <%= paginate @paiements %>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        let pickedup;
+        let paiements = [];
+        $("#paiements_id tr").on("click", function (event) {
+            let reference = $(this).find("td").eq(1).html();
+            console.log($(this).find("td").eq(0).html());
+            console.log($(this).find("td").eq(1).html());
+            console.log($(this).find("td").eq(3).html());
+
+            // get back to where it was before if it was selected :
+            if (paiements.indexOf(reference) <= -1) {
+
+            }
+            paiements.push(reference);
+            // $( this ).css( "background-color", "red" );
+            pickedup = $(this);
+        });
+    })
+</script>

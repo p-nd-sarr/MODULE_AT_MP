@@ -1,0 +1,24 @@
+
+  <div class="modal inmodal" id="affecter-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@suspension_allocataire, url: admin_allocataire_suspension_allocataire_affecter_path(@allocataire, @suspension_allocataire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @suspension_allocataire.id %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <%end %>
+    </div>
+  </div>

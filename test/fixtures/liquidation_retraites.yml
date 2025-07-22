@@ -1,0 +1,33 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  numero_dossier: MyString
+  numero_affiliation: MyString
+  prenom: MyString
+  nom: MyString
+  date_naissance: 2019-12-20
+  lieu_naissance: MyString
+  adresse_reception_allocation: MyString
+  adresse_domicile: MyString
+  mode_paiement: 1
+  compte_bancaire_nom_banque: MyString
+  compte_bancaire_code_banque: MyString
+  compte_bancaire_code_guichet: MyString
+  compte_bancaire_numero_compte: MyString
+  etat: 1
+
+two:
+  numero_dossier: MyString
+  numero_affiliation: MyString
+  prenom: MyString
+  nom: MyString
+  date_naissance: 2019-12-20
+  lieu_naissance: MyString
+  adresse_reception_allocation: MyString
+  adresse_domicile: MyString
+  mode_paiement: 1
+  compte_bancaire_nom_banque: MyString
+  compte_bancaire_code_banque: MyString
+  compte_bancaire_code_guichet: MyString
+  compte_bancaire_numero_compte: MyString
+  etat: 1

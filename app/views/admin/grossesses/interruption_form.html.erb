@@ -1,0 +1,27 @@
+<%= content_for :titre_page, "Déclaration d'interruption du grossesse : #{@grossesse.date_grossesse}".html_safe %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-8 col-sm-offset-2">
+      <div class="ibox-content">
+        <%= bootstrap_form_for([:admin, @dossier_prestation, @grossesse], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.select :etat,
+                       Grossesse::ETAT.except(:valide).keys.collect { |etat| [Grossesse.human_enum_name(:etat, etat), etat] },
+                       label: "Type d'interruption" %>
+
+          <%= f.date_select :date_interruption, label: "Date de l'interruption",
+                            start_year: (Date.today - 1.year).year, end_year: Date.today.year %>
+
+          <div class="form-group row">
+          <hr>
+            <div class="col-sm-3 col-sm-offset-9" style="text-align:right">
+              <%= link_to 'Annuler', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation), class: 'btn btn-white' %>
+              <%= f.button 'Valider', class: 'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+</div>

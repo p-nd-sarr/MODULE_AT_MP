@@ -1,0 +1,29 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Date',
+      'Numéro allocataire',
+      'Ancien numéro ipres',
+      'Numéro dossier',
+      'Nom',
+      'Prénom',
+      'Etat du dossier',
+      'Motif de régularisation',
+      'Gestionnaire qui a ouvert',
+  ]
+  sheet.add_row titre, :b => true
+  @regularisation_pensions.each do |t|
+    sheet.add_row [
+                      t.created_at,
+                      t.numero_allocataire,
+                      t.allocataire.try(:ipres_ancien_matric),
+                      t.numero_dossier,
+                      t.nom,
+                      t.prenom,
+                      RegularisationPension.workflow_spec.states[t.workflow_state.to_sym].meta[:label],
+                      t.motif_regularisation_pension,
+                      t.ajoute_par.try(:full_name),
+                  ]
+  end
+end

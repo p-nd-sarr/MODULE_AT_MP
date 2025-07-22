@@ -1,0 +1,96 @@
+<div class="row" style="margin-top: 30px;">
+  <% if @at_rechute.can_add_elt_salaire?(current_user) %>
+    <div class="col-md-12">
+      <h3> Ajout éléments de salaires </h3>
+      <hr class="no-margins">
+     </div>
+
+     <div class="col-md-12" style="margin-top: 30px;">
+      <%= bootstrap_form_for(@at_code_prime_salaire, url: admin_at_rechute_ajouter_element_salaire_path(@at_rechute, @at_code_prime_salaire), layout: :vertical,) do |f| %>
+        <%= f.alert_message "Please fix the errors below." %>
+        <%=hidden_field_tag :custom_page, 'information_prime_salaire'%>
+        <%=f.hidden_field :at_rechute_id, value: @at_rechute.id%>
+      
+          <div class="col-md-5">
+            <%= f.collection_select :designation, Admin::ComposantSalaire.all.order('code'),  :designation, :designation, label: 'Désignation' %>
+          </div>
+
+          <div class="col-md-5">
+            <%= f.number_field :montant %>
+          </div>
+
+          <div class="col-md-2 bntEltSalaire">
+            <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+          </div>
+      <% end%>
+    </div>
+  <% end %>
+
+    <div class="col-md-12" style="margin-top: 30px;">
+      <h3> Liste des éléments de salaires ajoutés </h3>
+      <hr class="no-margins">
+    </div>
+
+    <div class="col-md-12" style="margin-top: 30px;">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+          <tr>
+
+            <th scope="col">Désignation</th>
+            <th scope="col">Prise en compte(calcul)</th>
+            <th scope="col">Montant</th>
+            <th scope="col">Date</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        <%salaire_reference=0%> 
+        <% @at_rechute.at_code_prime_salaires.each do |prime| %>
+          <tr>
+            <td><%=prime.designation%></td>
+            <td><%=prime.prise_en_compte? ? "OUI" : "NON" %></td>
+            <td><%=number_to_currency(prime.montant, unit: '')%></td>
+            <td><%=prime&.created_at.strftime("%d/%m/%Y")%></td>            
+            <td style="width: 75px">
+                <%= link_to_if @at_rechute.can_add_elt_salaire?(current_user), 'supprimer',"/admin/at_rechutes/#{@at_rechute.id}/at_code_prime_salaires/#{prime.id}", method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs'  %>
+            </td> 
+          </tr>
+          <%if prime.prise_en_compte%>
+            <%salaire_reference=salaire_reference+prime.montant%>
+          <%end%>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-12">
+        <h3 class="text-success">Salaire référence du mois précédent la rechute : <strong><%=@at_rechute.salaire_reference%></strong></h3>
+        <li> Nombre jours ouvrables mois précedent rechute: <strong><%=@at_rechute.nombre_jours_ouvres%></strong> </li>
+        <li> Salaire Réference rechute: <strong><%=@at_rechute.salaire_reference%></strong> FCFA </li>
+        <li> Salaire journalier de réference rechute: <strong><%=@at_rechute.salaire_journalier_reference%></strong> FCFA </li>
+
+        <h3 style="margin-top: 30px;"> </h3>
+        <hr class="no-margins">
+        
+        <h3 class="text-success">Salaire de référence du mois précédent l'accident : <strong><%=@at_rechute.arret_travail.salaire_reference%></strong></h3>
+        <li class="mb-1"> Date accident: <strong><%=@at_rechute.arret_travail.date_accident.strftime("%d/%m/%Y")%></strong> </li>
+        <li> Nombre jours ouvrables mois précedent accident: <strong><%=@at_rechute.arret_travail.nombre_jours_ouvres%></strong> </li>
+        <li> Salaire de réference: <strong><%=@at_rechute.arret_travail.salaire_reference%></strong> FCFA </li>
+        <li> Salaire journalier de réference: <strong><%=@at_rechute.arret_travail.salaire_journalier_reference%></strong> FCFA </li>
+
+        <h3 style="margin-top: 30px;"> </h3>
+        <hr class="no-margins">
+
+        <h3 class="text-danger">Salaire de référence choisi : <strong><%= @at_rechute.arret_travail.salaire_reference_choisi %> F CFA</strong></h3>
+          <h3 class="text-danger">Indemnité journalière (IJ) choisie : <strong><%= @at_rechute.arret_travail.indemnite_journaliere %> F CFA</strong></h3>
+
+
+    </div>
+
+   
+  </div>
+<style>
+.col-md-2.bntEltSalaire {
+    margin-top: 22px;
+}
+</style>

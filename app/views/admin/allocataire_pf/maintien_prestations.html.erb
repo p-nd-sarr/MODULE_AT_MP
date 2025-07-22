@@ -1,0 +1,347 @@
+<%= content_for :titre_page, "Détails Dossier De Prestations [#{DossierPrestation.human_enum_name(:etat, @dossier_prestation_f.etat)}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Avec : <%= @dossier_prestation_f.conjoint.full_name unless @dossier_prestation_f.conjoint.nil? %> <br>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation_f.etat)}" %>
+  <% unless @dossier_prestation_f.get_maintien_prestations_active.nil? %>
+    pour cause de <%= MaintienPrestation.human_enum_name(:type_maintien, @dossier_prestation_f.get_maintien_prestations_active.type_maintien) unless @dossier_prestation_f.get_maintien_prestations_active.type_maintien.nil? %>
+  <% end %>
+  <% unless @dossier_prestation_f.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @dossier_prestation_f.date_soumission}" %>
+  <% end %>
+  <% if @dossier_prestation_f.creation? and @dossier_prestation_f.motif_retour? %>
+    <br>
+    <strong class="text-info">Motif retour dossier :</strong>
+    <%= @dossier_prestation_f.motif_retour %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_prestation_path(@dossier_prestation_f), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-12 col-md-12">
+    <div class="ibox-content">
+      <div class="row" style="padding: 20px; font-size: 12px">
+        <% unless @dossier_prestation_f.has_maintien_prestation_active? and current_user.gestionnaire_compte_allocataire? %>
+          <h3 style="font-weight: bold;"> Enregistrer une demande de maintien de prestations </h3>
+          <br>
+          <div class="row" style="margin-bottom: 10px">
+            <div class="col-sm-6">
+              <div class="panel panel-info">
+                <div class="panel-body">
+                  <%= bootstrap_form_for([:admin, @maintien_prestation], url: admin_dossier_prestation_create_maintien_prestations_path(@dossier_prestation_f), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                    <%= render 'layouts/errors', object: @maintien_prestation %>
+                    <%= f.date_field :date_effective, label: 'Date de chômage', required: true %>
+
+                    <%= f.text_area :commentaire, label: 'Commentaire' %> <br>
+
+                    <div class="row">
+                      <div class="col-sm-6">
+                        <h4 class="label-chomage" style="font-weight: bold;">Attestation de chômage *</h4>
+
+                        <div class="btn-file">
+                          <label>
+                            <%= f.file_field :document_justificatif, hide_label: true, label: '.',
+                                             help: (@maintien_prestation.persisted? ? "Ne rien mettre si vous ne voulez pas modifier la pièce d'identité" : ''), id: 'label-piece', class: 'label-piece' %>
+
+                            <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                              <span class="fa fa-upload"></span> Choisir un fichier
+                            </div>
+                          </label>
+                        </div>
+                        <small class="file-name" id="file-name"></small>
+                      </div>
+                      <div class="col-sm-6">
+                        <h4 class="label-other-doc" style="font-weight: bold;">Autre document *</h4>
+
+                        <div class="btn-file">
+                          <label>
+                            <%= f.file_field :autre_document, hide_label: true, label: '.',
+                                             help: (@maintien_prestation.persisted? ? "Ne rien mettre si vous ne voulez pas modifier le document" : ''), id: 'label-other-doc', class: 'label-other-doc' %>
+
+                            <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                              <span class="fa fa-upload"></span> Choisir un fichier
+                            </div>
+                          </label>
+                        </div>
+                        <small class="other-file-name" id="other-file-name"></small>
+                      </div>
+                    </div>
+
+
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="col-sm-4 col-sm-offset-3">
+                      <%= f.submit 'Ajouter', class: 'btn btn-primary' %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <h3 style="font-weight: bold;"> Informations du contrat </h3>
+              <hr>
+              <hr>
+              <h4>Type de contrat : </h4>
+              <h4>Date de début du contrat :
+                <% @dossier_prestation_f.get_last_carriere.date_debut_contrat unless @dossier_prestation_f.get_last_carriere.nil? %></h4>
+              <h4>Date de fin du contrat :
+                <% @dossier_prestation_f.get_last_carriere.date_fin_contrat unless @dossier_prestation_f.get_last_carriere.nil? %> </h4>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="row">
+          <% if @dossier_prestation_f.has_maintien_prestation_active? and @dossier_prestation_f.suspendu? %>
+            <% if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+              <h3 style="font-weight: bold;">Maintien de prestation en cours (chômage involontaire)</h3>
+            <% else %>
+              <h3 style="font-weight: bold;">Maintien de prestation en cours (décès)</h3>
+            <% end %>
+            <div>
+              <br>
+              <div class="col-lg-4 contact-box" style="margin-top: 10px;">
+                <div class="panel panel-white">
+                  <div class="panel-heading" style="text-align: center;height: 50px;">
+                    <h5>Demande de maintien de prestation</h5>
+                    <h6> <%= l(@dossier_prestation_f.get_maintien_prestations_active.date_demande_maintien) unless @dossier_prestation_f.get_maintien_prestations_active.date_demande_maintien.nil? %> </h6>
+                  </div>
+                  <hr>
+                  <div class="panel-body" style="min-height: 100px; text-align: center;">
+
+                    <h5>
+                      <strong>Type de demande
+                        :</strong> &nbsp; <%= MaintienPrestation.human_enum_name(:type_maintien, @dossier_prestation_f.get_maintien_prestations_active.type_maintien) unless @dossier_prestation_f.get_maintien_prestations_active.type_maintien.nil? %>
+                    </h5>
+
+                    <% if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+                      <h5>
+                        <strong>Date chômage
+                          :</strong> &nbsp; <%= l(@dossier_prestation_f.get_maintien_prestations_active.date_effective) unless @dossier_prestation_f.get_maintien_prestations_active.date_effective.nil? %>
+                      </h5>
+                    <% else %>
+                      <h5>
+                        <strong>Date décès
+                          :</strong> &nbsp; <%= l(@dossier_prestation_f.get_maintien_prestations_active.date_effective) unless @dossier_prestation_f.get_maintien_prestations_active.date_effective.nil? %>
+                      </h5>
+                    <% end %>
+
+                    <h5>
+                      <strong>Date demande
+                        :</strong> &nbsp;  <%= l(@dossier_prestation_f.get_maintien_prestations_active.date_demande_maintien) unless @dossier_prestation_f.get_maintien_prestations_active.date_demande_maintien.nil? %>
+                    </h5>
+                    <% if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+                      <h5>
+                        <strong>Nombre de mois maintenus
+                          :</strong> &nbsp;  <%= @dossier_prestation_f.get_maintien_prestations_active.get_time_of_presence_continu unless @dossier_prestation_f.get_maintien_prestations_active.get_time_of_presence_continu.nil? %>
+                        mois
+                      </h5>
+                      <h5>
+                        <strong>Nombre de mois travaillés
+                          :</strong> &nbsp;  <%= @dossier_prestation_f.get_maintien_prestations_active.number_of_month_presence unless @dossier_prestation_f.get_maintien_prestations_active.nil? %>
+                        mois
+                      </h5>
+                    <% end %>
+                    <h5>
+                      <strong>Etat
+                        :</strong> &nbsp;  <%= @dossier_prestation_f.get_maintien_prestations_active.etat unless @dossier_prestation_f.get_maintien_prestations_active.etat.nil? %>
+                    </h5>
+                    <span>
+                  <strong>Commentaire :</strong> &nbsp;  <%= @dossier_prestation_f.get_maintien_prestations_active.commentaire %>
+                  </span>
+
+                    <div class="" style="align-items: center; justify-content: center; display: flex;  margin-top: 30px">
+                      <div class="contact-box" style="min-height: 180px">
+                        <div class="">
+                          <div class="text-center">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <% if @dossier_prestation_f.get_maintien_prestations_active.document_justificatif.attached? %>
+                                  <% if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+                                    <h5 style="font-weight: bold;">Attestation de chômage </h5>
+                                  <% end %>
+                                  <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "img-responsive img-card-size img-bordered"), @dossier_prestation_f.get_maintien_prestations_active.document_justificatif, target: :_blank %>
+                                  <%#= link_to image_tag(@dossier_prestation_f.get_maintien_prestations_active.document_justificatif.preview(resize: "200x200>"), class: "img-responsive img-card-size img-bordered"), @dossier_prestation_f.get_maintien_prestations_active.document_justificatif, target: :_blank %>
+                                <% end %>
+                              </div>
+                              <div class="col-sm-6">
+                                <% if @dossier_prestation_f.get_maintien_prestations_active.autre_document.attached? %>
+                                  <% if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+                                    <h5 style="font-weight: bold;">Autre document </h5>
+                                  <% end %>
+                                  <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "img-responsive img-card-size img-bordered"), @dossier_prestation_f.get_maintien_prestations_active.autre_document, target: :_blank %>
+                                  <%#= link_to image_tag(@dossier_prestation_f.get_maintien_prestations_active.autre_document.preview(resize: "200x200>"), class: "img-responsive img-card-size img-bordered"), @dossier_prestation_f.get_maintien_prestations_active.autre_document, target: :_blank %>
+                                <% end %>
+                              </div>
+                            </div>
+
+                            <% if @dossier_prestation_f.get_maintien_prestations_active.has_dead_salary? %>
+                              <% if @dossier_prestation_f.get_maintien_prestations_active.deces? %>
+                                <h5 style="font-weight: bold;">Certiicat de décès </h5>
+                              <% end %>
+                              <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "img-responsive img-card-size img-bordered"), @dossier_prestation_f.get_maintien_prestations_active.get_dead_salary.certificat_deces, target: :_blank %>
+                              <%#= link_to image_tag(@dossier_prestation_f.get_maintien_prestations_active.get_dead_salary.certificat_deces.preview(resize: "200x200>"), class: "img-responsive img-card-size img-bordered"), @dossier_prestation_f.get_maintien_prestations_active.get_dead_salary.certificat_deces, target: :_blank %>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="panel-footer" style="text-align: center;">
+                    <%= link_to "Supprimer", admin_dossier_prestation_delete_maintien_prestation_path(@dossier_prestation_f, @dossier_prestation_f.get_maintien_prestations_active.id), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs fa fa-trash' if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+                    <%= link_to "Reprise d'activité", admin_dossier_prestation_cancel_maintien_prestation_path(@dossier_prestation_f, @dossier_prestation_f.get_maintien_prestations_active.id), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-primary btn-xs fa fa-edit' if @dossier_prestation_f.get_maintien_prestations_active.chomage? %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+        </div>
+
+
+        <br> <br>
+        <hr>
+        <br>
+        <div class="row">
+          <% if @dossier_prestation_f.has_maintien_prestation_inactive? %>
+            <h3 style="font-weight: bold;">Historique des maintiens de prestations </h3> <br>
+            <div class="row">
+              <% @dossier_prestation_f.get_maintien_prestations_inactive.each do |maintien| %>
+                <div class="col-lg-4 contact-box">
+                  <div class="panel panel-white">
+                    <div class="panel-heading" style="text-align: center;height: 50px;">
+                      <h5>Demande de maintien de prestation</h5>
+                      <h6> <%= l(maintien.date_demande_maintien) unless maintien.date_demande_maintien.nil? %> </h6>
+                    </div>
+                    <hr>
+                    <div class="panel-body" style="min-height: 100px; text-align: center;">
+
+                      <h5>
+                        <strong>Type de demande
+                          :</strong> &nbsp; <%= MaintienPrestation.human_enum_name(:type_maintien, maintien.type_maintien) unless maintien.type_maintien.nil? %>
+                      </h5>
+
+                      <% if maintien.chomage? %>
+                        <h5>
+                          <strong>Date chômage
+                            :</strong> &nbsp; <%= l(maintien.date_effective) unless maintien.date_effective.nil? %>
+                        </h5>
+                      <% else %>
+                        <h5>
+                          <strong>Date décès
+                            :</strong> &nbsp; <%= l(maintien.date_effective) unless maintien.date_effective.nil? %>
+                        </h5>
+                      <% end %>
+
+                      <h5>
+                        <strong>Date demande
+                          :</strong> &nbsp;  <%= l(maintien.date_demande_maintien) unless maintien.date_demande_maintien.nil? %>
+                      </h5>
+                      <% if maintien.chomage? %>
+                        <h5>
+                          <strong>Nombre de mois maintenus
+                            :</strong> &nbsp;  <%= maintien.get_time_of_presence_continu unless maintien.get_time_of_presence_continu.nil? %>
+                          mois
+                        </h5>
+                        <h5>
+                          <strong>Nombre de mois travaillés
+                            :</strong> &nbsp;  <%= maintien.number_of_month_presence unless maintien.nil? %>
+                          mois
+                        </h5>
+                      <% end %>
+                      <h5>
+                        <strong>Etat :</strong> &nbsp;  <%= maintien.etat unless maintien.etat.nil? %>
+                      </h5>
+                      <span>
+                    <strong>Commentaire :</strong> &nbsp;  <%= maintien.commentaire %>
+                  </span>
+
+                      <div class="" style="align-items: center; justify-content: center; display: flex; margin-top: 30px">
+                        <div class="contact-box" style="min-height: 180px">
+                          <div class="">
+                            <div class="text-center">
+                              <div class="row">
+                                <div class="col-sm-6">
+                                  <% if maintien.document_justificatif.attached? %>
+                                    <% if maintien.chomage? %>
+                                      <h5 style="font-weight: bold;">Attestation de chômage </h5>
+                                    <% end %>
+                                    <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "img-responsive img-card-size img-bordered"), maintien.document_justificatif, target: :_blank %>
+                                    <%#= link_to image_tag(maintien.document_justificatif.preview(resize: "200x200>"), class: "img-responsive img-card-size img-bordered"), maintien.document_justificatif, target: :_blank %>
+                                  <% end %>
+                                </div>
+                                <div class="col-sm-6">
+                                  <% if maintien.autre_document.attached? %>
+                                    <% if maintien.chomage? %>
+                                      <h5 style="font-weight: bold;">Autre document </h5>
+                                    <% end %>
+                                    <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "img-responsive img-card-size img-bordered"), maintien.autre_document, target: :_blank %>
+                                    <%#= link_to image_tag(maintien.autre_document.preview(resize: "200x200>"), class: "img-responsive img-card-size img-bordered"), maintien.autre_document, target: :_blank %>
+                                  <% end %>
+                                </div>
+                              </div>
+
+                              <% if maintien.has_dead_salary? %>
+                                <% if maintien.deces? %>
+                                  <h5 style="font-weight: bold;">Certiicat de décès </h5>
+                                <% end %>
+                                <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "img-responsive img-card-size img-bordered"), maintien.get_dead_salary.certificat_deces, target: :_blank %>
+                                <%#= link_to image_tag(maintien.get_dead_salary.certificat_deces.preview(resize: "200x200>"), class: "img-responsive img-card-size img-bordered"), maintien.get_dead_salary.certificat_deces, target: :_blank %>
+                              <% end %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+
+
+      /* Start section form conjoint */
+      $(document).ready(function () {
+          var file_name = document.getElementById('file-name');
+          var other_file_name = document.getElementById('other-file-name');
+          var input_check = document.getElementsByName('maintien_prestation[document_justificatif]');
+          var other_input_check = document.getElementsByName('maintien_prestation[autre_document]');
+          $('.label-chomage, label-other-doc').show()
+
+          input_check[0].addEventListener('change', function (event) {
+              showFileName(event);
+          });
+          other_input_check[0].addEventListener('change', function (event) {
+              showFileName(event);
+          });
+
+
+          function showFileName(event) {
+              let input = event.srcElement;
+              let fileName = input.files[0].name;
+              if (input.classList.contains('label-piece')) {
+                  file_name.textContent = fileName;
+              } else {
+                  other_file_name.textContent = fileName;
+              }
+          }
+
+      });
+
+
+  </script>
+<% end %>

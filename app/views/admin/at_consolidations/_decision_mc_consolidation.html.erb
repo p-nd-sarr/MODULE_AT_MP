@@ -1,0 +1,79 @@
+<%#unless @at_consolidation.can_see_accord?(current_user)  %>
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <%= bootstrap_form_for(@at_consolidation, url:  admin_arret_travail_at_consolidation_decision_medecin_conseil_path(@arret_travail, @at_consolidation), method: :put, layout: :vertical, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <%= f.alert_message "Please fix the errors below." %>
+  
+        <div class="col-lg-12">
+          <% unless @at_consolidation.taux_ipp_medecin_traitant.nil? %>
+            <div class="col-lg-6">
+              <%= f.number_field :taux_ipp_medecin_traitant, label: "Taux IPP Médecin traitant:", disabled: true  %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.date_field :date_consolidation_medecin_traitant, disabled: true%>
+            </div>
+          <% end %>
+          
+
+          <div class="col-lg-6">
+            <%= f.number_field :taux_ipp_mc, label: 'Taux IPP Médecin Conseil:', disabled: @at_consolidation.decision_mc_valide?,  required: true %>
+          </div>
+
+          <div class="col-lg-6">
+            <%= f.date_field :date_consolidation_medecin_conseil, disabled: @at_consolidation.decision_mc_valide?,  required: true %>
+          </div>
+
+          <div class="col-lg-6">
+            <%= f.number_field :taux_ipp_medecin_expert, label: 'Taux IPP Médecin Expert:', disabled: @at_consolidation.decision_mc_valide?  %>
+          </div>
+
+          <div class="col-lg-6">
+            <%= f.date_field :date_consolidation_medecin_expert, disabled: @at_consolidation.decision_mc_valide?  %>
+          </div>
+
+          <div class="col-lg-12">
+            <%= f.text_area :avis_mc, label: 'Avis:' , disabled: @at_consolidation.decision_mc_valide?, required: true  %>
+          </div>
+
+          <div class="col-lg-12 box_accord">
+              <%= f.check_box :accord_taux_ipp, label:"Accord avec le client?" , disabled: @at_consolidation.decision_mc_valide?, required: true  %>
+          </div>
+        </div>
+
+        <div class="col-lg-12 form-group">
+          <hr>
+          <div class="col-lg-6 col-lg-offset-6" style="text-align: right;">
+            <%= f.button 'Enregistrer saisie', class: 'btn btn-primary', disabled: @at_consolidation.decision_mc_valide? %>
+          </div>
+        </div>
+    <% end %>
+  </div>
+</div>
+<%# end %>
+
+
+<style>
+  input#at_consolidation_accord_taux_ipp {
+    margin-right: 1%;
+    width: 20px;
+    height: 20px;
+    margin-top: 0;
+  }
+
+   .col-lg-12.box_accord {
+    margin-top: 10px;
+    font-size: 17px;
+  } 
+</style>
+
+
+
+
+
+
+
+
+
+
+
+

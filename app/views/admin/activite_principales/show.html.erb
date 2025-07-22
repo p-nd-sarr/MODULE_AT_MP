@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_activite_principale" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_activite_principales_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_activite_principale_path(@admin_activite_principale), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter', new_admin_activite_principale_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Secteur activite:</strong>
+              <%= @admin_activite_principale.admin_secteur_activite.description %>
+            </p>
+
+            <p>
+              <strong>Description:</strong>
+              <%= @admin_activite_principale.description %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

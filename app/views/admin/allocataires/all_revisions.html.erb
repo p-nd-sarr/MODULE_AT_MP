@@ -1,0 +1,46 @@
+<%= content_for :titre_page, "Revision pensions" %>
+
+<%= content_for :actions_page do %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/revision_pensions/search' %>
+    <br>
+    <br>
+    <hr>
+    <%= paginate @revision_pensions %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Type</th>
+        <th scope="col">Date demande</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @revision_pensions.each do |revision_pension| %>
+        <tr>
+          <td><%= revision_pension.id %></td>
+          <td><%= revision_pension.allocataire.numero_allocataire %></td>
+          <td><%= revision_pension.allocataire.nom %></td>
+          <td><%= revision_pension.allocataire.prenom %></td>
+          <td><%= revision_pension.type_motif %></td>
+          <td><%= revision_pension.created_at %></td>
+          <td><%= revision_pension.workflow_state %></td>
+          <td width="75px">
+            <%= link_to 'détails', [:admin, revision_pension.allocataire, revision_pension], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @revision_pensions %>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<%= bootstrap_form_for([:admin, @dossier_cnav], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Une erreur est survenue lors de l'enregistrement." %>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-4">
+        <%= f.date_select :date_ouverture, label: "Date d'ouverture",
+                          start_year: (Date.today - 5.year).year, end_year: (Date.today).year %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.select :usage, DossierCnav::USAGE.keys.collect {
+          |usage| [DossierCnav.human_enum_name(:usage, usage), usage] }, label: "Usage" %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.select :type_convention, DossierCnav::TYPE_CONVENTION.keys.collect {
+          |type_convention| [DossierCnav.human_enum_name(:type_convention, type_convention), type_convention]
+          }, label: "Type Convention" %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.number_field :annee, label: "Année" %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.select :mois, DossierCnav::MOIS.keys.collect { |mois| [DossierCnav.human_enum_name(:mois, mois), mois] },
+                     label: "Mois", include_blank:true %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.select :trimestre, DossierCnav::TRIMESTRE.keys.collect { |trimestre|
+          [DossierCnav.human_enum_name(:trimestre, trimestre), trimestre] }, label: "Trimestre", include_blank: true %>
+      </div>
+    </div>
+
+    <div class="hr-line-dashed"></div>
+
+    <div class="col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', (@dossier_cnav.persisted? ? [:admin, @dossier_cnav] : admin_dossier_cnavs_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+
+  </div>
+<% end %>

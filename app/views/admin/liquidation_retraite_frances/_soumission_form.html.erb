@@ -1,0 +1,80 @@
+<div class="modal inmodal" id="SoumissionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Soumission de la demande de liquidation retraite
+        </h4>
+
+      </div>
+    </div>
+    <div class="modal-body">
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_soumettre_action_path(@demande_liquidation)) do |f| %>
+
+    <h3>          Soumission de la demande de liquidation retraite
+      </h3>
+        <table class="table table-condensed table-hover">
+         
+          <tr>
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+            <td><strong>Condition 1 : Le salarié déclare ne plus exercer d'activité salariée à compter du <%= l @demande_liquidation.date_cessation_activite %> et je m'engage à n'en plus reprendre sans avoir préalablement avisé l'IPRES.</strong></td>
+          </tr>
+  
+          <tr>
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+            <td>
+              <strong>Condition 2 : Le salarié déclare en outre n'avoir pas adressé d'autre demande d'allocation de retraite à l'IPRES et n'avoir jamais perçu à ce titre quelque somme que ce soit.</strong>
+            </td>
+          </tr>
+            <tr>
+
+              <td> <input type="checkbox" name="vehicle1" value="Bike">
+              </td>
+
+              <td><strong>Condition 3 : Le salarié certifie que les renseignements portés sur la présente demande sont exacts.</strong></td>
+            </tr>
+        </table>
+
+          <div class="modal-body">
+            <%= f.text_area :commentaire_soumission, label: 'Commentaire' %>
+          </div>
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary', id: 'soummetre_valide' %>
+        </div>
+      <% end %>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#soummetre_valide").hide();
+        var all_checkboxes = $('#SoumissionModal input[type="checkbox"]');
+
+        $(".modal-body").change(function(){
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#soummetre_valide").show();
+            }else{
+                $("#soummetre_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>
+

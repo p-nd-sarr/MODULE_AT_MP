@@ -1,0 +1,44 @@
+<p>
+  <strong>Prénom:</strong>
+  <%= @allocataire.try(:prenom) %>
+</p>
+<p>
+  <strong>Nom:</strong>
+  <%= @allocataire.try(:nom) %>
+</p>
+<p>
+  <strong>Date de naissance:</strong>
+  <%= @allocataire.try(:date_naissance) %>
+</p>
+
+<p>
+  <strong>Adresse domicile:</strong>
+  <%= @allocataire.try(:adresse_rue) %>
+</p>
+<p>
+  <strong>Ville:</strong>
+  <%= @allocataire.try(:adresse_ville) %>
+</p>
+<p>
+  <strong>Téléphone:</strong>
+  <%= @allocataire.try(:telephone) %>
+</p>
+
+</p>
+    <% if @allocataire.virement? %>
+      <div class="notes">
+        <p><strong style="font-style: italic;" class="text-info">Nom de la banque
+          :</strong> <%= @allocataire.admin_banque_agence.try(:nom_complet) %></p>
+        <p><strong style="font-style: italic;" class="text-info">Numéro compte bancaire
+          :</strong> <%= @allocataire.compte_bancaire_numero_compte %></p>
+        <p><strong style="font-style: italic;" class="text-info">Code SWIFT
+          :</strong> <%= @allocataire.admin_banque_agence.admin_banque.try(:code_swift) %></p>
+        <p><strong style="font-style: italic;" class="text-info">RIB :</strong> <%= @allocataire.compte_bancaire_cle_rib %></p>
+      </div>
+    <% end %>
+
+<p>
+<p>
+  <strong>Etat:</strong>
+  <%= @allocataire.try(:etat) %>
+</p>

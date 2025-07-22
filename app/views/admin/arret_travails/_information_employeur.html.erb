@@ -1,0 +1,76 @@
+<%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-4", control_col: "col-sm-6") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+ 
+  <div class="row">
+    <div class="col-md-12 col-sm-12 offset-6">
+      <h5 style="margin-top: 20px; margin-bottom: 20px;"><span class="label label-info"> Complèter le dossier</span> </h5>
+    </div>
+    <div class="col-sm-12">
+        <%=hidden_field_tag :custom_page, 'information_employeur'%>
+        <div class="col-sm-6 col-md-6"> 
+          <%= f.text_field  :numero_unique_ipress_css_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :ancien_numero_ipress_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :ancien_numero_css_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :raison_sociale_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :numero_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :adresse_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :boite_postale_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+           <%= f.text_field  :email_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :telephone_employeur ,readonly: @demande_arret_travail.read_only?%>
+        </div>
+      
+          <div class="col-sm-6 col-md-6">    
+            <%= f.text_field  :fax_employeur ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+          <%= f.text_field  :activite_principale_entreprise ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <%= f.text_field :status_ipress ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+          <%= f.text_field :status_css ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <%= f.text_field :status_ipress_css ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <%= f.number_field :solde_total_ipress_css ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <%= f.number_field :solde_branche_vieillesse ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <%= f.number_field :solde_branche_at ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+          <div class="col-sm-6 col-md-6">
+            <%= f.number_field :solde_branche_pf ,readonly: @demande_arret_travail.read_only?%>
+          </div>
+      </div>
+      <div class="form-group col-md-12 col-sm-12">
+          <hr>
+          <div class="col-sm-3 col-md-4 col-sm-offset-9 col-md-offset-9">
+            <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+            <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+            <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+            <%end%>
+          </div>
+        </div>
+  </div>
+<% end %>

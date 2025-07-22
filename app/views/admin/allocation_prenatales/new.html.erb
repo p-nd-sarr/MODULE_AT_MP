@@ -1,0 +1,10 @@
+<%= content_for :titre_page, "Ajout Allocation Prénatale "  %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h5>Date début grossesse (approximative) :
+    <u class="text-danger"><%= l @grossesse.date_grossesse %></u></h5>
+    <hr>
+    <%= render 'form' %>
+  </div>
+</div>

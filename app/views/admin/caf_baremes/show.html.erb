@@ -1,0 +1,41 @@
+<%= content_for :titre_page, "Détails barême" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_caf_baremes_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_caf_bareme_path(@admin_bareme), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter admin_bareme', new_admin_caf_bareme_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Periode:</strong>
+              <%= @admin_bareme.periode %>
+            </p>
+
+
+            <p>
+              <strong>Montant indemnités:</strong>
+              <%= @admin_bareme.montant_indemnites %>
+            </p>
+
+            <p>
+              <strong>Date debut validite:</strong>
+              <%= @admin_bareme.date_debut_validite %>
+            </p>
+
+            <p>
+              <strong>Date fin validite:</strong>
+              <%= @admin_bareme.date_fin_validite %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

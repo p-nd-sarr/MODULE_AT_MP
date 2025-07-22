@@ -1,0 +1,260 @@
+<div class="row" style="margin-top: 30px;">  
+  <div class="col-sm-3">    
+    <% unless !@demande_arret_travail.avec_nbr_heure_paye_jrnalier?(current_user) %>
+      <% unless @demande_arret_travail.nombre_heure_paye %>
+          <a style="" data-toggle="modal" data-target="#NbrHeurSalJounalierModal" id="NbrHeurSalJounalier" class="btn btn-primary btn-xs">Renseigner
+          le Nombre d'heures journalières payées </a>
+      <% else %>
+          <span> Nombre d'heures journalières payées : <%= @demande_arret_travail.nombre_heure_paye %>
+            <a data-toggle="modal" data-target="#NbrHeurSalJounalierModal" id="NbrHeurSalJounalier" class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> </a>
+          </span>
+      <% end %>      
+      <br>
+      <br>
+    <% end %>
+    <div class="modal inmodal" id="NbrHeurSalJounalierModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-check modal-icon btn-primary"></i>
+            <h4 class="modal-title">
+              Saisir le nombre d'heure journalier
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div class="ibox-content">
+            <%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-4", control_col: "col-sm-6") do |f| %>
+            <%#= bootstrap_form_for(@demande_arret_travail, url: admin_arret_travail_path(@demande_arret_travail), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+              <%= hidden_field_tag :custom_page, 'information_pro_salarie' %>
+              <%#= f.hidden_field :arret_travail_id, value: @demande_arret_travail.id %>
+              <%= f.number_field :nombre_heure_paye, label: 'Nombre heure payé' %>
+              <div class="form-group row">
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                  <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+  <% if @demande_arret_travail.can_add_ij?(current_user) && (@demande_arret_travail.at_decomptes.liquide.size <= 0) %>
+    <div class="col-md-12">
+      <h3> Ajout éléments de salaires </h3>
+      <hr class="no-margins">
+    </div>
+
+    <div class="row" style="margin-top: 30px;">
+      <%= bootstrap_form_for(@at_code_prime_salaire, url: "/admin/arret_travails/#{@demande_arret_travail.id}", method: :put, layout: :vertical,) do |f| %>
+        <%= f.alert_message "Please fix the errors below." %>
+        <%= hidden_field_tag :custom_page, 'information_prime_salaire' %>
+        <%= f.hidden_field :arret_travail_id, value: @demande_arret_travail.id %>
+
+        <div class="col-md-4">
+          <%= f.collection_select :designation, Admin::ComposantSalaire.all.order('code'), :designation, :designation, label: 'Désignation' %>
+        </div>
+
+        <div class="col-md-4">
+          <%= f.number_field :montant %>
+        </div>
+
+        <div class="col-md-4 bntEltSalaire">
+          <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+    <div class="row" id="entries-section">
+      <div id="extend-input" style="padding-left: 16px">
+        <div class="row">
+          <div class="col-sm-4">
+            <label for="number-entries">Nombre d'entrées</label>
+            <input type="number" id="number-entries" class="form-control">
+          </div>
+          <div class="col-sm-4" id="entries-destination">
+
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="col-md-12" style="margin-top: 30px;">
+    <h3> Liste des éléments de salaires ajoutés </h3>
+    <hr class="no-margins">
+  </div>
+
+  <div class="col-md-12" style="margin-top: 30px;">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+
+        <th scope="col">Désignation</th>
+        <th scope="col">Prise en compte(calcul)</th>
+        <th scope="col">Montant</th>
+        <th scope="col">Date</th>
+        <th scope="col">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% salaire_reference = 0 %>
+      <% @demande_arret_travail.at_code_prime_salaires.each do |prime| %>
+        <tr>
+          <td><%= prime.designation %></td>
+          <td><%= prime.prise_en_compte? ? "OUI" : "NON" %></td>
+          <td><%= number_to_currency(prime.montant, unit: '') %></td>
+          <td><%= prime&.created_at.strftime("%d/%m/%Y") %></td>
+          <% if @demande_arret_travail.can_add_ij?(current_user) %>
+            <td style="width: 75px">
+              <%= link_to 'supprimer', "/admin/arret_travails/#{@demande_arret_travail.id}/at_code_prime_salaires/#{prime.id}", method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+            </td>
+          <% end %>
+        </tr>
+        <% if prime.prise_en_compte %>
+          <% salaire_reference = salaire_reference + prime.montant %>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+    <h3 class="text-danger">Salaire mensuel de référence:
+      <strong><%= @demande_arret_travail.salaire_reference %></strong></h3>
+  </div>
+
+  <div class="col-md-12" style="margin-top: 10px;">
+    <h3 style="margin-top: 30px;" class="text-success"> Accident de travail </h3>
+    <hr class="no-margins">
+    <ul>
+      <li class="mb-1"> Date accident:
+        <strong><%= @demande_arret_travail.date_accident.strftime("%d/%m/%Y") %> </strong></li>
+        <% unless !@demande_arret_travail.est_journalier? %>
+        <li> Nombre d'heures payées: <strong><%= @demande_arret_travail.nombre_heure_paye %></strong></li>
+        <% end %>
+      <li> Nombre jours ouvrables mois précedent accident:
+        <strong><%= @demande_arret_travail.nombre_jours_ouvres %></strong></li>
+      <li> Salaire Réference: <strong><%= @demande_arret_travail.salaire_reference %></strong> FCFA</li>
+      <li> Salaire journalier de réference: <strong><%= @demande_arret_travail.indemnite_journaliere %></strong> FCFA
+      </li>
+    </ul>
+
+    <% if @demande_arret_travail.at_rechute %>
+      <h3 style="margin-top: 30px;" class="text-success"> Rechute </h3>
+      <hr class="no-margins">
+      <ul>
+        <li class="mb-1"> Date rechute:
+          <strong><%= @demande_arret_travail.at_rechute.date_rechute.strftime("%d/%m/%Y") %></strong></li>
+        <li> Nombre jours ouvrables mois précedent la rechute:
+          <strong><%= @demande_arret_travail.at_rechute.nombre_jours_ouvres %></strong></li>
+        <li> Salaire de réference: <strong><%= @demande_arret_travail.at_rechute.salaire_reference %></strong> FCFA</li>
+        <li> Salaire journalier de réference:
+          <strong><%= @demande_arret_travail.at_rechute.salaire_journalier_reference %></strong> FCFA
+        </li>
+      </ul>
+
+      <h3 style="margin-top: 30px;" class="text-danger"> Valeurs retenues dans les calculs </h3>
+      <hr class="no-margins">
+      <ul>
+        <li class="text-dark">Salaire de référence:
+          <strong><%= @demande_arret_travail.salaire_reference_choisi %> F CFA</strong></li>
+        <li class="text-dark">Indemnité journalière (IJ): <strong><%= @demande_arret_travail.ij_retenu %> F CFA</strong>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+</div>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          show_or_hide();
+          var array_inputs = [];
+
+
+          $("#at_code_prime_salaire_designation").change(function () {
+              document.getElementById('number-entries').value = '';
+              document.getElementById('at_code_prime_salaire_montant').value = '';
+              remove_entries()
+              show_or_hide();
+          });
+
+          $("#number-entries").change(function () {
+              remove_entries()
+              show_entries();
+              array_inputs = document.getElementsByClassName("new_entries_added")
+              for (let i = array_inputs.length - 1; i >= 0; i--) {
+                  array_inputs[i].addEventListener("change", function (e) {
+                      increase_amount()
+                  });
+              }
+          });
+
+          function show_entries() {
+              let number_input = $("#number-entries").val();
+              let entries_destination = document.getElementById('entries-destination')
+
+              for (let i = 0; i < number_input; i++) {
+                  let label = document.createElement("LABEL");
+                  let label_text = document.createTextNode("Entrée" + (i + 1));
+                  let input = document.createElement("input");
+                  label.setAttribute("for", "entrie-elt");
+                  label.classList.add("new_label_added")
+                  label.appendChild(label_text);
+                  input.style.marginBottom = "3px";
+                  input.setAttribute('type', 'number');
+                  input.setAttribute('id', 'entrie-elt' + i);
+                  input.setAttribute('step', 'any');
+                  input.classList.add("new_entries_added")
+                  input.classList.add("form-control")
+                  entries_destination.insertBefore(label, document.getElementById("entrie-elt" + i));
+                  entries_destination.appendChild(input);
+              }
+          }
+
+          function show_or_hide() {
+              if ($("#at_code_prime_salaire_designation").val() === 'HEURES SUPPLEMENTAIRES' || $("#at_code_prime_salaire_designation").val() === 'AUGMENTATION') {
+                  $("#entries-section").show()
+              } else {
+                  $("#entries-section").hide()
+              }
+          }
+
+          function remove_entries() {
+              let inputs = document.getElementsByClassName("new_entries_added");
+              let labels = document.getElementsByClassName("new_label_added");
+              if (inputs.length > 0) {
+                  for (let i = inputs.length - 1; i >= 0; i--) {
+                      inputs[i].remove();
+                  }
+              }
+              if (labels.length > 0) {
+                  for (let i = labels.length - 1; i >= 0; i--) {
+                      labels[i].remove();
+                  }
+              }
+          }
+
+          function increase_amount() {
+              let amount = 0
+              if (array_inputs.length > 0) {
+                  for (let i = array_inputs.length - 1; i >= 0; i--) {
+                      if (array_inputs[i].value) {
+                          amount += parseInt(array_inputs[i].value)
+                      }
+                  }
+              }
+              $("#at_code_prime_salaire_montant").val(amount)
+          }
+      })
+  </script>
+<% end %>
+
+<style>
+    .col-md-4.bntEltSalaire {
+        margin-top: 22px;
+    }
+</style>

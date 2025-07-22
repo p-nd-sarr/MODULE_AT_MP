@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-lg-12" style="margin-top: 30px">
+        <div class="panel-body">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" style="padding: 10px">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#elements_salaire">
+                                <span class="fa fa-user"></span> Elements salaires
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse" id="elements_salaire" style="padding-top: 20px">
+                        <%= render 'information_composantes_salaire' %>
+                    </div>
+                </div> <!-- End panel default infoConsolidation-->
+                <div class="panel panel-default" style="padding: 10px">   
+                    <div class="panel-heading">
+                            <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#jour_ouvrable">
+                                <span class="fa fa-user"></span> Nombre de jours ouvrables du mois
+                                <%= '<span class="label label-warning">Nombre de jours ouvrables de ce mois à saisir </span>'.html_safe if @demande_arret_travail.nombre_jours_ouvres.nil? %>
+                            </a>
+                            </h5>
+                    </div>
+                    <div class="panel-collapse collapse" id="jour_ouvrable" style="padding-top: 20px">
+   
+                        <%= render 'information_jours_ouvrables' %>
+                    </div>
+                </div> <!-- End panel default Documents -->  
+                
+            </div>
+        </div>
+    </div> <!-- End col -->
+</div> <!-- End row -->

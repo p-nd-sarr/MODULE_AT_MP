@@ -1,0 +1,49 @@
+<%= content_for :titre_page, "Historique de liquidations" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Détails échéance caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+  Employeur : <%= @employeur.matric %> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_caisse_employeur_path(@echeance, @employeur), 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <% if @echeance_lot_liquidations.empty? %>
+        Historique vide !
+      <% else %>
+        <h3>Historique de liquidations de l'échéance  <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %>
+          <br></h3>
+        <hr>
+        <%= paginate @echeance_lot_liquidations %>
+        <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+          <thead>
+          <tr>
+            <th scope="col">Date de liquidation</th>
+            <th scope="col">Statut</th>
+            <th scope="col">Options</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @echeance_lot_liquidations.each do |echeance_lot_liquidation| %>
+            <tr>
+              <td><%= echeance_lot_liquidation.created_at unless echeance_lot_liquidation.created_at.nil? %></td>
+              <td><%= @employeur.is_first_liquidation(echeance_lot_liquidation) ? 'Original' : 'Complémentaire' %></td>
+              <td>
+                <%= link_to 'Voir état de paiement', admin_echeance_caisse_show_order_path(@echeance, @employeur, echeance_lot_liquidation), 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+                <%= link_to 'Générer ordre de paiement', admin_echeance_caisse_generate_payment_order_path(@echeance, @employeur, echeance_lot_liquidation, format: :pdf), class: 'btn btn-white btn-sm', target: '_blank' unless OrdrePaiement.where(dossier_id: echeance_lot_liquidation.id, dossier_type: echeance_lot_liquidation.class.name, statut: [:en_cours, :paye]).first.nil? %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @echeance_lot_liquidations %>
+      <% end %>
+    </div>
+  </div>
+</div>

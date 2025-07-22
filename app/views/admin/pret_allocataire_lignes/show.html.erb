@@ -1,0 +1,180 @@
+<%= content_for :titre_page, "Détails de la demande de pret [#{ PretAllocataire.human_enum_name(:etat, @pret_allocataire.etat)}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_pret_allocataires_path(), class: 'btn btn-white btn-sm' %>
+  <% if @pret_allocataire.creation? %>
+    <%= link_to 'Editer', edit_admin_pret_allocataire_path(@pret_allocataire), class: 'btn btn-white btn-sm' %>
+  <% end %>
+
+  <% if @pret_allocataire.creation? and current_user.directeur_prestation? %>
+    <%= (link_to 'Valider', admin_allocataire_pret_allocataire_valider_path(@allocataire, @pret_allocataire), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+    <%= (link_to 'Rejeter', admin_allocataire_pret_allocataire_rejeter_path(@allocataire, @pret_allocataire), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+    <div class="col-sm-4">
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <% unless @pret_allocataire.ajouter_par.nil? %>
+              <h5>Crée et soumis Par
+                : <%= (@pret_allocataire.ajouter_par.try(:full_name)) unless @pret_allocataire.ajouter_par.nil? %> </h5>
+              <h5>Date de création
+                : <%= (@pret_allocataire.created_at.strftime("%d/%m/%Y")) unless @pret_allocataire.created_at.nil? %></h5>
+
+            <% end %>
+
+            <% unless @pret_allocataire.valider_par.nil? %>
+
+              <h5>Validé Par
+                : <%= (@pret_allocataire.valider_par.try(:full_name)) unless @pret_allocataire.valider_par.nil? %> </h5>
+              <h5>Date de validation
+                : <%= (@pret_allocataire.validation_date.strftime("%d/%m/%Y")) unless @pret_allocataire.validation_date.nil? %></h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-sm-8">
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la demande</h5>
+          </div>
+          <div class="ibox-content">
+
+            <p>
+              <strong>Type :</strong>
+              <%= PretAllocataire.human_enum_name(:type_pret, @pret_allocataire.type_pret) %>
+            </p>
+
+            <p>
+              <strong>Date creation:</strong>
+              <%= l @pret_allocataire.created_at.to_date %>
+            </p>
+
+
+            <p>
+              <strong>Date Paiement:</strong>
+              <%= (l @pret_allocataire.date_paiement.to_date) unless @pret_allocataire.date_paiement.nil?  %>
+            </p>
+
+            <p>
+              <strong>Date Début remboursement:</strong>
+              <%= (l @pret_allocataire.date_debut.to_date) unless @pret_allocataire.date_debut.nil?  %>
+            </p>
+
+            <p>
+              <strong>Date Fin remboursement:</strong>
+              <%= (l @pret_allocataire.date_fin_previsionnelle.to_date) unless @pret_allocataire.date_fin.nil? %>
+            </p>
+
+            <p>
+              <strong>Commentaire:</strong>
+              <%= @pret_allocataire.commentaire %>
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 60%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>

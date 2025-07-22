@@ -1,0 +1,2 @@
+module AllocataireCnavsHelper
+end

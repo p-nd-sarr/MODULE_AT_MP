@@ -1,0 +1,27 @@
+<%= bootstrap_form_for([:admin, @allocataire, @pension_alimentaire], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.text_field :nom, class: 'form-control' %>
+  <%= f.text_field :prenom, class: 'form-control' %>
+  <%= f.text_field :adresse, class: 'form-control' %>
+  <%= f.text_field :telephone, class: 'form-control' %>
+  <%= f.text_field :numero_jugement, class: 'form-control' %>
+  <%#= f.text_field :montant_versement, class: 'form-control' %>
+  <%= f.text_field :montant, label: 'Montant' %>
+  <%= f.text_field :email, class: 'form-control' %>
+  <%= f.date_select :date_naissance, label: "Date de naissance",
+                    start_year: (Date.today - 100.year).year, end_year: (Date.current - 0.years).year %>
+
+  <%= f.date_select :date_jouissance, label: "Date d'entrée en jouissance",
+                    start_year: (Date.today - 100.year).year, end_year: (Date.current - 0.years).year %>
+  <%= f.text_area :commentaire, class: 'form-control' %>
+  <%#= f.collection_select :gest_allocataire_id, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+  <%= f.file_field :document, label: '&nbsp;'.html_safe %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', (@pension_alimentaire.persisted? ? [:admin, @allocataire, @pension_alimentaire] : admin_allocataire_pension_alimentaires_path(@allocataire)), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

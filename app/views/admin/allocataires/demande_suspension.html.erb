@@ -1,0 +1,21 @@
+
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <h5>Formulaire de soumission </h5>
+      </div>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <%= bootstrap_form_for(@allocataire, url: admin_allocataire_soumettre_path(@allocataire)) do |f| %>
+      <%= f.hidden_field :etat , class:'form-control', value:2 %>
+      <div class="form-group">
+        <%= f.text_area :motif_suspension , class:'form-control' %>
+      </div>
+      <div class="hr-line-dashed"></div>
+      <%= f.submit 'Sauvegarder les modifications', class: 'btn btn-primary btn-sm', data: {confirm: 'voulez vous valider la demande?'}%>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,186 @@
+<div class="row">
+  <div class="col-lg-1"></div>
+  <div class="col-lg-10">
+    <div class="alert alert-warning alert-dismissable">
+      <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+        <font style="vertical-align: inherit;">
+          <font style="vertical-align: inherit;">x</font>
+        </font>
+      </button>
+      <font style="vertical-align: inherit;">
+        <font style="vertical-align: inherit;">
+          <h3 class="text-center">
+            <p class="text-center">
+              <span><u>Observation</u>:  <%= (" #{@dossier_reversion_salarie.display_message} ") unless @dossier_reversion_salarie.display_message.nil? %> </span>
+            </p>
+          </h3>
+        </font>
+      </font>
+    </div>
+  </div>
+</div>
+<br>
+<% if @dossier_reversion_salarie.creation?%>
+  <button type="button" class="btn btn-outline btn-success" data-toggle="modal" data-target="#modal-<%= @dossier_reversion_salarie.id %>" id="dossier_reversion_salarie_id" >
+    Complement dossier
+  </button>
+  <%= render partial: 'modal_create_base_reversion', locals: { demandeur: @dossier_reversion_salarie }%>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-4 col-lg-offset-8" style="text-align:right">
+    <%= link_to ' Modifier', edit_admin_dossier_reversion_salary_path(@dossier_reversion_salarie), class: "btn btn-outline btn-success fa fa-edit" %>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_reversion_salarie.prenom %> <%= @dossier_reversion_salarie.nom %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+
+          <dd class="mb-1"><%= @dossier_reversion_salarie.veuve? ? @dossier_reversion_salarie.conjoint.date_naissance : @dossier_reversion_salarie.enfant.date_naissance  %></dd>
+      </div>
+    </d1> 
+ 
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom Tuteur: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+         <dd class="mb-1"><%= @dossier_reversion_salarie.prenom_tuteur %>  <%= @dossier_reversion_salarie.nom_tuteur %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Adresse:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @dossier_reversion_salarie.adresse %></dd>
+      </div>
+    </d1>  
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Adresse de réception de l'allocation: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+          <dd class="mb-1"><%=@dossier_reversion_salarie.adresse_reception_allocation %></dd>
+      </div>
+    </d1>  
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-credit-card"></span> Mode de paiement:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= LiquidationRetraite.human_enum_name(:mode_paiement, @dossier_reversion_salarie.mode_paiement) unless @dossier_reversion_salarie.mode_paiement.nil? %>
+          </dd>          
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-12" style="text-align: center; font-size: 11px; color: rgb(50, 50, 50);">
+          <% if @dossier_reversion_salarie.virement? %>
+            <div class="notes">
+                <p><strong style="font-style: italic;" class="text-info">Nom banque:</strong> <%= @dossier_reversion_salarie.compte_bancaire_nom_banque %></p>
+                <p><strong style="font-style: italic;" class="text-info">Code banque:</strong> <%= @dossier_reversion_salarie.compte_bancaire_code_banque %></p>
+                <p><strong style="font-style: italic;" class="text-info">Code guichet:</strong> <%= @dossier_reversion_salarie.compte_bancaire_code_guichet %></p>
+                <p><strong style="font-style: italic;" class="text-info">Numéro compte:</strong> <%= @dossier_reversion_salarie.compte_bancaire_numero_compte %></p>
+            </div>
+          <% end %>
+      </div>
+    </d1>    
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-check-square"></span> Est éligible:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= state_yes_no @dossier_reversion_salarie.eligible %></dd>
+      </div>
+    </d1>  
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-check-square-o"></span> Peut être éligible:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= state_yes_no @dossier_reversion_salarie.peut_etre_eligible? %></dd>
+      </div>
+    </d1>  
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-envelope"></span> Adresse Email:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @dossier_reversion_salarie.email %></dd>
+      </div>
+    </d1>  
+    <% if @dossier_reversion_salarie.veuve? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-calendar"></span> Date mariage:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+            <dd class="mb-1"><%= @dossier_reversion_salarie.conjoint.date_mariage if @dossier_reversion_salarie.veuve? %></dd>
+        </div>
+      </d1> 
+    <% end %>
+    <% if @dossier_reversion_salarie.orphelin? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-calendar"></span> Sexe:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+            <dd class="mb-1"><%= @dossier_reversion_salarie.enfant.sexe  %></dd>
+        </div>
+      </d1> 
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @dossier_reversion_salarie.phone %></dd>
+      </div>
+    </d1>  
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Date deces:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @reversion_veuve_salarie.date_deces %></dd>
+      </div>
+    </d1>  
+  </div>
+</div>
+
+<style>
+button#base_reversion_salarie_id {
+    float: right;
+}
+</style>
+
+
+
+

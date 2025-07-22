@@ -1,0 +1,61 @@
+<%= content_for :titre_page, "Dossiers ICM en attente de validation Ordre Paiement" %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.chef_agence? or current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Ajouter un dossier', new_admin_dossier_maternite_path, class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-lg-12">
+        <h3>Critères de recherche</h3>
+        <br>
+        <%= search_form_for @q, url: valider_ordre_admin_dossier_maternites_path, html: { id: 'formulaire_recherche' } do |f| %>
+          <div class="row">
+            <div class="col-sm-3">
+              <%= f.label :num_affiliation_cont, 'Numéro Affiliation' %>
+              <%= f.search_field :num_affiliation_cont, class: 'form-control' %>
+            </div>
+
+            <div class="col-sm-3">
+              <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+              <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+            </div>
+
+            <div class="col-sm-3">
+              <%= f.label :prenom_cont, 'Prénom' %>
+              <%= f.search_field :prenom_cont, class: 'form-control' %>
+            </div>
+
+            <div class="col-sm-3">
+              <%= f.label :nom_cont, 'Nom' %>
+              <%= f.search_field :nom_cont, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">
+              <%= f.label :admin_agence_id_eq, 'Agence de gestion' %>
+              <%= f.collection_select :admin_agence_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest,
+                                      { :include_blank => true }, class: 'form-control' %>
+            </div>
+            <div class="col-sm-3">
+              <%= f.label :nin_cont, 'NIN' %>
+              <%= f.search_field :nin_cont, class: 'form-control' %>
+            </div>
+            <div class="col-sm-3">
+              <%= f.label :est_repris_eq, 'Est repris?' %>
+              <%= f.select :est_repris_eq, [['Non', 0], ['Oui', 1]],
+                           { :include_blank => true }, class: 'form-control' %>
+            </div>
+          </div>
+          <div class="hr-line-dashed"></div>
+          <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+        <% end %>
+        <br>
+        <%= render 'liste' %>
+      </div>
+    </div>
+  </div>
+</div>

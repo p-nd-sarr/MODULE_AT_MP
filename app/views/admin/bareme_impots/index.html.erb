@@ -1,0 +1,55 @@
+<%= content_for :titre_page, 'BAREME MENSUEL DES RETENUES A LA SOURCE SUR SALAIRES' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_admin_bareme_impot_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+<%= paginate @bareme_impots %>
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Revenu brut</th>
+        <th scope="col">TRIMF/Pers</th>
+        <th scope="col">1 part</th>
+        <th scope="col">1,5 parts</th>
+        <th scope="col">2 parts</th>
+        <th scope="col">2,5 parts</th>
+        <th scope="col">3 parts</th>
+        <th scope="col">3,5 parts</th>
+        <th scope="col">4 parts</th>
+        <th scope="col">4,5 parts</th>
+        <th scope="col">5 parts</th>
+
+<!--        <th colspan="2"></th>-->
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @bareme_impots.each do |bareme_impot| %>
+        <tr>
+          <td align="right"><%= format_cfa bareme_impot.revenu_brut, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.trimf, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.un, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.un_cinq, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.deux, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.deux_cinq, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.trois, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.trois_cinq, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.quatre, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.quatre_cinq, false %></td>
+          <td align="right"><%= format_cfa bareme_impot.cinq, false %></td>
+
+<!--          <td style="width: 75px">-->
+            <%#= link_to 'modifier', edit_admin_bareme_impot_path(bareme_impot), class: 'btn btn-outline btn-primary btn-xs' %>
+<!--          </td>-->
+<!--          <td style="width: 75px">-->
+            <%#= link_to 'supprimer', bareme_impot, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+<!--          </td>-->
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<%= paginate @bareme_impots %>

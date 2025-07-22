@@ -1,0 +1,21 @@
+<div class="section-salarié">
+  <div class="row text-center" style="padding: 20px; margin-bottom: 20px;">
+    <div class="row">
+      <%= render 'documents/liste',
+                 object: @dossier_audit,
+                 documents: @dossier_audit.documents,
+                 include_add: @dossier_audit.creation?,
+                 include_delete: @dossier_audit.creation?,
+                 type_documents: DossierAudit::TYPE_DOCUMENT,
+                 type_documents_obligatoires: DossierAudit::TYPE_DOCUMENT_OBLIGATOIRE,
+                 back_url: admin_dossier_audit_path(@dossier_audit)
+      %>
+
+      <%= render 'documents/modal_form',
+                 type_documents: DossierAudit::TYPE_DOCUMENT,
+                 document: Document.new(documentable: @dossier_audit),
+                 back_url: admin_dossier_audit_path(@dossier_audit)
+      %>
+    </div>
+  </div>
+</div>

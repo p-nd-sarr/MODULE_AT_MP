@@ -1,0 +1,160 @@
+<%= content_for :titre_page, 'Reversion avant liquidation' %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.gestionnaire_compte_allocataire? %>
+   <%= (link_to 'Ajouter une demande', new_admin_base_reversion_salary_path, class: 'btn btn-primary btn-sm') %>
+  <% end %>
+<% end %>
+
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h5>Demande de liquidation de pension</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h5>Demande de régularisaton de pension</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>          
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h5>Demande de remboursement de cotisations</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>          
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--  <div class="row" style="margin-top: -50px; min-height: 300px;">-->
+<!--    <div class="col-lg-12">-->
+<!--      <div class="ibox">-->
+<!--        <div class="ibox-title">-->
+<!--          <h5>Evolution des demandes</h5>-->
+<!--        </div>-->
+<!--        <div class="ibox-content">-->
+<!--          <div class="row">-->
+<!--            <div class="col-lg-9" style="height: 200px">-->
+              <%#= area_chart BaseReversionSalary.group(:workflow_state).group_by_day(:created_at).count, height: "200px" %>
+<!--            </div>-->
+<!--            <div class="col-lg-3">-->
+<!--              <ul class="stat-list">-->
+<!--                <li>-->
+<!--                  <h2 class="no-margins"><%#= BaseReversionSalary.with_soumis_state.count %></h2>-->
+<!--                  <small>Soumis</small>-->
+<!--                  <div class="stat-percent">-->
+                    <%#= BaseReversionSalary.count.zero? ? 0 : BaseReversionSalary.with_soumis_state.count * 100 / BaseReversionSalary.count %>
+<!--                    %-->
+<!--                    <i class="fa fa-level-up text-navy"></i>-->
+<!--                  </div>-->
+<!--                  <div class="progress progress-mini">-->
+<!--                    <div style="width: <%#= BaseReversionSalary.count.zero? ? 0 : BaseReversionSalary.with_soumis_state.count * 100 / BaseReversionSalary.count %>%" class="progress-bar"></div>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                  <h2 class="no-margins">0</h2>-->
+<!--                  <small>Validé</small>-->
+<!--                  <div class="stat-percent">-->
+<!--                    0%-->
+<!--                    <i class="fa fa-level-up text-navy"></i>-->
+<!--                  </div>-->
+<!--                  <div class="progress progress-mini">-->
+<!--                    <div style="width: 0%" class="progress-bar"></div>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                  <h2 class="no-margins">0</h2>-->
+<!--                  <small>Rejeté</small>-->
+<!--                  <div class="stat-percent">-->
+<!--                    0%-->
+<!--                    <i class="fa fa-level-up text-navy"></i>-->
+<!--                  </div>-->
+<!--                  <div class="progress progress-mini">-->
+<!--                    <div style="width: 0%" class="progress-bar"></div>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--              </ul>-->
+<!--            </div>-->
+<!--          </div-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+
+  <div class="row" style="margin-top: -50px; min-height: 300px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>Demandes de reversion avant liquidation</h5>
+          <span class="label label-warning">Total demande <%= @reversion_veuve_salaries.count %></span>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <div class="col-sm-2 pull-right">
+                <%= link_to ' AJOUTER', new_admin_base_reversion_salary_path, class: 'fa fa-plus btn btn-w-m btn-outline btn-success', style: 'height: 34px' %>
+              </div>
+            <% end %>
+          </div>
+          <div class="tab-content">
+            <div id="tous" class="tab-pane fade in active">
+              <%= render 'admin/base_reversion_salaries/search' %>
+              <%= render 'liste' %>
+            </div>
+            <div id="valide" class="tab-pane fade">
+              <!--   START liste valide  -->
+              <!-- END -->
+            </div>
+            <div id="rejete" class="tab-pane fade">
+              <!--   START liste rejeté  -->
+              <!-- END -->
+            </div>
+            <div id="attente_validation" class="tab-pane fade">
+              <!--   START liste en attente de validation  -->
+              <!-- END -->
+            </div>
+            <div id="attente_soumission" class="tab-pane fade">
+              <!--   START liste attente soumission  -->
+            
+
+              <!-- END -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+

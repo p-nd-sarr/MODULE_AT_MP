@@ -1,0 +1,1 @@
+json.partial! "admin_mouvement_travail_fins/admin_mouvement_travail_fin", admin_mouvement_travail_fin: @admin_mouvement_travail_fin

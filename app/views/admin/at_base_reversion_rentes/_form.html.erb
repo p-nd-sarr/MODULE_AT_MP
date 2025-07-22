@@ -1,0 +1,248 @@
+<%= bootstrap_form_for([:admin, @demande_arret_travail, @at_base_reversion_rente], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+   <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <%= f.hidden_field :arret_travail_id, value: @demande_arret_travail.id, readonly: @demande_arret_travail.read_only? %>
+    <div class="col-lg-12">
+        <div class="col-lg-6">
+            <%= f.text_field :numero_affiliation, value: @demande_arret_travail.numero_affiliation, label: 'Numéro affiliation',readonly: @demande_arret_travail.read_only? %>
+        </div>
+      <div class="col-lg-6">
+        <%= f.date_field :date_deces, label: 'Date de déces: '%>              
+      </div>
+    </div>
+
+      <div class="col-lg-12">
+        <div class="content clearfix" id="list_conjoint">
+          <h3>Listes des demandeurs de reversion veuve</h3>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12 table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Date de naissance</th>
+                    <th scope="col">Date de mariage</th>
+                    <th scope="col">Demande reversion</th>
+                 
+                  </tr>
+                </thead>
+                  <tbody id="t_body_conjoint">
+                  </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="col-lg-12">
+        <div class="content clearfix" id="list_enfant_salarie">
+          <h3>Liste des demandeurs de reversion orphelin </h3>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12 table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Date de naissance</th>
+                    <th scope="col">Demande Reversion</th>
+                  </tr>
+                </thead>
+                <tbody id="t_body_enfant">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <div class="col-lg-12">
+        <div class="content clearfix" id="list_ascendant">
+          <h3>Liste des demandeurs de reversion ascendants </h3>
+          <hr>
+          <div class="row">
+            <div class="col-sm-12 table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Date de naissance</th>
+                      <th scope="col">Lien de parenté</th>
+                    <th scope="col">Demande Reversion</th>
+                  </tr>
+                </thead>
+                <tbody id="t_body_ascendant">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+   
+    <div class="col-lg-12 form-group">
+      <hr>
+    <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler',admin_arret_travail_path(@demande_arret_travail),  class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      chargerInfosParticipant();
+      chargerInfosAscendants();
+      $('#at_base_reversion_rente_numero_affiliation').change(function () {
+        chargerInfosParticipant();
+        
+      })
+      function chargerInfosParticipant() {
+          let numero_affiliation = $('#at_base_reversion_rente_numero_affiliation').val();
+          $.ajax({
+              url: "/admin/salaries/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      $("#at_base_reversion_rente_prenom").val(data.prenom);
+                      $("#at_base_reversion_rente_nom").val(data.nom);
+                  } else {
+                      $("#at_base_reversion_rente_prenom").val('');
+                      $("#at_base_reversion_rente_nom").val('');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#at_reversion_rente_prenom").val('');
+                  $("#at_reversion_rente_nom").val('');
+              }
+          });
+
+          $.ajax({
+              url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+
+              success: function( data ) {
+                  if(data){
+                      nombre_conjoint = data.length
+                      if (data.length >= 1){
+                        $('#list_conjoint').show();
+                      }else{
+                          $('#list_conjoint').hide();
+                      }
+                      html = ' ';
+                      $.each(data, function (key, conjoint) {
+                          html += '<tr></tr>';
+                          html += '<td>' + conjoint.prenom + '</td>';
+                          html += '<td>' + conjoint.nom + '</td>';
+                          html += '<td>' + conjoint.date_naissance + '</td>';
+                          html += '<td>' + conjoint.date_mariage + '</td>';
+                          
+                          html += '<td> <input class="form-check-input" type="checkbox" value='+conjoint.id+' name="conjoints_id[]"> </td>';
+                          
+                      });
+                      $("#t_body_conjoint").html(html);
+                  }
+                  else{
+                    $('#list_conjoint').hide();
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  console.log('ERROR')
+              }
+          });
+
+          $.ajax({
+              url: "/admin/enfants/listenfant/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      console.log(data);
+                      if (data.length >= 1) {
+                          $('#list_enfant_salarie').show();
+                      } else {
+                          $('#list_enfant_salarie').hide();
+                      }
+                      html = ' ';
+                      $.each(data, function (key, enfant) {
+                          html += '<tr></tr>';
+                          html += '<td>' + enfant.prenom + '</td>';
+                          html += '<td>' + enfant.nom + '</td>';
+                          html += '<td>' + enfant.date_naissance + '</td>';
+                          
+                          html += '<td> <input class="form-check-input" type="checkbox" value='+enfant.id+' name="enfants_id[]"> </td>';
+                      });
+                      $("#t_body_enfant").html(html);
+
+                  } else {
+                      console.log('data not found');
+                      ('#list_enfant_salarie').hide();
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  console.log('ERROR')
+              }
+          });
+
+        
+        
+        
+      }
+      function chargerInfosAscendants() {
+        let numero_affiliation = $('#at_base_reversion_rente_numero_affiliation').val();
+        
+        $.ajax({
+          url: "/admin/ascendants_salaries/listascendant/" + numero_affiliation + ".json",
+          method: 'get',
+          dataType: "json",
+          success: function (data) {
+            if (data.length >= 1){
+                $('#list_ascendant').show();
+                console.log("DATA:", data);
+              }else{
+                  $('#list_ascendant').hide();
+              }
+              html = ' ';
+            $.each(data, function (key, pere) {
+              html += '<tr></tr>';
+              html += '<td>' + pere.prenom_pere + '</td>';
+              html += '<td>' + pere.nom_pere + '</td>';
+              html += '<td>' + pere.date_naissance_pere + '</td>';
+              html += '<td>pere</td>';
+              html += '<td> <input class="form-check-input" type="checkbox" value='+pere.id+' name="ascendants_pere_id[]"> </td>';
+
+              
+           });
+                $.each(data, function (key, mere) {
+              html += '<tr></tr>';
+              html += '<td>' + mere.prenom_mere + '</td>';
+              html += '<td>' + mere.nom_mere + '</td>';
+              html += '<td>' + mere.date_naissance_mere + '</td>';
+              html += '<td>mere</td>';
+              html += '<td> <input class="form-check-input" type="checkbox" value='+mere.id+' name="ascendants_mere_id[]"> </td>';
+
+              
+           });
+          $("#t_body_ascendant").html(html);
+             
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+              $("#at_reversion_rente_prenom").val('');
+              $("#at_reversion_rente_nom").val('');
+          }
+        });
+      }
+
+
+    }); 
+  </script>
+<% end %>
+

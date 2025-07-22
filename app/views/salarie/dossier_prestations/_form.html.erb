@@ -1,0 +1,56 @@
+<%= bootstrap_form_for([:salarie, @dossier_prestation], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+<%#= bootstrap_form_for(@dossier_prestation, layout: :horizontal) do |f| %>
+  <%#= f.alert_message 'aa' %>
+
+  <div class="ibox ">
+    <div class="ibox-title">
+      <h5 style="text-decoration: underline;"> Ajout D'un Dossier </h5>
+      <div class="ibox-tools">
+        <a class="collapse-link">
+          <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-sm-6 b-r">
+          <%= f.collection_select :conjoint_id, (current_user.conjoints.valide + current_user.conjoints.creation), :id, :full_name,
+                                  include_blank: true, label: (current_user.homme? ? 'Conjointe' : 'Conjoint') %>
+
+          <%= f.text_field :prenom %>
+          <%= f.text_field :nom %>
+          <%= f.date_select :date_naissance, label: "Date de naissance",
+                            start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+          <%= f.text_field :lieu_naissance %>
+          <%= f.text_field :adresse_domicile %>
+
+        </div>
+        <div class="col-sm-6"><h4>Vous avez besoin d'éclairessissements ?</h4>
+          <p>Retour à la page d'informations</p>
+          <p class="text-center">
+            <a href=""><i class="fa fa-sign-in big-icon"></i></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-6">
+
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', (@dossier_prestation.persisted? ? [:salarie, @dossier_prestation] : salarie_dossier_prestations_path), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

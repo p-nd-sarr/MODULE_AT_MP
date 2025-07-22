@@ -1,0 +1,183 @@
+<%= content_for :titre_page, 'Traitement collectif maintien (décès)' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_options_list_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-sm-6">
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#searchAllocationsModal">Renseigner
+          période
+        </button>
+        <% unless params[:trimestre].nil? %>
+          <br> <br>
+          <span>Résultats recherche :  trimestre => <%= params[:trimestre] %>
+            , Année => <%= @annee_presence["presence(1i)"] %> </span>
+        <% end %>
+      </div>
+      <div class="col-sm-6 text-right">
+        <h1 class="">Montant liquidé : <%= format_cfa @allocations.when_document_valid.sum(:montant_paiement) %></h1>
+        <br>
+        <h3>Nombre d'enfants éligibles
+          : <%= @allocations.when_document_valid.group(:enfant_id).pluck(:enfant_id).count %></h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="ibox-content">
+    <div class="submit-box">
+      <% unless params[:trimestre].nil? or @allocations.size == 0 %>
+        <div class="row">
+          <div class="col col-sm-2">
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <%= form_tag(admin_liquider_allocations_from_maintien_path(@annee_presence["presence(1i)"], @trimestre_presence), method: :post) do %>
+                <%= submit_tag 'Liquider les allocations', name: nil, data: { confirm: 'Voulez-vous vraiment liquider les allocations ?' }, class: 'btn btn-primary btn-sm' %>
+              <% end %>
+            <% end %>
+            <% if current_user.chef_agence? %>
+              <%= form_tag(admin_valider_allocations_from_maintien_path(@annee_presence["presence(1i)"], @trimestre_presence), method: :post) do %>
+                <%= submit_tag 'Valider les allocations', name: nil, data: { confirm: 'Voulez-vous vraiment valider les allocations ?' }, class: 'btn btn-primary btn-sm' %>
+              <% end %>
+            <% end %>
+            <% if current_user.comptable? %>
+              <%= form_tag(admin_valider_paiement_from_maintien_path(@annee_presence["presence(1i)"], @trimestre_presence), method: :post) do %>
+                <%= submit_tag 'Valider paiement', name: nil, data: { confirm: 'Voulez-vous vraiment générer les ordres de paiement ?' }, class: 'btn btn-primary btn-sm' %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="message-box">
+      <h5>Vous ne pouvez pas liquider un bordereau pour un trimestre en cours!</h5>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Numéro d'affiliation</th>
+            <th scope="col">Enfant</th>
+            <th scope="col">Trimestre</th>
+            <th scope="col">Année</th>
+            <th scope="col">Etat</th>
+            <th scope="col">Date Création</th>
+            <th scope="col">Statut</th>
+            <th scope="col"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @allocations.each do |allocation| %>
+            <tr>
+              <td>
+                <%= link_to allocation.enfant.numero_affiliation, admin_dossier_prestation_path(allocation.enfant.participant.get_dossier_pf), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+              </td>
+              <td> <%= allocation.enfant.full_name %></td>
+              <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation.trimestre) %></td>
+              <td><%= allocation.annee %></td>
+              <td><%= AllocationFamiliale.human_enum_name(:etat, allocation.etat) %></td>
+              <td><%= allocation.created_at.strftime('%d-%m-%Y') %></td>
+              <td>
+                <% unless allocation.document_valid %>
+                  <i class="fa fa-exclamation-triangle"></i>
+                <% else %>
+                  <i class="fa fa-check"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <% if @allocations.size == 0 and params[:annee] %>
+          <br>
+          <h5>0 allocation pour cette période</h5>
+        <% end %>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<%= render 'admin/traitement_collectifs/search_allocations_form' %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('.message-box').hide()
+
+          var trimestre = document.getElementById('trimestre');
+          set_trimestre();
+          <% unless params[:trimestre].nil? %>
+          if ($('#annee_presence_1i').val() == new Date().getFullYear()) {
+              trimestre.selectedIndex = <%= @trimestre_presence %> -1
+          } else {
+              trimestre.selectedIndex = 4 -
+              <%= @trimestre_presence %>
+          }
+
+          if ($('#annee_presence_1i').val() == new Date().getFullYear()) {
+              let checkout = true
+
+              if (trimestre.selectedIndex === 0 && new Date().getMonth() <= 2) {
+                  checkout = false
+              }
+              if (trimestre.selectedIndex === 1 && new Date().getMonth() <= 5) {
+                  checkout = false
+              }
+              if (trimestre.selectedIndex === 2 && new Date().getMonth() <= 8) {
+                  checkout = false
+              }
+              if (trimestre.selectedIndex === 3 && new Date().getMonth() <= 11) {
+                  checkout = false
+              }
+
+              if (!checkout) {
+                  $('.submit-box').hide()
+                  $('.message-box').show()
+              }
+          }
+
+          <% end %>
+
+          $('#annee_presence_1i').change(function () {
+              set_trimestre();
+          });
+
+          function set_trimestre() {
+              let annee = $('#annee_presence_1i').val();
+              var html = '';
+              if (annee == new Date().getFullYear()) {
+                  i = 1;
+                  let nb_month = new Date().getMonth() + 1;
+                  while (nb_month > 0) {
+                      html += '<option value="' + i + '">Trimestre' + i + '</option>';
+                      i++;
+                      nb_month -= 3;
+                  }
+              } else {
+                  i = 4;
+                  let nb_month = 12 - (new Date().getMonth() + 1);
+                  while (nb_month > 0) {
+                      html += '<option value="' + i + '">Trimestre' + i + '</option>';
+                      i--;
+                      nb_month -= 3;
+                  }
+              }
+
+              $("#trimestre").each(function () {
+                  $(this).html(html);
+              });
+          }
+      });
+
+  </script>`
+<% end %>

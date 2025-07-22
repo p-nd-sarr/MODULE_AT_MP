@@ -1,0 +1,160 @@
+<%= content_for :titre_page, "Détails Participant. Numéro Salarié : #{@matricule}" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Numéro Salarié : <%= @salarie.matric %> <br>
+  Ancien Numéro IPRES : <%= @salarie.ipres_ancien_matric %> <br>
+  Ancien Numéro CSS : <%= @salarie.css_ancien_matric %> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Liste des salariés', admin_salaries_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper" style="padding-top: 10px;">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>PERIODE D'ACTIVITE</h5>
+          <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>TOTAL POINTS</h5>
+          <h1 class="no-margins"><%= format_cfa @total_points, false %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content ">
+          <h5>LINEAIRE ?</h5>
+          <h1 class="no-margins"><%= state_yes_no Psrm::Carriere.lineaire?(@matricule) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="ibox float-e-margins">
+      <div class="ibox-content">
+        <div class="wrapper wrapper-content" >
+          <div>
+            <ul class="nav nav-tabs">
+              <!-- <span class="pull-right small text-muted">1406 Elements</span>-->
+              <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Informations du salarié
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-briefcase"></i>Carrières
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-users"></i>Grappe familiale
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>dossiers de prestations
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-5"><i class="fa fa-edit"></i>Historique de modifications
+              </a></li>
+            </ul>
+            <div class="tab-content">
+
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_informations' %>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                   <%= render 'show_carrieres' %>
+                  </div>
+                </div>
+
+
+                <div id="tab-3" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                      <div class="row">
+                        <div class="col-lg-12" style="margin-top: 30px">
+                          <div class="panel-body">
+                            <div class="panel-group" id="accordion">
+                              <div class="panel panel-default" style="padding: 10px">
+                                <div class="panel-heading">
+                                  <h5 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                                      <span class="fa fa-users"></span> Conjoint
+                                    </a>
+                                  </h5>
+                                </div>
+                                <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                                  <div class="full-height-scroll">
+                                    <br>
+                                
+                                    <%= render 'show_conjoints' %>
+              
+                                  </div>
+                                </div>
+                              </div> <!-- End panel default conjoint -->
+
+                              <div class="panel panel-default" style="padding: 10px">
+                                <div class="panel-heading">
+                                  <h5 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                                      <span class="fa fa-users"></span> Enfants
+                                    </a>
+                                  </h5>
+                                </div>
+                                <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                                  <div class="full-height-scroll">
+                                    <br>
+                                    <hr>
+                                    <%= render 'show_enfants' %>
+                                  </div>
+                                </div>
+                              </div> <!-- End panel default enfant -->
+                            </div>
+                          </div>
+                        </div> <!-- End col -->
+                      </div> <!-- End row -->
+                  </div>
+                </div>
+
+
+              <div id="tab-4" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_dossiers_prestations' %>
+                </div>
+              </div>
+
+
+              <div id="tab-5" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'historique_modifications' %>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+

@@ -1,0 +1,198 @@
+<%= content_for :titre_page do %>
+  Indemnités De Congés Maternité -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_maternite.num_dossier}", admin_dossier_maternite_path(@dossier_maternite), class: 'text-info' %>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_maternite_path(@dossier_maternite), class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <% if current_user.gestionnaire_compte_allocataire? and not @dossier_maternite.cloture? and not @dossier_maternite.suspendu? %>
+    <%= link_to ' Ajouter', new_admin_dossier_maternite_indemnite_conges_maternite_path(@dossier_maternite),
+                class: 'btn btn-primary btn-sm fa fa-plus' unless @dossier_maternite.tranches_eligibles.empty? %>
+    <%= link_to 'Tout Liquider', admin_dossier_maternite_liquider_indemnites_path(@dossier_maternite), class: 'btn btn-info btn-sm ' unless @dossier_maternite.indemnite_conges_maternites.creation.empty? and @dossier_maternite.pret_pour_soumission? %>
+  <% elsif current_user.chef_agence? %>
+    <%= (link_to 'Tout Valider', admin_dossier_maternite_valider_indemnites_path(@dossier_maternite), data: {confirm: 'En êtes vous sûr?'},
+                 class: 'btn btn-info btn-sm') if @dossier_maternite.valide? and not @dossier_maternite.indemnite_conges_maternites.soumis.empty? %>
+  <% end %>
+
+  <% if current_user.comptable? and not @dossier_maternite.cloture? and not @dossier_maternite.suspendu? %>
+    <% if @dossier_maternite.attente_paiement? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#PaiementModal" id="soumettre_id">
+        Valider Paiement
+      </button>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="ibox volet1">
+        <div class="ibox-title">
+          <span class="label label-success float-right"></span>
+          <h3>Première Tranche</h3>
+        </div>
+        <div class="ibox-content">
+          <h2 class="no-margins">
+            <%= format_cfa m1 = @dossier_maternite.indemnite_conges_maternites.avant_acouchement.valide.sum(&:montant_paiement) %>
+          </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet2">
+        <div class="ibox-title">
+          <h3>Deuxième Tranche</h3>
+        </div>
+        <div class="ibox-content">
+          <h2 class="no-margins">
+            <%= format_cfa m2 = @dossier_maternite.indemnite_conges_maternites.apres_acouchement.valide.sum(&:montant_paiement) %>
+          </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet3">
+        <div class="ibox-title">
+          <h3>Troisième Tranche</h3>
+        </div>
+        <div class="ibox-content">
+          <h2 class="no-margins">
+            <%= format_cfa m3 = @dossier_maternite.indemnite_conges_maternites.apres_reprise.valide.sum(&:montant_paiement) %>
+          </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title" style="border-bottom:1px solid #1ab394;">
+          <h3><strong class="text-navy">Total</strong></h3>
+        </div>
+        <div class="ibox-content"><h2 class="no-margins">
+          <strong><%= format_cfa mTot = m1 + m2 + m3 %></strong>
+        </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="ibox-content">
+  <% unless @indemnite_conges_maternites.empty? %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Tranche</th>
+        <th scope="col">Etat</th>
+        <th scope="col">N° liquidation</th>
+        <th scope="col">Montant liquidé</th>
+        <th scope="col">Date liquidation</th>
+        <th scope="col">Échéance</th>
+        <th scope="col">Date mise en paiement</th>
+        <th scope="col">Jours à payer</th>
+        <th colspan="5"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% unless @indemnite_conges_maternites.nil? %>
+        <% @indemnite_conges_maternites.each do |indemnite_conges_maternite| %>
+          <tr>
+            <td><%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, indemnite_conges_maternite.tranche_paiement) %></td>
+            <!--            <td>-->
+            <%# if indemnite_conges_maternite.avant_acouchement? %>
+            <%#= l indemnite_conges_maternite.debut_conges %>
+            <%#elsif indemnite_conges_maternite.apres_acouchement? %>
+            <%#= l indemnite_conges_maternite.date_accouchement %>
+            <%#elsif indemnite_conges_maternite.apres_reprise? %>
+            <%#= l indemnite_conges_maternite.date_reprise_service %>
+            <%#end %>
+            <!--            </td>-->
+            <td><%= IndemniteCongesMaternite.human_enum_name(:etat, indemnite_conges_maternite.etat) %></td>
+            <td>
+              <% unless indemnite_conges_maternite.numero_liquidation.nil? %>
+                <%= indemnite_conges_maternite.numero_liquidation %>
+              <% end %>
+            </td>
+            <td>
+              <% unless indemnite_conges_maternite.creation? %>
+                <%= format_cfa indemnite_conges_maternite.montant_paiement %>
+              <% end %>
+            </td>
+            <td>
+              <% unless indemnite_conges_maternite.date_soumission.nil? %>
+                <%= l indemnite_conges_maternite.date_soumission %>
+              <% end %>
+            </td>
+            <td>
+              <% unless (indemnite_conges_maternite.creation? or indemnite_conges_maternite.rejete?) %>
+                <%= l indemnite_conges_maternite.date_echeance unless indemnite_conges_maternite.date_echeance.nil? %>
+              <% end %>
+            </td>
+            <td>
+              <% unless indemnite_conges_maternite.date_paiement.nil? %>
+                <%= l indemnite_conges_maternite.date_paiement %>
+              <% end %>
+              <%#= indemnite_conges_maternite.dif.to_s + " jrs" %>
+            </td>
+            <td>
+              <%= indemnite_conges_maternite.nbre_jr_payes.to_s + " jrs" unless indemnite_conges_maternite.nbre_jr_payes.nil? %>
+            </td>
+            <td style="width: 75px">
+              <%= link_to 'Détails', [:admin, @dossier_maternite, indemnite_conges_maternite], class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+
+            <td style="width: 75px" class="dropdown">
+              <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+
+                <% if indemnite_conges_maternite.creation? and (current_user == @dossier_maternite.ajoute_par or current_user == @dossier_maternite.affecte_a) and not @dossier_maternite.cloture? and not @dossier_maternite.suspendu? %>
+                  <li>
+                    <%= link_to 'Modifier', edit_admin_dossier_maternite_indemnite_conges_maternite_path(@dossier_maternite, indemnite_conges_maternite),
+                                class: 'btn btn-outline btn-info btn-xs', id: "dd_hover" %>
+                    <%= link_to 'Supprimer', [:admin, @dossier_maternite, indemnite_conges_maternite], method: :delete, data: {confirm: 'En êtes vous sûr?'},
+                                class: 'btn btn-outline btn-danger btn-xs', id: "dd_hover" %>
+                  </li>
+                <% end %>
+                <% if indemnite_conges_maternite.soumis? and @dossier_maternite.valide? and current_user.chef_agence? %>
+                  <li>
+                    <%= (link_to 'Valider', admin_dossier_maternite_indemnite_conges_maternite_valider_path(@dossier_maternite, indemnite_conges_maternite),
+                                 class: 'btn btn-outline btn-success btn-xs') %>
+                  </li>
+                  <li>
+                    <%= (link_to 'Rejeter', admin_dossier_maternite_indemnite_conges_maternite_rejeter_path(@dossier_maternite, indemnite_conges_maternite),
+                                 class: 'btn btn-outline btn-danger btn-xs') %>
+                  </li>
+                <% end %>
+                <% if indemnite_conges_maternite.creation? and current_user.gestionnaire_compte_allocataire? %>
+                  <% if indemnite_conges_maternite.nbre_jr_payes > 0 %>
+                    <li>
+                      <%= link_to 'Liquider', admin_dossier_maternite_indemnite_conges_maternite_soumettre_path(@dossier_maternite, indemnite_conges_maternite),
+                                  class: 'btn btn-outline btn-success btn-xs', id: "dd_hover" %>
+                    </li>
+                  <% end %>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div>
+      <h2> Liste des indemnités vide </h2>
+    </div>
+  <% end %>
+</div>
+</div>
+
+<%= render 'valider_paiement' %>

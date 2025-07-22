@@ -1,0 +1,31 @@
+<div class="section-salarié">
+  <div class="row text-center" style="padding: 20px; margin-bottom: 20px;">
+    <div class="row">
+      <ul class="text-danger">
+        <% if @prestation_exterieure.documents.where(type_document: [:cni, :attestation_travail]).empty? %>
+          <span>Veuillez ajouter une copie du CNI ou un attestation de travail</span>
+        <% end %>
+      </ul>
+
+      <%= render 'documents/liste',
+                 object: @prestation_exterieure,
+                 documents: @prestation_exterieure.documents,
+                 include_add: @prestation_exterieure.creation?,
+                 include_delete: @prestation_exterieure.creation?,
+                 type_documents: PrestationExterieure::TYPE_DOCUMENT,
+                 type_documents_obligatoires: PrestationExterieure::TYPE_DOCUMENT_OBLIGATOIRE,
+                 back_url: admin_prestation_exterieure_path(@prestation_exterieure)
+      %>
+
+      <%= render 'documents/modal_form',
+                 type_documents: PrestationExterieure::TYPE_DOCUMENT,
+                 document: Document.new(documentable: @prestation_exterieure),
+                 back_url: admin_prestation_exterieure_path(@prestation_exterieure)
+      %>
+    </div>
+  </div>
+</div>
+
+
+
+

@@ -1,0 +1,155 @@
+<% content_for :titre_page do %>
+  Détails facture à payer #<%= @paiement.numero_ordre %> [<%= @paiement.etat_human %>]
+<% end %>
+
+<%= content_for :actions_page do %>
+  <% if @paiement.attente_paiement? %>
+    <%= link_to 'Payer', caisse_paiement_confirm_payer_path(@paiement), class: 'btn btn-primary btn-sm', method: :get %>
+    <%= link_to 'Retour', caisse_paiements_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Déclarer décès', caisse_paiement_decede_path(@paiement), class: 'btn btn-warning btn-sm', method: :post,
+                data: { confirm: "En êtes vous sûr de vouloir déclarer le décès, cette action est irréversible?" } %>
+  <% else %>
+    <%= link_to 'Retour', caisse_paiements_path, class: 'btn btn-white btn-sm' %>
+    <% if @paiement.paye? %>
+      <%= link_to 'Imprimer reçu', caisse_paiement_imprimer_paiement_path(@paiement, format: :pdf), target: "_blank", class: 'btn btn-warning btn-sm' %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h1>Montant à payer : <span class="text-navy font-bold"><%= format_cfa @paiement.montant %></span></h1>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Numéro Ordre:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.numero_ordre %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Source:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.source %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Mode de paiement:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.mode_paiement_human %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Détails:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.details %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Période:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1">
+              <% if @paiement.immediate? %>
+                Immédiate
+              <% else %>
+                <%= "#{ @paiement.periode_debut.strftime("%d/%m/%Y")} au #{@paiement.periode_fin.strftime("%d/%m/%Y")}" %>
+              <% end %>
+            </dd>
+          </div>
+        </d1>
+      </div>
+
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Numéro allocataire:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.numero_allocataire %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Ancien numéro IPRES:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.ipres_ancien_matric %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Prénom:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.prenom %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Nom:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.nom %></dd>
+          </div>
+        </d1>
+      </div>
+    </div>
+
+    <% if @paiement.paye? %>
+      <hr/>
+
+      <h3>Information de paiement</h3>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <d1 class="row mb-0">
+            <div class="col-sm-4" style="text-align: right;">
+              <dt>Payé par:</dt>
+            </div>
+            <div class="col-sm-4" style="text-align: left;">
+              <dd class="mb-1"><%= @paiement.user.full_name unless @paiement.user.nil? %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-4" style="text-align: right;">
+              <dt>Agence:</dt>
+            </div>
+            <div class="col-sm-4" style="text-align: left;">
+              <dd class="mb-1"><%= @paiement.user.admin_agence.try(:description_prest) %></dd>
+            </div>
+          </d1>
+        </div>
+
+        <div class="col-lg-6">
+          <d1 class="row mb-0">
+            <div class="col-sm-4 text-sm-right" style="text-align: right;">
+              <dt>Payé le:</dt>
+            </div>
+            <div class="col-sm-4 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= l(@paiement.date_paiement) unless @paiement.date_paiement.nil? %> <%= 'payé sur PSRM' if @paiement.paye_sur_psrm? %>></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-4 text-sm-right" style="text-align: right;">
+              <dt>NIN :</dt>
+            </div>
+            <div class="col-sm-4 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= @paiement.nin %></dd>
+            </div>
+          </d1>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

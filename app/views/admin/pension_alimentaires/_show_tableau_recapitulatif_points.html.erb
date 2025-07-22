@@ -1,0 +1,110 @@
+<% if @revision_pension.current_state >= :cotisation_valide %>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Régime Général</th>
+      <th scope="col">Régime Cadre</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+      <td>Points de cotisation</td>
+      <td><%= @revision_pension.calcul_points_regime_general %></td>
+      <td><%= @revision_pension.calcul_points_regime_cadre %></td>
+    </tr>
+    <tr>
+      <td>Points de minoration</td>
+      <td><%= @revision_pension.calcul_points_minoration_regime_general %></td>
+      <td><%= @revision_pension.calcul_points_minoration_regime_cadre %></td>
+    </tr>
+    <tr>
+      <td>Points de base</td>
+      <td><%= @revision_pension.calcul_points_base_regime_general %></td>
+      <td><%= @revision_pension.calcul_points_base_regime_cadre %></td>
+    </tr>
+    <tr>
+      <td>Points de majoration</td>
+      <td><%= @revision_pension.calcul_points_majoration_regime_general %></td>
+      <td><%= @revision_pension.calcul_points_majoration_regime_cadre %></td>
+    </tr>
+    <tr>
+      <td>Points à servir</td>
+      <td><%= @revision_pension.calcul_points_servis_regime_general %></td>
+      <td><%= @revision_pension.calcul_points_servis_regime_cadre %></td>
+    </tr>
+    <tr>
+      <td>Points gratuits</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+<h4>Montant à payer suite à la révision de carrière (Régine Général)</h4>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <td>Regime</td>
+      <td>Année</td>
+      <td>Point de la Révision</td>
+      <td>Valeur Points Annuel</td>
+      <td>Montant révision annuel</td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% MontantRevision.regime_general.order(annee: :asc).each do |montant_revision| %>
+
+        <tr>
+          <td><%= montant_revision.type_regime.code%></td>
+          <td><%= montant_revision.annee%></td>
+          <td><%= montant_revision.point_revision %></td>
+          <td><%= montant_revision.valeur_point_annuel %></td>
+          <td><%= montant_revision.montant %></td>
+        </tr>
+        <% end %>
+    </tbody>
+  </table>
+
+
+  <h4>Montant à payer suite à la révision de carrière (Régine Cadre)</h4>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <td>Regime</td>
+      <td>Année</td>
+      <td>Point de la Révision</td>
+      <td>Valeur Points Annuel</td>
+      <td>Montant révision annuel</td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% MontantRevision.regime_cadre.order(annee: :asc).each do |montant_revision| %>
+
+      <tr>
+        <td><%= montant_revision.type_regime.code%></td>
+        <td><%= montant_revision.annee%></td>
+        <td><%= montant_revision.point_revision %></td>
+        <td><%= montant_revision.valeur_point_annuel %></td>
+        <td><%= montant_revision.montant %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+
+  <h3>Montant: <%=@montant_rappel unless @montant_rappel.nil? %></h3>
+
+
+
+  <% else %>
+  <h4> Les carrières ne sont pas encore soumises pour validation.</h4>
+<% end %>

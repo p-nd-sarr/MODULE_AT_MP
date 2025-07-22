@@ -1,0 +1,249 @@
+<% if @dossier_prestation.creation?  %>
+<div class="row" style="margin-top: 20px;">
+  <div class="col-lg-4">
+    <h2>Liste des documents à soumettre</h2>
+  </div>
+  <%unless @dossier_prestation.document_valid?%>
+  <div class="col-lg-8">
+    <div class="alert alert-info alert-dismissable">
+      <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+          x
+      </button>
+        <span class="fa fa-info-o"></span> Veuillez renseigner des documents au format PDF
+    </div>
+  </div>
+  <% end %>
+  <div class="col-lg-12">
+    <div class="project-list">
+      <table class="table table-hover table-bordered">
+        <thead style="text-align: center;">
+        <tr>
+          <th scope="col"  style="width: 300px; text-align: center;">Type</th>
+          <th scope="col" style="width: 500px; text-align: center;">Choisir document *</th>
+          <th scope="col" style="width: 100px; text-align: center;">Action</th>
+        </tr>
+        </thead>
+        <%# DocumentDossierPrestation::TYPE_DOCUMENT.each do |document_name| %>
+          <tbody>
+          <%= bootstrap_form_for(@document_dossier_prestation, url: admin_dossier_prestation_create_document_path(@dossier_prestation ), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <tr>
+              <td style="text-align:center;">
+                <%= f.hidden_field :type_document, value:'cni'%>
+                <%#=DocumentDossierPrestation.human_enum_name(:type_document, document_name.first)%>
+                Copie de la Carte nationale d'identité numérisée et légalisée du demandeur
+              </td>
+              <td>
+                <div class="col-sm-4" style="height: 40px;">
+                  <div class="btn-file">
+                    <label>
+                      <%= f.file_field :document, hide_label:true, label: '.',
+                                       required: (not @document_dossier_prestation.persisted? ), class: "document-label"%>
+                      <div class="btn btn-success btn-sm" style="margin-top: -50px; margin-left: 1px; font-size: 10px;"><span class="fa fa-upload"></span> Choisir un fichier
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-sm-8" style="margin-top: 10px; margin-left: 0px;">
+                  <small class="document-name"></small>
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <% if !@dossier_prestation.document_dossier_prestations.where(type_document: 'cni').exists? %>
+                  <%= f.button 'Valider', class: 'btn btn-outline btn-primary btn-sm'  %>
+                <% else  !@dossier_prestation != nil && !@dossier_prestation.document_valid %>
+                  <%= f.label 'Le document est soumis', class: 'label ' %>
+                <% end %>
+              </td>
+            </tr>
+          <%end %>
+          <%= bootstrap_form_for(@document_dossier_prestation, url: admin_dossier_prestation_create_document_path(@dossier_prestation ), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <tr>
+              <td style="text-align:center;">
+                <%= f.hidden_field :type_document, value:'extrait_naissance'%>
+                <%#=DocumentDossierPrestation.human_enum_name(:type_document, document_name.first)%>
+                Extrait de naissance de moins de 3 mois
+              </td>
+              <td>
+                <div class="col-sm-4" style="height: 40px;">
+                  <div class="btn-file">
+                    <label>
+                      <%= f.file_field :document, hide_label:true, label: '.',
+                       required: (not @document_dossier_prestation.persisted? ), class: "document-label"%>
+                      <div class="btn btn-success btn-sm" style="margin-top: -50px; margin-left: 1px; font-size: 10px;"><span class="fa fa-upload"></span> Choisir un fichier
+                      </div>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-sm-8" style="margin-top: 10px; margin-left: 0px;">
+                  <small class="document-name"></small>
+                </div>
+              </td>
+
+              <td style="text-align:center;">
+                <% if !@dossier_prestation.document_dossier_prestations.where(type_document: 'extrait_naissance').exists? %>
+                    <%= f.button 'Valider', class: 'btn btn-outline btn-primary btn-sm'  %>
+                <% else  !@dossier_prestation != nil && !@dossier_prestation.document_valid %>
+                <%= f.label 'Le document est soumis', class: 'label ' %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        <%# end %>
+      </table>
+    </div>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      $(document).ready(function(){
+          $('#new_document_liquidation_retraite').hide();
+
+          $("#ajouter_document").click(function () {
+              $('#new_document_liquidation_retraite').show();
+              return false;
+          });
+      });
+
+      var inputDoc=document.getElementsByClassName('document-label');
+      var inputName=document.getElementsByClassName('document-name');
+
+      for (let i=0; i<inputDoc.length; i++){
+        inputDoc[i].addEventListener('change', function(event){
+          showFileName(event, i, inputName);
+        });
+      }
+
+      function showFileName(event, i, array_label){
+        let input=event.srcElement;
+        let fileName=input.files[0].name;
+        array_label[i].textContent=fileName;
+      }
+
+  </script>
+<% end %>
+
+<br/>
+<div class="row">
+  <div class="col-lg-12">
+    <hr>
+  </div>
+   <% @dossier_prestation.document_dossier_prestations.each do |document_dossier_prestation| %>
+    <div class="col-lg-4" style="margin-top: 10px;">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: center;height: 50px;">
+          <h5><%= DocumentDossierPrestation.human_enum_name(:type_document, document_dossier_prestation.type_document) %></h5>
+        </div>
+        <div class="panel-body"  style="min-height: 150px">
+          <a href="<%= url_for(document_dossier_prestation.document) %>" target="_blank">
+            <div class="col-sm-6 col-sm-offset-3">
+              <div class="text-center">
+                <%= image_tag document_dossier_prestation.document.preview(resize: "175x175>"), class: "m-t-xs img-responsive" %>
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="panel-footer"  style="text-align: center;">
+          <%#= link_to "Modifier", admin_dossier_prestation_update_document_form_path(@dossier_prestation, document_dossier_prestation.id) ,  class: 'btn btn-outline btn-primary btn-xs fa fa-edit' %>
+          <%= link_to "supprimer", admin_dossier_prestation_destroy_document_path(@dossier_prestation, document_dossier_prestation.id), data: { method: :delete }, class: 'btn btn-outline btn-danger btn-xs fa fa-trash' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<br>
+<%if @dossier_prestation.conjoint.nil? %>
+<!-- document Conjoints -->
+<div class="row" style="margin-top:20px;">
+  <div class="col-lg-12">
+    <hr>
+    <h2>Documents des conjoints </h2>
+  </div>
+  <% @conjoints.each do |conjoint| %>
+
+    <div class="col-lg-2" style="margin-top: 10px;">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: center;height: 50px;">
+          <% if conjoint.extrait_naissance.attached? %>
+          <h5>
+            <%= conjoint.prenom %> <%= conjoint.nom %>
+            <%= Conjoint.human_enum_name(:type_piece, conjoint.type_piece) unless conjoint.type_piece.nil? %>
+          </h5>
+          <% end %>
+        </div>
+        <div class="panel-body"  style="min-height: 150px">
+          <%= link_to image_tag(conjoint.extrait_naissance.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), conjoint.extrait_naissance, target: :_blank %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# document conjoints fin %>
+
+<!-- document avec la Conjointe -->
+<div class="row" style="margin-top:20px;">
+  <div class="col-lg-12">
+    <hr>
+    <h2>Documents des conjoints </h2>
+  </div>
+  <% @conjoints.each do |conjoint| %>
+
+    <div class="col-lg-2" style="margin-top: 10px;">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: center;height: 50px;">
+          <% if conjoint.extrait_naissance.attached? %>
+            <h5>
+              <%= conjoint.prenom %> <%= conjoint.nom %>: Certificat de mariage
+            </h5>
+          <% end %>
+        </div>
+        <div class="panel-body"  style="min-height: 150px">
+          <%= link_to image_tag(conjoint.certificat_mariage.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), conjoint.certificat_mariage, target: :_blank %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<%# documents avec conjoint fin %>
+
+<% end %>
+
+
+<!--<br>-->
+<!-- document Enfants -->
+<!--<div class="row" style="margin-top:20px;">-->
+<!--  <div class="col-lg-12">-->
+<!--    <hr>-->
+<!--    <h2>Documents des enfants </h2>-->
+<!--  </div>-->
+  <%# @enfants.each do |enfant| %>
+    <%#unless @dossier_prestation.conjoint.nil? %>
+    <%# if @dossier_prestation.conjoint.id == enfant.conjoint_id %>
+<!--    <div class="col-lg-4">-->
+<!--      <div class="contact-box" style="min-height: 180px">-->
+<!--      <h4 style="font-weight: bold;">Enfant <%#= enfant.prenom %> <%#= enfant.nom %> </h4>-->
+<!--          <div class="col-sm-4">-->
+<!--            <div class="text-center">-->
+              <%# if enfant.extrait_naissance.attached? %>
+                <%#= Enfant.human_enum_name(:type_piece, enfant.type_piece) unless enfant.type_piece.nil? %>
+                <%#= link_to image_tag(enfant.extrait_naissance.preview(resize: "175x175>"), class: "m-t-xs img-responsive"), enfant.extrait_naissance, target: :_blank %>
+              <%# else %>
+<!--                <h4 style="font-weight: bold;"> Ancune pièce d'identité enregistré </h4>-->
+              <%# end %>
+<!--            </div>-->
+<!--          </div>-->
+
+<!--        </a>-->
+<!--      </div>-->
+<!--    </div>-->
+  <%# end %>
+  <%# end %>
+  <%# end %>
+<!--</div>-->
+
+<%# document enfants fin %>

@@ -1,0 +1,144 @@
+<% content_for :titre_page do %>
+  Paiements à domicile
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :numero_ordre_cont, 'Numéro ordre' %>
+          <%= f.search_field :numero_ordre_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+          <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :ipres_ancien_matric_cont, 'Ancien numéro IPRES' %>
+          <%= f.search_field :ipres_ancien_matric_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :prenom_cont, 'Prénom' %>
+          <%= f.search_field :prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :nom_cont, 'Nom' %>
+          <%= f.search_field :nom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :mode_paiement_eq, 'Mode de paiement' %>
+          <%= f.select :mode_paiement_eq, Allocataire.mode_paiements.to_a.map { |w| [Allocataire.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :source_eq, 'Source' %>
+          <%= f.select :source_eq, Caisse::Paiement.sources.to_a.map { |w| [Caisse::Paiement.human_enum_name(:source, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :etat_eq, 'Etat' %>
+          <%= f.select :etat_eq, Caisse::Paiement.etats.to_a.map { |w| [Caisse::Paiement.human_enum_name(:etat, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :user_id_eq, 'Payé par' %>
+          <%= f.select :user_id_eq, User.caissier_ipres.map { |u| [u.full_name, u.id] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :date_paiement_gteq, 'Date paiement >=' %>
+          <%= f.datetime_field :date_paiement_gteq, class: 'form-control', max: DateTime.now.end_of_day %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :date_paiement_lteq, 'Date paiement <=' %>
+          <%= f.datetime_field :date_paiement_lteq, class: 'form-control', max: DateTime.now.end_of_day %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+      <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+    <% end %>
+
+    <br>
+
+    <b>Nombre de lignes retournées : <%= format_entier @nombre_lignes %>
+      <span style="font-style: italic;" class="text-info pull-right">Montant payés : <%= format_entier @montant_payes.ceil %>
+        F.CFA </span></b> <br><br>
+
+    <%= paginate @paiements %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro ordre</th>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Ancien numéro IPRES</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Mode de paiement</th>
+        <th scope="col">Montant à payer</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Payé le</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <% @paiements.each do |paiement| %>
+        <tr>
+          <td><%= paiement.numero_ordre %></td>
+          <td><%= paiement.numero_allocataire %></td>
+          <td><%= paiement.ipres_ancien_matric %></td>
+          <td><%= paiement.prenom %></td>
+          <td><%= paiement.nom %></td>
+          <td><%= paiement.mode_paiement_human %></td>
+          <td align="right"><%= format_cfa paiement.montant %></td>
+          <td><%= paiement.etat_human %></td>
+          <td><%= l(paiement.date_paiement) unless paiement.date_paiement.nil? %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_paiements_caisse_path(paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @paiements %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_paiements_caisses_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_paiements_caisses_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

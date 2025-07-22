@@ -1,0 +1,282 @@
+<%= content_for :titre_page, "Détails de la demande de pret [#{ PensionAlimentaire.human_enum_name(:etat, @pension_alimentaire.etat)}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_allocataire_pension_alimentaires_path(@allocataire), class: 'btn btn-white btn-sm' %>
+  <% if @pension_alimentaire.creation? %>
+    <%= link_to 'Editer', edit_admin_allocataire_pension_alimentaire_path(@allocataire, @pension_alimentaire), class: 'btn btn-white btn-sm' %>
+  <% end %>
+
+  <% if @pension_alimentaire.creation? and current_user.chef_service_allocation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#valider_par_chef_service" id="valider_par_chef_service_id">
+      Valider
+    </button>
+
+    <%= (link_to 'Rejeter', admin_allocataire_pension_alimentaire_rejeter_path(@allocataire, @pension_alimentaire), class: 'btn btn-danger btn-sm') %>
+
+  <% end %>
+
+  <% if @pension_alimentaire.validation_chef_service? and current_user.directeur_prestation? %>
+    <%= (link_to 'Valider', admin_allocataire_pension_alimentaire_valider_par_directeur_path(@allocataire, @pension_alimentaire), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+    <%= (link_to 'Rejeter', admin_allocataire_pension_alimentaire_rejeter_path(@allocataire, @pension_alimentaire), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+  <%if @pension_alimentaire.validation_directeur?%>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_pension_alimentaire_lettre_notification_path(@pension_alimentaire, format: :pdf), class: 'btn btn-outline btn-default btn-xs' %>
+  <%end %>
+
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+    <div class="col-sm-4">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/pension_alimentaires/infos_allocataire' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <% unless @pension_alimentaire.ajouter_par.nil? %>
+              <h5>Crée et soumis Par
+                : <%= (@pension_alimentaire.ajouter_par.try(:full_name)) unless @pension_alimentaire.ajouter_par.nil? %> </h5>
+              <h5>Date de création
+                : <%= (@pension_alimentaire.created_at.strftime("%d/%m/%Y")) unless @pension_alimentaire.created_at.nil? %></h5>
+
+
+              <h5>Affecter à
+                : <%= (@pension_alimentaire.affecter_allocataire.try(:full_name)) unless @pension_alimentaire.affecter_allocataire.nil? %> </h5>
+              <h5>Date de création
+                : <%= (@pension_alimentaire.created_at.strftime("%d/%m/%Y")) unless @pension_alimentaire.created_at.nil? %></h5>
+
+            <% end %>
+
+
+            <% unless @pension_alimentaire.valider_par.nil? %>
+
+              <h5>Validé Par
+                : <%= (@pension_alimentaire.valider_par.try(:full_name)) unless @pension_alimentaire.valider_par.nil? %> </h5>
+              <h5>Date de validation
+                : <%= (@pension_alimentaire.valider_le.strftime("%d/%m/%Y")) unless @pension_alimentaire.valider_le.nil? %></h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-sm-8">
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la demande</h5>
+          </div>
+          <div class="ibox-content">
+
+            <p>
+              <strong>Numero Dossier :</strong>
+              <%= @pension_alimentaire.numero_dossier %>
+            </p>
+
+            <p>
+              <strong>Nom :</strong>
+              <%= @pension_alimentaire.nom %>
+            </p>
+
+            <p>
+              <strong>Prenom :</strong>
+              <%= @pension_alimentaire.prenom %>
+            </p>
+
+
+            <p>
+              <strong>Telephone :</strong>
+              <%= @pension_alimentaire.telephone %>
+            </p>
+
+            <p>
+              <strong>Numero Jugement :</strong>
+              <%= @pension_alimentaire.numero_jugement %>
+            </p>
+
+            <p>
+              <strong>Montant :</strong>
+              <%= "#{@pension_alimentaire.montant} CFA" %>
+            </p>
+
+
+            <p>
+              <strong>Email :</strong>
+              <%= @pension_alimentaire.email %>
+            </p>
+
+            <p>
+              <strong>Date de Naissance :</strong>
+              <%= (@pension_alimentaire.date_naissance.strftime("%d/%m/%Y")) unless @pension_alimentaire.date_naissance.nil? %>
+            </p>
+
+
+            <p>
+              <strong>Date d'entrée en jouissance :</strong>
+              <%= (@pension_alimentaire.date_jouissance.strftime("%d/%m/%Y")) unless @pension_alimentaire.date_naissance.nil? %>
+            </p>
+            <p>
+              <strong>Adresse :</strong>
+              <%= @pension_alimentaire.adresse %>
+            </p>
+
+            <p>
+              <strong>Date creation:</strong>
+              <%= l @pension_alimentaire.created_at.to_date %>
+            </p>
+
+            <p>
+              <strong>Commentaire:</strong>
+              <%= @pension_alimentaire.commentaire %>
+            </p>
+
+            <p>
+              <strong>Document justificatif:</strong>
+
+              <% if @pension_alimentaire.document.attached? %>
+                <a href="<%= url_for(@pension_alimentaire.document) %>" target="_blank">
+                  <%= image_tag @pension_alimentaire.document.preview(resize: "300x300>"), class: "m-t-xs img-responsive" %>
+                </a>
+              <% end %>
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<div class="modal inmodal" id="valider_par_chef_service" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@pension_alimentaire, url: admin_allocataire_pension_alimentaire_valider_chef_service_path(@allocataire, @pension_alimentaire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title"> Valider la demande de Pension </h4>
+          <small class="font-bold">Montant de la retenue et création de l'allocataire </small>
+        </div>
+        <div class="modal-body">
+          <%#= f.text_field :montant, label: 'Montant  de la retenue' %>
+
+          <%#= f.file_field :document, label: '&nbsp;'.html_safe %>
+
+          <%= f.text_area :commentaire, label: '&nbsp;'.html_safe %>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 60%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>

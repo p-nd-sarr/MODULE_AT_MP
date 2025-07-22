@@ -1,0 +1,29 @@
+<%= content_for :titre_page do %>
+  Modification d'une demande de rechute
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+   <div class="col-sm-3">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Accident du travail <%#= link_to @arret_travail.numero_affiliation, [:admin, @arret_travail] %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'infos_at' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-9">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Editer dossier rechute</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

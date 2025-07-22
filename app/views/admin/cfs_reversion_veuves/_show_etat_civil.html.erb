@@ -1,0 +1,129 @@
+<div class="row">
+
+  <div class="col-lg-12" style="text-align: right;">
+    <% if !@cfs_reversion_veuve.creation? and current_user.can_allocataire? %>
+      <%= link_to ' Modifier', edit_admin_cfs_reversion_veuve_path(@cfs_reversion_veuve), class: "btn btn-outline btn-white fa fa-edit" %>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+    <% if @cfs_reversion_veuve.resident_sn? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> N° Immatriculation en France:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1">
+            <h5>
+              <%= @cfs_reversion_veuve.num_immatric_cfs %>
+            </h5>
+            <h5>
+              <%= @cfs_reversion_veuve.num_immatric_ipres %>
+            </h5>
+          </dd>
+        </div>
+      </d1>
+    <% elsif @cfs_reversion_veuve.resident_fr? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> N° Immatriculation en France:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1">
+            <h5>
+              <%= @cfs_reversion_veuve.num_immatric_ipres %>
+            </h5>
+          </dd>
+        </div>
+      </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @cfs_reversion_veuve.prenom %> <%= @cfs_reversion_veuve.nom %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= l @cfs_reversion_veuve.date_naissance %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Lieu de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @cfs_reversion_veuve.lieu_naissance %></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Nationalité:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @cfs_reversion_veuve.nationalite.try(:description) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Sexe:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= "#{CfsReversionVeuve.human_enum_name(:sexe_salarie, @cfs_reversion_veuve.sexe_salarie)}" %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Situation de famille:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= "#{CfsReversionVeuve.human_enum_name(:situation_familiale, @cfs_reversion_veuve.situation_familiale)}" %></dd>
+      </div>
+    </d1>
+    <% if !@cfs_reversion_veuve.celibataire? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <% if @cfs_reversion_veuve.marie? or @cfs_reversion_veuve.remarie? %>
+            <dt><span class="fa fa-map-marker"></span> Date de mariage:</dt>
+          <% elsif @cfs_reversion_veuve.divorce? %>
+            <dt><span class="fa fa-map-marker"></span> Date de divorce:</dt>
+          <% elsif @cfs_reversion_veuve.veuf? %>
+            <dt><span class="fa fa-map-marker"></span> Date décès conjoint :</dt>
+          <% elsif @cfs_reversion_veuve.divorce? %>
+            <dt><span class="fa fa-map-marker"></span> Date jugement divorce :</dt>
+          <% elsif @cfs_reversion_veuve.separe_de_corps? %>
+            <dt><span class="fa fa-map-marker"></span> Date séparation de corps :</dt>
+          <% elsif @cfs_reversion_veuve.separe_de_fait? %>
+            <dt><span class="fa fa-map-marker"></span> Date séparation de fait :</dt>
+          <% end %>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= l(@cfs_reversion_veuve.date_situation_fam) unless @cfs_reversion_veuve.date_situation_fam.nil? %></dd>
+        </div>
+      </d1>
+    <% end %>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Date ouverture dossier:</dt>
+      </div>
+      <%# if @cfs_reversion_veuve.date_soumission? %>
+      <h5 class="text-danger">
+        <%= (l @cfs_reversion_veuve.created_at) %>
+      </h5>
+      <%# end %>
+    </d1>
+
+
+  </div>
+  <div class="col-lg-3"></div>
+
+</div>

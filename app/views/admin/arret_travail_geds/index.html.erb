@@ -1,0 +1,101 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-lg-10">
+    <h2><%= @est_mp ? "Maladie Professionnelle - Origine GED" : "Accidents de Travail - Origine GED" %></h2>
+    <ol class="breadcrumb">
+      <li>
+        <%= link_to 'Accueil', admin_root_path %>
+      </li>
+      <li class="active">
+        <strong><%= @est_mp ? "Maladie Professionnelle - Origine GED" : "Accidents de Travail - Origine GED" %></strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <%= @est_mp ? "Liste des déclarations de maladies professionnelles provenant de la GED" : "Liste des déclarations d'accidents de travail provenant de la GED" %>
+        </div>
+        <div class="ibox-content">
+          <%= search_form_for @q, url: admin_arret_travail_geds_path(est_mp: @est_mp), class: 'form-inline mb-4' do |f| %>          
+          <div class="row">
+              <div class="col-sm-4">
+                <%= f.label :numero_affiliation_cont, "N° affiliation" %>
+                <%= f.search_field :numero_affiliation_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-4">
+                <%= f.label :nin_salarie_cont, "NIN" %>
+                <%= f.search_field :nin_salarie_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-4">
+                <%= f.label :status_ged_eq, "Status GED" %>
+                <%= f.select :status_ged_eq, ArretTravailGed.status_geds.keys.map { |k| [k.humanize, k] }, { include_blank: true }, class: 'form-control' %>
+              </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-sm-4">
+                <%= f.label :prenom_salarie_cont, "Prénom" %>
+                <%= f.search_field :prenom_salarie_cont, class: 'form-control' %>
+            </div>
+            <div class="col-sm-4">
+              <%= f.label :nom_salarie_cont, "Nom" %>
+              <%= f.search_field :nom_salarie_cont, class: 'form-control' %>
+            </div>
+            <% unless !current_user.admin? %>
+              <div class="col-sm-4">
+                <%= f.label :admin_agence_id_eq, "Agence" %>
+                <%= f.collection_select :admin_agence_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest, { include_blank: true }, class: 'form-control' %>
+              </div> 
+            <% end %>
+          </div>
+          <br>
+          <div class="row">
+            <%= f.submit "Rechercher", class: 'btn btn-primary' %>   
+          </div>
+          <% end %>          
+          <br>
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover dataTables-example">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>N° affiliation</th>
+                  <th>Nom du salarié</th>
+                  <th>Prénom du salarié</th>
+                  <th>Employeur</th>
+                  <th>Date de l'accident</th>
+                  <th>État</th>
+                  <th>Statut GED</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @arret_travail_geds.each do |arret_travail_ged| %>
+                  <tr>
+                    <td><%= arret_travail_ged.id %></td>
+                    <td><%= arret_travail_ged.numero_affiliation %></td>
+                    <td><%= arret_travail_ged.nom_salarie %></td>
+                    <td><%= arret_travail_ged.prenom_salarie %></td>
+                    <td><%= arret_travail_ged.raison_sociale_employeur %></td>
+                    <td><%= arret_travail_ged.date_accident&.strftime('%d/%m/%Y') %></td>
+                    <td><%= arret_travail_ged.etat %></td>
+                    <td><%= arret_travail_ged.status_ged %></td>
+                    <td>
+                      <%= link_to 'Voir', admin_arret_travail_ged_path(arret_travail_ged), class: 'btn btn-primary btn-xs' %>
+                      <%#= link_to 'Modifier', edit_admin_arret_travail_ged_path(arret_travail_ged), class: 'btn btn-warning btn-xs' %>
+                      <%#= link_to 'Supprimer', admin_arret_travail_ged_path(arret_travail_ged), method: :delete, data: { confirm: 'Êtes-vous sûr?' }, class: 'btn btn-danger btn-xs' %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

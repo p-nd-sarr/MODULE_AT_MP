@@ -1,0 +1,89 @@
+<%= content_for :titre_page do %>
+  Détails échéance caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.admin? or current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'États de contrôle', admin_echeance_caisse_bordereaux_path(@echeance), class: 'btn btn-primary btn-sm' %>
+  <% end %>
+  <%= link_to 'Retour', admin_echeance_caisses_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :matric_cont, 'Numéro' %>
+          <%= f.search_field :matric_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :css_ancien_matric_cont, 'Ancien numéro CSS' %>
+          <%= f.search_field :css_ancien_matric_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :ipres_ancien_matric_cont, 'Ancien numéro IPRES' %>
+          <%= f.search_field :ipres_ancien_matric_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :raison_sociale_cont, 'Raison sociale' %>
+          <%= f.search_field :raison_sociale_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :code_agence_css_eq, 'Code Agence CSS' %>
+          <%= f.search_field :code_agence_css_eq, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :code_agence_ipres_eq, 'Code Agence IPRES' %>
+          <%= f.search_field :code_agence_ipres_eq, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @employeurs %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro</th>
+        <th scope="col">Raison sociale</th>
+        <th scope="col">Ancien numéro CSS</th>
+        <th scope="col">Ancien numéro IPRES</th>
+        <th scope="col">Agence CSS</th>
+        <th scope="col">Agence IPRES</th>
+<!--        <th scope="col">Dossiers</th>-->
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @employeurs.each do |employeur| %>
+        <tr>
+          <td><%= employeur.matric %></td>
+          <td><%= employeur.raison_sociale %></td>
+          <td><%= employeur.css_ancien_matric %></td>
+          <td><%= employeur.ipres_ancien_matric %></td>
+          <td><%= employeur.code_agence_css %></td>
+          <td><%= employeur.code_agence_ipres %></td>
+<!--          <td><%#= employeur.echeance_caisse_dossiers.count %></td>-->
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_echeance_caisse_employeur_path(@echeance, employeur), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'état de contrôle', employeur.bordereau_download_link, target: '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @employeurs %>
+  </div>
+</div>

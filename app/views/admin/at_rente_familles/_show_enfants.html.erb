@@ -1,0 +1,38 @@
+<%= bootstrap_form_for(@at_rente_famille, url: admin_at_rente_famille_soumettre_orphelins_path(@at_rente_famille), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Nom</th>
+      <th scope="col">Prénom</th>
+      <th scope="col">Date de naissance</th>
+      <th scope="col">Conjoint</th>
+      <th scope="col">Selectionner</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @at_rente_famille.enfants.each do |enfant| %>
+      <tr>
+        <td><%= enfant.nom %></td>
+        <td><%= enfant.prenom %></td>
+        <td><%= l enfant.date_naissance %></td>
+        <% if enfant.conjoint_id %>
+          <td><%= enfant.conjoint.full_name %></td>
+        <% else %>
+          <td></td>
+        <% end %>
+        <td>
+          <%= check_box_tag 'enfants_id[]', enfant.id, @at_rente_famille.enfant_checked(enfant.id) %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <% if !@at_rente_famille.enfants_valide?%>
+  <div class="modal-footer">
+    <button type="submit" class="btn btn-primary">Soumettre la selection </button>
+  </div>
+  <% end %>
+<% end %>
+
+

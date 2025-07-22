@@ -1,0 +1,429 @@
+<%= bootstrap_form_for([:admin, @conjoint], url: admin_prestation_exterieure_create_caf_conjoint_path(@prestation_exterieure.id), namespace: 'new_conjoint', layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+    <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="ibox">
+    <div class="ibox-title">
+      <h5 style="text-decoration: underline;"> Ajouter conjoint(e) </h5>
+      <div class="ibox-tools">
+        <a class="collapse-link">
+          <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+    <div class="ibox-content">
+      <div class="row parentClass">
+        <div class="col-sm-6">
+          <div class="form-group" style="align-content: center">
+            <%= f.hidden_field :prestation_exterieure_id %>
+            <%= f.text_field :prenom, label: 'Prénom conjoint', required: true %>
+            <%= f.text_field :nom, label: 'Nom conjoint', required: true, class: 'nom_conjoint' %>
+            <div class="nom_jeune_fille">
+              <%= f.text_field :nom_jeune_fille, label: 'Nom jeune fille' %>
+            </div>
+            <%= f.text_field :adresse_precise, required: true %>
+            <%= f.date_select :date_naissance, label: "Date de naissance",
+                              start_year: (Date.today - 90.year).year, end_year: Date.today.year %>
+            <%= f.select :type_piece,
+                         CafConjoint::TYPE_PIECE.keys.collect { |type_piece| [CafConjoint.human_enum_name(:type_piece, type_piece), type_piece] },
+                         label: "Type de pièce" %>
+            <%= f.text_field :nin_conjoint, required: true, label: 'Numéro de pièce d’identité' %>
+            <div id="alert_nin" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">le nin doit etre
+              compris entre 13 et 14 chiffres
+            </div>
+            <div id="alert_nin_start_h" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">le nin
+              d'un homme commence par le chiffre "1"
+            </div>
+            <div id="alert_nin_start_f" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">le nin
+              d'une femme commence par le chiffre "2"
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <%= f.select :sexe,
+                       CafConjoint::SEXE.keys.collect { |sexe| [CafConjoint.human_enum_name(:sexe, sexe), sexe] },
+                       label: "Sexe conjoint" %>
+          <%= f.select :etat_couple,
+                       CafConjoint::ETAT_COUPLE.keys.collect { |etat_couple| [CafConjoint.human_enum_name(:etat_couple, etat_couple), etat_couple] },
+                       label: "Etat du couple" %>
+          <div id="mariage">
+            <%= f.date_select :date_mariage, label: "Date de mariage",
+                              start_year: (Date.today - 90.year).year, end_year: Date.today.year %>
+          </div>
+          <div id="separation">
+            <%= f.date_select :date_separation, label: "Date de séparation",
+                              start_year: (Date.today - 90.year).year, end_year: Date.today.year %>
+            <%= f.date_select :date_divorce, label: "Date de divorce",
+                              start_year: (Date.today - 90.year).year, end_year: Date.today.year %>
+          </div>
+          <%= f.text_field :lieu_naissance, required: true %>
+        </div>
+      </div>
+      <div class="row containerClass1">
+        <div class="col-sm-6 section-cert-mar" style="padding-top: 25px">
+          <h4 style="font-weight: bold;">Certificat de mariage</h4>
+          <div class="btn-file">
+            <label>
+              <%= f.file_field :certificat_mariage, hide_label: true, label: '.',
+                              # required: (not @conjoint.persisted?),
+                               help: (@conjoint.persisted? ? "Ne rien mettre si vous ne voulez pas modifier le certificat de mariage" : ''), id: 'label-cert1', class: 'label-cert' %>
+
+              <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                <span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small class="certificat-name" id="certificat-name"></small>
+        </div>
+        <div class="col-sm-6" style="padding-top: 25px">
+          <h4 style="font-weight: bold;">Pièce d'identité / Extrait de naissance *</h4>
+          <div class="btn-file">
+            <label>
+              <%= f.file_field :piece_identite, hide_label: true, label: '.',
+                               #required: (not @conjoint.persisted?),
+                               help: (@conjoint.persisted? ? "Ne rien mettre si vous ne voulez pas modifier la pièce d'identité" : ''), id: 'label-piece', class: 'label-piece' %>
+
+              <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                <span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small class="piece_name" id="piece_name"></small>
+        </div>
+      </div>
+
+      <div class="row containerClass2">
+        <div class="col-sm-6 section-cert-div" style="padding-top: 25px">
+          <h4 style="font-weight: bold;">Certificat de divorce</h4>
+          <div class="btn-file">
+            <label>
+              <%= f.file_field :certificat_divorce, hide_label: true, label: '.', id: 'label-cert1', class: 'label-cert-div' %>
+
+              <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                <span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small class="certificat-div-name"></small>
+        </div>
+        <div class="col-sm-6 section-cert-dec" style="padding-top: 25px">
+          <h4 style="font-weight: bold;">Certificat de décès </h4>
+          <div class="btn-file">
+            <label>
+              <%= f.file_field :certificat_deces, hide_label: true, label: '.', id: 'label-piece', class: 'label-cert-dec' %>
+
+              <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;">
+                <span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small class="certificat-dec-name"></small>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-5">
+      <a class="btn btn-white  btn-xs reset_form_conjoint">Annuler</a>
+      <%= f.submit 'Valider', id: 'new_caf_conjoint_submit_button', class: 'btn btn-primary  btn-xs' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#alert_nin').hide();
+          $('#alert_nin_start_h').hide();
+          $('#alert_nin_start_f').hide();
+          $('.section-cert-div').hide();
+          $('.section-cert-dec').hide();
+          $('#separation').hide();
+
+
+          $('#new_conjoint_caf_conjoint_nin_conjoint, #new_conjoint_caf_conjoint_type_piece').change(() => {
+              let x = $('#new_conjoint_caf_conjoint_nin_conjoint').val().length;
+              if ((x < 13 || x > 14) && $('#new_conjoint_caf_conjoint_type_piece').val() === 'cni') {
+                  $('#alert_nin').show();
+                  $('#new_caf_conjoint_submit_button').attr("disabled", true)
+              } else {
+                  $('#alert_nin').hide();
+                  $('#new_caf_conjoint_submit_button').attr("disabled", false)
+              }
+          })
+
+          $('#new_conjoint_caf_conjoint_nin_conjoint, #new_conjoint_caf_conjoint_sexe, #new_conjoint_caf_conjoint_type_piece').change(() => {
+              let x = $('#new_conjoint_caf_conjoint_nin_conjoint').val().slice(0, 1);
+              let sexe = $('#new_conjoint_caf_conjoint_sexe').val();
+              if (sexe == 'homme' && x != '1' && $('#new_conjoint_caf_conjoint_type_piece').val() === 'cni') {
+                  $('#alert_nin_start_h').show();
+                  $('#new_caf_conjoint_submit_button').attr("disabled", true)
+              } else {
+                  $('#alert_nin_start_h').hide();
+                  $('#new_caf_conjoint_submit_button').attr("disabled", false)
+                  
+              }
+              if (sexe == 'femme' && x != '2' && $('#new_conjoint_caf_conjoint_type_piece').val() === 'cni') {
+                  $('#alert_nin_start_f').show();
+                  $('#new_caf_conjoint_submit_button').attr("disabled", true)
+              } else {
+                  $('#alert_nin_start_f').hide();
+                  $('#new_caf_conjoint_submit_button').attr("disabled", false)
+              }
+          })
+
+
+      });
+  </script>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+
+      function findAncestor(el, wantedClass) {
+          while ((el = el.parentElement) && !el.classList.contains(wantedClass)) ;
+          return el;
+      }
+
+      function findNextElt(el, wantedClass) {
+          while ((el = el.nextElementSibling) && !el.classList.contains(wantedClass)) ;
+          return el;
+      }
+
+      function findSpecifiChild(el, wantedClass) {
+          return el.querySelector('.' + wantedClass);
+      }
+
+      /* Start section form conjoint */
+      $(document).ready(function () {
+          load_separation_section();
+
+          $('.reset_form_conjoint').on('click', () => {
+              $(".new_caf_conjoint").trigger("reset");
+              $('#alert_nin').hide();
+              $('#alert_nin_start_h').hide();
+              $('#alert_nin_start_f').hide();
+              $('#separation').hide();
+
+              clearFileName(type_input.cert)
+              clearFileName(type_input.piece)
+              clearFileName(type_input.cert_div)
+              clearFileName(type_input.cert_dec)
+
+          })
+
+
+          $('#new_conjoint_caf_conjoint_etat_couple').change(function () {
+              load_separation_section();
+          });
+
+          var etat_couple_array = document.getElementsByName('caf_conjoint[etat_couple]');
+
+
+          for (let i = 0; i < etat_couple_array.length; i++) {
+              etat_couple_array[i].addEventListener('change', function (event) {
+                  let elt = etat_couple_array[i]
+                  let selectAncestor = findAncestor(elt, 'parentClass')
+                  let sectionAncestor1 = findNextElt(selectAncestor, 'containerClass1')
+                  let sectionAncestor2 = findNextElt(selectAncestor, 'containerClass2')
+                  let sectionMariage = findSpecifiChild(sectionAncestor1, 'section-cert-mar')
+                  let sectionDivorce = findSpecifiChild(sectionAncestor2, 'section-cert-div')
+                  let sectionDeces = findSpecifiChild(sectionAncestor2, 'section-cert-dec')
+
+                  if (sectionMariage) {
+                      sectionMariage.style.display = elt.value === 'non_marie' ? 'none' : 'block'
+                  }
+
+                  if (sectionDivorce) {
+                      sectionDivorce.style.display = elt.value === 'divorce' ? 'block' : 'none'
+                  }
+
+                  if (sectionDeces) {
+                      sectionDeces.style.display = elt.value === 'decede' ? 'block' : 'none'
+                  }
+
+              });
+          }
+
+          function load_separation_section() {
+              if ($('#new_conjoint_caf_conjoint_etat_couple').val() === 'divorce') {
+                  $('#separation').show();
+                  $('#new_conjoint_caf_conjoint_date_separation_1i').attr('disabled', false);
+                  $('#new_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', false);
+
+              } else {
+                  $('#separation').hide();
+                  $('#new_conjoint_caf_conjoint_date_separation_1i').attr('disabled', true);
+                  $('#new_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', true);
+              }
+              if ($('#new_conjoint_caf_conjoint_etat_couple').val() === 'non_marie') {
+                  $('#mariage').hide();
+                  $('#new_conjoint_caf_conjoint_date_mariage_1i').attr('disabled', true);
+              } else {
+                  $('#mariage').show();
+                  $('#new_conjoint_caf_conjoint_date_mariage_1i').attr('disabled', false);
+              }
+          }
+      });
+
+      /* section list caf conjoint */
+      /*var date_naissance_array = document.getElementsByName('caf_conjoint[date_naissance(1i)]');
+      var sexe_array = document.getElementsByName('caf_conjoint[sexe]');
+      var date_mariage_array = document.getElementsByName('caf_conjoint[date_mariage(1i)]');
+
+
+      for (let i = 0; i < date_naissance_array.length; i++) {
+          setDateMariage(event, i);
+          date_naissance_array[i].addEventListener('change', function (event) {
+              setDateMariage(event, i);
+          });
+      }
+      for (let i = 0; i < sexe_array.length; i++) {
+          setDateMariage(event, i);
+          sexe_array[i].addEventListener('change', function (event) {
+              setDateMariage(event, i);
+          });
+      }
+
+      function setDateMariage(event, i) {
+          const marge = sexe_array[i].value == 'masculin' ? 1 : 1;
+          const birth_year = parseInt(date_naissance_array[i].value) + marge;
+          const rg = range(birth_year, new Date().getFullYear());
+
+          for (let j = date_mariage_array[i].length - 1; j >= 0; j--) {
+              date_mariage_array[i].remove(j);
+          }
+
+          let html = '';
+          $.each(rg, function (key) {
+              html += '<option value="' + rg[key] + '">' + rg[key] + '</option>';
+          });
+
+          for (let j = rg.length - 1; j >= 0; j--) {
+              let opt = document.createElement('option');
+              opt.value = rg[j];
+              opt.innerHTML = rg[j];
+              date_mariage_array[i].appendChild(opt)
+          }
+
+      }*/
+
+      /*  section list caf conjoint */
+
+      function range(startAt, endAt) {
+          return [...Array(endAt - startAt + 1).keys()].map(i => i + startAt);
+      }
+
+
+      var input_cert = document.getElementsByClassName('label-cert');
+      var input_piece = document.getElementsByClassName('label-piece');
+      var input_ext = document.getElementsByClassName('label-ext');
+      var input_cert_div = document.getElementsByClassName('label-cert-div');
+      var input_cert_dec = document.getElementsByClassName('label-cert-dec');
+
+
+      var cert_name = document.getElementsByClassName('certificat-name');
+      var piece_name = document.getElementsByClassName('piece_name');
+      var ext_name = document.getElementsByClassName('extrait_name');
+      var cert_name_div = document.getElementsByClassName('certificat-div-name');
+      var cert_name_dec = document.getElementsByClassName('certificat-dec-name');
+
+
+      const type_input = {
+          cert: cert_name,
+          piece: piece_name,
+          extrait: ext_name,
+          cert_div: cert_name_div,
+          cert_dec: cert_name_dec
+      }
+
+      for (let i = 0; i < input_cert.length; i++) {
+          input_cert[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.cert);
+          });
+      }
+
+      for (let i = 0; i < input_piece.length; i++) {
+          input_piece[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.piece);
+          });
+      }
+
+      for (let i = 0; i < input_ext.length; i++) {
+          input_ext[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.extrait);
+          });
+      }
+
+      for (let i = 0; i < input_cert_div.length; i++) {
+          input_cert_div[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.cert_div);
+          });
+      }
+
+      for (let i = 0; i < input_cert_dec.length; i++) {
+          input_cert_dec[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.cert_dec);
+          });
+      }
+
+      function showFileName(event, i, array_label) {
+          let input = event.srcElement;
+          let fileName = input.files[0].name;
+          array_label[i].textContent = fileName;
+      }
+
+      function clearFileName(array_label) {
+          for (let i = 0; i < array_label.length; i++) {
+              array_label[i].textContent = '';
+          }
+      }
+
+      /* end section form conjoint */
+
+
+
+      /* Start section list caf conjoint*/
+
+      var conjoint_njf = document.getElementsByClassName('nom_jeune_fille');
+
+
+      $('.select_etat_couple').each(function () {
+          display_section(this);
+
+          $(this).change(function () {
+              display_section(this);
+          });
+
+          function display_section(e) {
+              if ($(e).val() == 'divorce') {
+                  $(e).parent().parent().next().next().show();
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_separation_1i').attr('disabled', false);
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', false);
+              } else {
+                  $(e).parent().parent().next().next().hide();
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_separation_1i').attr('disabled', true);
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', true);
+              }
+          }
+      });
+
+      function setCollapse() {
+          $('.div_to_collapse').each(function () {
+              $(this).collapse('hide')
+          });
+      }
+
+      /* Start section list caf conjoint */
+
+
+  </script>
+<% end %>

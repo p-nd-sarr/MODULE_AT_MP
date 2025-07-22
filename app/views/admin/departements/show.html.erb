@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_departement" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_departements_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_departement_path(@admin_departement), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_departement', new_admin_departement_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Region:</strong>
+                  <%= @admin_departement.region %>
+                </p>
+
+                            <p>
+                  <strong>Designation:</strong>
+                  <%= @admin_departement.designation %>
+                </p>
+
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_departement.code %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

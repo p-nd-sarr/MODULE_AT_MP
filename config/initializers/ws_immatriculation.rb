@@ -1,0 +1,5 @@
+WS_IMM_CONFIG = YAML.load_file(File.join(Rails.root, "config", "ws_immatriculation.yml"))[Rails.env.to_s]
+WS_IMM_BASE_PATH = WS_IMM_CONFIG['base_path']
+WS_IMM_USERNAME = WS_IMM_CONFIG['username']
+WS_IMM_PASSWORD = WS_IMM_CONFIG['password']
+WS_IMM_AUTH = [WS_IMM_USERNAME, WS_IMM_PASSWORD]

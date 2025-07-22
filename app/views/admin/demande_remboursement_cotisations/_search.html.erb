@@ -1,0 +1,35 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+      <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prénom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :mode_paiement_eq, 'Mode de paiement' %>
+      <%= f.select :mode_paiement_eq, DemandeRemboursementCotisation.mode_paiements.to_a.map { |w| [DemandeRemboursementCotisation.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :workflow_state_eq, 'Etat' %>
+      <%= f.select :workflow_state_eq, DemandeRemboursementCotisation.workflow_spec.states.keys.map { |k| [DemandeRemboursementCotisation.workflow_spec.states[k].meta[:label], k] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>

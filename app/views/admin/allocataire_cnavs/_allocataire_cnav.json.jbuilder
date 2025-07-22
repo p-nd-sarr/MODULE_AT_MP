@@ -1,0 +1,2 @@
+json.extract! allocataire_cnav, :id, :dossier_cnav_id, :date_import, :numero, :prenom, :nom, :admin_region_id, :montant, :origine, :compte, :caisse_bk, :date_soumission, :date_validation, :valide_par_id, :user_id, :ajoute_par_id, :traite_le, :traite_par_id, :motif_rejet, :montant_paiement, :paiement, :etat, :mode_paiement, :numero_liquidation, :created_at, :updated_at
+json.url allocataire_cnav_url(allocataire_cnav, format: :json)

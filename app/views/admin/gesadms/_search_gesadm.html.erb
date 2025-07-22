@@ -1,0 +1,49 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row form-group">
+ 
+    <div class="col-sm-6 mb-3">
+      <%= f.label :PRENOM_cont, 'PRENOM:' %>
+      <%= f.search_field :PRENOM_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-6 mb-3">
+      <%= f.label :NOM_cont, 'NOM:' %>
+      <%= f.search_field :NOM_cont, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="row form-group">
+ 
+    <div class="col-sm-6 mb-3">
+      <%= f.label :MATRICULE_cont, 'MATRICULE:' %>
+      <%= f.search_field :MATRICULE_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-6 mb-3">
+      <%= f.label :CDEETAB_eq, 'CDEETAB:' %>
+      <%= f.search_field :CDEETAB_eq, class: 'form-control' %>
+    </div>
+  </div>
+
+
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %> 
+<% end %>
+
+<br/>
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+        $('#formulaire_recherche').submit(function (e) {
+            e.preventDefault(); // dont submit multiple times
+            this.submit(); // use native js submit
+
+            setTimeout(function () {
+                $('#action_export').prop("disabled", false);
+                $('#action_search').prop("disabled", false);
+            }, 500);
+        });
+      });
+  </script>
+<% end %>

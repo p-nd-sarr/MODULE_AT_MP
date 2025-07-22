@@ -1,0 +1,38 @@
+<h3>Critères de recherche</h3>
+<br>
+<div class="row form-group">
+  <%= search_form_for @q, url: request.path do |f| %>
+
+    <div class="col-md-12">
+
+      <div class="col-sm-3">
+        <%= f.label :numero_cont, 'Numéro ordre' %>
+        <%= f.search_field :numero_cont, class: 'form-control' %>
+      </div>
+
+      <div class="col-sm-3">
+        <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+        <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+      </div>
+
+      <div class="col-sm-3">
+        <%= f.label :dossier_type_eq, 'Type dossier' %>
+        <%= f.search_field :dossier_type_eq, class: 'form-control' %>
+      </div>
+
+      <div class="col-sm-3">
+        <%= f.label :compta_transaction_code_operation_eq, 'Opération' %>
+        <%= f.search_field :compta_transactions_code_operation_eq, class: 'form-control' %>
+      </div>
+    </div>
+    <br>
+
+    <div class="col-md-12">
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+
+
+</div>

@@ -1,0 +1,36 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path do |f| %>
+  <div class="row">
+    <div class="row">
+      <div class="col-sm-4">
+        <%= f.label :numero_affiliation_eq, 'Numéro affiliation' %>
+        <%= f.search_field :numero_affiliation_eq, class: 'form-control' %>
+      </div>
+      <div class="col-sm-4">
+        <%= f.label :employeur_source_id_eq, 'Numéro unique employeur source' %>
+        <%= f.search_field :employeur_source_id_eq, class: 'form-control' %>
+      </div>
+      <div class="col-sm-4">
+        <%= f.label :employeur_destination_id_eq, 'Numéro unique employeur destination' %>
+        <%= f.search_field :employeur_destination_id_eq, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">
+        <%= f.label :agence_id_eq, 'Agence source' %>
+        <%= f.collection_select :agence_source_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest,
+                                { :include_blank => true }, class: 'form-control' %>
+      </div>
+      <div class="col-sm-4">
+        <%= f.label :agence_id_eq, 'Agence destination' %>
+        <%= f.collection_select :agence_destination_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest,
+                                { :include_blank => true }, class: 'form-control' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit class: 'btn btn-primary' %>
+<% end %>

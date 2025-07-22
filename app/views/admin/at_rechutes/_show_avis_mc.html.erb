@@ -1,0 +1,35 @@
+
+  <div class="wrapper wrapper-content">
+  <% if @at_rechute.soumis_mc? and current_user.medecin_conseil?%>
+    <%= bootstrap_form_for([:admin, @arret_travail, @at_rechute], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="row">
+        <%=f.text_area :description_avis, required: true, disabled: @at_rechute.current_state > :soumis_mc %>
+        <%= f.select :avis, AtRechute::AVIS.keys.collect { |item| [AtRechute.human_enum_name(:avis, item), item] }, label: 'Avis'%> 
+        <div class="form-group row">
+          <div class="col-sm-2">
+            <%= f.button 'Sauvegarder', class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <% if @at_rechute.current_state > :soumis_mc %>
+      <div class= "col-md-12"></div>
+          <h3>Avis: </h3>
+          <p class="text-success"> <%=@at_rechute.avis%> </p>
+         <hr>
+        <h3>Description : </h3>
+        <p class="text-success"> <%=@at_rechute.description_avis%> </p>
+      </div>
+
+
+  <% end %>
+  </div>
+
+
+
+
+
+
+
+

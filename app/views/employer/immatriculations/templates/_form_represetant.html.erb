@@ -1,0 +1,358 @@
+<div class="row" id="update_representant" style="margin-top:20px" >
+  <%= bootstrap_form_for([:employer, @representant], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+    <div class="col-lg-10 col-lg-offset-1">
+      <div class="panel-group" id="accordion1">
+        <div class="panel panel-primary" style="padding: 10px">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion1" href="#etatCivil">
+                <span class="fa fa-user"></span> Etat civil
+                <div class="ibox-tools">
+                  <i class="fa fa-chevron-up"style="color: #fff"></i>
+                </div>
+              </a>
+            </h5>
+          </div>
+          <div class="panel-collapse collapse in" id="etatCivil" style="padding-top: 20px">
+            <div class="full-height-scroll row" style="padding:20px">
+
+              <div class="col-lg-6">
+                <%= f.text_field :last_name , label: 'Nom', required: true  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.text_field :first_name, label: 'Prénom', required: true %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.date_select :birthdate, label: "Date de naissance",
+                                  start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :place_of_birth, @pays ,:id,:description, include_blank: true, label: 'Lieu de naissance', tag: 'Naissance', required: true  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :nationality, @pays ,:id,:description, include_blank: true, label: 'Nationalité', tag: 'Nationalite', required: true  %>
+              </div>
+
+            </div>
+          </div>
+        </div> <!-- end panel primary -->
+
+        <div class="panel panel-primary" style="padding: 10px">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion1" href="#piece">
+                <span class="fa fa-id-badge"></span> Pièce d'identité
+                <div class="ibox-tools">
+                  <i class="fa fa-chevron-up"style="color: #fff"></i>
+                </div>
+              </a>
+            </h5>
+          </div>
+          <div class="panel-collapse collapse" id="piece" style="padding-top: 20px">
+            <div class="full-height-scroll row" style="padding:20px">
+
+              <div class="col-lg-6">
+                <%= f.select :type_of_identity,
+                       RepresentantLegal::TYPE_PIECE.keys.collect { |type_of_identity| [RepresentantLegal.human_enum_name(:type_of_identity, type_of_identity), type_of_identity] }, label: 'Type de piece' %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.text_field :identity_number, label: 'Numéro de piece', required: true  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.date_select :issued_date, label: "Date de délivrance",
+                                start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.date_select :expiry_date, label: "Date d'expiration",
+                                start_year: Date.today.year, end_year: Time.now.year + 18 , required: true %>
+              </div>
+
+            </div>
+          </div>
+        </div> <!-- end panel primary -->
+        <div class="panel panel-primary" style="padding: 10px">
+          <div class="panel-heading">
+            <h5 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion1" href="#adresse">
+                <span class="fa fa-address-card"></span> Adresse personnelle du représentant
+                <div class="ibox-tools">
+                  <i class="fa fa-chevron-up"style="color: #fff"></i>
+                </div>
+              </a>
+            </h5>
+          </div>
+          <div class="panel-collapse collapse" id="adresse" style="padding-top: 20px">
+            <div class="full-height-scroll row" style="padding:20px">
+
+              <div class="col-lg-6">
+                <%= f.collection_select :region, @regions,:id,:designation, include_blank: true, label: 'Région', tag: 'region', required: true   %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :departement, @departements,:id,:designation, label: 'Département' , required: true, id: 'immatriculation_departement' %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :ville, @villes,:id,:designation, label: 'Arrondissement', required: true, id: 'immatriculation_ville'  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :commune, @communes,:id,:designation, label: 'Commune', required: true, id: 'immatriculation_commune'  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :quartier, @quartiers,:id,:designation, label: 'Quartier', required: true, id: 'immatriculation_quartier'  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.text_field :address, label: 'Adresse', required: true  %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.text_field :mobile_number, label: 'Téléphone' %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.text_field :email, label: 'Email' %>
+              </div>
+            </div>
+          </div>
+        </div> <!-- end panel primary -->
+
+      </div> <!-- end panel group -->
+    </div> <!-- end col-lg-10 -->
+
+
+
+
+
+   <!-- <div class="col-sm-8" style="padding-left: 20%">
+
+      <div class="ibox">
+        <div class="ibox-title" style="background: #1ab394; color: #fff">
+          <h5>Etat Civil</h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"style="color: #fff"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content" style="">
+          <%= f.text_field :last_name , label: 'Nom', required: true  %>
+          <%= f.text_field :first_name, label: 'Prenom', required: true %>
+          <%= f.date_select :birthdate, label: "Date de naissance",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+          <%= f.collection_select :place_of_birth, @pays ,:id,:description, include_blank: true, label: 'Lieu de Naissance', tag: 'Naissance', required: true  %>
+          <%= f.collection_select :nationality, @pays ,:id,:description, include_blank: true, label: 'Nationalite', tag: 'Nationalite', required: true  %>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-sm-8" style="padding-left: 20%">
+
+      <div class="ibox">
+        <div class="ibox-title" style="background: #1ab394; color: #fff">
+          <div class="accordion-heading" class="ibox-title" >
+            <h5>Pièce d'identité</h5>
+            <div class="ibox-tools">
+              <a class="accordion-toggle collapse-link"
+                 data-toggle="collapse"
+                 data-parent="#accordion2"
+                 href="#collapseOne" style="background: #1ab394; color: #fff">
+                <i class="fa fa-chevron-down" style="color: #fff"></i>
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+
+
+        <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+          <%= f.select :type_of_identity,
+                       RepresentantLegal::TYPE_PIECE.keys.collect { |type_of_identity| [RepresentantLegal.human_enum_name(:type_of_identity, type_of_identity), type_of_identity] }, label: 'Type de piece' %>
+
+          <%= f.text_field :identity_number, label: 'Numéro de piece', required: true  %>
+
+          <%= f.date_select :issued_date, label: "Date de délivrance",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+
+          <%= f.date_select :expiry_date, label: "Date d expiration",
+                            start_year: Date.today.year, end_year: Time.now.year + 18 , required: true %>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8" style="padding-left: 20%">
+
+      <div class="ibox">
+        <div class="ibox-title" style="background: #1ab394; color: #fff">
+          <div class="accordion-heading" class="ibox-title" >
+            <h5>Adresse Personnelle du représentant</h5>
+            <div class="ibox-tools">
+              <a class="accordion-toggle collapse-link"
+                 data-toggle="collapse"
+                 data-parent="#accordion2"
+                 href="#collapseOne" style="background: #1ab394; color: #fff">
+                <i class="fa fa-chevron-down" style="color: #fff"></i>
+              </a>
+
+            </div>
+
+          </div>
+        </div>
+
+        <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+          <%= f.collection_select :region, @regions,:id,:designation, include_blank: true, label: 'Region', tag: 'region', required: true   %>
+
+          <%= f.collection_select :departement, @departements,:id,:designation, label: 'Departement' , required: true, id: 'immatriculation_departement' %>
+
+          <%= f.collection_select :ville, @villes,:id,:designation, label: 'Arrondissement', required: true, id: 'immatriculation_ville'  %>
+
+          <%= f.collection_select :commune, @communes,:id,:designation, label: 'Commune', required: true, id: 'immatriculation_commune'  %>
+
+          <%= f.collection_select :quartier, @quartiers,:id,:designation, label: 'Quartier', required: true, id: 'immatriculation_quartier'  %>
+
+          <%= f.text_field :address, label: 'Adresse', required: true  %>
+
+          <%= f.text_field :mobile_number, label: 'Telephone', placeholder: '00221' %>
+
+          <%= f.text_field :email, label: 'Email' %>
+        </div>
+      </div>
+    </div> -->
+
+
+    <div class="form-group row" style="padding-left: 20%">
+      <div class="col-sm-4 col-sm-offset-2">
+        <%= f.button 'Enregistrer', class: 'btn btn-primary block full-width m-b' %>
+      </div>
+    </div>
+
+  <% end %>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#representant_legal_region').change(function () {
+
+            console.log('change region');
+            var e = document.getElementById("representant_legal_region");
+
+            //var strOption = e.options[e.selectedIndex].text;
+            var regionRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?region=" + regionRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_departement')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#representant_legal_departement').change(function () {
+
+
+            console.log('change departement');
+
+            var e = document.getElementById("representant_legal_departement");
+            var departementRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?departement=" + departementRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_ville')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#representant_legal_ville').change(function () {
+
+            console.log('change ville');
+
+            var e = document.getElementById("representant_legal_ville");
+            var villeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?ville=" + villeRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_commune')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#representant_legal_commune').change(function () {
+
+            console.log('change commune');
+
+            var e = document.getElementById("representant_legal_commune");
+            var communeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?commune=" + communeRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_quartier')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+
+    });
+
+</script>

@@ -1,0 +1,41 @@
+
+<div class="row">
+  <br>
+  <div class="col-lg-6">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+           ANCIENNE ADRESSE <i class="fa fa-warning fa-2x"></i> 
+        </div>
+        <div class="panel-body">
+            <p>
+              <strong>Adresse domicile:</strong>
+              <%= @modifier_adresse.old_adresse_rue %>
+            </p>
+            <p>
+              <strong>Ville:</strong>
+              <%= @modifier_adresse.old_adresse_ville %>
+            </p>
+        </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+     <div class="panel panel-primary">
+        <div class="panel-heading">
+           NOUVELLE ADRESSE <i class="fa fa-check-circle fa-2x"></i> 
+        </div>
+        <div class="panel-body">
+          <p>
+            <strong>Adresse domicile:</strong>
+            <%= @modifier_adresse.adresse_rue %>
+          </p>
+          <p>
+            <strong>Ville:</strong>
+            <%= @modifier_adresse.adresse_ville %>
+          </p>
+        </div>
+    </div>
+  </div>
+</div>  
+
+  

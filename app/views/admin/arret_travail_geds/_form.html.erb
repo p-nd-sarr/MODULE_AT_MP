@@ -1,0 +1,326 @@
+<%= form_with(model: [:admin, @arret_travail_ged], local: true, class: 'form-horizontal') do |form| %>
+  <% if @arret_travail_ged.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(@arret_travail_ged.errors.count, "erreur") %> ont empêché l'enregistrement:</h4>
+      <ul>
+        <% arret_travail_ged.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <h3>Informations sur l'employeur</h3>
+  <div class="form-group">
+    <%= form.label :raison_sociale_employeur, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :raison_sociale_employeur, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :numero_employeur, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :numero_employeur, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :adresse_employeur, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :adresse_employeur, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :email_employeur, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.email_field :email_employeur, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :telephone_employeur, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :telephone_employeur, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :activite_principale_entreprise, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :activite_principale_entreprise, class: 'form-control' %>
+    </div>
+  </div>
+
+  <br>
+  <h3>Informations sur le salarié</h3>
+  <div class="form-group">
+    <%= form.label :numero_affiliation, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :numero_affiliation, class: 'form-control' %>
+    </div>
+  </div>  
+  
+  <div class="form-group">
+    <%= form.label :nom_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :nom_salarie, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :prenom_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :prenom_salarie, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :sexe, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :sexe, ArretTravailGed.sexes.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :type_de_piece, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :type_de_piece, ArretTravailGed.type_de_pieces.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :nin_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :nin_salarie, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :situation_matrimoniale_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :situation_matrimoniale_salarie, ArretTravailGed.situation_matrimoniale_salaries.keys.map { |s| [s.humanize, s] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :date_de_naissance_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_de_naissance_salarie, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :nationalite_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :nationalite_salarie, ArretTravailGed.nationalite_salaries.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>  
+  
+  <div class="form-group">
+    <%= form.label :adresse_domiciliaire_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :adresse_domiciliaire_salarie, class: 'form-control' %>
+    </div>
+  </div>  
+
+  <div class="form-group">
+    <%= form.label :date_embauche_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_embauche_salarie, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :type_de_contrat_travail_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :type_de_contrat_travail_salarie, ArretTravailGed.type_de_contrat_travail_salaries.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :qualification_professionnelle_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :qualification_professionnelle_salarie, ArretTravailGed.qualification_professionnelle_salaries.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <br>
+  <h3>Informations sur l'accident</h3>
+  <div class="form-group">
+    <%= form.label :date_accident, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_accident, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :debut_arret_travail, 'Début arret travail', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :debut_arret_travail, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :lieu_accident, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :lieu_accident, ArretTravailGed.lieu_accidents.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :accident_mortel, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <div class="checkbox">
+        <label>
+          <%= form.check_box :accident_mortel %> Oui
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :agent_materiel, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :agent_materiel, ArretTravailGed.agent_materiels.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :debut_arret_travail, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :debut_arret_travail, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :nature_accident, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :nature_accident, ArretTravailGed.nature_accidents.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :nature_du_travail_au_moment_accident, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :nature_du_travail_au_moment_accident, class: 'form-control' %>
+    </div>
+  </div>  
+
+  <div class="form-group">
+    <%= form.label :cause_circonstances_acccident, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_area :cause_circonstances_acccident, class: 'form-control', rows: 3 %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :incapacite_permanente, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :incapacite_permanente, ArretTravailGed.incapacite_permanentes.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :consequence_accident_travail, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :consequence_accident_travail, ArretTravailGed.consequence_accident_travails.keys.map { |l| [l.humanize, l] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :type_declaration, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :type_declaration, ArretTravailGed.type_declarations.keys.map { |e| [e.humanize, e] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <!--<div class="form-group">
+    <%= form.label :est_mp, 'Est maladie professionnelle', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <div class="checkbox">
+        <label>
+          <%= form.check_box :est_mp %> Oui
+        </label>
+      </div>
+    </div>
+  </div>-->
+
+  <br>
+  <h3>Informations sur le déclarant</h3>
+  
+  <div class="form-group">
+    <%= form.label :declarant, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :declarant, ArretTravailGed.declarants.keys.map { |s| [s.humanize, s] }, {}, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :prenom_declarant, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :prenom_declarant, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :nom_declarant, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :nom_declarant, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :adresse_declarant, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :adresse_declarant, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :telephone_declarant, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :telephone_declarant, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :lieu_declaration, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :lieu_declaration, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :qualite_declarant, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :qualite_declarant, class: 'form-control' %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= form.label :date_declaration, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_declaration, class: 'form-control' %>
+    </div>
+  </div>
+
+  <br>
+  <h3>Informations GED</h3>
+  <div class="form-group">
+    <%= form.label :id_item, 'Identifiant GED', class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :id_item, class: 'form-control' %>
+    </div>
+  </div>
+
+
+  <div class="hr-line-dashed"></div>
+  <div class="form-group">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler',(@arret_travail_ged.persisted? ? [:admin, @arret_travail_ged] : admin_arret_travail_geds_path), class: 'btn btn-white' %>
+      <%= form.submit 'Enregistrer', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,277 @@
+<%= content_for :titre_page, "Détails Arret [#{ AtDecompte.human_enum_name(:etat, @at_decompte.etat)}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_arret_travail_path(@arret_travail), class: 'btn btn-white btn-xs' %>
+  <% if (current_user.technicien_at? || current_user.technicien_direction_at?) %>
+
+    <% if @at_decompte.rejete? %>
+      <%= link_to 'Activer', admin_arret_travail_at_decompte_activer_path(@arret_travail, @at_decompte), class: "btn btn-success btn-xs" %>
+    <% end %>
+
+    <% if @at_decompte.creation? %>
+      <%= link_to 'Modifier', edit_admin_arret_travail_at_decompte_path(@arret_travail, @at_decompte), class: "btn btn-primary btn-xs" %>
+      <%= (link_to 'Supprimer', admin_arret_travail_at_decompte_path(@arret_travail, @at_decompte), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-danger btn-xs') %>
+    <% end %>
+
+    <% if @at_decompte.peut_etre_liquide?(current_user) %>
+      <%= link_to 'Liquider', admin_arret_travail_at_decompte_liquider_path(@arret_travail, @at_decompte), class: "btn btn-outline btn-success btn-xs" %>
+    <% end %>
+
+    <% if @at_decompte.liquide? %>
+      <%= link_to 'Annulation liquidation', admin_arret_travail_at_decompte_annuler_liquidation_path(@arret_travail, @at_decompte), class: "btn btn-warning btn-sm" %>
+    <% end %>
+  <% end %>
+
+  <% if @at_decompte.peut_etre_valide_liquidation?(current_user) %>
+    <%= link_to 'Valider', admin_arret_travail_at_decompte_valider_path(@arret_travail, @at_decompte), class: "btn btn-primary btn-xs" %>
+  <% end %>
+
+  <% if @at_decompte.can_convoquer?(current_user) %>
+    <button type="button" class='btn btn-success btn-xs' data-toggle="modal" data-target="#modal-convocation">CONVOQUER</button>
+  <% end %>
+
+  <% if @at_decompte.peut_etre_valide_medecin?(current_user) %>
+    <%= link_to 'Valider', admin_arret_travail_at_decompte_valider_medecin_path(@arret_travail, @at_decompte), class: "btn btn-primary btn-xs" %>
+  <% end %>
+
+  <% if @at_decompte.peut_etre_valide_comptable?(current_user) %>
+    <%= link_to 'Valider', admin_arret_travail_at_decompte_valider_comptable_path(@arret_travail, @at_decompte), class: "btn btn-outline btn-success btn-xs" %>
+  <% end %>
+
+  <% if @at_decompte.can_rejete?(current_user) %>
+    <button type="button" class='btn btn-danger btn-xs' data-toggle="modal" data-target="#modal-decompte">REJETER</button>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Information sur AT <%#= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/at_decomptes/infos_at' %>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <% unless @at_decompte.ajoute_par.nil? %>
+              <h5><strong class="text-navy">Ajouté Par</strong>
+                : <%= (@at_decompte.ajoute_par.try(:full_name)) unless @at_decompte.ajoute_par.nil? %> </h5>
+              <h5><strong class="text-navy">Date de création</strong>
+                : <%= (@at_decompte.created_at.strftime("%d/%m/%Y")) unless @at_decompte.created_at.nil? %></h5>
+
+            <% end %>
+            <br>
+            <% unless @at_decompte.liquide_par.nil? %>
+
+              <h5><strong class="text-navy">Liquidé Par</strong>
+                : <%= (@at_decompte.liquide_par.try(:full_name)) unless @at_decompte.liquide_par.nil? %> </h5>
+              <h5><strong class="text-navy">Date de Liquidation</strong>
+                : <%= (@at_decompte.date_liquidation.strftime("%d/%m/%Y")) unless @at_decompte.date_liquidation.nil? %>
+              </h5>
+            <% end %>
+
+            <br>
+            <% unless @at_decompte.validation_par.nil? %>
+
+              <h5><strong class="text-navy">Validation Agence Par</strong>
+                : <%= (@at_decompte.validation_par.try(:full_name)) unless @at_decompte.validation_par.nil? %> </h5>
+              <h5><strong class="text-navy">Date de validation</strong>
+                : <%= (@at_decompte.date_validation.strftime("%d/%m/%Y")) unless @at_decompte.date_validation.nil? %>
+              </h5>
+            <% end %>
+
+
+            <% unless @at_decompte.validation_medecin_conseil_par.nil? %>
+              <br>
+              <h5><strong class="text-navy">Validation Medecin par</strong>
+                : <%= (@at_decompte.validation_medecin_conseil_par.try(:full_name)) unless @at_decompte.validation_medecin_conseil_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de validation Medecin</strong>
+                : <%= (@at_decompte.date_validation_medecin.strftime("%d/%m/%Y")) unless @at_decompte.date_validation_medecin.nil? %>
+              </h5>
+            <% end %>
+
+
+            <% unless @at_decompte.validation_comptable_par.nil? %>
+              <br>
+              <h5><strong class="text-navy">Validation Comptable par</strong>
+                : <%= (@at_decompte.validation_comptable_par.try(:full_name)) unless @at_decompte.validation_comptable_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de validation Comptable</strong>
+                : <%= (@at_decompte.date_validation_comptable.strftime("%d/%m/%Y")) unless @at_decompte.date_validation_comptable.nil? %>
+              </h5>
+            <% end %>
+
+            <% unless @at_decompte.rejete_par.nil? %>
+              <br>
+              <h5><strong class="text-navy">Rejeté par</strong>
+                : <%= (@at_decompte.rejete_par.try(:full_name)) unless @at_decompte.rejete_par.nil? %> </h5>
+              <h5><strong class="text-navy">Date rejet</strong>
+                : <%= (@at_decompte.date_rejet.strftime("%d/%m/%Y")) unless @at_decompte.date_rejet.nil? %></h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur l'arret </h5>
+          </div>
+          <div class="ibox-content">
+            <p>
+              <strong>Periode indemnisé :</strong>
+              <%= @at_decompte.periode_ij %>
+            </p>
+            <p>
+              <strong>Nombre de jour d'arret :</strong>
+              <%= (@at_decompte.nombre_jour) unless @at_decompte.nombre_jour.nil? %>
+            </p>
+
+            <p>
+              <strong>Montant à payer:</strong>
+              <%= format_cfa @at_decompte.montant %>
+            </p>
+
+            <p>
+              <strong>Etat:</strong>
+              <%= AtDecompte.human_enum_name(:etat, @at_decompte.etat) %>
+            </p>
+
+            <p>
+              <strong>Motif de rejet:</strong>
+              <%= @at_decompte.motif_rejet %>
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+      <% unless @at_decompte.motif_convocation.nil? %>
+        <div class="col-sm-12">
+          <div class="ibox">
+            <div class="ibox-title">
+              <h5>Convocation </h5>
+            </div>
+            <div class="ibox-content">
+              <p>
+                <strong>Motif convocation :</strong>
+              <p><%= @at_decompte.motif_convocation unless @at_decompte.motif_convocation.nil? %></p>
+              </p>
+              <p>
+                <strong>Date convocation :</strong>
+                <%= @at_decompte.date_convocation.strftime("%d/%m/%Y") unless @at_decompte.date_convocation.nil? %>
+              </p>
+
+              <p>
+                <strong>Convoqué par le medecin:</strong>
+                <%= @at_decompte.convoquer_par.try(:full_name) unless @at_decompte.convoquer_par.nil? %>
+              </p>
+
+            </div>
+          </div>
+
+        </div>
+      <% end %>
+
+      <!--
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Documents</h5>
+          </div>
+          <div class="ibox-content">
+            <%#= bootstrap_form_for([:admin, @arret_travail, @at_decompte], label_col: "col-sm-8", control_col: "col-sm-8") do |f| %>
+              <%#= f.file_field :certificat_medical %>
+              <%#= f.submit "Enregistrer", class: "btn btn-primary" %>
+            <%# end %>
+          </div>
+        </div>
+      </div>
+-->
+
+    </div>
+
+
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12" style="margin-top: 30px">
+      <div class="panel-body">
+        <div class="row form-group mb-5">
+          <h2 style="text-align: left;"><span class="text-navy">Documents certificat médical:</span></h2>
+          <div class="hr-line-dashed"></div>
+          <div class="col-lg-6">
+            <dt>Certificat de médical de prolongation:</dt>
+            <d1 class="row mb-0">
+              <div class="col-lg-6" style="text-align: right; margin-top: 0px;">
+                <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @at_decompte.certificat_medical, target: :_blank if @at_decompte.certificat_medical.attached? %>
+                <%#= link_to image_tag(@at_decompte.certificat_medical.preview(resize: "300x300>"), class: "m-t-xs img-responsive"), @at_decompte.certificat_medical, target: :_blank if @at_decompte.certificat_medical.attached? %>
+              </div>
+            </d1>
+
+
+          </div>
+        </div>
+      </div>
+    </div> <!-- End col -->
+  </div> <!-- End row -->
+</div>
+
+
+<div class="modal inmodal" id="modal-decompte" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@at_decompte, url: admin_arret_travail_at_decompte_rejeter_path(@arret_travail, @at_decompte), method: :patch, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Rejet Arret : <%= @at_decompte.id %> </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :motif_rejet, label: 'Motif rejet', required: true %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Rejeter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal inmodal" id="modal-convocation" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@at_decompte, url: admin_arret_travail_at_decompte_convoquer_path(@arret_travail, @at_decompte), method: :patch, layout: :vertical, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-user modal-icon"></i>
+          <h3>Allocataire: <%= @at_decompte.arret_travail.prenom_salarie %>  <%= @at_decompte.arret_travail.nom_salarie %> </h3>
+          <h3>Dossier: <%= @at_decompte.arret_travail.num_dossier %> /
+            Téléphone: <%= @at_decompte.arret_travail.telephone %> </h3>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :motif_convocation, placeholder: "Details convocation ...", cols: "30", rows: "8", label: 'Motif Convocation', required: true %>
+          <%= f.date_select :date_convocation, label: 'Date de convocation', required: true %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

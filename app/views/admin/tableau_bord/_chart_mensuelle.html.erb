@@ -1,0 +1,101 @@
+<div class="ibox-content" style="padding-bottom: 40px;">
+  <div class="row" style="margin-top: 20px;">
+    <canvas id="myChart" height="187px"></canvas>
+  </div>
+  <div class="m-t-md">
+    <small class="float-right" style="float: right;">
+      <i class="fa fa-clock-o"></i>
+      Update on 16.12.2020
+    </small>
+    <small>
+      <strong>Analysis of sales</strong>
+      the value has been change over time and last month reach a level
+    </small>
+  </div>
+</div>
+
+
+
+
+
+
+<script>
+  const ctx = document.getElementById('myChart');
+    // ctx.height = 100;
+     const color = Chart.helpers.color;
+     const myChart = new Chart(ctx, {
+         type: 'line',
+         data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jui', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+                    datasets: [
+                    {
+                      label: 'Dos. prestation',
+                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                               borderColor: 'rgb(255,99,132)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| DossierPrestation.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                           {
+                               label: 'liq. retraite',
+                               backgroundColor: '#36A2EB',
+                               borderColor: 'rgba(54, 162, 235, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| LiquidationRetraite.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                           {
+                               label: 'Arr. travail',
+                               backgroundColor: '#D9865B',
+                               borderColor: 'rgba(255, 206, 86, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| ArretTravail.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count  }.join(',') %>],
+                           },
+                           {
+                               label: 'Mal. profess',
+                               backgroundColor: '#BC5CE6',
+                               borderColor: 'rgba(75, 192, 192, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| MaladieProfessionnelle.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count  }.join(',') %>],
+                           },
+                           {
+                               label: 'Ind. con. mater.',
+                               backgroundColor: '#848BE2',
+                               borderColor: 'rgba(153, 102, 255, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| IndemniteCongesMaternite.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                           {
+                               label: 'Prest. ext. CAF',
+                               backgroundColor: '#16B84E',
+                               borderColor: 'rgba(22, 184, 78, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| PrestationExterieure.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                           {
+                               label: 'Prest. ext. IPRES',
+                               backgroundColor: '#FFB347',
+                               borderColor: 'rgba(255, 179, 71, 1)',
+                               borderWidth: 1,
+                               data: [],
+                           },
+                       ]
+                   },
+                   options: {
+
+                    legend:{
+                      align:"start"
+                    },
+
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 5
+                            }
+                        }]
+                    }
+        }
+    });
+
+
+
+</script>

@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_localite_grappe" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_localite_grappes_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_localite_grappe_path(@admin_localite_grappe), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_localite_grappe', new_admin_localite_grappe_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code pays:</strong>
+                  <%= @admin_localite_grappe.code_pays %>
+                </p>
+
+                            <p>
+                  <strong>Code localite:</strong>
+                  <%= @admin_localite_grappe.code_localite %>
+                </p>
+
+                            <p>
+                  <strong>Localite:</strong>
+                  <%= @admin_localite_grappe.localite %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

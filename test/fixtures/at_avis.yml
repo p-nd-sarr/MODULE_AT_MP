@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  desciption: MyText
+  fait_par: MyString
+  arret_travail: one
+
+two:
+  desciption: MyText
+  fait_par: MyString
+  arret_travail: two

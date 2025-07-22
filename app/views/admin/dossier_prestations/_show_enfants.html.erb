@@ -1,0 +1,99 @@
+<% if (@dossier_prestation.conjoint.nil?) %>
+  <% @conjoints.not_deleted.not_incomplete.each do |conjoint| %>
+    <span class="btn btn-default btn-sm dim "><i class="fa fa-user-o"></i> Parent
+      : <%= conjoint.full_name %> / <%=  Conjoint.human_enum_name(:etat_conjoint, conjoint.etat_conjoint) unless conjoint.etat_conjoint.nil? %></span>
+    
+    <span class="btn btn-success btn-sm dim "><i class="fa fa-calendar"></i> Date de mariage
+      : <%= conjoint.date_mariage.try(:strftime, "%d/%m/%Y") %> </span>
+    <!--    <%# unless DossierPrestation.exists?(conjoint_id: conjoint) %>
+    <%= (link_to 'Créer dossier de prestation', admin_dossier_prestation_create_dossier_conjoint_path(@dossier_prestation, conjoint),
+                 data: {confirm: 'En êtes vous sûr?'}, id: "dd_hover", class: 'btn btn-primary btn-sm dim pull-right') %>
+    <%#else %>
+    <%#= link_to 'Détails', admin_dossier_prestation_path(DossierPrestation.where(conjoint_id: conjoint).pluck(:id).first), class: 'btn btn-outline btn-primary btn-xs pull-right' %>
+    <%#end %>-->
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Date de naissance</th>
+        <th scope="col">Nom salarie</th>
+        <th scope="col">Prénom salarié</th>
+        <th scope="col">Nom complet conjoint</th>
+        <th scope="col">Origine de l'enfant</th>
+        <th scope="col">Date d'expiration document migré</th>
+        <th scope="col">Options documents</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% conjoint.enfants.not_deleted.not_incomplete.each do |enfant| %>
+          <tr>
+            <td><%= enfant.nom %></td>
+            <td><%= enfant.prenom %></td>
+            <td><%= l enfant.date_naissance %></td>
+            <td><%= enfant.nom_salarie %></td>
+            <td><%= enfant.prenom_salarie %></td>
+            <% if enfant.conjoint_id %>
+              <td><%= enfant.conjoint.full_name %></td>
+            <% else %>
+              <td></td>
+            <% end %>
+            <td><%= Enfant.human_enum_name(:origine_enfant, enfant.origine_enfant) unless enfant.origine_enfant.nil? %></td>
+            <td><%= enfant.migrated_document_exp_date unless enfant.migrated_document_exp_date.nil? %></td>
+            <td>
+              <% if enfant.document_expired? %>
+                <%= link_to 'Renouveler', admin_dossier_prestation_renewal_child_documents_path(@dossier_prestation, enfant),
+                            class: 'btn btn-outline btn-primary btn-sm' %>
+              <% end %>
+            </td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>
+
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Nom salarie</th>
+    <th scope="col">Prénom salarié</th>
+    <th scope="col">Nom complet parent</th>
+    <th scope="col">Origine de l'enfant</th>
+    <th scope="col">Date d'expiration document migré</th>
+    <th scope="col">Options documents</th>
+  </tr>
+  </thead>
+  <tbody>
+  <span class="btn btn-default btn-sm dim "><i class="fa fa-users-o"></i> Autres Enfants</span>
+
+  <% @enfants.each do |enfant| %>
+
+    <% if enfant.conjoint.nil? %>
+      <tr>
+        <td><%= enfant.nom %></td>
+        <td><%= enfant.prenom %></td>
+        <td><%= l enfant.date_naissance %></td>
+        <td><%= enfant.nom_salarie %></td>
+        <td><%= enfant.prenom_salarie %></td>
+        <td><%= enfant.prenom_mere_naturel %> <%= enfant.nom_mere_naturel %></td>
+        <td><%= Enfant.human_enum_name(:origine_enfant, enfant.origine_enfant) unless enfant.origine_enfant.nil? %></td>
+        <td><%= enfant.migrated_document_exp_date unless enfant.migrated_document_exp_date.nil? %></td>
+        <td>
+          <% if enfant.document_expired? %>
+            <%= link_to 'Renouveler', admin_dossier_prestation_renewal_child_documents_path(@dossier_prestation, enfant),
+                        class: 'btn btn-outline btn-primary btn-sm' %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
+
+
+

@@ -1,0 +1,22 @@
+<%= content_for :titre_page, "Motif retour du dossier" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox-content">
+        <%= bootstrap_form_for(@dossier_maternite, url: admin_dossier_maternite_retour_process_path(@dossier_maternite), layout: :horizontal) do |f| %>
+          <%= f.text_area :motif_retour, label: 'Motif' %>
+
+          <div class="hr-line-dashed"></div>
+
+          <div class="form-group row">
+            <div class="col-sm-4 col-sm-offset-2">
+              <%= link_to 'Annuler', admin_dossier_maternite_path(@dossier_maternite), class: 'btn btn-white' %>
+              <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

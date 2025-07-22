@@ -1,0 +1,53 @@
+<%= content_for :titre_page, 'Liste des allocataires actifs' %>
+
+<%= content_for :actions_page do %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/allocataires/search_alloctataires_actifs' %>
+
+    <br>
+
+    <%#= paginate @allocataires %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro affiliation</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Catégorie</th>
+        <th scope="col">Mode paiement</th>
+        <th scope="col">Agence</th>
+        <th scope="col">Est repris ?</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Date activation</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @allocataires.each do |allocataire| %>
+        <tr>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= allocataire.prenom %></td>
+          <td><%= allocataire.nom %></td>
+          <td><%= allocataire.categorie_human %></td>
+          <td><%= allocataire.mode_paiement_human %></td>
+          <td><%= allocataire.admin_agence.try(:description_prest) %></td>
+          <td><%= state_yes_no allocataire.est_repris? %></td>
+          <td><%= allocataire.etat_human %></td>
+          <td><%= allocataire.date_activation_dp.strftime("%d-%m-%Y") unless allocataire.date_activation_dp.nil? %></td>
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_allocataire_path(allocataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%#= paginate @allocataires %>
+  </div>
+</div>

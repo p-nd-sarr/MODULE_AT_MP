@@ -1,0 +1,29 @@
+<li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Salariés</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/salaries') %>">
+    <li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+      <%= link_to 'Liste', admin_salaries_path %>
+    </li>
+  </ul>
+</li>
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%=I18n.t('module_arret_travail.admin_menu.arret_travail_label')%></span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+      <%= link_to "Accueil", admin_arret_travails_path %>
+      <%#= link_to I18n.t('module_arret_travail.admin_menu.ajouter_dossier'), new_admin_arret_travail_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente avis', en_attente_avis_redacteur_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente comité', en_attente_commission_rejets_admin_arret_travails_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
+    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+      <%= link_to 'Accueil', admin_maladie_professionnelles_path %>
+      <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
+    </li>
+  </ul>
+</li>

@@ -1,0 +1,71 @@
+<%= content_for :titre_page, 'Demandes de liquidation retraite' %>
+
+<%= content_for :actions_page do %>
+
+  <% if current_user.gestionnaire_compte_allocataire? %>
+    <%= (link_to 'Ajouter une demande', new_admin_liquidation_retraite_france_path, class: 'btn btn-primary btn-sm') %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h5>Demande de liquidation de pension</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin"> <%= LiquidationRetraiteFrance.count %> </h1>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h5>Demande de régularisaton de pension</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+        <div class="ibox-title text-success">
+          <h5>Demande de modification de dossier</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -50px; min-height: 300px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>Demandes de liquidation retraite</h5>
+          <span class="label label-warning">Total demande <%= @total %></span>
+        </div>
+        <div class="ibox-content">
+            <% if current_user.gestionnaire_compte_allocataire?%>
+              <div class="text-right">
+                <%= link_to 'AJOUTER UNE DEMANDE', new_admin_liquidation_retraite_france_path, class: 'fa fa-plus btn btn-w-m btn-outline btn-success', style: 'height: 34px' %>
+              </div>
+            <% end %>
+          <br>
+          <div class="tab-content">
+            <div id="tous" class="tab-pane fade in active">
+              <%= render 'admin/liquidation_retraite_frances/search' %>
+              <br>
+              <%= render 'liste' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,102 @@
+<%= content_for :titre_page do %>
+  Détails échéance veuves caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+<% end %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @echeance.motif_retour.nil? %>
+    <strong class="text-info">Dossier retourné </strong>
+    <br>
+    <strong class="text-info">Motif de retour :</strong>
+    <%= @echeance.motif_retour %>
+    <br>
+  <% end %>
+  <br>
+  <span>
+      <%= link_to 'Liste des liquidations', admin_echeance_veuves_caiss_all_liquidations_slices_path(@echeance), class: 'btn btn-white btn-sm' %>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_veuves_caisses_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to "Visualiser", '#', "data-toggle" => "modal", 'data-target' => '#liquidations-preview', class: 'btn btn-primary btn-xs' if @echeance.can_visualize? %>
+  <% @echeance.current_state.events.values.each { |event| %>
+    <% event = event.first %>
+    <% if event.meta[:types_profils].include?(current_user.type_profil.to_sym) %>
+      <%= link_to event.meta[:label], admin_echeance_veuves_caiss_change_statut_path(@echeance, event.name), 'data-turbolinks': false, class: 'btn btn-primary btn-xs' if event.meta[:retour] == false and @echeance.peut_etre_affiche? %>
+      <br>
+      <%= link_to "Retourner", '#', "data-toggle" => "modal", 'data-target' => '#retourner', class: 'btn btn-primary btn-xs' if event.meta[:retour] == true %>
+      <%= render 'echeance_back_modal', object: event.name if event.meta[:retour] == true %>
+    <% end %>
+  <% } %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :numero_affiliation_cont, 'Numéro salarié' %>
+          <%= f.search_field :numero_affiliation_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :prenom_cont, 'Prenom conjoint' %>
+          <%= f.search_field :prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :nom_cont, 'Nom conjoint' %>
+          <%= f.search_field :nom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :nin_cont, 'Nin conjoint' %>
+          <%= f.search_field :nin_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @epouses %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro affiliation</th>
+        <th scope="col">Numéro dossier</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Nombre enfants</th>
+        <th scope="col">Nombre enfants éligibles</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @epouses.each do |epouse| %>
+        <tr>
+          <td><%= epouse.numero_affiliation %></td>
+          <td><%= epouse.dossier_prestation.num_dossier %></td>
+          <td><%= epouse.prenom %></td>
+          <td><%= epouse.nom %></td>
+          <td><%= epouse.nombre_enfants unless epouse.nombre_enfants.nil? %></td>
+          <td><%= epouse.nombre_total_enfants_eligibles unless epouse.nombre_total_enfants_eligibles.nil? %></td>
+          <td style="width: 75px">
+            <%= link_to "dossier de l'allocataire", admin_dossier_prestation_path(epouse.dossier_prestation_id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_echeance_veuves_caiss_veuve_path(@echeance, epouse), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @epouses %>
+  </div>
+</div>
+
+<%= render 'admin/echeance_veuves_caisses/preview_liquidations_modal' %>

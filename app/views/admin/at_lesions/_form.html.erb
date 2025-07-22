@@ -1,0 +1,13 @@
+        <%= bootstrap_form_for([:admin, @arret_travail, @at_lesion], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>           
+            <%=f.hidden_field :arret_travail_id, value: @arret_travail.id%>
+            <%= f.select :nature_lesion, AtLesion::NATURE_LESION.keys.collect { |item| [ArretTravail.human_enum_name(:nature_lesion, item), item] }, label: 'Nature lésion' %>
+            <%= f.select :siege_lesion, AtLesion::SIEGEE_LESION.keys.collect { |item|  [ArretTravail.human_enum_name(:siege_lesion, item), item] }, label: 'Siege lésion' %>
+            <%=f.date_field :created_at, label: "Date établissement certificat"%> 
+            <div class="form-group row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <%= link_to 'Annuler', (@arret_travail.persisted? ? [:admin, @arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+            </div>
+            </div>
+        <% end %>

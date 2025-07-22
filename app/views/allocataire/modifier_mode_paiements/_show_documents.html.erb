@@ -1,0 +1,68 @@
+<style type="text/css">
+  label[title="required"] {
+    display: none;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+
+<ul class="text-danger">
+  <% if @modifier_mode_paiement.documents.where(type_document: [:cni, :attestation_travail, :certificat_mariage, :passeport, :carte_consulaire]).empty? %>
+    <li>Veuillez ajouter une copie du CNI ou passeport ou carte consulaire</li>
+  <% end %>
+</ul>
+
+
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <h2>Liste des documents</h2>
+    </div>
+    <%# unless @admin_reversion_veuve_salary.documents_valide! %>
+      <div class="col-lg-8">
+        <div class="alert alert-info alert-dismissable">
+          <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">x</font>
+            </font>
+          </button>
+          <font style="vertical-align: inherit;">
+            <font style="vertical-align: inherit;"><span class="fa fa-info-o"></span> Veuillez renseigner des documents
+              au format PDF</font>
+          </font>
+        </div>
+      </div>
+    <%# end %>
+  </div>
+
+
+
+<% if @modifier_mode_paiement.creation? %>
+<%= render 'documents/liste',
+           object: @modifier_mode_paiement,
+           documents: @modifier_mode_paiement.documents,
+           include_add: @modifier_mode_paiement.creation?,
+           include_delete: @modifier_mode_paiement.creation?,
+           type_documents: ModifierModePaiement::TYPE_DOCUMENT,
+           type_documents_obligatoires: ModifierModePaiement::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: allocataire_modifier_mode_paiement_path(@modifier_mode_paiement)
+%>
+
+  <%= render 'documents/modal_form',
+            type_documents: ModifierModePaiement::TYPE_DOCUMENT,
+            document: Document.new(documentable: @modifier_mode_paiement),
+             back_url: allocataire_modifier_mode_paiement_path(@modifier_mode_paiement)
+  %>
+<% else %>
+<%= render 'documents/liste',
+           object: @modifier_mode_paiement,
+           documents: @modifier_mode_paiement.documents,
+           include_add: false, 
+           include_delete: false, 
+           type_documents: ModifierModePaiement::TYPE_DOCUMENT,
+           type_documents_obligatoires: ModifierModePaiement::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: allocataire_modifier_mode_paiement_path(@modifier_mode_paiement)
+%>
+<%end%>

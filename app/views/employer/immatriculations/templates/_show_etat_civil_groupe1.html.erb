@@ -1,0 +1,406 @@
+<% if @immatriculation != nil && @immatriculation.etat_civil_demandeur_valide? %>
+<div class="row" style="padding-top:20px" id="details_etat_civil">
+  <div class="col-lg-12" style="text-align:right; margin-bottom:20px;">
+    <% unless @immatriculation == nil or @immatriculation.soumis? %>
+      <button class="btn btn-white" id="show_civil"><span class="fa fa-edit"> Modifier les informations de l'état civil</span></button>
+      <% end %>
+    <hr>
+  </div>
+  <div class="col-lg-4">
+
+    <h2 class="text-success"><strong>Identification</strong></h2>
+    <hr>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Numéro unique de sécurité sociale : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= "" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ancien numéro IPRES : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= current_user.num_ipres %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ancien numéro CSS : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= current_user.num_css %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ninéa : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.ninea %></dd>
+      </div>
+    </d1>
+    <% unless @immatriculation.hdqt? %>
+     <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ninet : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.ninet %></dd>
+      </div>
+    </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>COFI : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.code_identification_fiscale %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Régistre de commerce : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.registre_commerce %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Raison sociale : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.raison_sociale %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Numéro demande : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.id %></dd>
+      </div>
+    </d1>
+    <% if @immatriculation.soumis? or @immatriculation.valide? %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Numéro process flow : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%= @immatriculation.process_flow_id %></dd>
+      </div>
+    </d1>
+    <% end %>
+
+  </div> 
+
+  <div class="col-lg-4">
+  <h2 class="text-success"><strong>Catégorie d’entreprise</strong></h2>
+    <hr>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Type d’établissement : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= Immatriculation.human_enum_name(:type_etablissement, @immatriculation.type_etablissement) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Statut juridique : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.admin_statut_juridique.try(:description) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Activité principale : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.admin_activite_principale.try(:description) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Secteur d’activité : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd><%=  @immatriculation.admin_secteur_activite.try(:description) %></dd>
+      </div>
+    </d1>
+  </div>
+
+  <div class="col-lg-4">
+  <h2 class="text-success"><strong>Adresse - Siège social</strong></h2>
+    <hr>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Région : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.reprise_region.try(:designation) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ville : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.reprise_ville.try(:designation) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Commune : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.reprise_commune.try(:designation) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Quartier : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.reprise_quartier.try(:designation) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Adresse : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.adresse %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Email : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.email %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Téléphone : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @immatriculation.mobileNumber %></dd>
+      </div>
+    </d1>
+
+  </div>
+  <div class="col-lg-12">
+    <hr>
+  </div>
+</div>
+
+<% end %>
+
+<% unless @immatriculation.id == nil or @immatriculation.etat_civil_demandeur_valide? %>
+  <%= link_to "Je valide les informations sur la Structure", employer_immatriculation_valider_infos_societe_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="row" id="update_etat_civil" style="margin-top:20px" >
+  <%= bootstrap_form_for([:employer, @immatriculation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <div class="col-lg-10 col-lg-offset-1">
+    <div class="panel-group" id="accordion">
+      <div class="panel panel-primary" style="padding: 10px">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#categorieStructure">
+              <span class="fa fa-list-alt"></span> Catégorie structure
+              <div class="ibox-tools">
+              <i class="fa fa-chevron-up"style="color: #fff"></i>
+            </div>
+            </a>
+          </h5>
+        </div>
+        <div class="panel-collapse collapse in" id="categorieStructure" style="padding-top: 20px">
+          <div class="full-height-scroll row" style="padding:20px">
+            <br>
+              <div class="form-group">
+                <label class="col-form-label col-sm-3" for="immatriculation_type_etablissement">Type employeur:</label>
+                    <div class="col-sm-6" style="padding-bottom:40px">
+                      <input required="required" class="form-control" type="text" value="<%= current_user.admin_type_employeur.description unless current_user.admin_type_employeur.nil? %>" name="immatriculation[sigle]" id="type_employeur" disabled>
+                    </div>
+              </div>
+              <div class="col-lg-6">
+                <%= f.select :type_etablissement,
+                        Immatriculation::TYPE_ETABLISSEMENT.keys.collect { |type_etablissement| [Immatriculation.human_enum_name(:type_etablissement, type_etablissement), type_etablissement] }, label: 'Type établissement' %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :statut_juridique, @statut_juridiques, :id, :description, label: 'Statut juridique', required: true %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :secteur_activite, @secteurs, :id, :description, label: "Secteur d'activité", required: true %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.collection_select :activite_principale, @activites, :id, :description, label: 'Activité principale', required: true %>
+              </div>
+          </div>
+        </div>
+      </div> <!-- End panel default categorie structure -->
+
+      <div class="panel panel-primary" style="padding: 10px">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#identiteStructure">
+              <span class="fa fa-id-badge"></span> Identité structure
+              <div class="ibox-tools">
+              <i class="fa fa-chevron-up"style="color: #fff"></i>
+            </div>
+            </a>
+          </h5>
+        </div>
+        <div class="panel-collapse collapse" id="identiteStructure" style="padding-top: 20px">
+          <div class="full-height-scroll row" style="padding:20px">
+          <br>
+          <div class="col-lg-6">
+            <%= f.text_field :raison_sociale, label: 'Raison sociale', required: true %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :sigle, label: 'Sigle' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :ninea, label: 'Ninea', required: true, :pattern => '^[0-9]{9}$', help: "Ninéa c'est 9 chiffres" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :code_identification_fiscale, label: 'Code identification fiscale', :pattern => '^[0-9]+[a-zA-Z]+[0-9]$', help: "COFI c'est 3 caractères" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.date_select :date_identification_fiscale, label: "Date identification fiscale", required: true,
+                                start_year: (Date.today - 100.year).year, end_year: Date.today.year %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :registre_commerce, label: 'Registre de commerce' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.date_select :date_identification_rc, label: "Date identification registre de commerce",
+                                start_year: (Date.today - 100.year).year, end_year: Date.today.year %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :siege_social, label: 'Siège social' %>
+          </div>
+          <div class="col-lg-6">
+              <%= f.date_select :date_ouverture, label: "Date ouverture établissement", required: true,
+                                start_year: (Date.today - 100.year).year, end_year: Date.today.year %>
+          </div>
+          </div>
+        </div>
+      </div> <!-- End panel default identite structure -->
+
+      <div class="panel panel-primary" style="padding: 10px">
+        <div class="panel-heading">
+          <h5 class="panel-title">
+            <a data-toggle="collapse" data-parent="#accordion" href="#adresseStructure">
+              <span class="fa fa-address-card"></span> Adresse structure
+            <div class="ibox-tools">
+              <i class="fa fa-chevron-up"style="color: #fff"></i>
+            </div>
+            </a>
+          </h5>
+        </div>
+        <div class="panel-collapse collapse" id="adresseStructure" style="padding-top: 20px">
+          <div class="full-height-scroll row" style="padding:20px">
+          <br>
+            <div class="col-lg-6">
+              <%= f.collection_select :region, @regions, :id, :designation, include_blank: true, label: 'Région', tag: 'region', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.collection_select :departement, @departements, :id, :designation, include_blank: true, label: 'Département', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.collection_select :ville, @villes, :id, :designation, include_blank: true, label: 'Arrondissement', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.collection_select :commune, @communes, :id, :designation, include_blank: true, label: 'Commune', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.collection_select :quartier, @quartiers, :id, :designation, include_blank: true, label: 'Quartier', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :adresse, label: 'Adresse', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :email, label: 'Email', required: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :mobileNumber, label: 'Téléphone', required: true %>
+            </div>
+          </div>
+        </div>
+      </div> <!-- End panel default adresse structure -->
+    </div>
+  </div>
+    <div class="form-group row" style="padding-left: 20%">
+      <div class="col-sm-4 col-sm-offset-2">
+        <button type="submit" class="btn btn-primary block full-width m-b">Enregister</button>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @immatriculation != nil && @immatriculation.etat_civil_demandeur_valide? %>
+
+  <script type="text/javascript">
+
+      $(document).ready(function () {
+
+          $('#update_etat_civil').hide();
+
+          $("#show_civil").click(function () {
+              $('#update_etat_civil').show();
+              $('#details_etat_civil').hide();
+              return false;
+          });
+      });
+
+  </script>
+
+<% end %>
+
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+
+        console.log('load etat civil');
+        $('#ninet').hide();
+        $('#immatriculation_ninet').attr("value", "0000000000000");
+
+        $("#immatriculation_type_etablissement").change(function () {
+
+            var e = document.getElementById("immatriculation_type_etablissement");
+            var strUser = e.options[e.selectedIndex].text;
+
+            console.log(strUser);
+            switch (strUser) {
+                case "agence/succursale":
+                    $('#ninet').show();
+                    break;
+                case "chantier":
+                    $('#ninet').show();
+                    break;
+                default:
+                    $('#ninet').hide();
+
+                    alert('0000000000000');
+                    $('#immatriculation_ninet').attr("value", "0000000000000");
+            }
+
+            return false;
+        });
+
+    })
+</script>
+
+<style>
+  label.required:after {
+    content: " *";
+  }
+</style>

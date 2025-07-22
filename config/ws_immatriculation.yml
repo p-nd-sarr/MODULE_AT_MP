@@ -1,0 +1,20 @@
+development:
+  base_path: http://192.168.125.23:7500/
+  username: SYSUSER
+  password: ouafadmin
+production:
+  base_path: http://192.168.125.23:7500/
+  username: SYSUSER
+  password: ouafadmin
+preprod:
+  base_path: http://192.168.125.23:7500/
+  username: SYSUSER
+  password: ouafadmin
+staging:
+  base_path: http://192.168.125.23:7500/
+  username: SYSUSER
+  password: ouafadmin
+recette:
+  base_path: http://192.168.125.23:7500/
+  username: SYSUSER
+  password: ouafadmin

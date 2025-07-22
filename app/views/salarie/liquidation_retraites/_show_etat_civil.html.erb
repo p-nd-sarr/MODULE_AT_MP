@@ -1,0 +1,57 @@
+<p>
+  <strong>Prénom:</strong>
+  <%= @demande_liquidation.prenom %>
+</p>
+
+<p>
+  <strong>Nom:</strong>
+  <%= @demande_liquidation.nom %>
+</p>
+
+<p>
+  <strong>Date de naissance:</strong>
+  <%= l @demande_liquidation.date_naissance %>
+</p>
+
+<p>
+  <strong>Lieu de naissance:</strong>
+  <%= @demande_liquidation.lieu_naissance %>
+</p>
+
+<p>
+  <strong>Adresse de réception de l'allocation:</strong>
+  <%= @demande_liquidation.adresse_reception_allocation %>
+</p>
+
+<p>
+  <strong>Adresse domicile:</strong>
+  <%= @demande_liquidation.adresse_domicile %>
+</p>
+
+<p>
+  <strong>Mode de paiement:</strong>
+  <%= LiquidationRetraite.human_enum_name(:mode_paiement, @demande_liquidation.mode_paiement) %>
+  <% if @demande_liquidation.virement? %>
+    sur le compte <%= @demande_liquidation.compte_bancaire_nom_banque %> numéro
+    <%= @demande_liquidation.compte_bancaire_code_banque %>
+    <%= @demande_liquidation.compte_bancaire_code_guichet %>
+    <%= @demande_liquidation.compte_bancaire_numero_compte %>
+  <% end %>
+</p>
+
+<p class="text-danger">
+  <strong>Date de cessation d'activité:</strong>
+  <%= (l @demande_liquidation.date_cessation_activite) unless @demande_liquidation.date_cessation_activite.nil? %>
+</p>
+
+<p>
+  <strong>Type de retraite:</strong>
+  <%= LiquidationRetraite.human_enum_name(:type_retraite, @demande_liquidation.type_retraite) %>
+</p>
+
+<% if @demande_liquidation.retraite_anticipee_valide? %>
+  <ul class="text-warning">
+    <li>il y a une minoration de 5% pour chaque année (1,5% par trimestre) sur le nombre de points acquis au régime général</li>
+    <li>il y a une minoration de 4% pour chaque année (1% par trimestre) sur le nombre de points acquis au régime cadre</li>
+  </ul>
+<% end %>

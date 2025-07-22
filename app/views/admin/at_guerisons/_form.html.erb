@@ -1,0 +1,27 @@
+
+<%= bootstrap_form_for([:admin, @arret_travail, @at_guerison], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+ <%= f.alert_message "Please fix the errors below." %>
+ <div class="row">
+    <div class="col-lg-12">
+        <%=f.hidden_field :ajoute_par_id, value: current_user.id%>
+
+      <div class="col-lg-6">
+        <%= f.text_area :observation, class:'form-control', required: true %>
+      </div>
+
+      <div class="col-lg-6">
+        <%= f.date_field :date_ouverture_guerison, required: true %>
+      </div>
+   
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_at_guerisons_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+

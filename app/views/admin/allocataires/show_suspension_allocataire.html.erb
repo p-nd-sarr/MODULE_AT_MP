@@ -1,0 +1,105 @@
+<%= content_for :titre_page, "Détails Suspension Allocataire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', suspension_soumis_admin_allocataires_path, class: 'btn btn-white btn-sm' %>
+  <%#= (link_to 'valider', admin_enfant_valider_path(@enfant), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-primary btn-sm') unless @enfant.valide? or @enfant.ajoute_par == current_user %>
+  <%#= (link_to 'rejeter', admin_enfant_rejeter_path(@enfant), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-sm') unless @enfant.rejete? or @enfant.ajoute_par == current_user %>
+<% end %>
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+            <h5>Details demandes de suspension allocataire</h5>
+        </div>
+        <div class="ibox-content">
+
+          <p>
+                <strong>Numéro de la demande:</strong>
+                <%= @suspension_allocataire.id %>
+          </p>
+          <p>
+                <strong>Numéro de la demande:</strong>
+                <%= @suspension_allocataire.numero_allocataire %>
+          </p>
+          <p>
+            <strong>Prénom:</strong>
+            <%= @suspension_allocataire.prenom %>
+          </p>
+
+          <p>
+            <strong>Nom:</strong>
+            <%= @suspension_allocataire.nom %>
+          </p>
+        
+          <p>
+              <strong>Motif de suspension:</strong>
+              <%= @suspension_allocataire.motif_suspension %>
+          </p>
+          <% if @suspension_allocataire.soumis? %>
+            <p>
+              <strong>Date de soumission :</strong>
+              <%= @suspension_allocataire.date_soumission%>
+            </p>
+            
+            <p>
+                <strong>Etat:</strong>
+                <%= @suspension_allocataire.etat %>
+            </p>
+          
+        <%end%>
+                  <% if @suspension_allocataire.valide? %>
+            <p>
+              <strong>Date validation :</strong>
+              <%= @suspension_allocataire.date_validation%>
+            </p>
+            
+            <p>
+                <strong>Etat:</strong>
+                <%= @suspension_allocataire.etat %>
+            </p>
+          
+        <%end%>
+       
+           <% if @suspension_allocataire.rejete? %>
+              <p>
+                  <strong>Motif du rejet:</strong>
+                  <%= @suspension_allocataire.motif_rejet %>
+                      
+              </p>
+              <p>
+                <strong>Etat:</strong>
+                <%= @suspension_allocataire.etat %>
+            </p>
+              
+
+          <% end%>
+          <% if @suspension_allocataire.affecte? %>
+            <p>
+              <strong>Date affectation:</strong>
+              <%= @suspension_allocataire.affectation_allocataire_date %>         
+           </p>
+            <p>
+              <strong>Affecté par:</strong>
+               <%= (@suspension_allocataire.affecter_allocataire.full_name) unless @regularisation_pension.affecter_allocataire.nil? %> </h5>      
+           </p>
+           <p>
+              <strong>Etat:</strong>
+              <%= @suspension_allocataire.etat %>         
+           </p>
+
+        <% end%>
+        
+      
+        
+            </div>
+          </div>
+
+        </div>
+
+      
+
+        </div>
+ 
+      </div>
+</div>

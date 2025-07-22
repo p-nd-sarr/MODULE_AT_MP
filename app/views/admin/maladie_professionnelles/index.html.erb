@@ -1,0 +1,388 @@
+<%= content_for :titre_page, 'Admin Maladies Professionnelles' %>
+
+<%= content_for :actions_page do %>
+<% if current_user.gestionnaire_compte_allocataire? %>
+  <%= link_to 'Ajouter', new_admin_maladie_professionnelle_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-6">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Demande de dossier de maladie professionnelle</h5>
+          </div>
+          <div class="ibox-content">
+            <h1 class="no-margins">0</h1>
+              <div class="stat-percent font-bold text-info">
+                0%
+                <i class="fa fa-level-up"></i>
+              </div>
+              <small>Nombre demande</small>
+          </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Demande de liquidation de prestation</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins">0</h1>
+            <div class="stat-percent font-bold text-info">
+              0%
+              <i class="fa fa-level-up"></i>
+            </div>
+            <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Evolution des dossiers de maladie professionnelle</h5>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+              <div class="col-lg-9">
+                 <%= area_chart MaladieProfessionnelle.group_by_month(:created_at).count, height:"200px"%>
+              </div>
+              <div class="col-lg-3">
+                <ul class="stat-list">
+                  <li>
+                    <h2 class="no-margins">0</h2>
+                    <small>Soumis</small>
+                    <div class="stat-percent">
+                      0%
+                      <i class="fa fa-level-up text-navy"></i>
+                    </div>
+                    <div class="progress progress-mini">
+                      <div style="width: 0%" class="progress-bar"></div>
+                    </div>
+                  </li>
+                  <li>
+                    <h2 class="no-margins">0</h2>
+                      <small>Validé</small>
+                      <div class="stat-percent">
+                       0%
+                        <i class="fa fa-level-up text-navy"></i>
+                      </div>
+                      <div class="progress progress-mini">
+                        <div style="width: 0%" class="progress-bar">
+                        </div>
+                      </div>
+                  </li>
+                  <li>
+                    <h2 class="no-margins">0</h2>
+                      <small>Rejeté</small>
+                    <div class="stat-percent">
+                      0%
+                      <i class="fa fa-level-up text-navy"></i>
+                    </div>
+                    <div class="progress progress-mini">
+                      <div style="width: 0%" class="progress-bar">
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          <div class="m-t-md">
+            <small class="float-right" style="float: right;">
+              <i class="fa fa-clock-o"></i>
+              Update on 16.12.2020
+            </small>
+            <small>
+              <strong>Analysis of sales</strong>
+              the value has been change over time and last month reach a level
+            </small>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -50px; min-height: 300px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+            <h5>Demande maladie professionnelle </h5>
+            <span class="label label-warning">Total demande <%=MaladieProfessionnelle.count%></span>
+            <div class="ibox-tools">
+                <a class="collapse-link">
+                  <i class="fa fa-chevron-up"></i>
+                </a>
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <i class="fa fa-wrench"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                  <li><a href="#" class="dropdown-item">Config option 1</a>
+                  </li>
+                  <li><a href="#" class="dropdown-item">Config option 2</a>
+                  </li>
+                </ul>
+                <a class="close-link">
+                  <i class="fa fa-times"></i>
+                </a>
+            </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+             <div class="col-sm-7 m-b-xs">
+                <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                  <label class="btn btn-sm btn-white active" data-toggle="pill" href="#tous"> <input type="radio" id="option1" name="options"> Tous </label>
+                  <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_info"> <input type="radio" id="option6" name="options"> En attante d'informations </label>
+                  <label class="btn btn-sm btn-white" data-toggle="pill" href="#instruction"> <input type="radio" id="option7" name="options"> En instruction </label>
+                  <label class="btn btn-sm btn-white" data-toggle="pill" href="#accepte"> <input type="radio" id="option8" name="options"> Accepté </label>
+                  <label class="btn btn-sm btn-white" data-toggle="pill" href="#rejete"> <input type="radio" id="option9" name="options"> Rejeté </label>
+                </div> 
+              </div>
+              <div class="col-sm-3">
+                <%= search_form_for @q, url: admin_maladie_professionnelles_path do |f|%>
+                  <div class="input-group mb-3" style="float: right;">
+                    <%= f.search_field :prenom_salarie_or_nom_salarie_or_numero_affiliation_cont, class:"form-control form-control-sm", placeholder: "Search", style: "width:148px; position: relative; z-index: 1"%>
+                      <div class="input-group-append" style="float: right; position:relative; z-index: 2">
+                        <%= f.submit "Go!", :class => "btn btn-sm btn-primary", :style=>"height:34px"%>
+                      </div>
+                  </div>
+                <%end%>
+              </div>
+              <% if current_user.gestionnaire_compte_allocataire? %>
+              <div class="col-sm-2">
+                <%= link_to 'AJOUTER', new_admin_maladie_professionnelle_path , class: 'fa fa-plus btn btn-w-m btn-success btn-outline', style:'height: 34px; float:right' %>
+              </div>
+              <% end %>
+            </div>
+
+            <div class="tab-content">
+              <!-- Afficher tous les dossiers-->
+              <div id="tous" class="tab-pane fade in active">
+                <div class="table-responsive" style="margin-top: 20px">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">Numero Affiliation</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Qualification professionnelle</th>
+                      <th scope="col">Situation Matrimoniale</th>
+                      <th scope="col">Etat</th>
+                      <th colspan="3"></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @demande_maladie_professionnelles.each do |mp| %>
+                      <tr>
+                      <td><%=mp.numero_affiliation%></td>
+                      <td><%=mp.prenom_salarie%></td>
+                      <td><%=mp.nom_salarie%></td>
+                      <td><%=mp.qualification_professionnelle_salarie%></td>
+                      <td><%=mp.situation_matrimoniale_salarie%></td>
+                      <td><%=mp.etat%></td>
+                        <td style="width: 75px">
+                          <%= link_to 'détails', admin_maladie_professionnelle_path(mp), class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <td style="width: 75px">
+                          <%= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <!--td width="75px">
+                          <%#= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td-->
+                        <td style="width: 75px">
+                          <%#= link_to 'supprimer', '#', method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div id="attente_info" class="tab-pane fade">
+                 
+                  <!-- START Liste en attente d'informations-->
+                  <% @liste_info=MaladieProfessionnelle.en_attente_information.page(params[:page]).per(100)%>
+                  <%= paginate @liste_info %>
+                  <div class="table-responsive" style="margin-top: 20px;">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">Numero Affiliation</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Qualification professionnelle</th>
+                      <th scope="col">Situation Matrimoniale</th>
+                      <th colspan="3"></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @liste_info.each do |mp| %>
+                      <tr>
+                      <td><%=mp.numero_affiliation%></td>
+                      <td><%=mp.prenom_salarie%></td>
+                      <td><%=mp.nom_salarie%></td>
+                      <td><%=mp.qualification_professionnelle_salarie%></td>
+                      <td><%=mp.situation_matrimoniale_salarie%></td>
+                        <td style="width: 75px">
+                          <%= link_to 'détails', admin_maladie_professionnelle_path(mp), class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <td style="width: 75px">
+                          <%= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <!--td width="75px">
+                          <%#= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td-->
+                        <td style="width: 75px">
+                          <%#= link_to 'supprimer', '#', method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+                <%= paginate @liste_info%>
+                  <!-- END -->
+              </div>
+              <div id="instruction" class="tab-pane fade">
+                  <!-- START Liste en instruction-->
+                  <% @liste_instruction=MaladieProfessionnelle.en_instruction.page(params[:page]).per(100)%>
+                  <%= paginate @liste_instruction %>
+                  <div class="table-responsive" style="margin-top: 20px;">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">Numero Affiliation</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Qualification professionnelle</th>
+                      <th scope="col">Situation Matrimoniale</th>
+                      <th colspan="3"></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @liste_instruction.each do |mp| %>
+                      <tr>
+                      <td><%=mp.numero_affiliation%></td>
+                      <td><%=mp.prenom_salarie%></td>
+                      <td><%=mp.nom_salarie%></td>
+                      <td><%=mp.qualification_professionnelle_salarie%></td>
+                      <td><%=mp.situation_matrimoniale_salarie%></td>
+                        <td style="width: 75px">
+                          <%= link_to 'détails', admin_maladie_professionnelle_path(mp), class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <td style="width: 75px">
+                          <%= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <!--td width="75px">
+                          <%#= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td-->
+                        <td style="width: 75px">
+                          <%#= link_to 'supprimer', '#', method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+                <%= paginate @liste_instruction%>
+              </div>
+              <div id="accepte" class="tab-pane fade">
+                <!-- START Liste accepte -->
+                <% @liste_accepte=MaladieProfessionnelle.accepte.page(params[:page]).per(100)%>
+                  <%= paginate @liste_accepte %>
+                  <div class="table-responsive" style="margin-top: 20px;">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">Numero Affiliation</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Qualification professionnelle</th>
+                      <th scope="col">Situation Matrimoniale</th>
+                      <th colspan="3"></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @liste_accepte.each do |mp| %>
+                      <tr>
+                      <td><%=mp.numero_affiliation%></td>
+                      <td><%=mp.prenom_salarie%></td>
+                      <td><%=mp.nom_salarie%></td>
+                      <td><%=mp.qualification_professionnelle_salarie%></td>
+                      <td><%=mp.situation_matrimoniale_salarie%></td>
+                      <td style="width: 75px">
+                        <%= link_to 'détails', admin_maladie_professionnelle_path(mp), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                        <td style="width: 75px">
+                          <%= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <!--td width="75px">
+                          <%#= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td-->
+                        <td style="width: 75px">
+                          <%#= link_to 'supprimer', '#', method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+                <%= paginate @liste_accepte%>
+                <!-- END -->
+              </div>
+              <div id="rejete" class="tab-pane fade">
+                <!-- START Liste rejete -->
+                <% @liste_rejete=ArretTravail.rejete.page(params[:page]).per(100)%>
+                  <%= paginate @liste_rejete %>
+                  <div class="table-responsive" style="margin-top: 20px;">
+                  <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">Numero Affiliation</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Qualification professionnelle</th>
+                      <th scope="col">Situation Matrimoniale</th>
+                      <th colspan="3"></th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @liste_rejete.each do |mp| %>
+                      <tr>
+                      <td><%=mp.numero_affiliation%></td>
+                      <td><%=mp.prenom_salarie%></td>
+                      <td><%=mp.nom_salarie%></td>
+                      <td><%=mp.qualification_professionnelle_salarie%></td>
+                      <td><%=mp.situation_matrimoniale_salarie%></td>
+                        <td style="width: 75px">
+                          <%= link_to 'détails', admin_maladie_professionnelle_path(mp), class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <td style="width: 75px">
+                          <%= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                        <!--td width="75px">
+                          <%#= link_to 'modifier', '#', class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td-->
+                        <td style="width: 75px">
+                          <%#= link_to 'supprimer', '#', method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+                <%= paginate @liste_rejete%>
+                <!-- END -->
+              </div>
+            </div>
+          </div>
+          </div>
+          </div>
+        </div>
+    </div>

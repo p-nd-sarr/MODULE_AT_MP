@@ -1,0 +1,52 @@
+<%= content_for :titre_page, 'Conjoints' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour à accueil', allocataire_root_path, class: ' btn btn-white btn-sm fa fa-arrow-left' %>
+  <%= link_to ' Ajouter un conjoint', new_allocataire_conjoint_path, class: ' btn btn-success btn-sm fa fa-plus' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-title">
+      <h3>Liste des conjoints</h3>
+    </div>
+    <div class="ibox-content">
+    <div class="row">
+      <% if @conjoints.count.zero? %>
+        <div class="col-lg-12" style="margin:30px">
+          <h1> La liste des conjoints est vide !!! <h1>
+        </div>
+      <% else %>
+      <% @conjoints.each do |conjoint| %>
+        <div class="col-lg-3">
+          <div class="contact-box center-version">
+
+            <%= link_to [:allocataire, conjoint] do %>
+              <h3 class="m-b-xs"><strong><%= conjoint.full_name %></strong></h3>
+              <br>
+              <p>
+                Marié le <%= l conjoint.date_mariage %> <br>
+                Né le <%= l conjoint.date_naissance %> <br>
+                <br>
+                <span class='label label-info'><%= Conjoint.human_enum_name(:etat, conjoint.etat) %></span> <br>
+              </p>
+            <% end %>
+            <div class="contact-box-footer">
+              <div class="m-t-xs btn-group">
+                <% if conjoint.can_be_edited? %>
+                  <%= link_to 'modifier', edit_allocataire_conjoint_path(conjoint), class: 'btn btn-outline btn-primary btn-xs' %>
+            
+                  <%= link_to 'supprimer', [:allocataire, conjoint], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                <% end %>
+            
+              </div>
+            </div>
+
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div> <!-- end row -->
+</div>
+</div>
+</div>

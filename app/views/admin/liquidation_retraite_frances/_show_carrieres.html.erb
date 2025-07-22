@@ -1,0 +1,5 @@
+<h4>Nom et Prénom: <%= @demande_liquidation.allocataire.try(:full_name) %></h4>
+<%= render 'carrieres/liste',
+           carrieres: @demande_liquidation.carrieres,
+           show_employeur: true,
+           show_employe: false %> %>

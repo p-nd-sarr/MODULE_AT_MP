@@ -1,0 +1,51 @@
+<div class="modal inmodal" id="SoumissionSalaireModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Soumission de la demande de consolidation
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <table class="table table-condensed table-hover">
+          <tr>
+            
+            <td><strong>Votre dossier est prét à être soumis</strong></td>
+          </tr>
+
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= link_to 'Valider la soumission', admin_at_rente_famille_soumettre_path(@at_rente_famille), class: 'btn btn-primary', id: 'soummetre_valide' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#soummetre_valide").show();
+        var all_checkboxes = $('#SoumissionModal input[type="checkbox"]');
+
+        $(".modal-body").change(function(){
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#soummetre_valide").show();
+            }else{
+                $("#soummetre_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>

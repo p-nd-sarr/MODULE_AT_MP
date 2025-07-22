@@ -1,0 +1,66 @@
+<div class="modal inmodal" id="avocat_huissier_form<%= object.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-user modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Ajouter Avocat / Huissier
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for([:admin, object], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <%= f.select :type_intervenant,
+                             AvocatsHuissier::TYPE_INTERVENANT.keys.collect { |type_intervenant| [AvocatsHuissier.human_enum_name(:type_intervenant, type_intervenant), type_intervenant] }, label: "Type intervenant", required: true %>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6">
+                <%= f.text_field :prenom, label: "Prénom", required: true %>
+              </div>
+
+              <div class="col-sm-6">
+                <%= f.text_field :nom, label: "Nom", required: true %>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <%= f.text_field :adresse, label: "Adresse" %>
+              </div>
+
+              <div class="col-sm-6">
+                <%= f.number_field :nin, label: "Numéro pièce" %>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <%= f.phone_field :tel, label: "Téléphone" %>
+              </div>
+
+              <div class="col-sm-6">
+                <%= f.email_field :email, label: "Email" %>
+              </div>
+            </div>
+
+            <%= f.hidden_field :dossier_juridique_id, value: @dossier_juridique.id %>
+
+            <div class="hr-line-dashed"></div>
+            <br>
+
+            <div class="modal-footer form-group">
+              <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+              <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

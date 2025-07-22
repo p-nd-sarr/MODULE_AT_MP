@@ -1,0 +1,429 @@
+<%= content_for :titre_page, 'Reversion Veuve / Conv. Franco-Sénégalaise  ' %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.gestionnaire_compte_allocataire? %>
+    <%= (link_to 'Ajouter une demande', new_admin_cfs_reversion_veuve_path, class: 'btn btn-primary btn-sm') if current_user.can_allocataire? %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Résidents Au Sénégal </h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-success font-bold">
+            0%
+            <i class="fa fa-bolt"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Résidents En France </h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-info font-bold">
+            0%
+            <i class="fa fa-level-up"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Courrier Ouvert</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-info font-bold">
+            0%
+            <i class="fa fa-level-up"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Evolution des demandes</h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-9">
+              <%= area_chart CfsReversionVeuve.group(:workflow_state).group_by_day(:created_at).count, height: "200px" %>
+            </div>
+            <div class="col-lg-3">
+              <ul class="stat-list">
+                <li>
+                  <h2 class="no-margins"><%= CfsReversionVeuve.with_soumis_state.count%></h2>
+                  <small>Soumis</small>
+                  <div class="stat-percent">
+                    <%= CfsReversionVeuve.count.zero? ? 0 : CfsReversionVeuve.with_soumis_state.count * 100 /CfsReversionVeuve.count %>%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%= CfsReversionVeuve.count.zero? ? 0 : CfsReversionVeuve.with_soumis_state.count * 100 /CfsReversionVeuve.count %>%" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins"><%= CfsReversionVeuve.with_dossier_valide_state.count%></h2>
+                  <small>Validé</small>
+                  <div class="stat-percent">
+                    <%= CfsReversionVeuve.count.zero? ? 0 : CfsReversionVeuve.with_dossier_valide_state.count * 100 /CfsReversionVeuve.count %>%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%= CfsReversionVeuve.count.zero? ? 0 : CfsReversionVeuve.with_dossier_valide_state.count * 100 /CfsReversionVeuve.count %>%" class="progress-bar">
+                    </div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins"><%= CfsReversionVeuve.with_dossier_rejete_state.count%></h2>
+                  <small>Rejeté</small>
+                  <div class="stat-percent">
+                    <%= CfsReversionVeuve.count.zero? ? 0 : CfsReversionVeuve.with_dossier_rejete_state.count * 100 /CfsReversionVeuve.count %>%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%= CfsReversionVeuve.count.zero? ? 0 : CfsReversionVeuve.with_dossier_rejete_state.count * 100 /CfsReversionVeuve.count %>%" class="progress-bar">
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="m-t-md">
+            <small class="float-right" style="float: right;">
+              <i class="fa fa-clock-o"></i>
+              Update on 16.12.2020
+            </small>
+            <small>
+              <strong>Analysis of sales</strong>
+              the value has been change over time and last month reach a level
+            </small>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -50px; min-height: 300px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>Dossiers De Prestation Extérieure / CFS</h5>
+          <span class="label label-warning">Total dossier <%= CfsReversionVeuve.count %></span>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-sm-7 m-b-xs">
+              <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                <label class="btn btn-sm btn-white active" data-toggle="pill" href="#tous">
+                  <input type="radio" id="option1" name="options"> Tous
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#valide">
+                  <input type="radio" id="option2" name="options"> Validés </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#rejete">
+                  <input type="radio" id="option3" name="options"> Rejetés
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_validation">
+                  <input type="radio" id="option4" name="options"> En attente validation
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_soumission">
+                  <input type="radio" id="option5" name="options"> En attente soumission
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#reversion">
+                  <input type="radio" id="option6" name="options"> De reversion </label>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <%#= search_form_for @q, url: admin_cfs_reversion_veuves_path do |f| %>
+<!--                <div class="input-group mb-3" style="float: right;">-->
+                  <%#= f.search_field :prenom_or_nom_or_numero_dossier_cont, class: "form-control form-control-sm", placeholder: "Search", style: "width:150px; position: relative; z-index: 1" %>
+<!--                  <div class="input-group-append" style="float: right; position:relative; z-index: 2">-->
+                    <%#= f.submit "Go!", :class => "btn btn-sm btn-primary", :style => "height:34px" %>
+<!--                  </div>-->
+<!--                </div>-->
+              <%# end %>
+            </div>
+            <% if current_user.gestionnaire_compte_allocataire? %>
+            <div class="col-sm-2">
+              <%= link_to ' AJOUTER', new_admin_cfs_reversion_veuve_path, class: 'fa fa-plus btn btn-w-m btn-outline btn-success', style: 'height: 34px' %>
+            </div>
+            <% end %>
+          </div>
+          <div class="tab-content">
+            <div id="tous" class="tab-pane fade in active">
+              <%= render 'liste' %>
+            </div>
+            <div id="valide" class="tab-pane fade">
+              <!--   START liste valide  -->
+              <% @cfs_reversion_veuve_vals = CfsReversionVeuve.with_dossier_valide_state.page(params[:page]).per(100) %>
+              <%= paginate @cfs_reversion_veuve_vals %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° dossier</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Date de naissance</th>
+                  <th scope="col">Lieu de naissance</th>
+                  <th scope="col">Adresse résidence</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th colspan="3"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @cfs_reversion_veuve_vals.each do |cfs_reversion_veuve| %>
+                  <tr>
+                    <td><%= cfs_reversion_veuve.numero_dossier %></td>
+                    <td><%= cfs_reversion_veuve.prenom %></td>
+                    <td><%= cfs_reversion_veuve.nom %></td>
+                    <td><%= l cfs_reversion_veuve.date_naissance %></td>
+                    <td><%= cfs_reversion_veuve.lieu_naissance %></td>
+                    <td><%= cfs_reversion_veuve.adresse_residence %></td>
+                    <td><%= CfsReversionVeuve.human_enum_name(:mode_paiement, cfs_reversion_veuve.mode_paiement) unless cfs_reversion_veuve.mode_paiement.nil? %></td>
+
+                    <td width="75px">
+                      <%= (link_to 'Details', admin_cfs_reversion_veuve_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                    </td>
+                    <% if cfs_reversion_veuve.soumis? and current_user.chef_service_allocation? %>
+                      <td width="75px">
+                        <%= (link_to 'Affecter', admin_cfs_reversion_veuve_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.traitement_en_cours? %>
+                      <td width="75px">
+                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#affecterModal" id="affecter_id" disabled>
+                          Deja Affecté
+                        </button>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.date_soumission? %>
+                      <td> <%= link_to 'Récépissé', admin_cfs_reversion_veuve_show_facture_path(cfs_reversion_veuve.id, format: :pdf), class: "btn btn-outline-success my-2 my-sm-0", target: '_blank' %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @cfs_reversion_veuve_vals %>
+
+              <!-- END -->
+            </div>
+            <div id="rejete" class="tab-pane fade">
+              <!--   START liste rejeté  -->
+              <% @cfs_reversion_veuve_rejetes = CfsReversionVeuve.with_dossier_rejete_state.page(params[:page]).per(100) %>
+              <%= paginate @cfs_reversion_veuve_rejetes %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Date de naissance</th>
+                  <th scope="col">Lieu de naissance</th>
+                  <th scope="col">Adresse residence</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th colspan="3"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @cfs_reversion_veuve_rejetes.each do |cfs_reversion_veuve| %>
+                  <tr>
+                    <td>
+                      <% if cfs_reversion_veuve.num_dossier.nil? %>
+                        <%= cfs_reversion_veuve.numero_dossier %>
+                      <% else %>
+                        <%= cfs_reversion_veuve.num_dossier %>
+                      <% end %>
+                    </td>
+                    <td><%= cfs_reversion_veuve.prenom %></td>
+                    <td>
+                      <%= cfs_reversion_veuve.nom %> <%= cfs_reversion_veuve.nom_jeune_fille if cfs_reversion_veuve.feminin? %>
+                    </td>
+                    <td><%= l cfs_reversion_veuve.date_naissance %></td>
+                    <td><%= cfs_reversion_veuve.lieu_naissance %></td>
+                    <td><%= cfs_reversion_veuve.adresse_residence %></td>
+                    <td><%= CfsReversionVeuve.human_enum_name(:mode_paiement, cfs_reversion_veuve.mode_paiement) unless cfs_reversion_veuve.mode_paiement.nil? %></td>
+
+                    <td width="75px">
+                      <%= (link_to 'Details', admin_liquidation_retraite_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                    </td>
+                    <% if cfs_reversion_veuve.soumis? and current_user.chef_service_allocation? %>
+                      <td width="75px">
+                        <%= (link_to 'Affecter', admin_liquidation_retraite_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.traitement_en_cours? %>
+                      <td width="75px">
+                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#affecterModal" id="affecter_id" disabled>Deja
+                          Affecter
+                        </button>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.date_soumission? %>
+                      <td> <%= link_to 'Récépissé', admin_liquidation_retraite_show_facture_path(cfs_reversion_veuve.id, format: :pdf), class: "btn btn-outline-success my-2 my-sm-0", target: '_blank' %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @cfs_reversion_veuve_rejetes %>
+
+              <!-- END -->
+            </div>
+            <div id="attente_validation" class="tab-pane fade">
+              <!--   START liste en attente de validation  -->
+              <% @cfs_reversion_veuve_attente_vals = CfsReversionVeuve.with_soumis_state.page(params[:page]).per(100) %>
+              <%= paginate @cfs_reversion_veuve_attente_vals %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° dossier</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Date de naissance</th>
+                  <th scope="col">Lieu de naissance</th>
+                  <th scope="col">Adresse residence</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th colspan="3"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @cfs_reversion_veuve_attente_vals.each do |cfs_reversion_veuve| %>
+                  <tr>
+                    <td><%= cfs_reversion_veuve.numero_dossier %></td>
+                    <td><%= cfs_reversion_veuve.prenom %></td>
+                    <td>
+                      <%= cfs_reversion_veuve.nom %> <%= cfs_reversion_veuve.nom_jeune_fille if cfs_reversion_veuve.feminin? %>
+                    </td>
+                    <td><%= l cfs_reversion_veuve.date_naissance %></td>
+                    <td><%= cfs_reversion_veuve.lieu_naissance %></td>
+                    <td><%= cfs_reversion_veuve.adresse_residence %></td>
+                    <td><%= CfsReversionVeuve.human_enum_name(:mode_paiement, cfs_reversion_veuve.mode_paiement) unless cfs_reversion_veuve.mode_paiement.nil? %></td>
+
+                    <td width="75px">
+                      <%= (link_to 'Details', admin_liquidation_retraite_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                    </td>
+                    <% if cfs_reversion_veuve.soumis? and current_user.chef_service_allocation? %>
+                      <td width="75px">
+                        <%= (link_to 'Affecter', admin_liquidation_retraite_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.traitement_en_cours? %>
+                      <td width="75px">
+                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#affecterModal" id="affecter_id" disabled>Deja
+                          Affecter
+                        </button>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.date_soumission? %>
+                      <td> <%= link_to 'Récépissé', admin_liquidation_retraite_show_facture_path(cfs_reversion_veuve.id, format: :pdf), class: "btn btn-outline-success my-2 my-sm-0", target: '_blank' %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @cfs_reversion_veuve_attente_vals %>
+
+              <!-- END -->
+            </div>
+            <div id="attente_soumission" class="tab-pane fade">
+              <!--   START liste attente soumission  -->
+              <% @cfs_reversion_veuve_attente_soumis = CfsReversionVeuve.with_creation_state.page(params[:page]).per(100) %>
+              <%= paginate @cfs_reversion_veuve_attente_soumis %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° dossier</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Date de naissance</th>
+                  <th scope="col">Lieu de naissance</th>
+                  <th scope="col">Adresse residence</th>
+                  <th scope="col">Mode de paiement</th>
+                  <th colspan="3"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @cfs_reversion_veuve_attente_soumis.each do |cfs_reversion_veuve| %>
+                  <tr>
+                    <td><%= cfs_reversion_veuve.numero_dossier %></td>
+                    <td><%= cfs_reversion_veuve.prenom %></td>
+                    <td>
+                      <%= cfs_reversion_veuve.nom %> <%= cfs_reversion_veuve.nom_jeune_fille if cfs_reversion_veuve.feminin? %>
+                    </td>
+                    <td><%= l cfs_reversion_veuve.date_naissance %></td>
+                    <td><%= cfs_reversion_veuve.lieu_naissance %></td>
+                    <td><%= cfs_reversion_veuve.adresse_residence %></td>
+                    <td><%= CfsReversionVeuve.human_enum_name(:mode_paiement, cfs_reversion_veuve.mode_paiement) unless cfs_reversion_veuve.mode_paiement.nil? %></td>
+
+                    <td width="75px">
+                      <%= (link_to 'Details', admin_liquidation_retraite_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                    </td>
+                    <% if cfs_reversion_veuve.soumis? and current_user.chef_service_allocation? %>
+                      <td width="75px">
+                        <%= (link_to 'Affecter', admin_liquidation_retraite_path(cfs_reversion_veuve), class: 'btn btn-outline btn-primary btn-xs') %>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.traitement_en_cours? %>
+                      <td width="75px">
+                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#affecterModal" id="affecter_id" disabled>Deja
+                          Affecter
+                        </button>
+                      </td>
+                    <% end %>
+
+                    <% if cfs_reversion_veuve.date_soumission? %>
+                      <td> <%= link_to 'Récépissé', admin_liquidation_retraite_show_facture_path(cfs_reversion_veuve.id, format: :pdf), class: "btn btn-outline-success my-2 my-sm-0", target: '_blank' %></td>
+                    <% end %>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @cfs_reversion_veuve_attente_soumis %>
+
+              <!-- END -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

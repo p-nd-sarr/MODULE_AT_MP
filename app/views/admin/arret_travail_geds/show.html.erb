@@ -1,0 +1,155 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-lg-10">
+    <h2>Détails de la déclaration d'accident de travail</h2>
+    <ol class="breadcrumb">
+      <li>
+        <%= link_to 'Accueil', admin_root_path %>
+      </li>
+      <li>
+        <%= link_to 'Accidents de Travail - Origine GED', admin_arret_travail_geds_path %>
+      </li>
+      <li class="active">
+        <strong>Détails</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Informations sur la déclaration</h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-md-6">
+              <h3>Informations sur l'employeur</h3>
+              <dl class="dl-horizontal">
+                <dt>Raison sociale:</dt>
+                <dd><%= @arret_travail_ged.raison_sociale_employeur %></dd>
+                <dt>Numéro employeur:</dt>
+                <dd><%= @arret_travail_ged.numero_employeur %></dd>
+                <dt>Adresse:</dt>
+                <dd><%= @arret_travail_ged.adresse_employeur %></dd>
+                <dt>Email:</dt>
+                <dd><%= @arret_travail_ged.email_employeur %></dd>
+                <dt>Téléphone:</dt>
+                <dd><%= @arret_travail_ged.telephone_employeur %></dd>
+                <dt>Activité principale:</dt>
+                <dd><%= @arret_travail_ged.activite_principale_entreprise %></dd>
+              </dl>
+            </div>
+
+            <div class="col-md-6">
+              <h3>Informations sur le salarié</h3>
+              <dl class="dl-horizontal">
+                <dt>Numéro d'affiliation:</dt>
+                <dd><%= @arret_travail_ged.numero_affiliation %></dd>
+                <dt>Type de pièce:</dt>
+                <dd><%= @arret_travail_ged.type_de_piece.humanize %></dd>
+                <dt>NIN:</dt>
+                <dd><%= @arret_travail_ged.nin_salarie %></dd>
+                <dt>Nom:</dt>
+                <dd><%= @arret_travail_ged.nom_salarie %></dd>
+                <dt>Prénom:</dt>
+                <dd><%= @arret_travail_ged.prenom_salarie %></dd>
+                <dt>Sexe:</dt>
+                <dd><%= @arret_travail_ged.sexe.humanize %></dd>
+                <dt>Date de naissance:</dt>
+                <dd><%= @arret_travail_ged.date_de_naissance_salarie&.strftime('%d/%m/%Y') %></dd>
+                <dt>Nationalité:</dt>
+                <dd><%= @arret_travail_ged.nationalite_salarie.humanize %></dd>
+                <dt>Adresse:</dt>
+                <dd><%= @arret_travail_ged.adresse_domiciliaire_salarie %></dd>
+                <dt>Téléphone:</dt>
+                <dd><%= @arret_travail_ged.telephone_salarie %></dd>
+                <dt>Date d'embauche:</dt>
+                <dd><%= @arret_travail_ged.date_embauche_salarie&.strftime('%d/%m/%Y') %></dd>
+                <dt>Type de contrat:</dt>
+                <dd><%= @arret_travail_ged.type_de_contrat_travail_salarie.humanize %></dd>
+                <dt>Qualification professionnelle:</dt>
+                <dd><%= @arret_travail_ged.qualification_professionnelle_salarie.humanize %></dd>
+              </dl>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-6">
+              <h3>Informations sur l'accident</h3>
+              <dl class="dl-horizontal">
+                <dt>Date de l'accident:</dt>
+                <dd><%= @arret_travail_ged.date_accident&.strftime('%d/%m/%Y') %></dd>
+                <dt>Début de l'arrêt de travail:</dt>
+                <dd><%= @arret_travail_ged.debut_arret_travail&.strftime('%d/%m/%Y') %></dd>
+                <dt>Lieu de l'accident:</dt>
+                <dd><%= @arret_travail_ged.lieu_accident.humanize %></dd>
+                <dt>Accident mortel:</dt>
+                <dd><%= @arret_travail_ged.accident_mortel ? 'Oui' : 'Non' %></dd>
+                <dt>Agent matériel:</dt>
+                <dd><%= @arret_travail_ged.agent_materiel.humanize %></dd>
+                <dt>Nature du travail au moment de l'accident:</dt>
+                <dd><%= @arret_travail_ged.nature_du_travail_au_moment_accident %></dd>
+                <dt>Circonstances:</dt>
+                <dd><%= @arret_travail_ged.cause_circonstances_acccident %></dd>
+              </dl>
+            </div>
+
+            <div class="col-md-6">
+              <h3>Informations sur le déclarant</h3>
+              <dl class="dl-horizontal">
+                <dt>Déclarant:</dt>
+                <dd><%= @arret_travail_ged.declarant.humanize %></dd>
+                <dt>Prénom du déclarant:</dt>
+                <dd><%= @arret_travail_ged.prenom_declarant %></dd>
+                <dt>Nom du déclarant:</dt>
+                <dd><%= @arret_travail_ged.nom_declarant %></dd>
+                <dt>Adresse du déclarant:</dt>
+                <dd><%= @arret_travail_ged.adresse_declarant %></dd>
+                <dt>Téléphone du déclarant:</dt>
+                <dd><%= @arret_travail_ged.telephone_declarant %></dd>
+                <dt>Lieu de déclaration:</dt>
+                <dd><%= @arret_travail_ged.lieu_declaration %></dd>
+                <dt>Qualité du déclarant:</dt>
+                <dd><%= @arret_travail_ged.qualite_declarant %></dd>
+                <dt>Date de déclaration:</dt>
+                <dd><%= @arret_travail_ged.date_declaration&.strftime('%d/%m/%Y') %></dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <h3>Informations GED</h3>
+              <dl class="dl-horizontal">
+                <dt>Identifiant GED:</dt>
+                <dd><%= @arret_travail_ged.id_item %></dd>
+                <dt>Lien vers les documents:</dt>
+                <dd>
+                  <%= link_to 'Ouvrir dans Laserfiche', "http://192.168.125.242/laserfiche/Browse.aspx?db=CSS-IPRES#?id=#{@arret_travail_ged.id_item}", target: '_blank', class: 'btn btn-info btn-xs' %>
+                </dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="hr-line-dashed"></div>
+              <% if @arret_travail_ged.peut_traiter?(current_user) %>
+              <div class="btn-group">
+                <%= link_to 'Modifier', edit_admin_arret_travail_ged_path(@arret_travail_ged), class: 'btn btn-white' %>
+                <%= link_to 'Retour', admin_arret_travail_geds_path, class: 'btn btn-white' %>
+                <%= link_to 'Supprimer', admin_arret_travail_ged_path(@arret_travail_ged), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer cette demande ?' }, class: 'btn btn-danger' %>
+              </div>
+              <div class="btn-group">
+                <%= link_to 'Migrer en production', admin_arret_travail_ged_migrer_prod_path(@arret_travail_ged), data: { confirm: 'Êtes-vous sûr de vouloir migrer cette demande en production ?' }, class: 'btn btn-green' %>                
+              </div>
+              <% end %>                
+           </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

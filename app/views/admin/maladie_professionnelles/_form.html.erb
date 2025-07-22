@@ -1,0 +1,100 @@
+<%= bootstrap_form_for([:admin, @demande_maladie_professionnelle], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="ibox ">
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-sm-7 b-r">
+          <div class="col-sm-12">
+            <%= f.text_field :numero_affiliation, label: 'Numéro affiliation' %>
+
+            <%= f.text_field :prenom_salarie, label:'Prénom salarié' %>
+            <%= f.text_field :nom_salarie, label:'Nom salarié' %>
+            <%= f.date_select :date_de_naissance_salarie, label: "Date de naissance",
+                              start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+             <%= f.select :qualification_professionnelle_salarie, 
+            MaladieProfessionnelle::QUALIFICATION_PROFESSIONNELLE.keys.collect{|item| [item, item]}, label: 'Qualification professionnelle' %>
+            <%= f.text_field :adresse_domiciliaire_salarie, label:'Adresse domiciliaire' %>
+
+          </div>
+          <div class="col-sm-12 form-group" style="text-align: right;">
+           <hr>
+           
+            <%= link_to 'Annuler', (@demande_maladie_professionnelle.persisted? ? [:admin, @demande_maladie_professionnelle] : admin_maladie_professionnelles_path), class: 'btn btn-white' %>
+            <%= f.button 'Valider', class: 'btn btn-primary' %>
+          
+          </div>
+        </div>
+        <div class="col-sm-5"><h4>Vous avez besoin d'éclairessissements ?</h4>
+          <p>Retour à la page d'informations</p>
+          <p class="text-center">
+            <a href=""><i class="fa fa-sign-in big-icon"></i></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+          load_infos_participant();
+          load_conjoints();
+
+          $('#maladie_professionnelle_numero_affiliation').change(function() {
+             load_infos_participant();
+              load_conjoints();
+          });
+
+          function load_infos_participant() {
+              var numero_affiliation = $('#maladie_professionnelle_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function( data ) {
+                      if(data){
+                          $("#maladie_professionnelle_prenom_salarie").val(data.prenom);
+                          $("#maladie_professionnelle_nom_salarie").val(data.nom);
+                      }
+                      else{
+                          $("#maladie_professionnelle_prenom_salarie").val('');
+                          $("#maladie_professionnelle_nom_salarie").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#maladie_professionnelle_prenom_salarie").val('');
+                      $("#maladie_professionnelle_nom_salarie").val('');
+                  }
+              });
+          }
+
+          function load_conjoints() {
+              var numero_affiliation = $('#maladie_professionnelle_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/conjoints/valides.json?numero_affiliation=" + numero_affiliation,
+                  method: 'get',
+                  dataType: "json",
+                  success: function( data ) {
+                      if(data) {
+                          html = '<option value=""></option>';
+
+                          $.each(data, function(key, conjoint) {
+                              html += '<option value="' + conjoint.id + '">' + conjoint.full_name + '</option>';
+                          });
+
+                          $("#maladie_professionnelle_conjoint_id").html(html);
+                      }
+                      else{
+                          $("#maladie_professionnelle_conjoint_id").html('<option value=""></option>');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#maladie_professionnelle_conjoint_id").html('<option value=""></option>');
+                  }
+              });
+          }
+      })
+  </script>
+<% end %>

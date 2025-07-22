@@ -1,0 +1,51 @@
+<%= content_for :titre_page, "Détails salarié" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_deces_salaries_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_deces_salary_path(@admin_deces_salary), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Enregistrer un nouveau décés', new_admin_deces_salary_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Numero affiliation:</strong>
+              <%= @admin_deces_salary.numero_affiliation %>
+            </p>
+
+            <p>
+              <strong>Prenom:</strong>
+              <%= @admin_deces_salary.prenom %>
+            </p>
+
+            <p>
+              <strong>Nom:</strong>
+              <%= @admin_deces_salary.nom %>
+            </p>
+
+            <p>
+              <strong>Date deces:</strong>
+              <%= @admin_deces_salary.date_deces %>
+            </p>
+
+            <p>
+              <strong>Numero piece:</strong>
+              <%= @admin_deces_salary.numero_piece %>
+            </p>
+
+            <p>
+              <strong>Justificatif décés:</strong>
+              <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @admin_deces_salary.certificat_deces, target: :_blank if @admin_deces_salary.certificat_deces.attached?%>
+              <%#= link_to image_tag(@admin_deces_salary.certificat_deces.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @admin_deces_salary.certificat_deces, target: :_blank if @admin_deces_salary.certificat_deces.attached?%>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

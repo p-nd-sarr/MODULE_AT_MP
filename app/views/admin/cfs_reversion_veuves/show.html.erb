@@ -1,0 +1,603 @@
+<%= content_for :titre_page, "Détails Dossier Prestation Ext. / CFS" %>
+<%#= content_for :titre_page, "Détails cfs_reversion_veuve [#{PrestationExtFrance.human_enum_name(:etat, @cfs_reversion_veuve.etat)}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Sens Convention : <%= "#{CfsReversionVeuve.human_enum_name(:sens_convention, @cfs_reversion_veuve.sens_convention)}" %>
+  <br>
+  Etat du dossier : <%= "#{@cfs_reversion_veuve.workflow_state}" %>
+  <% unless @cfs_reversion_veuve.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @cfs_reversion_veuve.date_soumission}" %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+
+  <% if @cfs_reversion_veuve.can_affecte_gestionnaire? and @cfs_reversion_veuve.affectation_allocataire.nil? and current_user.chef_section_liquidation?
+  %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+      Affecter la Demande Allocation
+    </button>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.instruit? and @cfs_reversion_veuve.affectation_salarie.nil? and current_user.chef_service_cotisation?
+  %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-salarie" id="affecter_salarie_id">
+      Affecter Validation Fiche Carrière
+    </button>
+  <% end %>
+
+  <%= link_to 'Retour', admin_cfs_reversion_veuves_path, class: 'btn btn-white btn-sm' %>
+  <% if @cfs_reversion_veuve.creation? and @cfs_reversion_veuve.ajoute_par == current_user %>
+    <%= link_to 'Editer', edit_admin_cfs_reversion_veuve_path(@cfs_reversion_veuve), class: 'btn btn-white btn-sm' %>
+    <%= (link_to 'Supprimer', [:admin, @cfs_reversion_veuve], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-danger btn-sm') %>
+
+    <% if @cfs_reversion_veuve.pret_pour_soumission? and current_user.can_allocataire? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre</button>
+    <% end %>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.soumis? %>
+    <%= (link_to 'Instruire Dossier', admin_cfs_reversion_veuve_instruire_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_instruction? %>
+
+    <% if current_user.chef_section_instruction? %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right;">
+        Retourner Dossier
+      </button>
+    <% end %>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.instruit? and @cfs_reversion_veuve.affecter_salarie == current_user and (@cfs_reversion_veuve.carrieres_prestation.traite.size == @cfs_reversion_veuve.carrieres_prestation.size) %>
+    <%= link_to "Soumettre la validation des carrières", admin_cfs_reversion_veuve_valider_activite_prof_valid_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right; margin-top: 5px;">
+      Retourner Dossier
+    </button>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.carriere_soumis? and (@cfs_reversion_veuve.carrieres_prestation.traite.size == @cfs_reversion_veuve.carrieres_prestation.size) %>
+    <%= (link_to 'Valider Carrière', admin_cfs_reversion_veuve_cotisation_valide_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_service_cotisation? %>
+    <% if current_user.chef_service_cotisation? %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right; margin-left: 3px;">
+        Retourner Dossier
+      </button>
+    <% end %>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.cotisation_valide? and @cfs_reversion_veuve.affecter_allocataire == current_user %>
+    <%= (link_to "Soumettre la validation du tableau", admin_cfs_reversion_veuve_valider_recapitulatif_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @cfs_reversion_veuve.affecter_allocataire.nil? %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right; margin-top: 5px;">
+      Retourner Dossier
+    </button>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.recap_soumis? %>
+    <%= (link_to 'Valider Tableau Recapitulatif', admin_cfs_reversion_veuve_liquidation_valide_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_liquidation? %>
+    <% if current_user.chef_section_liquidation? %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right;margin-top: 5px;">
+        Retourner Dossier
+      </button>
+    <% end %>
+  <% end %>
+
+  <% if @cfs_reversion_veuve.liquidation_valide? and current_user.chef_service_allocation? %>
+    <%= (link_to 'Valider', admin_cfs_reversion_veuve_dossier_valide_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @cfs_reversion_veuve.traite? %>
+    <%= (link_to 'Rejeter', admin_cfs_reversion_veuve_rejeter_path(@cfs_reversion_veuve), class: 'btn btn-danger btn-sm') unless @cfs_reversion_veuve.traite? %>
+    <% unless @cfs_reversion_veuve.traite? %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right; margin-left: 3px;">
+        Retourner Dossier
+      </button>
+
+    <% end %>
+  <% end %>
+  <%# if current_user.comptable? and not @cfs_reversion_veuve.attente_paiement? %>
+  <!--    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#PaiementModal" id="soumettre_id">Valider Paiement</button>-->
+  <%# end %>
+
+<% end %>
+
+<!-- Retour du dossier de liquidation -->
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif du retour du dossier de Prestation Ext. / CFS</h4>
+      </div>
+      <%= bootstrap_form_for(@cfs_reversion_veuve, url: admin_cfs_reversion_veuve_retourner_process_path(@cfs_reversion_veuve)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif_rejet, label: 'Motif' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<!-- Fin retour dossier -->
+
+<div class="wrapper wrapper-content">
+
+  <div class="row">
+    <p>
+      <span style="color: red"><%= (" Motif Rejet : :  #{@cfs_reversion_veuve.motif_rejet} ") unless @cfs_reversion_veuve.motif_rejet.nil? %> </span>
+    </p>
+    <div class="progressbar-wrapper">
+      <ul class="progressbar">
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :creation %>">Création</li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :soumis %>">Soumission</li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :instruit %>">Instruction</li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :carriere_soumis %>">Soumission Carrière
+        </li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :cotisation_valide %>">Validation
+          Carrière
+        </li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :recap_soumis %>">Soumission Recap</li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :liquidation_valide %>">Validation Recap
+        </li>
+        <li class="<%= ("active") if @cfs_reversion_veuve.current_state >= :dossier_valide %>">Validation Dossier</li>
+      </ul>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <h5 class="text-warning" style="font-family: Georgia;">
+                N° Dossier : <%= @cfs_reversion_veuve.numero_dossier %>
+              </h5>
+
+              <% if @cfs_reversion_veuve.creation? %>
+                <% if @cfs_reversion_veuve.pret_pour_soumission? %>
+                  <p class="text-info">
+                    Votre dossier est prêt pour être enregistré
+                  </p>
+                <% else %>
+                  <p class="text-warning">
+                    Merci de valider les informations sur les différents onglets pour pouvoir enregistrer le dossier
+                  </p>
+                <% end %>
+              <% end %>
+
+
+              <!-- Historique du dossier de liquidation -->
+              <button type="button" class="btn btn-success btn-outline" data-toggle="modal" data-target="#history" style="float: right;">
+                <span class="fa fa-history"></span> Historiques
+              </button>
+              <div class="modal inmodal" id="history" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                  <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                        <span class="sr-only">Close</span>
+                      </button>
+                      <h4 class="modal-title">Historiques du dossier de liquidation</h4>
+                    </div>
+                    <div class="modal-body">
+                      <div class="full-height-scroll">
+                        <br>
+                        <div class="row">
+                          <div class="col-lg-4">
+                            <h5>Ouvert Par: <%= @cfs_reversion_veuve.ajoute_par.full_name %></h5>
+                            <h5>Date de création: <%= @cfs_reversion_veuve.created_at.strftime("%d/%m/%Y") %></h5>
+                          </div>
+
+                          <div class="col-lg-4">
+                            <h5>Soumis à l'instruction: <%= @cfs_reversion_veuve.ajoute_par.full_name %></h5>
+                            <h5>Date de soumission:
+                              <%= (@cfs_reversion_veuve.date_soumission.strftime("%d/%m/%Y")) unless @cfs_reversion_veuve.date_soumission.nil? %>
+                            </h5>
+                          </div>
+
+                          <div class="col-lg-4">
+                            <h5>Instruit par:
+                              <%= (@cfs_reversion_veuve.instruit_par.full_name) unless @cfs_reversion_veuve.instruit_par.nil? %>
+                            </h5>
+                            <h5>Date Insctruction:
+                              <%= (@cfs_reversion_veuve.instruit_le.strftime("%d/%m/%Y")) unless @cfs_reversion_veuve.instruit_le.nil? %>
+                            </h5>
+                          </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+
+                          <div class="col-lg-4">
+                            <h5>Validé Par :
+                              <%= (@cfs_reversion_veuve.valide_par.try(:full_name)) unless @cfs_reversion_veuve.valide_par.nil? %> </h5>
+                            <h5>Date De Validation :
+                              <%= (@cfs_reversion_veuve.date_validation.strftime("%d/%m/%Y")) unless @cfs_reversion_veuve.date_validation.nil? %></h5>
+                          </div>
+
+                          <div class="col-lg-4">
+                            <h5>Gestionnaire Compte Allocataire :
+                              <%= (@cfs_reversion_veuve.affecter_allocataire.full_name) unless @cfs_reversion_veuve.affecter_allocataire.nil? %>
+                            </h5>
+                            <h5>Date Affectation
+                              : <%= (@cfs_reversion_veuve.affectation_allocataire_date.strftime("%d/%m/%Y")) unless @cfs_reversion_veuve.affectation_allocataire_date.nil? %></h5>
+                          </div>
+
+                          <div class="col-lg-4">
+                            <h5>Gestionnaire Compte Salarié :
+                              <%= (@cfs_reversion_veuve.affecter_salarie.full_name) unless @cfs_reversion_veuve.affecter_salarie.nil? %>
+                            </h5>
+                            <h5>Date Affectation :
+                              <%= (@cfs_reversion_veuve.affectation_salarie_date.strftime("%d/%m/%Y")) unless @cfs_reversion_veuve.affectation_salarie_date.nil? %>
+                            </h5>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="modal-footer form-group">
+                      <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Fin Historique -->
+            </div>
+            <div class="col-lg-12">
+              <ul class="nav nav-tabs" style="font-size:10px">
+                <!-- <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="active tab-link-top">
+                  <a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Infos Demandeur
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.etat_civil_demandeur_valid? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @cfs_reversion_veuve.etat_civil_demandeur_valid? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Grappe Familiale
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.epouses_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @cfs_reversion_veuve.epouses_valide? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-3"> <i class="fa fa-folder"></i>Documents
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.document_valid? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @cfs_reversion_veuve.document_valid? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>Activités Prof. Sénégal
+                    <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.activite_prof_valid? %>
+                    <% if @cfs_reversion_veuve.traitement_en_cours? or @cfs_reversion_veuve.soumis? %>
+                      <%= '<span class="label label-warning">à valider par un gest. salarié</span>'.html_safe unless @cfs_reversion_veuve.activite_prof_valid? or @cfs_reversion_veuve.resident_sn? %>
+                    <% end %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-5"><i class="fa fa-briefcase"></i>Activités Prof. France
+                    <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.activite_prof_valid? %>
+                    <% if @cfs_reversion_veuve.traitement_en_cours? or @cfs_reversion_veuve.soumis? %>
+                      <%= '<span class="label label-warning">à valider par un gest. salarié</span>'.html_safe unless @cfs_reversion_veuve.activite_prof_valid? or @cfs_reversion_veuve.resident_sn? %>
+                    <% end %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-6"><i class="fa fa-briefcase"></i>Périodes Assur. France
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.assur_residence_valid? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-7"><i class="fa fa-briefcase"></i>Période Assur. Sénégal
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.assur_second_pays_valid? %>
+                  </a>
+                </li>
+
+                <li class="tab-link-top">
+                  <a data-toggle="tab" href="#tab-8"><i class="fa fa-briefcase"></i>Recap. Points
+                    <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.charge_second_pays_valid? %>
+                  </a>
+                </li>
+                <% if @cfs_reversion_veuve.resident_fr? %>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-8"><i class="fa fa-folder"></i>Avantage Vieil. Sénégal
+                      <% if @cfs_reversion_veuve.traitement_en_cours? or @cfs_reversion_veuve.soumis? %>
+                        <%= '<span class="label label-warning">à valider par un Gestionnaire Allocataire</span>'.html_safe unless @cfs_reversion_veuve.recap_point_valide? %>
+                      <% end %>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+              
+              <div class="tab-content">
+                <div id="tab-1" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @cfs_reversion_veuve.etat_civil_demandeur_valid %>
+                      <%= link_to "Je valide les informations générales", admin_cfs_reversion_veuve_valider_etat_civil_demandeur_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_etat_civil' %>
+                  </div>
+                </div>
+
+
+                <div id="tab-2" class="tab-pane tab-pane-section">
+                  <div class="row">
+                    <div class="col-lg-12" style="margin-top: 30px">
+                      <div class="panel-body">
+                        <div class="panel-group" id="accordion">
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                              <h5 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                                  <span class="fa fa-users"></span> Conjoints
+                                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.epouses_valide? %>
+                                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @cfs_reversion_veuve.epouses_valide? %>
+                                </a>
+                              </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                              <div class="full-height-scroll">
+                                <br>
+                                <% if !@cfs_reversion_veuve.epouses_valide? and current_user.can_allocataire? and @cfs_reversion_veuve.ajoute_par == current_user %>
+                                  <%= link_to "Je valide les informations sur les epouses", admin_cfs_reversion_veuve_valider_epouses_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                                <% end %>
+                                <hr>
+                                <%= render 'show_epouses' %>
+
+                              </div>
+                            </div>
+                          </div> <!-- End panel default epouse -->
+
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                              <h5 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                                  <span class="fa fa-users"></span> Enfants
+                                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @cfs_reversion_veuve.enfants_valide? %>
+                                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @cfs_reversion_veuve.enfants_valide? %>
+                                </a>
+                              </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                              <div class="full-height-scroll">
+                                <br>
+                                <% if !@cfs_reversion_veuve.enfants_valide? and current_user.can_allocataire? and @cfs_reversion_veuve.ajoute_par == current_user %>
+                                  <%= link_to "Je valide les informations sur les enfants", admin_cfs_reversion_veuve_valider_enfants_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                                <% end %>
+                                <hr>
+                                <%= render 'show_enfants' %>
+                              </div>
+                            </div>
+                          </div> <!-- End panel default enfant -->
+                        </div>
+                      </div>
+                    </div> <!-- End col -->
+                  </div> <!-- End row -->
+                </div> <!-- End tab-3 -->
+
+
+                <div id="tab-3" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @cfs_reversion_veuve.document_valid %>
+                      <%= link_to "Je valide tous les documents", admin_cfs_reversion_veuve_valider_documents_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+                <div id="tab-4" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'show_carrieres_prestation' %>
+                    <%# if @cfs_reversion_veuve.creation? %>
+                    <!--                      <hr>-->
+                    <%#= link_to "Voir le détail ou Faire une demande d'intégration de carrière", admin_carrieres_path %>
+                    <%# end %>
+                  </div>
+                </div>
+
+                <div id="tab-5" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @cfs_reversion_veuve.assur_residence_valid? %>
+                      <%= link_to "Je valide les informations ", admin_cfs_reversion_veuve_valider_assur_residence_valid_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'activites_professionnelles_france' %>
+                  </div>
+                </div>
+
+                <div id="tab-6" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @cfs_reversion_veuve.assur_residence_valid? %>
+                      <%= link_to "Je valide les informations ", admin_cfs_reversion_veuve_valider_assur_residence_valid_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_per_ass_pays_resid' %>
+                  </div>
+                </div>
+
+                <div id="tab-7" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @cfs_reversion_veuve.assur_second_pays_valid? %>
+                      <%= link_to "Je valide les informations ", admin_cfs_reversion_veuve_valider_assur_second_pays_valid_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_per_ass_sec_pays' %>
+                  </div>
+                </div>
+
+
+                <%# if @cfs_reversion_veuve.resident_fr? %>
+                <div id="tab-8" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll"><br>
+                    <%= render 'show_tableau_recapitulatif_points' %>
+                  </div>
+                </div>
+                <%# end %>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'soumission_form' %>
+
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@cfs_reversion_veuve, url: admin_cfs_reversion_veuve_affecter_allocataire_path(@cfs_reversion_veuve), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @cfs_reversion_veuve.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+
+<% unless @gestionnaires_salaries.nil? %>
+  <div class="modal inmodal" id="affecter-one-salarie" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@cfs_reversion_veuve, url: admin_cfs_reversion_veuve_affecter_salarie_path(@cfs_reversion_veuve), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @cfs_reversion_veuve.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_salarie, @gestionnaires_salaries, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 10%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>

@@ -1,0 +1,168 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="col-lg-7">
+      <h3>Listes des arrets </h3>
+      <h3 class="label label-danger"><strong>Salaire journalier de référence plafonné
+        à: <%= number_to_currency(@demande_arret_travail.indemnite_journaliere, unit: '') %></strong></h3>
+    </div>
+    <div class="col-lg-5" style="text-align: right;">
+      <% if @demande_arret_travail.peut_tout_liquide?(current_user) %>
+        <%= link_to 'Tout liquider', admin_arret_travail_liquidation_tous_at_decomptes_path(@demande_arret_travail), 'data-turbolinks': false, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-white' %>
+      <% end %>
+      <% if @demande_arret_travail.can_add_ij?(current_user) and @demande_arret_travail.at_consolidation.nil? %>
+        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#decompte">
+          <span class="fa fa-plus"></span> Ajouter un arret
+        </button>
+      <% end %>
+      <div class="modal inmodal" id="decompte" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <%= bootstrap_form_for(@at_decompte, url: admin_arret_travail_add_decompte_path(@demande_arret_travail), label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>
+            <div class="modal-content animated fadeIn">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">x</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Ajouter arret travail</h4>
+              </div>
+              <div class="modal-body">
+                <%= hidden_field_tag :custom_page, 'information_frais_engage' %>
+                <%= f.hidden_field :arret_travail_id, value: @demande_arret_travail.id %>
+                <div class="row">
+                  <div class="col-lg-8">
+                    <%= f.date_select :date_debut, label: "Date arret", selected: (@demande_arret_travail.date_accident + 1.day), required: true %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :nombre_jour, required: true %>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <%= f.check_box :solicite_medecin_displayed, class: 'form-control', label: 'Cocher la case si vous souhaitez soummettre le certificat médical' %>
+                    <div id="check_box_hidden" style="display: none">
+                      <%= f.check_box :solicite_medecin %>
+                    </div>
+                  </div>
+                  <div class="col-lg-6" id="">
+                    <%= f.file_field :certificat_medical, required: true %>
+                  </div>
+                </div>
+                <%#=f.date_field :date_fin, label: "Date fin"%>
+              </div>
+              <div class="modal-footer form-group">
+                <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                <%= f.submit 'Ajouter', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12" style="margin-top: 20px;">
+    <table class="table table-bordered table-condensed table-hover" style="margin-top: 10px;">
+      <thead>
+      <tr style="font-size: 12px;">
+        <th scope="col">ID</th>
+        <th scope="col">Période idemnisée</th>
+        <th scope="col">Nbre de jours</th>
+        <th scope="col">1/2 salaire</th>
+        <th scope="col">2/3 salaire</th>
+        <th scope="col">Montant</th>
+        <th scope="col">Validation Medecin ?</th>
+        <th scope="col">Etat</th>
+        <th colspan="2">Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @demande_arret_travail.at_decomptes.order("id asc").each do |decompte| %>
+        <tr style="font-size: 12px;">
+          <td><%= decompte.id %></td>
+          <td><%= decompte.periode_ij %></td>
+          <td><%= decompte.nombre_jour %></td>
+          <td><%= decompte.demi_sal(decompte.id) %></td>
+          <td><%= decompte.deux_tiers_sal(decompte.id) %></td>
+          <td><%= decompte.montant %></td>
+          <td>
+
+            <%= !decompte.motif_convocation.nil? ? "CONVOQUE"
+                  : decompte.solicite_medecin? ? "OUI" : "NON"
+            %>
+          </td>
+          <td><%= decompte.etat %></td>
+          <td>
+            <% if decompte.peut_etre_liquide?(current_user) and not @demande_arret_travail.is_subrogation? %>
+              <%= link_to 'Liquider', admin_arret_travail_at_decompte_liquider_path(@demande_arret_travail, decompte), class: "btn btn-outline btn-success btn-xs" %>
+            <% end %>
+
+            <% if decompte.peut_etre_valide_liquidation?(current_user) %>
+              <%= link_to 'Valider', admin_arret_travail_at_decompte_valider_path(@demande_arret_travail, decompte), class: "btn btn-outline btn-success btn-xs" %>
+            <% end %>
+
+            <% if decompte.peut_etre_valide_medecin?(current_user) %>
+              <%= link_to 'Valider', admin_arret_travail_at_decompte_valider_medecin_path(@demande_arret_travail, decompte), class: "btn btn-outline btn-success btn-xs" %>
+            <% end %>
+
+            <% if decompte.peut_etre_valide_comptable?(current_user) %>
+              <%= link_to 'Valider', admin_arret_travail_at_decompte_valider_comptable_path(@demande_arret_travail, decompte), class: "btn btn-outline btn-success btn-xs" %>
+            <% end %>
+          </td>
+
+
+          <td>
+            <%= link_to 'Detail', admin_arret_travail_at_decompte_path(@demande_arret_travail, decompte), class: "btn btn-outline btn-success btn-xs" %>
+          </td>
+          <% if decompte.creation? %>
+            <td>
+              <%= (link_to 'Supprimer', admin_arret_travail_at_decompte_path(@demande_arret_travail, decompte), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-success btn-xs') %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<% content_for :javascript do %>
+  <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          // Ton script spécifique sur les checkboxes
+          const solicite_medecin = document.getElementById('at_decompte_solicite_medecin');
+          const solicite_medecin_displayed = document.getElementById('at_decompte_solicite_medecin_displayed');
+          const nbr_at_decompte = <%= @demande_arret_travail.at_decomptes.count %>;
+          if (solicite_medecin_displayed) {
+              solicite_medecin_displayed.addEventListener("change", function () {
+                  solicite_medecin.checked = solicite_medecin_displayed.checked;
+              });
+          }
+
+          $("#at_decompte_nombre_jour").change(function () {
+              let nbr_jr = $("#at_decompte_nombre_jour").val();
+              if (nbr_jr) {
+                  if (nbr_at_decompte === 0) {
+                      solicite_medecin.checked = false;
+                      solicite_medecin_displayed.checked = false;
+                      solicite_medecin_displayed.disabled = true;
+                  } else {
+                      if (nbr_jr < 15) {
+                          solicite_medecin.checked = false;
+                          solicite_medecin_displayed.checked = false;
+                          solicite_medecin_displayed.disabled = false;
+                      } else {
+                          solicite_medecin.checked = true;
+                          solicite_medecin_displayed.checked = true;
+                          solicite_medecin_displayed.disabled = true;
+                      }
+                  }
+              } else {
+                  solicite_medecin.checked = false;
+                  solicite_medecin_displayed.checked = false;
+                  solicite_medecin_displayed.disabled = false;
+              }
+          });
+      });
+  </script>
+<% end %>

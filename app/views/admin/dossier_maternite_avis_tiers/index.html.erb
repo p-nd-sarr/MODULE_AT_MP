@@ -1,0 +1,48 @@
+<%= content_for :titre_page, "Avis à Tiers Du Dossier De Maternité : #{@dossier_maternite.num_dossier}" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier maternité', admin_dossier_maternite_path(@dossier_maternite), 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+  <% if current_user.gestionnaire_compte_allocataire? %>
+    <%= (link_to 'Ajouter Avis à Tiers', new_admin_dossier_maternite_dossier_maternite_avis_tier_path(@dossier_maternite), class: 'btn btn-primary btn-sm') %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Type avis</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Montant total</th>
+        <th scope="col">Date demande</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @dossier_maternite_avis_tiers.each_with_index do |avis_tier, i| %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= DossierMaterniteAvisTier.human_enum_name(:type_avis, avis_tier.type_avis) %></td>
+          <td><%= DossierMaterniteAvisTier.human_enum_name(:etat, avis_tier.etat) %></td>
+          <td><%= format_cfa avis_tier.montant_avis %></td>
+          <td><%= avis_tier.created_at %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_dossier_maternite_dossier_maternite_avis_tier_path(@dossier_maternite, avis_tier), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <% if avis_tier.creation? and current_user.gestionnaire_compte_allocataire? %>
+            <td style="width: 75px">
+              <%= link_to 'modifier', edit_admin_dossier_maternite_dossier_maternite_avis_tier_path(@dossier_maternite, avis_tier), class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+            <td style="width: 75px">
+              <%= link_to 'supprimer', admin_dossier_maternite_dossier_maternite_avis_tier_path(@dossier_maternite, avis_tier), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

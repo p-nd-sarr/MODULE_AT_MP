@@ -1,0 +1,47 @@
+<div class="modal inmodal" id="RejeterAllocationFamilialeModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          <% if object.soumis? %>
+            Rejeteter allocation familiale
+          <% end %>
+          <% if object.rejete? %>
+            Voir motif rejet
+          <% end %>
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <% if object.soumis? %>
+            <%= bootstrap_form_for(object, url: admin_dossier_prestation_allocation_familiale_rejeter_path(@dossier_prestation, object), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+              <%= f.text_area :commentaire_rejet, label: 'Motif rejet' %>
+              <div class="form-group row">
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                  <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+          <% if object.rejete? %>
+            <h4>Rejeté par
+              : <%= object.rejete_par.prenom unless object.rejete_par.nil? %> <%= object.rejete_par.nom unless object.rejete_par.nil? %> </h4>
+            <h4>Rejeté le : <%= object.date_rejet unless object.date_rejet.nil? %> </h4>
+            <h4>
+              Motif rejet : <%= object.commentaire_rejet unless object.commentaire_rejet.nil? %>
+            </h4>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

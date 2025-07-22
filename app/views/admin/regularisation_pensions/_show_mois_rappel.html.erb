@@ -1,0 +1,39 @@
+<% if (@regularisation_pension.regularisation_impayes.en_attente.size > 0) and
+  @regularisation_pension.ajoute_par == current_user %>
+  <%= link_to "Valider toutes les lignes impayés", admin_regularisation_pension_valider_all_impayes_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+<% end %>
+<br>
+<br/>
+
+<% cache @regularisation_pension do %>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Date début</th>
+      <th scope="col">points servis rg</th>
+      <th scope="col">points servis rc</th>
+      <th scope="col">valeur point rg</th>
+      <th scope="col">valeur point rc</th>
+      <th scope="col">Montant rappel</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% liste = @regularisation_pension.liste_periode_rappel %>
+    <% if liste.empty? %>
+      <p> Liste des régularisation de pensions mensuelles vide </p>
+    <% else %>
+      <% liste.each do |objet| %>
+        <tr>
+          <td><%= objet['periode'] %></td>
+          <td><%= objet['points_servis_rg'] %></td>
+          <td><%= objet['points_servis_rc'] %></td>
+          <td><%= objet['val_point_general'] %></td>
+          <td><%= objet['val_point_cadre'] %></td>
+          <td><%= objet['montant_rappel'] %></td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>

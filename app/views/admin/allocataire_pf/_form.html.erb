@@ -1,0 +1,106 @@
+<%= bootstrap_form_for([:admin, @allocataire_pf], url:'/admin/allocataire_pf', layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="ibox ">
+    <div class="ibox-title">
+      <h5 style="text-decoration: underline;"> Ajout d'un allocataire </h5>
+      <div class="ibox-tools">
+        <a class="collapse-link">
+          <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-sm-7 b-r">
+          <%= f.text_field :numero_allocataire, label: 'Numéro allocataire', required: true %>
+
+          <%= f.text_field :prenom , required: true%>
+
+          <%= f.text_field :nom, required: true %>
+
+          <%= f.select :sexe,
+                       AllocatairePf::SEXE.keys.collect { |sexe| [AllocatairePf.human_enum_name(:sexe, sexe), sexe] },
+                       label: "Sexe" %>
+
+          <%= f.date_select :date_naissance, label: "Date de naissance",
+                            start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+
+          <%= f.text_field :lieu_naissance, required: true %>
+
+          <%= f.text_field :adresse, required: true %>
+
+          <%= f.select :regime_matrimoniale,
+                       AllocatairePf::REGIME_MAT.keys.collect { |regime_matrimoniale| [AllocatairePf.human_enum_name(:regime_matrimoniale, regime_matrimoniale), regime_matrimoniale] },
+                       label: "Régime matrimoniale" %>
+
+          <%= f.text_field :nombre_conjoint, label: 'Nombre de conjoint', required: true %>
+          <%= f.select :mode_paiement,
+                       MODE_PAIEMENT_CAISSE_CSS.keys.collect { |mode_paiement| [AllocatairePf.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                       label: "Mode de Paiement" %>
+
+          <%= f.text_field :numero_employeur, required: true %>
+
+          <%= f.text_field :adresse_employeur, required: true %>
+        </div>
+        <div class="col-sm-5"><h4>Vous avez besoin d'éclairessissements ?</h4>
+          <p>Retour à la page d'informations</p>
+          <p class="text-center">
+            <a href=""><i class="fa fa-sign-in big-icon"></i></a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-sm-6">
+
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', class: 'btn btn-danger' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+          $('#allocataire_numero_allocataire').change(function () {
+              let numero_allocataire = $('#allocataire_numero_allocataire').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_allocataire + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          console.log(data)
+                          $("#allocataire_prenom").val(data.prenom);
+                          $("#allocataire_nom").val(data.nom);
+                          $("#allocataire_sexe").val(data.genre);
+
+                      } else {
+                          $("#allocataire_prenom").val('');
+                          $("#allocataire_nom").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#allocataire_prenom").val('');
+                      $("#allocataire_nom").val('');
+                  }
+              });
+          })
+      })
+  </script>
+<% end %>

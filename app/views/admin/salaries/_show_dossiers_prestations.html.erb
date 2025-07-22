@@ -1,0 +1,91 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Prestation</th>
+    <th scope="col">Date création</th>
+    <th scope="col">Numéro dossier</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Supprimé?</th>
+    <th scope="col">Incomplet?</th>
+    <th scope="col">Details</th>
+  </tr>
+  </thead>
+
+  <tbody>
+
+  <% unless @salarie.liquidation_retraite.nil?%>
+        <tr>
+            <td width="100px">
+                <span class="btn btn-primary btn-sm dim "><i class="fa fa-folder"></i> Liquidation Retraite </span>
+            </td>
+            <td width="100px"> <%=@salarie.liquidation_retraite.created_at %></td>
+            <td style="width: 75px"> <%=@salarie.liquidation_retraite.num_dossier %></td>
+            <td style="width: 75px"><%=@salarie.liquidation_retraite.workflow_state %> </td>
+            <td style="width: 75px"><%= link_to 'Détails', admin_liquidation_retraite_path(@salarie.liquidation_retraite), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+        </tr>
+    <% end %>
+
+    <% unless @salarie.base_reversion_salary.nil?%>
+        <tr>
+            <td width="100px">
+                <span class="btn btn-info btn-sm dim "><i class="fa fa-folder"></i> Reversion avant Liquidation </span>
+            </td>
+            <td width="100px"> <%=@salarie.base_reversion_salary.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+            <td> <%=@salarie.base_reversion_salary.numero_dossier %></td>
+            <td style="width: 75px"><%=@salarie.base_reversion_salary.workflow_state %></td>
+            <td style="width: 75px"><%= link_to 'Détails', admin_base_reversion_salary_path(@salarie.base_reversion_salary), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+        </tr>
+    <% end %>
+
+    <% unless @salarie.arret_travails.nil?%>
+        <% @salarie.arret_travails.each do |arret| %>
+            <tr>
+
+                <td width="100px">
+                    <span class="btn btn-success btn-sm dim "><i class="fa fa-folder"></i> Accident de travail </span>
+                </td>
+                <td width="100px"> <%=arret.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+                <td style="width: 75px"> <%= arret.num_dossier %> </td>
+              <td style="width: 75px"><%= arret.workflow_state %> </td>
+              <td style="width: 75px"><%= link_to 'Détails', admin_arret_travail_path(arret), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+            </tr>
+    <% end %>
+  <% end %>
+
+  <% unless @salarie.dossier_prestations.nil? %>
+    <% @salarie.dossier_prestations.each do |dossier| %>
+      <tr>
+        <td width="100px">
+                    <span class="btn btn-warning btn-sm  "><i class="fa fa-folder"></i>
+                      Prestation Familiale <%= '- PPN / ' + dossier.conjoint.full_name unless dossier.conjoint_id.nil? %>
+                    </span>
+        </td>
+        <td width="100px"> <%= dossier.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+        <td style="width: 75px"> <%= dossier.num_dossier %></td>
+        <td style="width: 75px"><%= dossier.etat %></td>
+        <td><%= state_yes_no dossier.deleted %></td>
+        <td><%= state_yes_no dossier.incomplete %></td>
+        <td style="width: 75px"><%= link_to 'Détails', admin_dossier_prestation_path(dossier), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+      </tr>
+    <% end %>
+  <% end %>
+
+  <% unless @salarie.dossier_maternites.nil? %>
+    <% @salarie.dossier_maternites.each do |dossier| %>
+      <tr>
+        <td width="100px">
+          <span class="btn btn-warning btn-sm dim form-control"><i class="fa fa-folder"></i> Dossier de maternité </span>
+        </td>
+        <td width="100px"> <%= dossier.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+        <td style="width: 75px"> <%= dossier.num_dossier %></td>
+        <td style="width: 75px"><%= dossier.etat %></td>
+        <td><%= state_yes_no dossier.deleted %></td>
+        <td><%= state_yes_no dossier.incomplete %></td>
+        <td style="width: 75px"><%= link_to 'Détails', admin_dossier_maternite_path(dossier), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+      </tr>
+    <% end %>
+  <% end %>
+
+  </tr>
+  </tbody>
+</table>

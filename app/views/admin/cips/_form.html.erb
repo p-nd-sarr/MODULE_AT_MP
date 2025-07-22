@@ -1,0 +1,46 @@
+<%#= bootstrap_form_for(@cip, layout: :horizontal) do |f| %>
+<%= bootstrap_form_for([:admin, @cip], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  
+  <div class="form-group row">
+    <%=f.hidden_field :ajoute_par_id, value: current_user.id%>
+    <div class="col-sm-12">
+      <div class= "col-sm-6">
+        <%= f.text_field :prenom, label: 'Prénom:', required: true %>
+      </div>
+
+      <div class= "col-sm-6">
+        <%= f.text_field :nom, label: 'Nom:', required: true %>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+      <div class= "col-sm-6">
+        <%= f.text_field :nin, label: 'N° CNI:', required: true %>
+      </div>
+      <div class= "col-sm-6">
+        <%= f.select :demande_type, [['Liquidation Retraite', 'liquidation_retraite'],
+                                     ['Reversion avant liquidation', 'reversion_avat_liquidation'],
+                                     ['Reversion après liquidation', 'reversion_apres_liquidation']] %>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+      <div class= "col-sm-6">
+        <%= f.text_area :observation, label: 'Observation:', required: true %>
+      </div>
+      <div class= "col-sm-6">
+        <%= f.file_field :piece_identite, label: 'Piéce identité', required: true %>
+      </div>
+
+     
+      
+    </div>
+
+
+
+    <div class="col-sm-4 pull-right">
+      <%= link_to 'Annuler', admin_cips_path, class: 'btn btn-white' %>
+      <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

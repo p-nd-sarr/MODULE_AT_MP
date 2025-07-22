@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+Bonjour <%= @user.full_name %>,<br>
+Nous vous avons créé un compte Prestation. Bienvenue.<br>
+Votre mot de passe est: <%= @password %><br>
+Nous vous prions de modifier ce mot de passe à la première connexion dans le menu Modifier mon Mot de Passe.<br>
+<br>
+Vous pou‎vez vous connecter avec le lien: <%= link_to new_user_session_url, new_user_session_url %><br>
+<br>
+Merci.<br>
+</body>
+</html>

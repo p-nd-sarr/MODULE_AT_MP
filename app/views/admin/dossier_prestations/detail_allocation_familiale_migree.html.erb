@@ -1,0 +1,151 @@
+<%= content_for :titre_page, "Détail allocation familiale migrée" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_prestation.nil? %>
+    Allocataire : <%= @dossier_prestation.full_name %> <br>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' unless @dossier_prestation.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Enfant ID:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.enfant_id unless @allocation_familiale_migree.enfant_id.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Nom enfant:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= Enfant.find_by_old_id(@allocation_familiale_migree.enfant_id).nom unless @allocation_familiale_migree.enfant_id.nil? or Enfant.find_by_old_id(@allocation_familiale_migree.enfant_id).nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Prenom enfant:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= Enfant.find_by_old_id(@allocation_familiale_migree.enfant_id).prenom unless @allocation_familiale_migree.enfant_id.nil? or Enfant.find_by_old_id(@allocation_familiale_migree.enfant_id).nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Année:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.annee unless @allocation_familiale_migree.annee.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Trimestre:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.trimestre unless @allocation_familiale_migree.trimestre.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> État:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.etat unless @allocation_familiale_migree.etat.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Montant liquidé:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.montant_liquide unless @allocation_familiale_migree.montant_liquide.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Numéro liquidation:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.numero_liquidation unless @allocation_familiale_migree.numero_liquidation.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Ajouté Par:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.ajoute_par unless @allocation_familiale_migree.ajoute_par.nil? %></dd>
+          </div>
+        </d1>
+      </div>
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Date création:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.date_creation unless @allocation_familiale_migree.date_creation.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Date liquidation:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.date_liquidation unless @allocation_familiale_migree.date_liquidation.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Date validation:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.date_validation unless @allocation_familiale_migree.date_validation.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Date paiement:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.date_paiement unless @allocation_familiale_migree.date_paiement.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Bénéficiaire ID:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.beneficiaire_id unless @allocation_familiale_migree.beneficiaire_id.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Nom bénéficiaire:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.beneficiaire_nom unless @allocation_familiale_migree.beneficiaire_nom.nil? %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Prenom bénéficiaire:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @allocation_familiale_migree.beneficiaire_prenom unless @allocation_familiale_migree.beneficiaire_prenom.nil? %></dd>
+          </div>
+        </d1>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

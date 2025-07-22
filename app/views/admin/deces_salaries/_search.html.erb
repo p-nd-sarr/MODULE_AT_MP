@@ -1,0 +1,28 @@
+<h3>Critères de recherche</h3>
+<br>
+
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :numero_affiliation_cont, 'Numéro Affiliation' %>
+      <%= f.search_field :numero_affiliation_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :prenom_cont, 'Prénom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :numero_piece_cont, 'NIN' %>
+      <%= f.search_field :numero_piece_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="hr-line-dashed"></div>
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+<% end %>

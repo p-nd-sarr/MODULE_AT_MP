@@ -1,0 +1,78 @@
+<div class="modal inmodal" id="SoumissionDossierModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Soumission du dossier de prestation
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <% unless @dossier_prestation.conjoint.nil? %>
+          <%= render 'liste_pren_post' %>
+        <% end %>
+        <% if @dossier_prestation.conjoint.nil? && @dossier_prestation.feminin?%>
+          <%= render 'liste_pren_post' %>
+        <% end %>
+
+        <table class="table table-condensed table-hover">
+          <tr>
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+            <td><strong>Condition 1 : </strong></td>
+
+          </tr>
+
+          <tr>
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+            <td>
+              <strong>Condition 2 : Je déclare en outre n'avoir pas adressé d'autre dossier de prestation à la
+                CSS.</strong>
+            </td>
+          </tr>
+          <tr>
+
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+
+            <td><strong>Condition 3 : Je certifie que les renseignements portés sur la présente demande sont
+              exacts.</strong></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= link_to 'Valider la Soumission', admin_dossier_prestation_soumettre_path(@dossier_prestation), class: 'btn btn-primary', id: 'soummetre_valide' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#soummetre_valide").hide();
+        var all_checkboxes = $('#SoumissionDossierModal input[type="checkbox"]');
+
+        $(".modal-body").change(function () {
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#soummetre_valide").show();
+            } else {
+                $("#soummetre_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>
+

@@ -1,0 +1,10 @@
+<% unless current_user.type_profil == 'allocataire' %>
+  <li class="<%= 'active' if is_active_controller('admin/home') or is_active_controller('employer/home') %>">
+    <%= link_to root_path do %>
+      <!--    <i class="fa fa-th-large"></i> <span class="nav-label">Tableau de bord</span>-->
+      <i class="fa fa-th-large"></i> <span class="nav-label">Accueil</span>
+    <% end %>
+  </li>
+<% end %>
+
+<%= render "layouts/menu_#{current_user.type_profil}" %>

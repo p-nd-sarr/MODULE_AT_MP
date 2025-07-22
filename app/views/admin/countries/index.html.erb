@@ -1,0 +1,36 @@
+<%= content_for :titre_page, 'Admin Countries' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_country_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Code</th>
+        <th scope="col">Description</th>
+        <th scope="col">Pays CAF</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_countries.each do |admin_country| %>
+        <tr>
+          <td><%= link_to admin_country.code, admin_country %></td>
+          <td><%= admin_country.description %></td>
+          <td><%= admin_country.est_pays_caf %></td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_country_path(admin_country), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_country, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

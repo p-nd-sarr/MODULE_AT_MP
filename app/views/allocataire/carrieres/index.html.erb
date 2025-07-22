@@ -1,0 +1,51 @@
+
+
+<%= content_for :titre_page, "Carrières N° Dossier:  "+ @current_user.numero_salarie  %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>PERIODE D'ACTIVITE</h5>
+          <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>TOTAL POINTS</h5>
+          <h1 class="no-margins">
+            <%= format_cfa @total_points, false %> /
+            <%= format_cfa @carrieres.map(&:calcul_points).sum, false unless @carrieres.nil?%>
+          </h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>LINEAIRE ?</h5>
+          <h1 class="no-margins"><%= state_yes_no Psrm::Carriere.lineaire?(current_user.numero_salarie) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+      <%unless @carrieres.nil?%>
+        <%= render 'carrieres/liste',
+                   carrieres: @carrieres,
+                   show_employeur: true,
+                   show_employe: false %>
+
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>

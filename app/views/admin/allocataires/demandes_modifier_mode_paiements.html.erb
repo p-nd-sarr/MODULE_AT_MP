@@ -1,0 +1,391 @@
+<%= content_for :titre_page, 'Demandes de modification mode paiement' %>
+
+<%= content_for :actions_page do %>
+ <%= link_to ' Accueil allocataires', toutes_les_demandes_admin_allocataires_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+<% end %>
+
+<div class="row" style="min-height: 300px; margin-top:30px">
+  <div class="col-lg-12">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <h5>Liste des demandes</h5>
+        <span class="label label-info">Total des demandes <%= ModifierModePaiement.count %></span>
+        <div class="ibox-tools">
+          <a class="collapse-link">
+            <i class="fa fa-chevron-up"></i>
+          </a>
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+            <i class="fa fa-wrench"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-user">
+            <li><a href="#" class="dropdown-item">Config option 1</a>
+            </li>
+            <li><a href="#" class="dropdown-item">Config option 2</a>
+            </li>
+          </ul>
+          <a class="close-link">
+            <i class="fa fa-times"></i>
+          </a>
+        </div>
+      </div>
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-sm-12 m-b-xs">
+            <div data-toggle="buttons" class="btn-group btn-group-toggle">
+              <label class="btn btn-sm btn-white active" data-toggle="pill" href="#tous">
+                <input type="radio" id="option1" name="options"> Tous
+              </label>
+              <% if current_user.gestionnaire_compte_allocataire?%>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_soumission">
+                  <input type="radio" id="option2" name="options"> En attente soumission
+                  <span class="label label-info"><%= @en_attente_soumissions.size%> </span>
+                </label>
+
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_validation_modif">
+                  <input type="radio" id="option4" name="options"> En attente validation modification
+                  <span class="label label-info"><%= @en_attentes_modif_soumis.size%> </span>
+                </label>
+              <% end%>
+
+              <% if current_user.chef_service_allocation?  %>
+                 
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_affectation">
+                  <input type="radio" id="option3" name="options"> En attente  affectation
+                  <span class="label label-info"><%= @en_attentes_affectations.size%> </span>
+                </label>
+            
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#attente_validation_dossier">
+                  <input type="radio" id="option4" name="options"> En attente validation dossier
+                  <span class="label label-info"><%= @en_attentes_validation_dossier.size%> </span>
+                </label>
+
+              <% end %>
+  
+              <label class="btn btn-sm btn-white" data-toggle="pill" href="#rejete">
+                <input type="radio" id="option5" name="options"> Rejetés
+                 <span class="label label-info"><%= @rejetees.size%> </span>
+              </label>
+   
+             
+              <label class="btn btn-sm btn-white" data-toggle="pill" href="#valide">
+                <input type="radio" id="option6" name="options"> Dossiers validés 
+                 <span class="label label-info"><%= @validees.size%> </span>
+              </label>
+            </div>
+          </div>
+        
+          
+        </div>
+        <div class="tab-content">
+          <div id="tous" class="tab-pane fade in active">
+            <% if @modifier_mode_paiements.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes est vide !!!</h2>
+            <% else %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                  <tr>
+                  <th scope="col">N° Dossier</th>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Mode paiement</th>
+                    <th scope="col">Etat</th>
+                    <th colspan="4"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @modifier_mode_paiements.each do |modifier_mode_paiement| %>
+                  <tr>
+                      <td><%= modifier_mode_paiement.numero_dossier %></td>
+                      <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                      <td><%= modifier_mode_paiement.prenom %></td>
+                      <td><%= modifier_mode_paiement.nom %></td>
+                      <td><%= modifier_mode_paiement.mode_paiement %></td>
+                      <td><%= modifier_mode_paiement.workflow_state %></td>
+            
+                      </td>
+                      <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+          </div>
+
+         <!-- Dossiers en atttentes de soumission -->
+          <div id="attente_soumission" class="tab-pane fade">
+            <!--   START liste attente soumission  -->
+            <% en_attente_soumissions = @en_attente_soumissions.page(params[:page]).per(100) %>
+            <% if @en_attente_soumissions.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes en attente d'affectation est vide !!!</h2>
+            <% else %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                  <tr>
+                  <th scope="col">N°</th>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Mode paiement</th>
+                    <th scope="col">Etat</th>
+                    <th colspan="4"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @en_attente_soumissions.each do |modifier_mode_paiement| %>
+                    <tr>
+                      <td><%= modifier_mode_paiement.numero_dossier %></td>
+                      <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                      <td><%= modifier_mode_paiement.prenom %></td>
+                      <td><%= modifier_mode_paiement.nom %></td>
+                      <td><%= modifier_mode_paiement.mode_paiement %></td>
+                      <td><%= modifier_mode_paiement.workflow_state %></td>
+                      <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% end %>
+                      
+                    </tr>
+                  
+                  
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+            <%= paginate en_attente_soumissions %>
+
+            <!-- END -->
+          </div>
+
+        
+
+          <div id="attente_validation_dossier" class="tab-pane fade">
+            <!--   START liste en attente de validation  -->
+            <% en_attentes_validation_dossier = @en_attentes_validation_dossier.page(params[:page]).per(100) %>
+            <% if @en_attentes_validation_dossier.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes en attente de validation est vide !!!</h2>
+            <% else %>
+             <table class="table table-striped" style="margin-top: 20px">
+              <thead>
+                <tr>
+                <th scope="col">N°</th>
+                  <th scope="col">Matricule</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Mode paiement</th>
+                  <th scope="col">Etat</th>
+                  <th colspan="4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @en_attentes_validation_dossier.each do |modifier_mode_paiement| %>
+                 <tr>
+                    <td><%= modifier_mode_paiement.numero_dossier %></td>
+                    <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                    <td><%= modifier_mode_paiement.prenom %></td>
+                    <td><%= modifier_mode_paiement.nom %></td>
+                    <td><%= modifier_mode_paiement.mode_paiement %></td>
+                     <td><%= modifier_mode_paiement.workflow_state %></td>
+                     <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <% end %>
+            <%= paginate en_attentes_validation_dossier %>
+
+            <!-- END -->
+          </div>
+          <div id="attente_validation_modif" class="tab-pane fade">
+            <!--   START liste en attente de validation  -->
+            <% en_attentes_modif_soumis = @en_attentes_modif_soumis.page(params[:page]).per(100) %>
+            <% if @en_attentes_modif_soumis.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes en attente de validation est vide !!!</h2>
+            <% else %>
+             <table class="table table-striped" style="margin-top: 20px">
+              <thead>
+                <tr>
+                <th scope="col">N°</th>
+                  <th scope="col">Matricule</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Mode paiement</th>
+                  <th scope="col">Etat</th>
+                  <th colspan="4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @en_attentes_modif_soumis.each do |modifier_mode_paiement| %>
+                 <tr>
+                    <td><%= modifier_mode_paiement.numero_dossier %></td>
+                    <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                    <td><%= modifier_mode_paiement.prenom %></td>
+                    <td><%= modifier_mode_paiement.nom %></td>
+                    <td><%= modifier_mode_paiement.mode_paiement %></td>
+                     <td><%= modifier_mode_paiement.workflow_state %></td>
+                     <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                    <% end %>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <% end %>
+            <%= paginate en_attentes_validation_dossier %>
+
+            <!-- END -->
+          </div>
+
+          <div id="attente_affectation" class="tab-pane fade">
+            <!--   START liste attente soumission  -->
+            <% en_attentes_affectations = @en_attentes_affectations.page(params[:page]).per(100) %>
+            <% if @en_attentes_affectations.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes en attente d'affectation est vide !!!</h2>
+            <% else %>
+            <table class="table table-striped" style="margin-top: 20px">
+              <thead>
+                <tr>
+                <th scope="col">N°</th>
+                  <th scope="col">Matricule</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Mode paiement</th>
+                  <th scope="col">Etat</th>
+                  <th colspan="4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @en_attentes_affectations.each do |modifier_mode_paiement| %>
+                  <tr>
+                    <td><%= modifier_mode_paiement.numero_dossier %></td>
+                    <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                    <td><%= modifier_mode_paiement.prenom %></td>
+                    <td><%= modifier_mode_paiement.nom %></td>
+                    <td><%= modifier_mode_paiement.mode_paiement %></td>
+                     <td><%= modifier_mode_paiement.workflow_state %></td>
+                     <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                    <% end %>
+                    
+                  </tr>
+                
+                 
+                <% end %>
+              </tbody>
+            </table>
+            <% end %>
+            <%= paginate en_attentes_affectations %>
+
+            <!-- END -->
+          </div>
+
+
+          <div id="valide" class="tab-pane fade">
+            <!--   START liste valide  -->
+            
+            <% validees = @validees.page(params[:page]).per(100) %>
+            <% if @validees.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes validées est vide !!!</h2>
+            <% else %>
+              <table class="table table-striped" style="margin-top: 20px">
+                <thead>
+                  <tr>
+                  <th scope="col">N° Dossier</th>
+                    <th scope="col">Matricule</th>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <th scope="col">Mode paiement</th>
+                    <th scope="col">Etat</th>
+                    <th colspan="4"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @validees.each do |modifier_mode_paiement| %>
+                    <tr>
+                      <td><%= modifier_mode_paiement.numero_dossier %></td>
+                      <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                      <td><%= modifier_mode_paiement.prenom %></td>
+                      <td><%= modifier_mode_paiement.nom %></td>
+                      <td><%= modifier_mode_paiement.mode_paiement %></td>
+                      <td><%= modifier_mode_paiement.workflow_state %></td>
+                      </td>
+                     <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% end %>
+                      
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            <% end %>
+            <%= paginate validees %>
+
+            <!-- END -->
+          </div>
+
+          <div id="rejete" class="tab-pane fade">
+            <!--   START liste rejeté  -->
+            <% rejetees = @rejetees.page(params[:page]).per(100) %>
+            <% if @rejetees.count.zero? %>                
+              <h2 style="text-align:center; margin-top:50px"><hr>La liste des demandes rejetées est vide !!!</h2>
+            <% else %>
+             <table class="table table-striped" style="margin-top: 20px">
+              <thead>
+                <tr>
+                <th scope="col">N°</th>
+                  <th scope="col">Matricule</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                  <th scope="col">Mode paiement</th>
+                  <th scope="col">Etat</th>
+                  <th colspan="4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @rejetees.each do |modifier_mode_paiement| %>
+                 <tr>
+                    <td><%= modifier_mode_paiement.numero_dossier %></td>
+                    <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                    <td><%= modifier_mode_paiement.prenom %></td>
+                    <td><%= modifier_mode_paiement.nom %></td>
+                    <td><%= modifier_mode_paiement.mode_paiement %></td>
+                     <td><%= modifier_mode_paiement.workflow_state %></td>
+                    </td>
+                      <% unless modifier_mode_paiement.allocataire.nil? %>
+                      <td>
+                         <%= link_to 'détails', admin_allocataire_modifier_mode_paiement_path(modifier_mode_paiement.allocataire, modifier_mode_paiement), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% end %>
+                    
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <% end %>
+            <%= paginate rejetees %>
+
+            <!-- END -->
+          </div>
+
+          
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

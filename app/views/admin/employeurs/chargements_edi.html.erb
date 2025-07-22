@@ -1,0 +1,109 @@
+<%= content_for :titre_page do %>
+  Chargements EDI <br>
+  <span style="font-size: 60%; font-family: Georgia;">
+    déclarations chargées : <%= DeclarationChargement.valide.count %>
+    (<%= (DeclarationChargement.valide.count * 100.0 / DeclarationSalaireManquante.manquante.count).ceil(2) %> %) <br>
+    déclarations manquantes : <%= DeclarationSalaireManquante.manquante.count %> <br>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Employeurs', admin_employeurs_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Déclarations manquantes', declarations_manquantes_admin_employeurs_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h3>Critères de recherche</h3>
+    <br>
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :statut_eq, 'Statut' %>
+          <%= f.select :statut_eq, DeclarationChargement.statuts.to_a.map { |w| [DeclarationChargement.human_enum_name(:statut, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :regime_eq, 'Régime' %>
+          <%= f.select :regime_eq, DeclarationChargement.regimes.to_a.map { |w| [DeclarationChargement.human_enum_name(:regime, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :numero_adherent_cont, 'Numéro adhérent' %>
+          <%= f.search_field :numero_adherent_cont, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :created_by_id_eq, 'Ouvert par' %>
+          <%= f.collection_select :created_by_id_eq, User.gestionnaire_compte_salarie.order(:prenom), :id, :full_name,
+                                  { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :traite_par_id_eq, 'Traité par' %>
+          <%= f.collection_select :traite_par_id_eq, User.chef_service_cotisation.order(:prenom), :id, :full_name,
+                                  { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+      </div>
+      <div class="row">
+
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+    <br>
+    <% if @chargements.count.zero? %>
+      <h2 style="text-align:center">
+        <hr>
+        La liste est vide !!!
+      </h2>
+    <% else %>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Regime</th>
+          <th scope="col">Numéro adhérent</th>
+          <th scope="col">Raison sociale</th>
+          <th scope="col">Nombre salariés</th>
+          <th scope="col">Total salariés</th>
+          <th scope="col">Cotisation dues</th>
+          <th scope="col">Ajouté par</th>
+          <th scope="col">Ajouté le</th>
+          <th scope="col">Traité par</th>
+          <th scope="col">Traité le</th>
+          <th scope="col">Statut</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @chargements.each do |chargement| %>
+          <tr>
+            <td><%= chargement.regime_human %></td>
+            <td><%= chargement.numero_adherent %></td>
+            <td><%= chargement.raison_sociale %></td>
+            <td><%= chargement.nombre_salaries %></td>
+            <td><%= chargement.total_salaries %></td>
+            <td><%= chargement.cotisation_dues %></td>
+            <td><%= chargement.created_by&.full_name %></td>
+            <td><%= l chargement.created_at %></td>
+            <td><%= chargement.traite_par&.full_name %></td>
+            <td><%= l(chargement.traite_le) unless chargement.traite_le.nil? %></td>
+            <td><%= chargement.statut_human %></td>
+            <td>
+              <% if chargement.declaration_salaire_manquante.employeur %>
+                <%= link_to 'Détails', admin_employeur_declaration_manquante_charger_show_path(chargement.declaration_salaire_manquante.employeur, chargement.declaration_salaire_manquante, chargement), class: 'btn btn-outline btn-default btn-xs' %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @chargements %>
+
+    <% end %>
+    </div>
+</div>

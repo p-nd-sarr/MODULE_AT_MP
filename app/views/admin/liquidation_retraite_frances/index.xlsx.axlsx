@@ -1,0 +1,33 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numéro dossier',
+      'Nom',
+      'Prénom',
+      'Sexe',
+      'Téléphone',
+      'Email',
+      'Etat du dossier',
+      'Agence de gestion',
+      'Mode de paiement',
+      'Gestionnaire qui a ouvert',
+      'Date d''ouverture',
+  ]
+  sheet.add_row titre, :b => true
+  @demande_liquidations.each do |t|
+    sheet.add_row [
+                      t.num_dossier,
+                      t.nom,
+                      t.prenom,
+                      t.sexe_human,
+                      t.telephone,
+                      t.email,
+                      LiquidationRetraiteFrance.workflow_spec.states[t.workflow_state.to_sym].meta[:label],
+                      t.agence_creation.try(:description_prest),
+                      t.mode_paiement_human,
+                      t.ajoute_par.try(:full_name),
+                      t.date_ouverture,
+                  ]
+  end
+end

@@ -1,0 +1,357 @@
+<h4>Nom et Prénom: <%= @demande_liquidation.prenom %> <%= @demande_liquidation.nom %></h4>
+
+<% if (@demande_liquidation.carrieres_prestation.traite.size < @demande_liquidation.carrieres_prestation.size) and
+  @demande_liquidation.affecter_salarie == current_user %>
+  <%= link_to "Je valide toutes les carrières", admin_liquidation_retraite_valider_all_carrieres_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+  <hr>
+  
+<% end %>
+
+
+<% if @demande_liquidation.can_integrate_carrieres?(current_user) %>
+  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#create_carriere" id="create_carriere_id">
+    Integration de carrière
+  </button>
+<% end %>
+
+<% if @demande_liquidation.current_state >= :cotisation_valide %>
+  <h2>TOTAL POINTS RÉGIME GÉNÉRAL
+    : <%= format_entier @demande_liquidation.carrieres_prestation.regime_general.sum(:points) %></h2>
+  <h2>TOTAL POINTS RÉGIME CADRE
+    : <%= format_entier @demande_liquidation.carrieres_prestation.regime_cadre.sum(:points) %></h2>
+<% end %>
+
+<h3>Régime Général</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Numero</th>
+    <th scope="col">Période</th>
+    <th scope="col">Salaire 1</th>
+    <th scope="col">Salaire 2</th>
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Points</th>
+    <th scope="col">Motif</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Est repris?</th>
+    <th scope="col">From EDI?</th>
+    <% if @demande_liquidation.affecter_salarie == current_user %>
+      <th colspan="3"></th>
+    <% end %>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @demande_liquidation.carrieres_prestation.regime_general.order("date_sortie asc").each do |carriere| %>
+    <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+      <td><%= carriere.exercice %></td>
+      <td><%= carriere.raison_sociale %></td>
+      <td><%= carriere.ref_employeur %></td>
+      <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+      <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+      <td align="right"><%= format_entier carriere.points %></td>
+      <td align="right"><%=  carriere.try(:motif) %></td>
+      <td align="right"><%= carriere.etat %></td>
+      <td align="right"><%= state_yes_no carriere.est_repris? %></td>
+      <td><%= state_yes_no carriere.edi_id? %></td>
+      <% if @demande_liquidation.affecter_salarie == current_user %>
+        <td style="width: 75px">
+          <%= (link_to 'valider', admin_liquidation_retraite_valider_ligne_carriere_path(@demande_liquidation, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or carriere.rejete? or carriere.a_rembourse? %>
+        </td>
+        <td style="width: 75px">
+          <% unless carriere.valide? or carriere.rejete? %>
+            <button type="button" class="btn btn-outline btn-danger btn-xs" data-toggle="modal" data-target="#modal-<%= carriere.id %>">rejeter
+            </button>
+
+            <!-- Retour du dossier de liquidation -->
+            <div class="modal inmodal" id="modal-<%= carriere.id %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+              <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">x</span>
+                      <span class="sr-only">Close</span>
+                    </button>
+                    <h5 class="modal-title">Rejet carriere année exercice <%= carriere.exercice %></h5>
+                  </div>
+                  <%= bootstrap_form_for(@carriere, url: admin_liquidation_retraite_rejeter_ligne_carriere_path(@demande_liquidation, carriere_id: carriere.id)) do |f| %>
+                    <div class="modal-body">
+                      <%= f.text_area :motif_rejet, label: 'Motif' %>
+                    </div>
+
+                    <div class="modal-footer form-group">
+                      <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                      <%= f.button 'rejeter', class: 'btn btn-primary' %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+
+        </td>
+        <td style="width: 75px">
+          <%= (link_to 'detail', admin_liquidation_retraite_carriere_path(@demande_liquidation, carriere.id), class: 'btn btn-outline btn-primary btn-xs') %>
+        </td>
+
+
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>Régime Cadre</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Numero</th>
+    <th scope="col">Période</th>
+    <!--    <th scope="col">Régime</th>-->
+    <th scope="col">Salaire 1</th>
+    <th scope="col">Salaire 2</th>
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Points</th>
+    <th scope="col">Motif</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Est repris?</th>
+    <th scope="col">From EDI?</th>
+    <% if @demande_liquidation.affecter_salarie == current_user %>
+      <th colspan="3"></th>
+    <% end %>
+  </tr>
+  </thead>
+  <tbody>
+  <% @demande_liquidation.carrieres_prestation.regime_cadre.order("date_sortie asc").each do |carriere| %>
+    <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+      <td><%= carriere.exercice %></td>
+      <td><%= carriere.raison_sociale %></td>
+      <td><%= carriere.ref_employeur %></td>
+      <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+      <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+      <!--      <td align="right"><%#= carriere.points %></td>-->
+      <td align="right">
+        <%= format_entier carriere.points %></td>
+
+      <td align="right">
+        <%= carriere.try(:motif) %></td>
+      <td align="right"><%= carriere.etat %></td>
+      <td align="right"><%= state_yes_no carriere.est_repris? %></td>
+      <td><%= state_yes_no carriere.edi_id? %></td>
+
+      <% if @demande_liquidation.affecter_salarie == current_user %>
+
+        <td style="width: 75px">
+          <%= (link_to 'valider', admin_liquidation_retraite_valider_ligne_carriere_path(@demande_liquidation, carriere_id: carriere.id), class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or carriere.rejete? %>
+        </td>
+
+        <td style="width: 75px">
+          <% unless carriere.valide? or carriere.rejete? %>
+            <button type="button" class="btn btn-outline btn-danger btn-xs" data-toggle="modal" data-target="#modal-<%= carriere.id %>">rejeter
+            </button>
+
+            <!-- Retour du dossier de liquidation -->
+            <div class="modal inmodal" id="modal-<%= carriere.id %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+              <div class="modal-dialog">
+                <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">x</span>
+                      <span class="sr-only">Close</span>
+                    </button>
+                    <h5 class="modal-title">Rejet carriere année exercice <%= carriere.exercice %></h5>
+                  </div>
+                  <%= bootstrap_form_for(@carriere, url: admin_liquidation_retraite_rejeter_ligne_carriere_path(@demande_liquidation, carriere_id: carriere.id)) do |f| %>
+                    <div class="modal-body">
+                      <%= f.text_area :motif_rejet, label: 'Motif' %>
+                    </div>
+
+                    <div class="modal-footer form-group">
+                      <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                      <%= f.button 'Rejeter', class: 'btn btn-primary' %>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+
+          <% end %>
+        </td>
+
+        <td style="width: 75px">
+          <%= (link_to 'detail', admin_liquidation_retraite_carriere_path(@demande_liquidation, carriere.id), class: 'btn btn-outline btn-primary btn-xs') %>
+        </td>
+
+
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<div class="modal inmodal" id="create_carriere" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@carriere, url: admin_liquidation_retraite_ajouter_carriere_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter carrière </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :ref_employeur, label: 'Numéro Employeur', class: 'form-control', required: true %>
+
+          <%= f.text_field :raison_sociale, label: 'Raison Sociale', readonly: true %>
+
+          <%= f.collection_select :type_regime_id, Admin::TypeRegime.all, :id, :description, include_blank: true, label: 'Type Regime', tag: 'type_regime', required: true %>
+
+          <%= f.select :exercice, Date.today.year - 60..Date.today.year + 0 %>
+
+          <%= f.date_select :date_entree, label: "Date d'entrée",
+                            start_year: (Date.today - 50.year).year, end_year: Date.today.year, id: "test_id " %>
+
+          <%= f.date_select :date_sortie, label: "Date de sortie",
+                            start_year: (Date.today - 50.year).year, end_year: Date.today.year %>
+
+          <%= f.text_field :salaire1, label: 'Salaire 1', class: 'form-control' %>
+
+          <%= f.text_field :salaire2, label: 'Salaire 2', class: 'form-control' %>
+
+          <%#= f.select :motif, [['Certificat d emploi et de salaire', 'Certificat d emploi et de salaire'], ['Saisie de déclarations', 'Saisie de déclarations'], ['Fusion de carrière', 'Fusion de carrière']], label: "Motif"%>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosEmployeur();
+
+
+          $('#soumettre_button_id').hide();
+
+          var exercice = $('#carriere_exercice').val();
+          var date_entree = $('#carriere_date_entree_1i').val();
+          var date_sortie = $('#carriere_date_sortie_1i').val();
+          if (exercice === date_entree && exercice === date_sortie) {
+              console.log('true');
+              $('#soumettre_button_id').show();
+          } else {
+              $('#soumettre_button_id').hide();
+          }
+
+
+          $('#carriere_ref_employeur').change(function () {
+              chargerInfosEmployeur();
+          })
+
+          function chargerInfosEmployeur() {
+              let ref_employeur = $('#carriere_ref_employeur').val();
+              $.ajax({
+                  url: "/admin/employeurs/single_employeur/" + ref_employeur + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#carriere_raison_sociale").val(data.fhrsoc);
+                      } else {
+                          $("#carriere_raison_sociale").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#carriere_raison_sociale").val('');
+                      $("#carriere_raison_sociale").val('');
+                  }
+              });
+          }
+
+
+          $("#carriere_date_entree_1i").change(function () {
+              var exercice = $('#carriere_exercice').val();
+              var date_entree = $('#carriere_date_entree_1i').val();
+              var date_sortie = $('#carriere_date_sortie_1i').val();
+
+              var date_entree_mois = $('#carriere_date_entree_2i').val();
+              var date_sortie_mois = $('#carriere_date_sortie_2i').val();
+
+              if (exercice === date_entree && exercice === date_sortie) {
+                  $('#soumettre_button_id').show();
+              } else {
+                  $('#soumettre_button_id').hide();
+              }
+
+              if (date_sortie_mois > date_entree_mois) {
+                  $('#soumettre_button_id').show();
+              } else {
+                  $('#soumettre_button_id').hide();
+              }
+
+          });
+
+          $("#carriere_date_sortie_1i").change(function () {
+              var exercice = $('#carriere_exercice').val();
+              var date_entree = $('#carriere_date_entree_1i').val();
+              var date_sortie = $('#carriere_date_sortie_1i').val();
+
+              var date_entree_mois = $('#carriere_date_entree_2i').val();
+              var date_sortie_mois = $('#carriere_date_sortie_2i').val();
+
+              if (exercice === date_entree && exercice === date_sortie) {
+                  $('#soumettre_button_id').show();
+              } else {
+                  $('#soumettre_button_id').hide();
+              }
+
+              if (date_sortie_mois > date_entree_mois) {
+                  $('#soumettre_button_id').show();
+              } else {
+                  $('#soumettre_button_id').hide();
+              }
+
+          });
+
+          $("#carriere_date_entree_2i").change(function () {
+              var date_entree_mois = $('#carriere_date_entree_2i').val();
+              var date_sortie_mois = $('#carriere_date_sortie_2i').val();
+
+              if (parseInt(date_sortie_mois) > parseInt(date_entree_mois)) {
+                  $('#soumettre_button_id').show();
+              } else {
+                  $('#soumettre_button_id').hide();
+              }
+
+          });
+
+          $("#carriere_date_sortie_2i").change(function () {
+              var date_entree_mois = $('#carriere_date_entree_2i').val();
+              var date_sortie_mois = $('#carriere_date_sortie_2i').val();
+
+              if (parseInt(date_sortie_mois) > parseInt(date_entree_mois)) {
+                  $('#soumettre_button_id').show();
+              } else {
+                  $('#soumettre_button_id').hide();
+              }
+
+          });
+
+
+      })
+  </script>
+<% end %>
+

@@ -1,0 +1,34 @@
+<%= bootstrap_form_for(@at_rente_famille, url: admin_at_rente_famille_soumettre_veuves_path(@at_rente_famille), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+     <th scope="col">Sélectionner</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @at_rente_famille.conjoints.valide.each do |epouse| %>
+    <tr>
+      <td><%= epouse.nom %></td>
+      <td><%= epouse.prenom %></td>
+      <td><%= l epouse.date_naissance %></td>
+      <td>
+        <%= check_box_tag 'conjoints_id[]', epouse.id, @at_rente_famille.conjoint_checked(epouse.id) %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<div class="hr-line-dashed"></div>
+
+  <% if !@at_rente_famille.epouses_valide?%>
+    <div class="form-group row">
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-primary">Soumettre la selection </button>
+      </div>
+    </div>
+  <% end %>
+<% end %>

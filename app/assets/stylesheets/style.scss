@@ -1,0 +1,257 @@
+/*
+ *   INSPINIA - Responsive Admin Theme
+ *   Copyright 2014 Webapplayers.com
+ */
+
+// Google Fonts
+@import url("//fonts.googleapis.com/css?family=Open+Sans:300,400,600,700&lang=en");
+
+// Bootstra
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+// Variables, Mixins
+@import "base/variables";
+@import "base/mixins";
+
+// INSPINIA Theme Elements
+@import "base/typography";
+@import "base/navigation";
+@import "base/top_navigation";
+@import "base/buttons";
+@import "base/badgets_labels";
+@import "base/elements";
+@import "base/sidebar";
+@import "base/base";
+@import "base/pages";
+
+// RTL Support
+@import "base/rtl";
+
+// For demo only - config box style
+@import "base/theme-config";
+
+// INSPINIA Skins
+@import "base/skins";
+
+// Media query style
+@import "base/media";
+
+// Custom style
+// Your custom style to override base style
+@import "base/custom";
+
+
+label.required:after {
+  content:" *";
+}
+
+.title-action {
+  text-transform: uppercase;
+}
+
+.form-control.is-invalid {
+  border-color: #ed5565;
+}
+
+.btn-file{
+  position:relative;
+  overflow:hidden;
+  margin:10;
+}
+
+.btn-file input[type=file] + label{
+  display:inline-block;
+  overflow:hidden;
+  width:1px;
+  height:1px;
+}
+
+.btn-file input[type=file]{
+  top:0;
+  right:0;
+  display:block;
+  opacity:0;
+  outline:none;
+  background:white;
+  cursor:inherit;
+  filter:alpha(opacity=0);
+  width:0px;
+  height:0px;
+  overflow:hidden;
+}
+
+.box1{
+  padding-top:25px;
+}
+
+.box1 input, .box2 input{
+  width:20px;
+  height:20px;
+}
+
+.box1 input[checked]{
+  color:green;
+}
+
+.box1 label, .box2 label{
+  margin-left:10px;
+}
+
+.btn-file{
+  height:55px;
+}
+
+.infoNav > li.active{
+  background-color: rgba(250, 250,  250, 0.8);
+}
+
+.piece-card {
+  height: 220px;
+}
+
+
+.piece-card2 {
+  width: 800px;
+  height: fit-content;
+}
+.not-active {
+  pointer-events: none;
+  cursor: not-allowed;
+  color: black;
+}
+
+.active-link {
+  cursor: pointer;
+}
+.motif_virement {
+  display: none;
+}
+
+.img-card-size{
+  height: 150px;
+  width: 250px;
+}
+
+
+.img-card-size-1{
+  height: 75px;
+  width: 250px;
+}
+
+.img-card-size-2{
+  height: 20px;
+  width: 20px;
+}
+
+.img-card-size-3{
+  width: 600px;
+  height: 600px;
+}
+
+
+
+.img-bordered {
+  border: 1px solid black;
+}
+
+.paddind_3 {
+  padding: 3px;
+}
+
+.panel-size {
+  height: 220px;
+}
+
+.panel-size2 {
+  height: 280px;
+}
+
+.panel-size3 {
+  height: fit-content;
+}
+
+.option_menu:hover{
+  border:1px solid rosybrown
+}
+
+.feed_el_h:hover{
+  background-color: rgba(240, 240,  240, 0.8);
+}
+
+.ibox-title{
+  border: none;
+}
+
+#dd_hover:hover{
+  background-color:#1ab394;
+  color:white;
+}
+
+#dr_hover:hover{
+  background-color:red;
+  color:white;
+}
+
+.volet1, .volet4{
+  border:1px solid rgb(0, 162, 255)
+}
+.volet2, .volet5{
+  border:1px solid rgb(228, 173, 122)
+}
+.volet3, .volet6{
+  border:1px solid #6ACCBC
+}
+
+.volet7{
+  border:1px solid #cc6a6a
+}
+
+.volet8{
+  border:1px solid #a6a8a8
+}
+
+.full_button {
+  width: 100%;
+  height: 100;
+}
+
+.menu_tr_col ul {
+  padding:0;
+  margin:0;
+  list-style-type:none;
+}
+.menu_tr_col li {
+  margin-left:2px;
+  float:left; /*pour IE*/
+}
+.menu_tr_col ul li a {
+  display:block;
+  float:left;
+  width:fit-content;
+  text-decoration:none;
+  text-align:center;
+  border:2px solid;
+  /*pour avoir un effet "outset" avec IE :*/
+  border-color:#DCDCDC #696969 #696969 #DCDCDC;
+}
+.menu_tr_col ul li a:hover {
+  background-color:#D3D3D3;
+  border-color:#696969 #DCDCDC #DCDCDC #696969;
+}
+
+.search_section select {
+  width: fit-content;
+  height: 30px;
+}
+
+.search_section input {
+  width: fit-content;
+  height: 30px;
+}
+
+.search_section #annee_{}_1i { display: none}
+//.nav > li.active {
+//  border-left: 4px solid #f47422;
+//  background: #293846;
+//}

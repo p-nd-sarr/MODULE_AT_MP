@@ -1,0 +1,634 @@
+<%= bootstrap_form_for([:admin, @demande_liquidation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Une erreur est survenue lors de l'enregistrement." %>
+  <div class="row">
+    <div class="col-lg-12">
+      <!--      <div class="col-lg-4">-->
+      <%#= f.select :precision_carriere, LiquidationRetraiteFrance::PRECISION_CARRIERE.keys.collect { |precision_carriere| [LiquidationRetraiteFrance.human_enum_name(:precision_carriere, precision_carriere), precision_carriere] }, include_blank: true, label: 'Carriere' %>
+      <!--      </div>-->
+      <div class="col-lg-4">
+        <%= f.select :sens_convention, LiquidationRetraiteFrance::SENS_CONVENTION.keys.collect { |sens_convention|
+          [LiquidationRetraiteFrance.human_enum_name(:sens_convention, sens_convention), sens_convention] }, include_blank: true, label: 'Sens convention' %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-4">
+        <%= f.text_field :numero_affiliation, label: 'N° Affiliation' %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.text_field :numero_securite_sociale, label: 'N° Sécurité Sociale' %>
+      </div>
+      <div class="col-lg-4">
+        <%= f.select :sexe,
+                     LiquidationRetraiteFrance::SEXE.keys.collect { |sexe| [LiquidationRetraiteFrance.human_enum_name(:sexe, sexe), sexe] },
+                     label: "Sexe" %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-4">
+        <%#= f.text_field :prenom, label: 'Prénom', disabled: true %>
+        <%= f.text_field :prenom, label: 'Prénom' %>
+      </div>
+      <div class="col-lg-4">
+        <%#= f.text_field :nom, label: 'Nom', disabled: true %>
+        <%= f.text_field :nom, label: 'Nom' %>
+      </div>
+      <div class="col-lg-4">
+        <%#= f.text_field :nom_jeune_fille, label: 'Nom de Jeune Fille', disabled: true %>
+        <%= f.text_field :nom_jeune_fille, label: 'Nom de Jeune Fille' %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div id="message-erreur" style="color: red;"></div> <!-- Message d'erreur ici -->
+    </div>
+
+    <div class="col-lg-12">
+      <hr>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <%= f.text_field :numero_piece, label: 'N° Piéce Identification' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.collection_select :nationalite_id, Admin::Country.all.order(:description), :id, :description, include_blank: true, label: 'Nationalite', tag: 'Nationalite', required: true %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <%= f.date_select :date_naissance, label: 'Date de naissance',
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today - 18.year).year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.select :zone,
+                         ZONE.keys.collect { |zone| [LiquidationRetraiteFrance.human_enum_name(:zone, zone), zone] },
+                         include_blank: false, label: 'Zone' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.collection_select :admin_region_id, Admin::Country.find_by(code: 'SEN').admin_regions.order('designation'),
+                                    :id, :designation, label: 'Région', include_blank: true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.text_field :adresse_reception_allocation, label: "Adresse de résidence" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :adresse_postale, label: 'Adresse Postale' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.text_field :prenom_pere, label: 'Prénom du Père' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :nom_pere, label: 'Nom du Père' %>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.text_field :prenom_mere, label: 'Prénom de la Mère' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :nom_mere, label: 'Nom  de la Mère' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.email_field :email, label: 'Email' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.phone_field :telephone, label: 'Téléphone', help: "spécifiez l'indicatif (ex: 221 77 000 00 00)" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.select :regime_matrimoniale,
+                         LiquidationRetraiteFrance::REGIME_MATRIMONIALE.keys.collect { |regime_matrimoniale|
+                           [LiquidationRetraiteFrance.human_enum_name(:regime_matrimoniale, regime_matrimoniale), regime_matrimoniale] }, include_blank: true, label: 'Situation matrimoniale' %>
+          </div>
+          <div class="col-lg-6" id="nombre_femmes">
+            <%= f.number_field :nombre_femmes, label: 'Nombre de femmes limite', min: 2, max: 4 %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+
+      <div class="col-lg-6">
+            <%= f.select :situation_familiale, LiquidationRetraiteFrance::SITUATION_FAMILIALE.keys.collect { |situation_fam|
+              [LiquidationRetraiteFrance.human_enum_name(:situation_familiale, situation_fam), situation_fam] }, label: 'Situation Familiale Actuelle' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_situation_fam, label: 'Date de la situation familiale',
+                          start_year: (Date.today - 70.year).year, end_year: (Date.today - 18.year).year %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+      <hr>
+    </div>
+
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <%= f.date_select :date_cessation_activite, label: "Date de céssasion activité Sénégal",
+                          start_year: (Date.today - 60.year).year, end_year: (Date.today + 42.year).year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.select :type_retraite,
+                     LiquidationRetraiteFrance::TYPE_RETRAITE.keys.collect { |type_retraite| [LiquidationRetraiteFrance.human_enum_name(:type_retraite, type_retraite), type_retraite] },
+                     label: 'Type de retraite' %>
+      </div>
+      <!--        <div class="col-lg-6">-->
+      <!--          <div class="row">-->
+      <!--            <div class="col-lg-6">-->
+      <%#= f.number_field :total_an_carriere_sn, label: "Nombre total d'années de salariat" %>
+      <!--            </div>-->
+      <!--            <div class="col-lg-6">-->
+      <%#= f.select :type_retraite, LiquidationRetraiteFrance::TYPE_RETRAITE.keys.collect { |type_retraite| [LiquidationRetraiteFrance.human_enum_name(:type_retraite, type_retraite), type_retraite] }, label: 'Type de retraite' %>
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+
+      <div class="col-lg-6">
+        <%= f.date_select :date_cess_act_fr, label: "Date de céssasion activité France",
+                          start_year: (Date.today - 60.year).year, end_year: (Date.today + 42.year).year %>
+      </div>
+
+      <div class="col-lg-6">
+        <%= f.number_field :total_an_carriere_fr, label: "Nombre total d'années de salariat" %>
+      </div>
+
+      <!--        <div class="col-lg-6">-->
+      <!--          <div class="row">-->
+      <!--            <div class="col-lg-6">-->
+      <%#= f.number_field :total_an_carriere_fr, label: "Nombre total d'années de salariat" %>
+      <!--            </div>-->
+      <!--            <div class="col-lg-6">-->
+      <%#= f.text_field :num_immatric_cfs, label: 'N° Immatriculation France' %>
+      <!--            </div>-->
+      <!--          </div>-->
+      <!--        </div>-->
+
+      <div class="col-lg-6">
+        <%= f.check_box :inapte, label: "Etait-il inapte au travail ?" %>
+      </div>
+
+      <div class="col-lg-6">
+        <%= f.select :mode_paiement,
+                     MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [LiquidationRetraiteFrance.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                     include_blank: true, label: 'Mode de paiement' %>
+      </div>
+    </div>
+
+    <div class="col-lg-12" style="background-color: rgba(240,240,240,1); padding-top: 20px; padding-bottom: 20px;" id="infos_inapte" hidden="hidden">
+      <div class="col-lg-6">
+        <%= f.date_select :date_depart_inapt, label: 'Départ inaptitude',
+                          start_year: (Date.today - 42.year).year, end_year: (Date.today).year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_decision_inapt, label: 'Décision inatitude',
+                          start_year: (Date.today - 42.year).year, end_year: (Date.today).year %>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.check_box :titulaire_pens_invalidite, label: "Titulaire pension d'invalidité ?" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.check_box :titre_reg_gl, label: "Au titre du régime général" %>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.check_box :titre_reg_agric, label: "Au titre du régime agricole" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.check_box :titre_reg_minier, label: "Au titre du régime minier" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <%= f.check_box :titre_reg_special, label: "Au titre du régime spécial" %>
+      </div>
+      <div class="col-lg-6">
+        <div class="row">
+          <div class="col-lg-6" id="infos_institution_deb" hidden="hidden">
+            <%= f.text_field :institution_reg_spec, label: "Institution débitrice" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :num_pension_inapt, label: "N° Pension" %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_virement">
+      <div class="col-lg-6">
+        <%= f.collection_select :admin_banque_agence_id,
+                                Admin::BanqueAgence.all, :id, :nom_complet,
+                                label: 'Banque',
+                                include_blank: true %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte' %>
+        <%#= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+      </div>
+    </div>
+
+    <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_caisse">
+      <div class="col-lg-6">
+        <%= f.collection_select :admin_agence_id,
+                                Admin::Agence.ipres, :id, :description_prest,
+                                label: 'Agence de paiement',
+                                include_blank: true %>
+      </div>
+
+      <div class="col-lg-6" id="adresse_paiement">
+        <%= f.text_field :adresse_paiement, label: 'Adresse de paiement' %>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <%= f.text_area :commentaire, label: 'Observations' %>
+    </div>
+    <div class="col-lg-6">
+      <%= f.date_select :date_ouverture, label: 'Date de réception du formulaire',
+                        start_year: (Date.today - 10.year).year, end_year: (Date.today).year %>
+    </div>
+
+  <div class="col-lg-12 form-group" style="margin-top: 5px;">
+    <div class="row">
+        <div class="panel-body">
+          <div class="panel-group" id="accordion">
+            <div class="panel panel-default" style="padding: 10px">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                    <span class="fa fa-folder"></span> Documents obligatoires
+                  </a>
+                </h5>
+              </div>
+              <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                <div class="full-height-scroll">
+                  <%= check_box_tag "documents_deposes_obligatoires[]", "CNI" %> CNI <br>
+                  <%= check_box_tag "documents_deposes_obligatoires[]", "Formulaire de la demande" %> Formulaire de
+                  liaison <br>
+                  <%= check_box_tag "documents_deposes_obligatoires[]", "certificat de travail" %> Certificat de
+                  travail <br>
+                </div>
+              </div>
+            </div> <!-- End panel default conjoint -->
+
+            <div class="panel panel-default" style="padding: 10px">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                    <span class="fa fa-folder"></span> Autres documents
+                  </a>
+                </h5>
+              </div>
+              <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                <div class="full-height-scroll">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "Certificat médical" %> Certificat médical
+                      <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "Bulletin de salaire" %> Bulletin de
+                      salaire <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "Certificat de mariage" %> Certificat de
+                      mariage <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "Certificat emploi salaire" %> Certificat
+                      emploi salaire <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "RIB" %> RIB <br>
+
+                    </div>
+
+                    <div class="col-md-6">
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "Protocole accord branche" %>
+                      protocole_accord_branche <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "Declaration sur honneur" %> Declaration
+                      sur honneur <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "certificat vie collectif" %> Certificat
+                      vie collectif <br>
+                      <%= check_box_tag "documents_deposes_facultatifs[]", "certificat vie individuel" %> certificat
+                      vie individuelle <br>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- End panel default enfant -->
+          </div>
+        </div>
+    </div> <!-- End row -->
+  </div>
+
+<!--  <div class="col-lg-12" style="margin-top: -1%;">-->
+<!--    <hr>-->
+<!--    <p class="text-warning" style="margin-left: 2%; font-size: large;text-decoration: underline;">-->
+<!--      <strong>Ressources Personnelles du conjoint</strong>-->
+<!--    </p>-->
+<!--    <hr>-->
+<!--    <div class="col-lg-6">-->
+      <%#= f.check_box :carriere_conjoint, label: "Exerce ou a exercé une activité salariée" %>
+<!--    </div>-->
+<!--    <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="activite_conjoint" hidden="hidden">-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.number_field :salaire_trimestre_conjoint, label: "Salaire du dernier trimestre" %>
+<!--      </div>-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.number_field :salaire_annuel_conjoint, label: "Salaire de la derniere année" %>
+<!--      </div>-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.date_select :date_cess_act_conjoint, label: 'Date cessation activité', start_year: (Date.today - 42.year).year, end_year: (Date.today).year %>
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="col-lg-6">-->
+      <%#= f.check_box :avantage_viellesse_conjoint, label: "A déja obtenu une avantage viellesse" %>
+<!--    </div>-->
+<!--    <div class="col-lg-12" style="margin-top: 2%; background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="div_avant_viel_conjoint" hidden="hidden">-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.select :nature_avantage_conjoint, LiquidationRetraiteFrance::NATURE_AVANTAGE_CONJ.keys.collect { |nature_avantage_conjoint| [LiquidationRetraiteFrance.human_enum_name(:nature_avantage_conjoint, nature_avantage_conjoint), nature_avantage_conjoint] }, label: "Nature de l'avantage" %>
+<!--      </div>-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.text_field :nom_instit_deb_conjoint, label: "Nom institution debitatrice" %>
+<!--      </div>-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.text_field :adresse_instit_deb_conjoint, label: "Adresse institution debitatrice" %>
+<!--      </div>-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.text_field :numero_pension_conjoint, label: "N° Pension ou rente" %>
+<!--      </div>-->
+<!--      <div class="col-lg-4">-->
+        <%#= f.number_field :montant_pension_conjoint, label: "Montant du dernier trimestre" %>
+<!--      </div>-->
+<!--    </div>-->
+
+<!--    <div class="col-lg-6">-->
+      <%#= f.check_box :autres_revenus_conjoint, label: "Dispose d'autres revenus" %>
+<!--    </div>-->
+<!--    <div class="col-lg-6">-->
+      <%#= f.check_box :biens_perso_conjoint, label: "Posséde des biens personnels" %>
+<!--    </div>-->
+<!--    <div class="col-lg-6">-->
+      <%#= f.check_box :biens_donation_conjoint, label: "Fait donnation de biens" %>
+<!--    </div>-->
+
+  <div class="col-lg-12 form-group">
+    <hr>
+    <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+      <%= link_to 'Annuler', (@demande_liquidation.persisted? ? [:admin, @demande_liquidation] : admin_liquidation_retraite_frances_path), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+
+  </div>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosCompteBancaire();
+          chargerInfosParticipant();
+          chargerRegions();
+          chargerInfosInapte();
+          chargerInfosInstitution_deb();
+          showAndHideNombreFemme();
+          // chargerInfosActiviteConj();
+          // chargerInfosAvantViellesseConj();
+
+          // $('#liquidation_retraite_france_date_cess_act_conjoint_3i').prop("disabled", true).val('');
+          // $('#liquidation_retraite_france_date_cess_act_conjoint_2i').prop("disabled", true).val('');
+          // $('#liquidation_retraite_france_date_cess_act_conjoint_1i').prop("disabled", true).val('');
+
+          // $('#liquidation_retraite_france_date_cess_act_conjoint_3i').val('');
+          // $('#liquidation_retraite_france_date_cess_act_conjoint_2i').val('');
+          // $('#liquidation_retraite_france_date_cess_act_conjoint_1i').val('');
+
+          $("#liquidation_retraite_france_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+          });
+          $("#liquidation_retraite_france_inapte").change(function () {
+              chargerInfosInapte()
+          });
+          $("#liquidation_retraite_france_titre_reg_special").change(function () {
+              chargerInfosInstitution_deb()
+          });
+
+          $('#liquidation_retraite_france_regime_matrimoniale').on('change', function () {
+              showAndHideNombreFemme();
+          });
+          // $("#liquidation_retraite_france_carriere_conjoint").change(function () {
+          //     chargerInfosActiviteConj()
+          // });
+          // $("#liquidation_retraite_france_avantage_viellesse_conjoint").change(function () {
+          //     chargerInfosAvantViellesseConj()
+          // });
+
+          function chargerInfosCompteBancaire() {
+              let mode_paiement = $('#liquidation_retraite_france_mode_paiement').val();
+              let elem_mode_paiement_virement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  $('#liquidation_retraite_france_admin_banque_agence_id').attr('disabled', false);
+                  $('#liquidation_retraite_france_compte_bancaire_numero_compte').attr('disabled', false);
+                  $('#liquidation_retraite_france_compte_bancaire_cle_rib').attr('disabled', false);
+                  elem_mode_paiement_virement.show();
+              } else {
+                  elem_mode_paiement_virement.hide();
+                  $('#liquidation_retraite_france_admin_banque_agence_id').attr('disabled', true);
+                  $('#liquidation_retraite_france_compte_bancaire_numero_compte').attr('disabled', true);
+                  $('#liquidation_retraite_france_compte_bancaire_cle_rib').attr('disabled', true);
+              }
+              let elem_mode_paiement_caisse = $('#mode_paiement_caisse')
+              if (mode_paiement === 'caisse_ipres' || mode_paiement === 'paiement_a_domicile') {
+                  $('#liquidation_retraite_france_admin_agence_id').attr('disabled', false);
+                  elem_mode_paiement_caisse.show();
+              } else {
+                  elem_mode_paiement_caisse.hide();
+                  $('#liquidation_retraite_france_admin_agence_id').attr('disabled', true);
+              }
+              let elem_adresse_paiement = $('#adresse_paiement')
+              if (mode_paiement === 'paiement_a_domicile') {
+                  $('#liquidation_retraite_france_adresse_paiment').attr('disabled', false);
+                  elem_adresse_paiement.show();
+              } else {
+                  elem_adresse_paiement.hide();
+                  $('#liquidation_retraite_france_adresse_paiment').attr('disabled', true);
+              }
+          }
+
+          $('#liquidation_retraite_france_numero_affiliation').change(function () {
+              chargerInfosParticipant();
+          })
+
+          function chargerInfosParticipant() {
+              let numero_affiliation = $('#liquidation_retraite_france_numero_affiliation').val();
+              let elem_message_erreur = $('#message-erreur')
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#liquidation_retraite_france_prenom").val(data.prenom);
+                          $("#liquidation_retraite_france_nom").val(data.nom);
+                          elem_message_erreur.hide();
+                          $("#message-erreur").text(''); // Effacer le message d'erreur si le numéro est valide
+
+                          if (Object.keys(data).length > 0) {
+                              if (data.date_naissance !== null) {
+                                  $("#liquidation_retraite_france_date_naissance").val(data.date_naissance);
+                              }
+                          }
+                          if (data.numero_piece !== null) {
+                              $("#liquidation_retraite_france_nin").val(data.numero_piece);
+                          }
+
+                          if (data.genre === 'HOMME') {
+                              // nom_jeune_fille
+                              $('#liquidation_retraite_france_nom_jeune_fille').attr("disabled", true)
+                          } else {
+                              $('#liquidation_retraite_france_nom_jeune_fille').attr("disabled", false)
+                          }
+
+                      } else {
+                          // $("#liquidation_retraite_france_prenom").val('');
+                          // $("#liquidation_retraite_france_nom").val('');
+
+                          // En cas d'erreur AJAX, ne pas vider les champs, mais afficher un message d'erreur
+                          elem_message_erreur.show();
+                          $("#message-erreur").text("Le numéro n'est pas valide.");
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      // $("#liquidation_retraite_france_prenom").val('');
+                      // $("#liquidation_retraite_france_nom").val('');
+
+                      // En cas d'erreur AJAX, ne pas vider les champs, mais afficher un message d'erreur
+                      // elem_message_erreur.show();
+                      // $("#message-erreur").text("Le numéro n'est pas valide.");
+                  }
+              });
+          }
+
+          $("#liquidation_retraite_france_zone").change(function () {
+              chargerRegions()
+          });
+
+          function chargerRegions() {
+              let zone = $('#liquidation_retraite_france_zone').val();
+
+              if (zone === 'senegal') {
+                  $('#liquidation_retraite_france_admin_region_id').attr("disabled", false);
+              } else {
+                  $('#liquidation_retraite_france_admin_region_id').val('').attr("disabled", true);
+              }
+          }
+
+          function chargerInfosInapte() {
+              elem_infos_inapte = $('#infos_inapte')
+              if (liquidation_retraite_france_inapte.checked === true) {
+                  elem_infos_inapte.show();
+              } else {
+                  elem_infos_inapte.hide();
+              }
+          }
+
+          function showAndHideNombreFemme() {
+              if ($('#liquidation_retraite_france_regime_matrimoniale').val() == 'polygame') {
+                  $('#nombre_femmes').show();
+              } else {
+                  $('#nombre_femmes').hide();
+              }
+          }
+
+          function chargerInfosInstitution_deb() {
+              elem_infos_institution_deb = $('#infos_institution_deb')
+              if (liquidation_retraite_france_titre_reg_special.checked === true) {
+                  elem_infos_institution_deb.show();
+              } else {
+                  elem_infos_institution_deb.hide();
+              }
+          }
+
+          // function chargerInfosActiviteConj() {
+          //     elem_infos_activite_conj = $('#activite_conjoint')
+          //     if (liquidation_retraite_france_carriere_conjoint.checked === true) {
+          //         elem_infos_activite_conj.show();
+          //
+          //         $('#liquidation_retraite_france_salaire_trimestre_conjoint').attr('disabled', false);
+          //         $('#liquidation_retraite_france_salaire_annuel_conjoint').attr('disabled', false);
+          //
+          //         $('#liquidation_retraite_france_date_cess_act_conjoint_3i').prop("disabled", false).val('');
+          //         $('#liquidation_retraite_france_date_cess_act_conjoint_2i').prop("disabled", false).val('');
+          //         $('#liquidation_retraite_france_date_cess_act_conjoint_1i').prop("disabled", false).val('');
+          //     } else {
+          //         elem_infos_activite_conj.hide();
+          //
+          //         $('#liquidation_retraite_france_salaire_trimestre_conjoint').attr('disabled', true).val(null);
+          //         $('#liquidation_retraite_france_salaire_annuel_conjoint').attr('disabled', true).val(null);
+          //
+          //         $('#liquidation_retraite_france_date_cess_act_conjoint_3i').prop("disabled", true).val('');
+          //         $('#liquidation_retraite_france_date_cess_act_conjoint_2i').prop("disabled", true).val('');
+          //         $('#liquidation_retraite_france_date_cess_act_conjoint_1i').prop("disabled", true).val('');
+          //     }
+          // }
+
+          // function chargerInfosAvantViellesseConj() {
+          //     elem_infos_viellesse_conj = $('#div_avant_viel_conjoint')
+          //     if (liquidation_retraite_france_avantage_viellesse_conjoint.checked === true) {
+          //         elem_infos_viellesse_conj.show();
+          //
+          //         $('#liquidation_retraite_france_nature_avantage_conjoint').attr('disabled', false);
+          //         $('#liquidation_retraite_france_nom_instit_deb_conjoint').attr('disabled', false);
+          //         $('#liquidation_retraite_france_adresse_instit_deb_conjoint').attr('disabled', false);
+          //         $('#liquidation_retraite_france_numero_pension_conjoint').attr('disabled', false);
+          //         $('#liquidation_retraite_france_montant_pension_conjoint').attr('disabled', false);
+          //     } else {
+          //         elem_infos_viellesse_conj.hide();
+          //
+          //         $('#liquidation_retraite_france_nature_avantage_conjoint').attr('disabled', true).val(null);
+          //         $('#liquidation_retraite_france_nom_instit_deb_conjoint').attr('disabled', true).val(null);
+          //         $('#liquidation_retraite_france_adresse_instit_deb_conjoint').attr('disabled', true).val(null);
+          //         $('#liquidation_retraite_france_numero_pension_conjoint').attr('disabled', true).val(null);
+          //         $('#liquidation_retraite_france_montant_pension_conjoint').attr('disabled', true).val(null);
+          //     }
+          // }
+      })
+  </script>
+<% end %>

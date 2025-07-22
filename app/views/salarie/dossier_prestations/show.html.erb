@@ -1,0 +1,153 @@
+<%= content_for :titre_page, 'Dossier De Prestation' %>
+
+<%= content_for :titre_page_autres_details do %>
+  Avec : <%= @dossier_prestation.conjoint.full_name unless @dossier_prestation.conjoint.nil?%> <br>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}" %>
+  <% unless @dossier_prestation.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @dossier_prestation.date_soumission}" %>
+  <%end %>
+  <% unless @dossier_prestation.date_enregistrement.nil? %>
+    <br>
+    <strong class="text-info">Date date_enregistrement :</strong>
+    <%= "#{l @dossier_prestation.date_enregistrement}" %>
+  <%end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', salarie_dossier_prestations_path, class: 'btn btn-white btn-sm' %>
+  <% if @dossier_prestation.creation?  and current_user == @dossier_prestation.ajoute_par %>
+    <%= link_to 'Modifier', edit_salarie_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'supprimer', [:salarie, @dossier_prestation], method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                class: 'btn btn-danger btn-sm'%>
+
+    <% if @dossier_prestation.pret_pour_soumission? and current_user == @dossier_prestation.ajoute_par %>
+      <%= link_to 'Modifier', edit_salarie_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+    <% end %>
+
+    <% if @dossier_prestation.pret_pour_soumission? and current_user == @dossier_prestation.ajoute_par %>
+      <%= link_to 'Soumettre', salarie_dossier_prestation_soumission_form_path(@dossier_prestation), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <%= link_to 'Prénatales', salarie_dossier_prestation_allocation_prenatales_path(@dossier_prestation),
+                class: 'btn btn-outline btn-primary btn-xs' %>
+
+              <%= link_to 'Postnatales', salarie_dossier_prestation_allocation_postnatales_path(@dossier_prestation),
+                          class: 'btn btn-outline btn-primary btn-xs' %>
+
+              <%= link_to 'Familiales', new_salarie_dossier_prestation_allocation_familiale_path(@dossier_prestation),
+                          class: 'btn btn-outline btn-primary btn-xs' %>
+            </div>
+            <div class="col-lg-12">
+            <h2>
+              Numéro demande : <%= @dossier_prestation.num_dossier %>
+            </h2>
+
+            <% if @dossier_prestation.creation? %>
+              <% if @dossier_prestation.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission <br>
+                  <% unless @dossier_prestation.conjoint.nil? or @dossier_prestation.conjoint.valide? %>
+                    Attendez juste que votre conjoint(e) <%= @dossier_prestation.conjoint.prenom + ' ' + @dossier_prestation.conjoint.nom %> soit validé(e) en agence
+                  <% end %>
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs">
+                <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Infos Générales
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.etat_civil_demandeur_valid? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.etat_civil_demandeur_valid? %>
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-calendar"></i>Enfants
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.enfants_valid? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.enfants_valid? %>
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>Temps De Présence
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.carriere_valid? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.carriere_valid? %>
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.document_valid? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.document_valid? %>
+                </a></li>
+              </ul>
+              <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @dossier_prestation.etat_civil_demandeur_valid %>
+                      <%= link_to "Je valide les informations sur l'état civil", salarie_dossier_prestation_valider_etat_civil_demandeur_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_etat_civil' %>
+                    <% if @dossier_prestation.creation? %>
+                      <%= link_to 'Modifier mes informations personnelles', edit_salarie_dossier_prestation_path(@dossier_prestation) %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div id="tab-3" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @dossier_prestation.enfants_valid? %>
+                      <%= link_to "Je valide les informations sur mes enfants", salarie_dossier_prestation_valider_enfants_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_enfants' %>
+                    <% if @dossier_prestation.creation? %>
+                      <%= link_to 'Modifier les informations sur mes enfants', salarie_enfants_path %>
+                    <% end %>
+                  </div>
+                </div>
+                <div id="tab-4" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @dossier_prestation.carriere_valid? %>
+                      <%= link_to "Je valide les informations sur ma carrière", salarie_dossier_prestation_valider_carriere_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_carrieres' %>
+                    <% if @dossier_prestation.creation? %>
+                      <hr>
+                      <%= link_to "Voir le détail", salarie_carrieres_path %>
+                    <% end %>
+                  </div>
+                </div>
+                <div id="tab-5" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @dossier_prestation.document_valid %>
+                      <%= link_to "Je valide tous les documents", salarie_dossier_prestation_valider_documents_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

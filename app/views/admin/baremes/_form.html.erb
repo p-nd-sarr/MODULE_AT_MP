@@ -1,0 +1,28 @@
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="ibox-content">
+      <%= bootstrap_form_for(@admin_bareme, layout: :horizontal, label_col: "col-sm-3", control_col: "col-sm-9") do |f| %>
+        <%= f.collection_select :admin_type_regime_id, Admin::TypeRegime.order('description'), :id, :description %>
+        <%= f.select :periode,
+                     Admin::Bareme::PERIODE.keys.collect { |periode| [Admin::Bareme.human_enum_name(:periode, periode), periode] },
+                     label: 'Période' %>
+        <%= f.text_field :taux_contractuel %>
+        <%= f.text_field :plafond_salaire %>
+        <%= f.text_field :salaire_reference %>
+        <%= f.date_select :date_debut_validite,
+                          start_year: 1950, end_year: (Date.today + 1.year).year %>
+        <%= f.date_select :date_fin_validite,
+                          start_year: 1950, end_year: (Date.today + 1.year).year %>
+
+        <div class="hr-line-dashed"></div>
+
+        <div class="form-group row">
+          <div class="col-sm-4 col-sm-offset-3">
+            <%= link_to 'Annuler', admin_baremes_path, class: 'btn btn-white' %>
+            <%= f.button 'Valider', class: 'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

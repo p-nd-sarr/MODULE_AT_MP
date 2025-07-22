@@ -1,0 +1,1 @@
+json.array! @admin_type_etablissement_publiques, partial: "admin_type_etablissement_publiques/admin_type_etablissement_publique", as: :admin_type_etablissement_publique

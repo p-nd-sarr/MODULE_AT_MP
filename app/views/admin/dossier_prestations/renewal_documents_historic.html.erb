@@ -1,0 +1,49 @@
+<%= content_for :titre_page, "Historique de renouvellement documents" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_prestation.nil? %>
+    Allocataire : <%= @dossier_prestation.full_name %> <br>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' unless @dossier_prestation.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <% if @renewed_documents.nil? %>
+        Historique vide !
+      <% else %>
+        <h3>Historique des documents des enfants</h3>
+        <hr>
+        <%= paginate @renewed_documents %>
+        <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+          <thead>
+          <tr>
+            <th scope="col">Enfant</th>
+            <th scope="col">Type document</th>
+            <th scope="col">Date délivrance</th>
+            <th scope="col">Date d'expiration</th>
+            <th scope="col">Date de creation</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @renewed_documents.each do |renewed_document| %>
+            <tr>
+              <td><%= renewed_document.documentable.full_name unless renewed_document.documentable.nil? %></td>
+              <td><%= Document.human_enum_name(:type_document, renewed_document.type_document) unless renewed_document.type_document.nil? %></td>
+              <td><%= renewed_document.date_delivrance_piece unless renewed_document.date_delivrance_piece.nil? %></td>
+              <td><%= renewed_document.date_expiration unless renewed_document.date_expiration.nil? %></td>
+              <td><%= renewed_document.created_at unless renewed_document.created_at.nil? %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @renewed_documents %>
+      <% end %>
+    </div>
+  </div>
+</div>

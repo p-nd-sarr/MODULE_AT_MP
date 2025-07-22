@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  numero: MyString
+  prenom: MyString
+  nom: MyString
+  montant: MyString
+  date_liquidation: MyString
+  nature: MyString
+  type_frais: 1
+
+two:
+  numero: MyString
+  prenom: MyString
+  nom: MyString
+  montant: MyString
+  date_liquidation: MyString
+  nature: MyString
+  type_frais: 1

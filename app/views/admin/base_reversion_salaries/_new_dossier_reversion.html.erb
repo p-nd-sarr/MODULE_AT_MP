@@ -1,0 +1,152 @@
+<div class="modal inmodal" id="create_reversion" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" style="width:750px;">
+    <%= bootstrap_form_for(@dossier_reversion_salarie, url: admin_base_reversion_salary_create_dossier_reversion_path(@reversion_veuve_salarie), label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Nouveau dossier de reversion  </h4>
+            </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                        <div class="col-lg-6">
+                            <%= f.select :type_ayant_droit,
+                            ReversionVeuve::TYPE_AYANT_DROIT.keys.collect { |type_ayant_droit| [ReversionVeuve.human_enum_name(:type_ayant_droit, type_ayant_droit), type_ayant_droit] },
+                            label: 'Type ayant droit' %>
+                        </div>
+                        
+                        <div id="conjoint" class="cojoint">
+                            <div class="col-lg-6">
+                                <%= f.collection_select :conjoint_id, @reversion_veuve_salarie.conjoints.valide, :id, :full_name,
+                                                        include_blank: true, label: 'Conjoint' %>
+                            </div>
+                            <div class="col-lg-6 mb-2">
+                                <%= f.phone_field :phone, label: 'Téléphone' %>
+                            </div>
+                            <div class="col-lg-6">
+                                <%= f.text_field :email, label: 'Email' %>
+                            </div>
+                        </div>
+
+                        <div id="infos_orphelin" style="margin-bottom: 2px">
+                            <div class="col-lg-6">
+                                <%= f.collection_select :enfant_id, @reversion_veuve_salarie.enfants.valide.mineurs, :id, :full_name,
+                                                    include_blank: true, label: 'Orphelin' %>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <%= f.text_field :nom_tuteur, label: 'Nom du tuteur' %>
+                            </div>
+                            <div class="col-lg-6">
+                                <%= f.text_field :prenom_tuteur, label: 'Prénom du tuteur' %>
+                             </div>
+                             <div class="col-lg-6">
+                                <%= f.phone_field :phone, label: 'Téléphone Tuteur', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+                            </div>
+                            <div class="col-lg-6">
+                                <%= f.text_field :email, label: 'Email Tuteur' %>
+                            </div>
+                        </div>
+                         <div class="col-lg-6">
+                            <%= f.text_field :adresse, label: 'Adresse' %>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <%= f.text_field :adresse_reception_allocation, label: "Adresse de réception de l'allocation" %>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <%= f.select :mode_paiement,
+                                         MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [LiquidationRetraite.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                                        include_blank: true, label: 'Mode de paiement' %>
+                        </div>
+                     <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_virement">
+                      <div class="col-lg-6">
+                        <%= f.collection_select :admin_banque_agence_id,
+                                                Admin::BanqueAgence.all, :id, :nom_complet,
+                                                label: 'Banque',
+                                                include_blank: true %>
+                      </div>
+                      <div class="col-lg-6">
+                        <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte', maxlength: 12, minlength: 12 %>
+                        <%= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+                      </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                <button type="submit" class="btn btn-primary">Valider</button>
+            </div>
+        </div>
+    <% end %>
+  </div>
+</div>
+  <% content_for :javascript do %>
+      <script type="text/javascript">
+          $(document).ready(function () {
+              chargerInfosCompteBancaire();
+              chargerInfosVeuve();
+
+              $("#dossier_reversion_salary_mode_paiement").change(function () {
+                  chargerInfosCompteBancaire()
+              });
+
+              function chargerInfosCompteBancaire() {
+                  let mode_paiement = $('#dossier_reversion_salary_mode_paiement').val();
+                  console.log(mode_paiement);
+                  let elem_mode_paiement = $('#mode_paiement_virement')
+                  if (mode_paiement === 'virement') {
+                      elem_mode_paiement.show();
+                  } else {
+                      elem_mode_paiement.hide();
+                  }
+              }
+
+              $("#dossier_reversion_salary_type_ayant_droit").change(function () {
+                  chargerInfosVeuve()
+              });
+
+              function chargerInfosVeuve() {
+                  let type_ayant_droit = $('#dossier_reversion_salary_type_ayant_droit').val();
+                  console.log(type_ayant_droit);
+                  let elem_conjoint = $('#conjoint')
+                  let elem_infos_orphelin = $('#infos_orphelin')
+                  if (type_ayant_droit === 'veuve') {
+                      elem_conjoint.show();
+                      elem_infos_orphelin.hide();
+                      $('#dossier_reversion_salary_nom_tuteur').val('')
+                      $('#dossier_reversion_salary_prenom_tuteur').val('')
+                  } else {
+                      elem_conjoint.hide();
+                      elem_infos_orphelin.show();
+                  }
+              }
+
+              $('#reversion_veuve_numero_affiliation').change(function () {
+                  var numero_affiliation = $('#dossier_reversion_salary_numero_affiliation').val();
+                  $.ajax({
+                      url: "/admin/salaries/" + numero_affiliation + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data) {
+                              $("#dossier_reversion_salary_prenom").val(data.prenom);
+                              $("#dossier_reversion_salary_nom").val(data.nom);
+                          } else {
+                              $("#dossier_reversion_salary_prenom").val('');
+                              $("#dossier_reversion_salary_nom").val('');
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#dossier_reversion_salary_prenom").val('');
+                          $("#dossier_reversion_salary_nom").val('');
+                      }
+                  });
+              })
+          })
+      </script>
+    <% end %>
+   

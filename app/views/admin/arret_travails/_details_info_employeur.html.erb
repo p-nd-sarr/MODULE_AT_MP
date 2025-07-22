@@ -1,0 +1,376 @@
+<div class="row" style="margin-top: 20px;">
+  <div class="col-lg-12">
+    <div class="m-b-md">
+      <% unless  @demande_arret_travail.info_employeur_valid?%>
+        <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+        <button type="button" class="btn btn-outline btn-white fa fa-edit" data-toggle="modal" data-target="#infoEmployeurAT" style="float: left;"></span> Modifier</button>
+        <%end%>
+      <%end%>
+      <div class="modal inmodal" id="infoEmployeurAT" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+          <%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-4", control_col: "col-sm-6") do |f| %>
+          <%= f.alert_message "Please fix the errors below." %>
+
+          <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Modifier les informations de l'employeur</h4>
+            </div>
+            <div class="modal-body">            
+              <div class="row">
+                <div class="col-sm-12">
+                  <%=hidden_field_tag :custom_page, 'information_employeur'%>
+                
+                  <div class="col-sm-6 col-md-6">
+                    <%= f.text_field  :raison_sociale_employeur ,readonly: @demande_arret_travail.read_only?%>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                    <%= f.text_field  :numero_employeur ,readonly: @demande_arret_travail.read_only?%>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                    <%= f.text_field  :adresse_employeur ,readonly: @demande_arret_travail.read_only?%>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                    <%= f.text_field  :boite_postale_employeur ,readonly: @demande_arret_travail.read_only?%>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                     <%= f.text_field  :email_employeur ,readonly: @demande_arret_travail.read_only?%>
+                  </div>
+                  <div class="col-sm-6 col-md-6">
+                    <%= f.text_field  :telephone_employeur ,readonly: @demande_arret_travail.read_only?%>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="modal-footer form-group">
+              <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+              <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+              <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+            <%end%>
+            </div>
+          </div>
+          <%end%>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+<% if @employeur.nil?%>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Raison sociale:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.raison_sociale_employeur? ? @demande_arret_travail.raison_sociale_employeur : "indéfini" %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>N° employeur:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.numero_employeur? ? @demande_arret_travail.numero_employeur : "indéfini" %></dd>
+      </div>
+    </d1>
+    
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Adresse employeur:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+       <dd class="mb-1"><%= @demande_arret_travail.adresse_employeur? ? @demande_arret_travail.adresse_employeur : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Téléphone:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.telephone_employeur? ? @demande_arret_travail.telephone_employeur : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Email:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.email_employeur? ? @demande_arret_travail.email_employeur : "indéfini" %></dd>
+      </div>
+    </d1>
+  </div>
+  <% else %>
+    <div class="col-lg-6">
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt>Numéro unique:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhnum? ? @employeur.fhnum : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ancien numéro IPRES:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.ancien_num_ipres? ? @employeur.ancien_num_ipres : "indéfini" %> </dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ancien numéro CSS:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.ancien_num_css? ? @employeur.ancien_num_css : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Raison sociale:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhrsoc? ? @employeur.fhrsoc : "indéfini" %></dd>
+      </div>
+    </d1>
+  
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Adresse employeur:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhadr? ? @employeur.fhadr : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Boite postale:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhbp? ? @employeur.fhbp : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Téléphone:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhtel? ? @employeur.fhtel : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Email:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhtel? ? @employeur.ancien_num_css : "indéfini"%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Fax:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.fhtel? ? @employeur.ancien_num_css : "indéfini"%></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Activité principale:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.activite_prinicipal? ? @employeur.activite_prinicipal : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Statut IPRES:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.ancien_statut_ipres? ? @employeur.ancien_statut_ipres : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Statut CSS:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.ancien_statut_css? ? @employeur.ancien_statut_css : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Statut IPRES CSS:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.statut? ? @employeur.statut : "indéfini" %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Solde tolal IPRES CSS:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.solde_total%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Solde branche vieillesse:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.solde_ve %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Solde branche AT:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.solde_at %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Solde branche PF:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.solde_pf %></dd>
+      </div>
+    </d1>
+      <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Carnet d'accident de travail:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @employeur.taux_at %></dd>
+      </div>
+    </d1>
+  </div>
+  <% end %>
+</div>
+
+<!--<% unless  @demande_arret_travail.info_employeur_valid?%>
+  <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+  <div class="row">
+    <%compteur=0%>
+    <%var=0%>
+
+    <% if @demande_arret_travail.numero_unique_ipress_css_employeur and @demande_arret_travail.numero_unique_ipress_css_employeur.length > 0 %>
+       <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.ancien_numero_ipress_employeur and @demande_arret_travail.ancien_numero_ipress_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.ancien_numero_css_employeur and @demande_arret_travail.ancien_numero_css_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.raison_sociale_employeur and @demande_arret_travail.raison_sociale_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.numero_employeur and @demande_arret_travail.numero_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.adresse_employeur and @demande_arret_travail.adresse_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.boite_postale_employeur and @demande_arret_travail.boite_postale_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.telephone_employeur and @demande_arret_travail.telephone_employeur.length > 0 %>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.email_employeur and @demande_arret_travail.email_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.fax_employeur and @demande_arret_travail.fax_employeur.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.activite_principale_entreprise and @demande_arret_travail.activite_principale_entreprise.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.status_ipress and @demande_arret_travail.status_ipress.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.status_css and @demande_arret_travail.status_css.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.status_ipress_css and @demande_arret_travail.status_ipress_css.length > 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.solde_total_ipress_css and @demande_arret_travail.solde_total_ipress_css >= 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <% if @demande_arret_travail.solde_branche_vieillesse and @demande_arret_travail.solde_branche_vieillesse >= 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+     <% if @demande_arret_travail.solde_branche_at and @demande_arret_travail.solde_branche_at >= 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+     <% if @demande_arret_travail.solde_branche_pf and @demande_arret_travail.solde_branche_pf >= 0%>
+        <%compteur=compteur+1%>
+    <%end%>
+    <%var=var+1%>
+
+    <div class="col-lg-12">
+      <hr>
+          <d1 class="row mb-0">
+            <div class="col-sm-2" style="text-align: right;">
+              <dt>Progression: </dt>
+            </div>
+            <div class="col-sm-10" style="text-align: left;">
+              <dd>
+                <div class="progress m-b-1">
+                  <div style="width: <%=compteur*100/var%>%" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+                </div>
+                <small style="padding-top: 0px;">Profile complet à <%=compteur*100/var%>%</small>
+              </dd>
+            </div>
+          </d1>
+      </div>
+    </div>
+  <% end %>
+<% end %> -->

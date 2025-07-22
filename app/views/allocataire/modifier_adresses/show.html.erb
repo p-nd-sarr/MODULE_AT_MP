@@ -1,0 +1,180 @@
+<%= content_for :titre_page, "Détails Demande modification d'adresse [#{@modifier_adresse.workflow_state}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Liste demandes', allocataire_modifier_adresses_path, class: 'btn btn-white btn-sm' %>
+
+  <!-- Soumission demande  -->
+   <% if @modifier_adresse.creation? %>
+    <%#= link_to 'Modifier', edit_admin_demande_remboursement_cotisation_path(@demande_remboursement_cotisation), class: 'btn btn-white btn-sm' %>
+    <% if @modifier_adresse.pret_pour_soumission? and current_user.can_allocataire? and @modifier_adresse.ajoute_par == current_user %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre</button>
+    <% end %>
+      <%#= render 'soumission_form' %>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+
+  <div class="progressbar-wrapper">
+    <ul class="progressbar">
+      <li class="<%= ("active") if @modifier_adresse.current_state >= :creation %>">Création</li>
+      <li class="<%= ("active") if @modifier_adresse.current_state >= :soumis %>">Soumission</li>
+      <li class="<%= ("active") if @modifier_adresse.current_state >= :modif_soumis %>">Soumission changement</li>
+      <li class="<%= ("active") if @modifier_adresse.current_state >= :dossier_valide %>">Validation Dossier</li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <h4>
+            N° affiliation: <%= @modifier_adresse.numero_allocataire %>
+          </h4>
+          <%unless @modifier_adresse.numero_dossier.nil?%>
+          <h4>
+            N° dossier: <%= @modifier_adresse.numero_dossier %>
+          </h4>
+          <% end %>
+          <div class="wrapper wrapper-content">
+            <ul class="nav nav-tabs">
+              <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+              <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Informations Allocataire
+                <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.etat_civil_demandeur_valide? %>
+              </a></li>
+              <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Documents
+              </a></li>
+               <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Modification d'adresse
+              </a></li>
+              <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Historiques
+              </a></li>
+
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                    <br>
+                    <% if !@modifier_adresse.etat_civil_demandeur_valide? %>
+                      <%= link_to "Je valide les informations sur l'état civil", allocataire_modifier_adress_valider_etat_civil_demandeur_path(@modifier_adresse), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_etat_civil' %>
+                  </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                 <br>
+                  <% if !@modifier_adresse.documents_valide? %>
+                    <%= link_to "Je valide tous les documents", allocataire_modifier_adress_valider_documents_path(@modifier_adresse), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_documents' %>
+                  <br>
+                </div>
+              </div>
+              <div id="tab-3" class="tab-pane">
+                <div class="full-height-scroll">
+                  <%= render 'show_tableau_recapitulatif' %>
+                  <br>
+                </div>
+              </div>
+              <div id="tab-4" class="tab-pane">
+                <div class="full-height-scroll">
+                  <%= render 'show_historiques' %>
+                  <br>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</div>
+
+<style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 20%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+    margin-bottom: 20px;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 60%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>

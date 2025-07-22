@@ -1,0 +1,43 @@
+<%= bootstrap_form_for(@admin_gesadm, layout: :horizontal) do |f| %>
+    <%= f.text_field :MATRICULE %>
+    <%= f.text_field :PRENOM %>
+    <%= f.text_field :NOM %>
+    <%= f.text_field :NAISSLIEU %>
+    <%= f.text_field :NAISSMM %>
+    <%= f.text_field :NAISSAA %>
+    <%= f.select :SEXE,
+        Admin::Gesadm::SEXE.keys.collect { |sexe| [Admin::Gesadm.human_enum_name(:sexe, sexe), sexe] },
+    label: "SEXE" %>
+    <%#= f.text_field :NATION %>
+    <%= f.select :NATION,
+        Admin::Gesadm::NATION.keys.collect { |nation| [Admin::Gesadm.human_enum_name(:nation, nation), nation] },
+    label: "NATION" %>
+    <%= f.text_field :EMPLOI %>
+    <%= f.text_field :PECMM %>
+    <%= f.text_field :PECAA %>
+    <%= f.text_field :SITUAT %>
+    <%= f.text_field :JJPOS %>
+    <%= f.text_field :CDQVNB %>
+    <%= f.text_field :CDDXNB %>
+    <%= f.text_field :CDEETAB %>
+    <%= f.collection_select :CDEETAB,
+                              Admin::Etablissement.all, :id, :name,
+                              label: 'Etablissement',
+                              include_blank: true %>
+    <%= f.text_field :CDECARTE %>
+    <%= f.text_field :CDBLNB %>
+    <%= f.text_field :CDBKNB %>
+     <%= f.text_field :SALAIRE %>
+    <%= f.text_field :COTISAT %>
+    <%= f.text_field :RESTE %>
+
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_gesadms_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

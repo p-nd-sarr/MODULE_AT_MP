@@ -1,0 +1,23 @@
+<%= content_for :titre_page, "Motif du Retour Volet" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox-content">
+        <div class="row">
+          <%= bootstrap_form_for([@dossier_prestation, @allocation_prenatale], url: admin_dossier_prestation_allocation_prenatale_retour_volet_path(@dossier_prestation, @allocation_prenatale)) do |f| %>
+            <div class="col-lg-12">
+              <%= f.text_area :motif_retour_volet, label: 'Motif' %>
+            </div>
+            <div class="form-group col-lg-12">
+              <div class="col-lg-8 col-lg-offset-4" style="text-align:right">
+                <%= link_to 'Annuler', admin_dossier_prestation_allocation_prenatales_path(@allocation_prenatale), class: 'btn btn-white' %>
+                <%= f.button 'Retourner volet', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

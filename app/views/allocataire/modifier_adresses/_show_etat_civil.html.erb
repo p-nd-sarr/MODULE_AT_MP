@@ -1,0 +1,65 @@
+<div class="row">
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"> <%= @allocataire.try(:prenom) %> <%= @allocataire.try(:nom) %></dd>
+      </div>
+    </d1>
+ 
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse domicile: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1 label label-info"><%= @allocataire.adresse_rue %></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Date de naissance: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1 "> <%= @allocataire.try(:date_naissance) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse Ville: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1 label label-info"> <%= @allocataire.try(:adresse_ville) %> </dd>
+      </div>
+    </d1>
+  </div>
+
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Téléphone: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"> <%= @allocataire.try(:telephone) %> </dd>
+      </div>
+    </d1>
+
+  </div>
+
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Etat: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1">   <%= @allocataire.try(:etat) %></dd>
+      </div>
+    </d1>
+  </div>
+</div>
+
+
+

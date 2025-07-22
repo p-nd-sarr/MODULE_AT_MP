@@ -1,0 +1,117 @@
+<%= content_for :titre_page, "Mes moratoires" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Demander moratoire', new_employer_moratoire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+
+  <% if @moratoire != nil %>
+  <h2>Dernière moratoire</h2>
+    <div class="row">
+
+      <div class="col-lg-12">
+        <div class="ibox volet3">
+          <div class="ibox-content text-left">
+            <div class="row">
+              <div class="col-lg-3">
+                <h5>Montant total</h5>
+                <h2 class="no-margins"><%= @moratoire.montant == nil ? 0:  @moratoire.montant.round(-1) %></h2>
+              </div>
+              <div class="col-lg-2">
+                <h5>Nombre échéance</h5>
+                <h2 class="no-margins"><%=  @moratoire.nombre_echeance %></h2>
+              </div>
+              <div class="col-lg-2">
+                <h5>Date début</h5>
+                <% if @moratoire.date_debut != nil %>
+                  <h2 class="no-margins text-success"><%= I18n.l(@moratoire.date_debut , format: :long) %></h2>
+                <%end %>
+              </div>
+              <div class="col-lg-2">
+                <h5>Date fin</h5>
+                  <% if @moratoire.date_fin != nil %>
+                    <h2 class="no-margins text-danger"><%=  I18n.l(@moratoire.date_fin , format: :long)%></h2>
+                  <%end %>
+              </div>
+              <div class="col-lg-3">
+                <h5><span class="label label-success" style="font-size:12px">Première échénace: <%=  @moratoire.premier_montant == nil ? 0:  @moratoire.premier_montant.round(0) %></span></h5>
+                <br>
+                <h5><span class="label label-danger" style="font-size:12px">Dernière échéance: <%=  @moratoire.premier_montant == nil ? 0:  @moratoire.dernier_montant.round(-1) %></span></h5>
+              </div>                
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    
+
+     <!-- <div class="col-lg-2">
+        <div class="ibox">
+          <div class="ibox-content">
+            <h5>Nombre échéance</h5>
+            <h1 class="no-margins"><%=  @moratoire.nombre_echeance %></h1>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <div class="ibox">
+          <div class="ibox-content">
+            <h5>Date debut</h5>
+            <% if @moratoire.date_debut != nil %>
+            <h1 class="no-margins"><%= I18n.l(@moratoire.date_debut , format: :long) %></h1>
+              <%end %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <div class="ibox">
+          <div class="ibox-content">
+            <h5>Date fin</h5>
+            <% if @moratoire.date_fin != nil %>
+
+          <h1 class="no-margins"><%=  I18n.l(@moratoire.date_fin , format: :long)%></h1>
+              <%end %>
+          </div>
+        </div>
+      </div> -->
+      <div class="col-lg-3"></div>
+      
+    </div>
+
+
+    <h2>Historique moratoires</h2>
+
+    <table class="table table-striped">
+
+      <tbody>
+
+      <tr>
+        <td>Montant total</td>
+        <td>Nombre échéance</td>
+        <td>Date debut</td>
+        <td>Date fin</td>
+        <td>Premier échéance</td>
+        <td>Dernier échéance</td>
+        <td>Statut</td>
+      </tr>
+      <% @moratoires.each do |moratoire| %>
+      <tr>
+        <td><strong><%= moratoire.montant == nil ? 0 : moratoire.montant.round(-1) %></strong></td>
+        <td><%= moratoire.nombre_echeance %></td>
+        <td><%= moratoire.date_debut %></td>
+        <td><%= moratoire.date_fin %></td>
+        <td><strong><%= moratoire.premier_montant == nil ? 0 :  moratoire.premier_montant.round(-1) %></strong></td>
+        <td><strong><%#= moratoire.dernier_montant == nil ? 0 :  moratoire.dernier_montant.round(-1) %></strong></td>
+        <td><a href="#"><i class="fa fa-check text-navy"></i></a></td>
+      </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <%= paginate @moratoires %>
+</div>
+
+<% end %>

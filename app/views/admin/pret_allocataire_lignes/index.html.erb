@@ -1,0 +1,92 @@
+<%= content_for :titre_page, "Prêt allocataire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Allocataire', [:admin, @allocataire], class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/allocataires/infos_gauche' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <% if @pret_en_cours %>
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Prêt en cours</h5>
+          </div>
+          <div class="ibox-content">
+            <p>
+              <strong>Régime:</strong>
+              <%= @pret_en_cours.allocataire.regime_allocataire %>
+            </p>
+            <p>
+              <strong>Date début:</strong>
+              <%= @pret_en_cours.date_debut %>
+            </p>
+            <p>
+              <strong>Est versé:</strong>
+              <%= state_yes_no @pret_en_cours.est_verse %>
+            </p>
+            <p>
+              <strong>Montant:</strong>
+              <%= format_cfa @pret_en_cours.montant %>
+            </p>
+            <p>
+              <strong>Montant mensuel:</strong>
+              <%= format_cfa @pret_en_cours.montant_mensuel %>
+            </p>
+            <p>
+              <strong>Montant restant:</strong>
+              <%= format_cfa @pret_en_cours.montant_restant %>
+            </p>
+            <p>
+              <strong>Date dernier prélèvement:</strong>
+              <%= l(@pret_en_cours.date_dernier_prelevement) unless @pret_en_cours.date_dernier_prelevement.nil? %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Historique prêt</h5>
+        </div>
+        <div class="ibox-content">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Date Debut</th>
+              <th scope="col">Regime</th>
+              <th scope="col">Montant</th>
+              <th scope="col">Montant Mensuel</th>
+              <th scope="col">Montant Restant</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @pret_allocataires.order('created_at DESC').each do |pret_allocataire| %>
+              <tr>
+                <td><%= l pret_allocataire.date_debut %></td>
+                <td><%= pret_allocataire.allocataire.regime_allocataire %></td>
+                <td><%= format_cfa pret_allocataire.montant, false %></td>
+                <td><%= format_cfa pret_allocataire.montant_mensuel, false %></td>
+                <td><%= format_cfa pret_allocataire.montant_restant, false %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

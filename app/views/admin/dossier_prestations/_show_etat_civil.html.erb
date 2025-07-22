@@ -1,0 +1,179 @@
+<div class="row">
+  <div class="col-lg-12" style="text-align: right;">
+    <% if @dossier_prestation.creation? %>
+      <%= link_to 'Modifier', edit_admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-outline btn-white fa fa-edit' %>
+    <% end %>
+    <%= (link_to 'Modification exceptionnelle', admin_dossier_prestation_edit_specially_path(@dossier_prestation), class: 'btn btn-outline btn-white btn-sm fa fa-edit') if current_user.admin? or current_user.chef_agence? and @dossier_prestation.conjoint_id.nil? %>
+  </div>
+  <div class="col-lg-6">
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-arrow-right"></span> Numéro d'affiliation:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.num_affiliation unless @dossier_prestation.num_affiliation.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.prenom %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.nom %></dd>
+      </div>
+    </d1>
+
+    <% unless @dossier_prestation.sexe_salarie.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-genderless"></span> Genre:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= DossierPrestation.human_enum_name(:sexe_salarie, @dossier_prestation.sexe_salarie) unless @dossier_prestation.sexe_salarie.nil? %></dd>
+        </div>
+      </d1>
+    <% end %>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-id-card"></span> Nin:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.nin unless @dossier_prestation.nin.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= l(@dossier_prestation.date_naissance) unless @dossier_prestation.date_naissance.nil? %></dd>
+      </div>
+    </d1>
+
+    <% unless @dossier_prestation.nationalite.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-globe"></span> Nationalité:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= DossierPrestation.human_enum_name(:nationalite, @dossier_prestation.nationalite) unless @dossier_prestation.nationalite.nil? %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <!--  Ajout de la date d'embauche' et  de la date de reception -->
+
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de dépôt du dossier:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left " style="text-align: left;">
+        <dd class="mb-1"><%= (l @dossier_prestation.date_reception) unless @dossier_prestation.date_reception.nil? %></dd>
+      </div>
+    </d1>
+
+    <!--   fin ajout date d'embauche et date de reception -->
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Lieu de naissance:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.lieu_naissance %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse domicile:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.adresse_domicile %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_prestation.telephone unless @dossier_prestation.telephone.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de soumission:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= (l @dossier_prestation.date_soumission) unless @dossier_prestation.date_soumission.nil? %></dd>
+      </div>
+    </d1>
+
+    <!--    ajout de la date de mariage et de la date d'ouverture-->
+
+    <!-- <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de mariage : </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"> <%#= l @dossier_prestation.conjoint.date_mariage unless  @dossier_prestation.conjoint.nil?%></dd>
+      </div>
+    </d1>-->
+
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date d'embauche :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left " style="text-align: left;">
+        <dd class="mb-1"><%= (l @dossier_prestation.date_embauche) unless @dossier_prestation.date_embauche.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right text-danger" style="text-align: right; font-weight: 800">
+        <dt><span class="fa fa-calendar"></span> Date d'ouverture des droits:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left; font-weight: 800">
+        <dd class="mb-1"><%= (l @dossier_prestation.date_ouverture) unless @dossier_prestation.date_ouverture.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right text-danger" style="text-align: right; font-weight: 800">
+        <dt><span class="fa fa-users"></span> Employeur actuel :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left; font-weight: 800">
+        <dd class="mb-1"><%= @dossier_prestation.psrm_employeur.try(:fhrsoc) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right text-danger" style="text-align: right; font-weight: 800">
+        <dt><span class="fa fa-home"></span> Agence de gestion :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-danger" style="text-align: left; font-weight: 800">
+        <dd class="mb-1"><%= @dossier_prestation.admin_agence.try(:description_prest) %></dd>
+      </div>
+    </d1>
+
+
+    <!--    fin ajout date d'ouverture-->
+
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :numero_allocataire_cont, 'Numéro affiliation' %>
+      <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :ipres_ancien_matric_cont, 'Ancien numéro IPRES' %>
+      <%= f.search_field :ipres_ancien_matric_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prénom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :categorie_eq, 'Catégorie' %>
+      <%= f.select :categorie_eq, Allocataire.categories.to_a.map { |w| [Allocataire.human_enum_name(:categorie, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :etat_eq, 'État' %>
+      <%= f.select :etat_eq, Allocataire.etats.to_a.map { |w| [Allocataire.human_enum_name(:etat, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :mode_paiement_eq, 'Mode de paiement' %>
+      <%= f.select :mode_paiement_eq, Allocataire.mode_paiements.to_a.map { |w| [Allocataire.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <%#= f.submit class: 'btn btn-primary' %>
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>

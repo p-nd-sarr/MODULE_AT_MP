@@ -1,0 +1,57 @@
+<% if @dossier_reversion_salarie.orphelin? %>
+        <% if @reversion_veuve_salarie.creation? %>
+                <%= render 'documents/liste',
+                        object: @dossier_reversion_salarie,
+                        documents: @dossier_reversion_salarie.documents,
+                        include_add: true,
+                        include_delete: true,
+                        type_documents: DossierReversionSalary::TYPE_DOCUMENT_ORPHELIN,
+                        type_documents_obligatoires: DossierReversionSalary::TYPE_DOCUMENT_ORPHELIN_OBLIGATOIRE,
+                        back_url: admin_dossier_reversion_salary_path(@dossier_reversion_salarie)
+                %>
+                <%= render 'documents/modal_form',
+                        type_documents: DossierReversionSalary::TYPE_DOCUMENT_ORPHELIN,
+                        document: Document.new(documentable: @dossier_reversion_salarie),
+                        back_url: admin_dossier_reversion_salary_path(@dossier_reversion_salarie)
+                %>
+                <% else %>
+                <%= render 'documents/liste',
+                        object: @dossier_reversion_salarie,
+                        documents: @dossier_reversion_salarie.documents,
+                        include_add: false, 
+                        include_delete: false, 
+                        type_documents: DossierReversionSalary::TYPE_DOCUMENT_ORPHELIN,
+                        type_documents_obligatoires: DossierReversionSalary::TYPE_DOCUMENT_ORPHELIN_OBLIGATOIRE
+
+                %>
+        <% end%>
+<% end %>
+<% if @dossier_reversion_salarie.veuve? %>
+        <% if @reversion_veuve_salarie.creation? %>
+                <%= render 'documents/liste',
+                        object: @dossier_reversion_salarie,
+                        documents: @dossier_reversion_salarie.documents,
+                        include_add: true,
+                        include_delete: true,
+                        type_documents: DossierReversionSalary::TYPE_DOCUMENT_VEUVE,
+                        type_documents_obligatoires: DossierReversionSalary::TYPE_DOCUMENT_VEUVE_OBLIGATOIRE,
+                        back_url: admin_dossier_reversion_salary_path(@dossier_reversion_salarie)
+                %>
+                <%= render 'documents/modal_form',
+                        type_documents: DossierReversionSalary::TYPE_DOCUMENT_VEUVE,
+                        document: Document.new(documentable: @dossier_reversion_salarie),
+                        back_url: admin_dossier_reversion_salary_path(@dossier_reversion_salarie)
+                %>
+                <% else %>
+                <%= render 'documents/liste',
+                        object: @dossier_reversion_salarie,
+                        documents: @dossier_reversion_salarie.documents,
+                        include_add: false, 
+                        include_delete: false, 
+                        type_documents: DossierReversionSalary::TYPE_DOCUMENT_VEUVE,
+                        type_documents_obligatoires: DossierReversionSalary::TYPE_DOCUMENT_VEUVE_OBLIGATOIRE
+
+                %>
+        <% end%>
+<% end %>
+

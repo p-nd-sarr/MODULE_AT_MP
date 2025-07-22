@@ -1,0 +1,44 @@
+<%= content_for :titre_page, "Allocations en attente de validation" %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Ajouter un dossier', new_admin_dossier_prestation_path, class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+        <div class="ibox-title">
+            <h3 class="text-success"></h3>
+            <div class="ibox-tools">
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-sm-12 m-b-xs">
+                    <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                        <label class="btn btn-white active" style="outline: none; font-size:14px" data-toggle="pill" href="#prenatale"> <input type="radio" id="option1" name="options">Allocations prénatales <span class="label label-warning"><%= @total_prenatale_en_attente %></span> </label>
+                        <label class="btn btn-white" style="outline: none; font-size:14px" data-toggle="pill" href="#postnatale"> <input type="radio" id="option2" name="options"> Allocations postnatales <span class="label label-warning"><%= @total_postnatale_en_attente %></span>  </label>
+                        <label class="btn btn-white" style="outline: none; font-size:14px" data-toggle="pill" href="#familiale"> <input type="radio" id="option3" name="options"> Allocations familiales <span class="label label-warning"><%= @total_familiale_en_attente %></span> </label>
+                    </div>
+                </div>
+                <div class="col-lg-12 tab-content" style="margin-bottom: 60px; margin-top: 30px">
+                    <div id="prenatale" class="tab-pane fade in active">
+                      <%= render 'liste_prenatales_en_attente' %>
+                    </div>
+                    <div id="postnatale" class="tab-pane fade in">
+                      <%= render 'liste_postnatales_en_attente' %>
+                    </div>
+                    <div id="familiale" class="tab-pane fade in">
+                       <%= render 'liste_familiales_en_attente' %>                  
+                    </div>
+                </div>
+             </div>            
+          </div>
+
+        </div>
+  </div>
+</div>
+</div>

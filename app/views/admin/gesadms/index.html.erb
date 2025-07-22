@@ -1,0 +1,60 @@
+<%= content_for :titre_page, 'Liste des Gesadms' %>
+
+<%= content_for :actions_page do %>
+    <%#= link_to 'Ajouter', new_admin_gesadm_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= paginate @admin_gesadms %>
+
+     <%= render 'search_gesadm' %>
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">CDEETAB</th>
+      <th scope="col">MATRICULE</th>
+      <th scope="col">PRENOM</th>
+      <th scope="col">NOM</th>
+      <th scope="col">CDDXNB</th>
+      <th scope="col">SALAIRE</th>
+      <th colspan="col">RESTE</th>
+      <th colspan="col">COTISAT</th>
+      
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @admin_gesadms.each do |admin_gesadm| %>
+    <tr>
+      <td>
+        <%= admin_gesadm.etablissement.nil? ? 
+          admin_gesadm.try(:CDEETAB) : 
+          admin_gesadm.etablissement.try(:name)
+        %>
+      </td>
+    
+      <td><%= admin_gesadm.try(:MATRICULE) %></td>
+      <td><%= admin_gesadm.try(:PRENOM) %></td>
+      <td><%= admin_gesadm.try(:NOM) %></td>
+      <td><%= admin_gesadm.try(:CDDXNB) %></td>
+      <td><%= admin_gesadm.try(:SALAIRE) %></td>
+      <td><%= admin_gesadm.try(:RESTE) %></td>
+      <td><%= admin_gesadm.try(:COTISAT) %></td>
+      
+  <!-- <td style="width: 75px">
+        <%= link_to 'détails', admin_gesadm, class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'modifier', edit_admin_gesadm_path(admin_gesadm), class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%#= link_to 'supprimer', admin_gesadm, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+      </td> -->
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+    <%= paginate @admin_gesadms %>
+  </div>
+</div>

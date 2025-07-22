@@ -1,0 +1,41 @@
+<%= content_for :titre_page, 'Soumission de la demande de liquidation retraite' %>
+
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Soumission de la demande de liquidation retraite</h5>
+        </div>
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@demande_liquidation, url: salarie_liquidation_retraite_soumettre_path(@demande_liquidation),
+                                 layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Une erreur est survenue lors de la soumission. Vous devez accepter toutes les conditions." %>
+            <p>
+              En soumettant le demande j'accepte les conditions suivantes :
+            </p>
+
+            <!--            <ul>-->
+            <!--              <li>Je déclare ne plus exercer d'activité salariée à compter du <%#= l @demande_liquidation.date_cessation_activite %> et je m'engage à n'en plus reprendre sans avoir préalablement avisé l'IPRES.</li>-->
+            <!--              <li>Je déclare en outre n'avoir pas adressé d'autre demande d'allocation de retraite à l'IPRES et n'avoir jamais perçu à ce titre quelque somme que ce soit.</li>-->
+            <!--              <li>Je certifie que les renseignements portés sur la présente demande sont exacts.</li>-->
+            <!--            </ul>-->
+
+            <%= f.check_box :condition_1, label: "Condition 1 : Je déclare ne plus exercer d'activité salariée à compter du #{l @demande_liquidation.date_cessation_activite} et je m'engage à n'en plus reprendre sans avoir préalablement avisé l'IPRES." %>
+            <%= f.check_box :condition_2, label: "Condition 2 : Je déclare en outre n'avoir pas adressé d'autre demande d'allocation de retraite à l'IPRES et n'avoir jamais perçu à ce titre quelque somme que ce soit." %>
+            <%= f.check_box :condition_3, label: "Condition 3 : Je certifie que les renseignements portés sur la présente demande sont exacts." %>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row">
+              <div class="col-sm-4 col-sm-offset-4">
+                <%= link_to 'Annuler', [:salarie, @demande_liquidation], class: 'btn btn-white' %>
+                <%= f.button 'Soumettre', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

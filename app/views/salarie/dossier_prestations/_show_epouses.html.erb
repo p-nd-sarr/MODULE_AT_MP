@@ -1,0 +1,31 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">NIN</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Date de mariage</th>
+    <th scope="col">Salarié</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% current_user.conjoints.valide.each do |epouse| %>
+    <tr>
+      <td><%= epouse.nin %></td>
+      <td><%= epouse.nom %></td>
+      <td><%= epouse.prenom %></td>
+      <td><%= l epouse.date_naissance %></td>
+      <td><%= l epouse.date_mariage %></td>
+      <td>
+        <% if epouse.numero_salarie.nil? %>
+          Non
+        <%else %>
+          Oui
+        <%end %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

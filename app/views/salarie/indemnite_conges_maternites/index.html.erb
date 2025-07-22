@@ -1,0 +1,119 @@
+<%= content_for :titre_page, "Indemnites De Conges Maternité" %>
+<%= content_for :titre_page_autres_details do %>
+  N° Dossier : <%= link_to "#{@dossier_maternite.num_dossier}", salarie_dossier_maternite_path(@dossier_maternite), class: 'text-info' %>
+<% end %>
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', salarie_dossier_maternites_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter', new_salarie_dossier_maternite_indemnite_conges_maternite_path(@dossier_maternite),
+              class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row" >
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-success float-right">Première Tranche</span>
+          <h6>Paiement</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa m1 = @dossier_maternite.indemnite_conges_maternites.avant_acouchement.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-info float-right">Deuxième Tranche</span>
+          <h6>Paiement</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa m2 = @dossier_maternite.indemnite_conges_maternites.apres_acouchement.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-warning float-right">Troisième Tranche</span>
+          <h6>Paiement</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa m3 = @dossier_maternite.indemnite_conges_maternites.apres_reprise.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-danger float-right">Totalisation</span>
+          <h6>Paiement</h6>
+          <!--          <h5>User activity</h5>-->
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa mTot = m1 + m2 + m3 %>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Tranche</th>
+<!--          <th scope="col">Date</th>-->
+          <th scope="col">Etat</th>
+          <th scope="col">Montant Liquidé</th>
+          <th scope="col">Date de liquidation </th>
+          <th scope="col">Date de paiement</th>
+          <th colspan="4"></th>
+        </tr>
+      </thead>
+
+    <tbody>
+    <% unless @indemnite_conges_maternites.nil? %>
+    <% @indemnite_conges_maternites.each do |indemnite_conges_maternite| %>
+    <tr>
+      <td><%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, indemnite_conges_maternite.tranche_paiement)%></td>
+<!--      <td>-->
+        <%# if indemnite_conges_maternite.avant_acouchement? %>
+          <%#= l indemnite_conges_maternite.debut_conges %>
+        <%#elsif indemnite_conges_maternite.apres_acouchement? %>
+          <%#= l indemnite_conges_maternite.date_accouchement %>
+        <%#elsif indemnite_conges_maternite.apres_reprise? %>
+          <%#= l indemnite_conges_maternite.date_reprise_service %>
+        <%#end %>
+<!--      </td>-->
+      <td><%= IndemniteCongesMaternite.human_enum_name(:etat, indemnite_conges_maternite.etat) %></td>
+      <td><%= indemnite_conges_maternite.montant_paiement %></td>
+      <td>
+        <% unless indemnite_conges_maternite.date_liquidation.nil? %>
+          <%= l indemnite_conges_maternite.date_liquidation %>
+        <%end %>
+      </td>
+      <td>
+        <% unless indemnite_conges_maternite.date_paiement.nil? %>
+          <%= l indemnite_conges_maternite.date_paiement %>
+        <%end %>
+      </td>
+
+      <td style="width: 75px">
+        <%= link_to 'détails', [:salarie, @dossier_maternite, indemnite_conges_maternite],
+                    class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+  
+    </tr>
+    <% end %>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

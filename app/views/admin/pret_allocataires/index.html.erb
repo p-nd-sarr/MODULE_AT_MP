@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Prêt allocataire" %>
+
+<%= content_for :actions_page do %>
+  <%= (link_to 'Nouvelle Demande de Prêt', new_admin_pret_allocataire_path(), class: 'btn btn-primary btn-sm')if current_user.chef_service_allocation? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Type</th>
+        <th scope="col">Date demande</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @pret_allocataires.each do |pret_allocataire| %>
+        <tr>
+          <td><%= pret_allocataire.id %></td>
+          <td><%= "#{ PretAllocataire.human_enum_name(:type_pret, pret_allocataire.type_pret) } #{pret_allocataire.created_at.strftime("%Y")}" %></td>
+          <td><%= l pret_allocataire.created_at %></td>
+          <td><%= pret_allocataire.etat %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, pret_allocataire], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

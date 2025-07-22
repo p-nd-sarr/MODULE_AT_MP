@@ -1,0 +1,15 @@
+<%= render 'documents/liste',
+           object: @cfs_reversion_veuve,
+           documents: @cfs_reversion_veuve.documents,
+           include_add: true,
+           include_delete: true,
+           type_documents: CfsReversionVeuve::TYPE_DOCUMENT,
+           type_documents_obligatoires: CfsReversionVeuve::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_cfs_reversion_veuve_path(@cfs_reversion_veuve)
+%>
+
+<%= render 'documents/modal_form',
+           type_documents: CfsReversionVeuve::TYPE_DOCUMENT,
+           document: Document.new(documentable: @cfs_reversion_veuve),
+           back_url: admin_cfs_reversion_veuve_path(@cfs_reversion_veuve)
+%>

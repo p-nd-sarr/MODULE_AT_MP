@@ -1,0 +1,43 @@
+<%= bootstrap_form_for([:admin, @demande_maladie_professionnelle], abel_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+<div class="row">
+  <div class="col-md-12 col-sm-12 offset-6">
+    <h5 style="margin-top: 20px; margin-bottom: 20px;"><span class="label label-info">Complèter le dossier</span> </h5>
+  </div>
+  <div class="col-sm-12 col-md-12">
+    <%=hidden_field_tag :custom_page, 'information_employeur'%>
+    <div class="col-sm-6 col-md-6">      
+      <%= f.text_field  :raison_sociale_employeur, label: 'Raison sociale' %>
+    </div>
+    <div class="col-sm-6 col-md-6"> 
+      <%= f.text_field  :numero_employeur, label: 'Numéro employeur' %>
+    </div>
+    <div class="col-sm-6 col-md-6"> 
+      <%= f.text_field  :adresse_employeur, label: 'Adresse' %>
+    </div>
+    <div class="col-sm-6 col-md-6"> 
+      <%= f.text_field  :boite_postale_employeur, label: 'Boite postale'%>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <%= f.text_field  :email_employeur, label: 'Email' %>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <%= f.text_field  :telephone_employeur, label: 'Téléphone' %>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <%= f.text_field  :fax_employeur,label: 'Fax' %>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <%= f.text_field  :activite_principale_entreprise, label: "Activité principale de l'entreprise" %>
+    </div>         
+  </div>
+  <div class="form-group col-sm-12 col-md-12">
+    <hr>
+    <div class="col-sm-3 col-sm-offset-9" style="text-align: right;">
+      <%= link_to 'Annuler', (@demande_maladie_professionnelle.persisted? ? [:admin, @demande_maladie_professionnelle] : admin_maladie_professionnelles_path), class: 'btn btn-white' %>
+      <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+    </div>
+  </div>
+</div> 
+<% end %>

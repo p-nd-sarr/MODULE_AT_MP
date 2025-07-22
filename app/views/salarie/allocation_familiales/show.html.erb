@@ -1,0 +1,123 @@
+<%= content_for :titre_page do %>
+
+  <span style="text-align: center; margin-left: 30%;
+      font-family: Georgia, 'Times New Roman';font-size: 37px;">
+    Allocation Familiale
+  </span>
+
+
+
+  <small style="margin-left: 50%; font-family: Georgia;">
+    <% unless @allocation_familiale.enfant.nil? %>
+      Pour : <%= @allocation_familiale.enfant.full_name %>
+    <% end %>
+  </small>
+  <small style="margin-left: 50%; font-family: Georgia;">
+    <%=  "Etat : #{AllocationFamiliale.human_enum_name(:etat, @allocation_familiale.etat)}" %>
+  </small>
+
+<% end %>
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', salarie_dossier_prestation_allocation_familiales_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+  <% if @allocation_familiale.creation? %>
+    <%= link_to 'Modifier', edit_salarie_dossier_prestation_allocation_familiale_path(@dossier_prestation, @allocation_familiale), class: 'btn btn-white btn-sm' %>
+    <% if @allocation_familiale.pret_pour_soumission? %>
+      <%= link_to 'Soumettre', salarie_dossier_prestation_allocation_familiale_soumission_form_path(@dossier_prestation, @allocation_familiale), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+  <% end %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <% if @allocation_familiale.creation? %>
+              <% if @allocation_familiale.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs">
+                <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="active">
+                  <a data-toggle="tab" href="#tab-1">
+                    <i class="fa fa-user"></i>
+                    Informations Générales
+                  </a>
+                </li>
+                <li class="">
+                  <a data-toggle="tab" href="#tab-2">
+                    <i class="fa fa-folder"></i>
+                    Documents
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @allocation_familiale.document_valid? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @allocation_familiale.document_valid? %>
+                  </a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                  <div class="full-height-scroll">
+                    <br>
+                    <p>
+                      <strong>Dossier prestation : </strong>
+                      <%= @allocation_familiale.dossier_prestation.num_dossier %>
+                    </p>
+
+                    <p>
+                      <strong>Enfant : </strong>
+                      <%= @allocation_familiale.enfant.full_name %> de
+                      <%= @allocation_familiale.enfant.age %> ans
+                    </p>
+                    <% if @allocation_familiale.soumis? %>
+                      <p class="text-success">
+                        <strong>Age de l'enfant à la soumission : </strong>
+                        <%= @allocation_familiale.age_a_la_soumission %> ans
+                      </p>
+                     <%end %>
+                    <p>
+                      <strong>Trimestre : </strong>
+                      <%=  AllocationFamiliale.human_enum_name(:trimestre, @allocation_familiale.trimestre) %>
+                    </p>
+
+                    <p>
+                      <strong>Annee : </strong>
+                      <%= @allocation_familiale.annee %>
+                    </p>
+                    <% if @allocation_familiale.creation? %>
+                      <hr>
+                      <%= link_to 'Modifier ces informations',
+                                  edit_salarie_dossier_prestation_allocation_familiale_path(@allocation_familiale) %>
+                    <% end %>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% unless @allocation_familiale.document_valid %>
+                      <%= link_to "Je valide tous les documents",
+                                  salarie_dossier_prestation_allocation_familiale_valider_documents_path(@dossier_prestation, @allocation_familiale),
+                                  'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

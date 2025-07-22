@@ -1,0 +1,292 @@
+<li class="dropdown">
+  <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">
+    <i class="fa fa-bell"></i>
+    <% if current_user.admin? %>
+                  <span class="label label-primary"> <%= User.count + Enfant.creation.count + Conjoint.creation.count + (LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count) + (DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count) + (DossierMaternite.soumis.count + DossierMaternite.traitement_en_cours.count) + (AllocationPrenatale.soumis.count + AllocationPrenatale.traitement_en_cours.count) + (AllocationPostnatale.soumis.count + AllocationPostnatale.traitement_en_cours.count) + (AllocationFamiliale.soumis.count + AllocationFamiliale.traitement_en_cours.count) + (IndemniteCongesMaternite.soumis.count + IndemniteCongesMaternite.traitement_en_cours.count) + (MaladieProfessionnelle.a_soumettre.count + MaladieProfessionnelle.en_instruction.count) + (ArretTravail.instruction.count + ArretTravail.instruction.count) %>
+                 </span>
+    <% end %>
+
+    <% if current_user.comptable? || current_user.chef_agence? || current_user.gestionnaire_compte_allocataire? %>
+                    <span class="label label-primary"> <%= Enfant.creation.count + Conjoint.creation.count + (LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count) + (DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count) + (DossierMaternite.soumis.count + DossierMaternite.traitement_en_cours.count) + (AllocationPrenatale.soumis.count + AllocationPrenatale.traitement_en_cours.count) + (AllocationPostnatale.soumis.count + AllocationPostnatale.traitement_en_cours.count) + (AllocationFamiliale.soumis.count + AllocationFamiliale.traitement_en_cours.count) + (IndemniteCongesMaternite.soumis.count + IndemniteCongesMaternite.traitement_en_cours.count) %>
+                    </span>
+    <% end %>
+
+    <% if current_user.gestionnaire_compte_salarie? %>
+                    <span class="label label-primary"> <%= Enfant.creation.count + Conjoint.creation.count + (LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count) + (DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count) %>
+                    </span>
+    <% end %>
+
+    <% if current_user.chef_service_cotisation? %>
+                        <span class="label label-primary"> <%= Enfant.creation.count + Conjoint.creation.count + (LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count) + (AllocationPrenatale.soumis.count + AllocationPrenatale.traitement_en_cours.count) + (AllocationPostnatale.soumis.count + AllocationPostnatale.traitement_en_cours.count) + (AllocationFamiliale.soumis.count + AllocationFamiliale.traitement_en_cours.count) %>
+                        </span>
+    <% end %>
+  </a>
+  <ul class="dropdown-menu dropdown-alerts">
+    <% if current_user.admin? %>
+      <li>
+        <a href="/admin/users" class="dropdown-item">
+          <div>
+            <i class="fa fa-twitter fa-fw"></i> Il y'a <%= User.inactifs.count %> utilisateurs inactifs
+          </div>
+        </a>
+      </li>
+
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/dossier_prestations" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count %>
+            dossiers
+            Prestation à valider
+
+          </div>
+        </a>
+      </li>
+
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/dossier_maternites" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= DossierMaternite.soumis.count + DossierMaternite.traitement_en_cours.count %> Dossier ICM à
+            valider
+
+          </div>
+        </a>
+      </li>
+
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/liquidation_retraites" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count %>
+            LIQUIDATION RETRAITE à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/maladie_professionnelles" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= MaladieProfessionnelle.a_soumettre.count + MaladieProfessionnelle.en_instruction.count %>
+            Maladies professionnelles à valider
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/arret_travails" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= ArretTravail.instruction.count + ArretTravail.instruction.count %> arrêts de travails à
+            valider
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/conjoints" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il y'a <%= Conjoint.creation.count %> conjoints à valider
+
+          </div>
+        </a>
+      </li>
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/enfants" class="dropdown-item">
+          <div>
+            <i class="fa fa-envelope fa-fw"></i> Il y'a <%= Enfant.creation.count %> enfants à valider
+
+          </div>
+        </a>
+      </li>
+    <% end %>
+
+    <% if current_user.chef_agence? %>
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/dossier_prestations" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count %>
+            dossiers
+            Prestation à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/dossier_maternites" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= DossierMaternite.soumis.count + DossierMaternite.traitement_en_cours.count %> Dossier ICM à
+            valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/liquidation_retraites" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count %>
+            LIQUIDATION RETRAITE à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/maladie_professionnelles" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= MaladieProfessionnelle.a_soumettre.count + MaladieProfessionnelle.en_instruction.count %>
+            Maladies professionnelles à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/arret_travails" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= ArretTravail.instruction.count %> arrêts de travails à
+            valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/conjoints" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il y'a <%= Conjoint.creation.count %> conjoints à valider
+
+          </div>
+        </a>
+      </li>
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/enfants" class="dropdown-item">
+          <div>
+            <i class="fa fa-envelope fa-fw"></i> Il y'a <%= Enfant.creation.count %> enfants à valider
+
+          </div>
+        </a>
+      </li>
+    <% end %>
+
+    <% if current_user.comptable? || current_user.chef_service_cotisation? || current_user.chef_section_instruction? || current_user.chef_section_liquidation? || current_user.gestionnaire_compte_salarie? || current_user.gestionnaire_compte_employeur? || current_user.gestionnaire_compte_allocataire? || current_user.chef_service_allocation? %>
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/liquidation_retraites" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count %>
+            LIQUIDATION RETRAITE à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/dossier_prestations" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count %>
+            dossiers
+            Prestation à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/conjoints" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il y'a <%= Conjoint.creation.count %> conjoints à valider
+
+          </div>
+        </a>
+      </li>
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/admin/enfants" class="dropdown-item">
+          <div>
+            <i class="fa fa-envelope fa-fw"></i> Il y'a <%= Enfant.creation.count %> enfants à valider
+
+          </div>
+        </a>
+      </li>
+    <% end %>
+
+    <% if current_user.salarie? %>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/salarie/liquidation_retraites" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= LiquidationRetraite.with_soumis_state.count + LiquidationRetraite.traitement_en_cours.count %>
+            LIQUIDATION RETRAITE à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/salarie/dossier_prestations" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il
+            y'a <%= DossierPrestation.workflow_etat(:soumis).count + DossierPrestation.workflow_etat(:traitement_en_cours).count %>
+            dossiers
+            Prestation à valider
+
+          </div>
+        </a>
+      </li>
+
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/salarie/conjoints" class="dropdown-item">
+          <div>
+            <i class="fa fa-upload fa-fw"></i>Il y'a <%= Conjoint.creation.count %> conjoints à valider
+
+          </div>
+        </a>
+      </li>
+      <li class="dropdown-divider"></li>
+      <li>
+        <a href="/salarie/enfants" class="dropdown-item">
+          <div>
+            <i class="fa fa-envelope fa-fw"></i> Il y'a <%= Enfant.creation.count %> enfants à valider
+
+          </div>
+        </a>
+      </li>
+
+    <% end %>
+  </ul>
+</li>

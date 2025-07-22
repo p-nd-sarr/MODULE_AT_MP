@@ -1,0 +1,77 @@
+<div class="row" style="margin-top:30;">
+  <div class="col-lg-12">
+    <% if @allocataire.enfants.valide.empty? %>
+      <h2>Liste des enfants vide !!! </h2>
+    <% else %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Date de naissance</th>
+        <th scope="col">Nom mère</th>
+        <th scope="col">Prénom mère</th>
+        <th scope="col">Nom père</th>
+        <th scope="col">Prénom père</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @allocataire.enfants.valide.each do |enfant| %>
+        <tr>
+          <td><%= enfant.nom %></td>
+          <td><%= enfant.prenom %></td>
+          <td><%= l enfant.date_naissance %></td>
+          <td><%= enfant.nom_mere %></td>
+          <td><%= enfant.prenom_mere %></td>
+          <td><%= enfant.nom_pere %></td>
+          <td><%= enfant.prenom_pere %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%end%>
+  </div>
+  <div class="col-lg-12">
+  <hr>
+    <% if @allocataire.retraite? %>
+      <% if @allocataire.enfants_majoration.empty? %>
+        <h2>Liste des enfants pris en charges sur la majoration vide !!! </h2>
+      <% else %>
+      <h3>Enfants pris en charges sur la majoration</h3><br>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Nom</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Date de naissance</th>
+          <th scope="col">Nom salarie</th>
+          <th scope="col">Prénom salarié</th>
+          <th scope="col">Nom complet conjoint</th>
+          <th scope="col">Date fin prise en charge</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @allocataire.enfants_majoration.each do |enfant| %>
+          <tr>
+            <td><%= enfant.nom %></td>
+            <td><%= enfant.prenom %></td>
+            <td><%= l enfant.date_naissance %></td>
+            <td><%= enfant.nom_salarie %></td>
+            <td><%= enfant.prenom_salarie %></td>
+            <% if enfant.conjoint_id %>
+              <td><%= enfant.conjoint.full_name %></td>
+            <% else %>
+              <td></td>
+            <% end %>
+            <td><%= l enfant.date_fin_mineur %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <% end %>
+    <% end %>
+
+  </div>
+</div>

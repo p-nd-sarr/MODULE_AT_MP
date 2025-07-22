@@ -1,0 +1,210 @@
+<%= content_for :titre_page, "Détails enfant" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', salarie_enfants_path, class: 'btn btn-white btn-sm' %>
+  <%#= link_to 'Modifier', edit_salarie_enfant_path(@enfant), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter un enfant', new_salarie_enfant_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+  <div class="col-lg-4">
+    <div class="ibox">
+      <div class="ibox-title">
+        <h5 class="text-success">Informations sur les parents</h5>
+      </div>
+      <div class="ibox-content">
+        <d1 class="row mb-0">
+          <div class="col-sm-6">
+            <dt>Numéro affiliation: </dt>
+          </div>
+          <div class="col-sm-6">
+            <dd class="mb-1"><%= @enfant.numero_affiliation %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6" >
+            <dt>Prénom & nom du salarié: </dt>
+          </div>
+          <div class="col-sm-6" >
+            <dd class="mb-1"><%= @enfant.prenom_salarie %> <%= @enfant.nom_salarie %></dd>
+          </div>
+        </d1>
+        <% if @enfant.conjoint_id? %>
+          <d1 class="row mb-0">
+            <div class="col-sm-6 text-sm-right">
+              <dt>Nom complet conjoint(e): </dt>
+            </div>
+            <div class="col-sm-6 text-sm-left" >
+              <dd class="mb-1"><%= @enfant.conjoint.full_name %></dd>
+            </div>
+          </d1>
+        <%end%>
+        <% if !@enfant.origine_enfant.nil? and @enfant.origine_enfant == 'naturel'%>
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Prénom & nom du parent naturel:</dt>
+            </div>
+            <div class="col-sm-6 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= @enfant.prenom_mere_naturel unless @enfant.prenom_mere_naturel.nil? %> <%= @enfant.nom_mere_naturel unless @enfant.nom_mere_naturel.nil? %></dd>
+            </div>
+          </d1>
+          <% end %>
+       </div>
+    </div>
+  </div>
+    <div class="col-lg-8">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5 class="text-success">Informations sur l'enfant</h5>
+          <div class="ibox-tools">
+            <%if @enfant.creation?%>
+              <%= (link_to ' Modifier', edit_salarie_enfant_path(@enfant), class:'btn btn-success btn-outline btn-xs fa fa-edit')  %>
+            <%end%>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Prénom & nom de l'enfant: </dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @enfant.prenom %> <%= @enfant.nom%></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Date de naissance: </dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= l @enfant.date_naissance %></dd>
+                  </div>
+                </d1>
+                <%if @enfant.lieu_naissance? %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6">
+                      <dt>Lieu de naissance: </dt>
+                    </div>
+                    <div class="col-sm-6">
+                      <dd class="mb-1"><%= @enfant.lieu_naissance unless @enfant.lieu_naissance.nil?%></dd>
+                    </div>
+                  </d1>
+                <%end %>
+                <% if @enfant.sexe? %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6">
+                      <dt>Sexe:</dt>
+                    </div>
+                    <div class="col-sm-6">
+                      <dd class="mb-1"><%= Enfant.human_enum_name(:sexe, @enfant.sexe) unless @enfant.sexe.nil? %></dd>
+                    </div>
+                  </d1>
+                <%end%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Origine de l'enfant:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= Enfant.human_enum_name(:origine_enfant, @enfant.origine_enfant) unless @enfant.origine_enfant.nil? %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Type de pièce:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= Enfant.human_enum_name(:type_piece, @enfant.type_piece) unless @enfant.type_piece.nil? %></dd>
+                </div>
+               </d1>
+               <d1 class="row mb-0">
+                <div class="col-lg-3"></div>
+                <div class="col-lg-6" style="text-align: right; margin-top: 0px;">
+                    <%= link_to image_tag('missing_logo.png', size: "250x250>", class: "m-t-xs img-responsive"), @enfant.extrait_naissance, target: :_blank %>
+                  </div>
+               </d1>
+            </div>
+            <div class="col-lg-6">
+              <% if @enfant.numero_piece?%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Numéro d'identification</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @enfant.numero_piece %></dd>
+                  </div>
+                </d1>
+              <%end%>
+
+              <% if @enfant.code_etat_civil? and @enfant.extrait_naissance?%>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Centre d'état civil ou localité:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.code_etat_civil %></dd>
+                </div>
+              </d1>
+              <%end%>
+
+              <% if @enfant.numero_registre? and @enfant.extrait_naissance? %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Numéro régistre:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.numero_registre %></dd>
+                </div>
+              </d1>
+              <%end%>
+
+              <% unless @enfant.date_transcription.nil? %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Date de transcription:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.date_transcription.strftime("%d/%m/%Y") %></dd>
+                </div>
+              </d1>
+              <% end %>
+              <% unless @enfant.date_delivrance_piece.nil? %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Date de délivrance pièce:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.date_delivrance_piece.strftime("%d/%m/%Y") %></dd>
+                </div>
+              </d1>
+              <%end%>
+              <% unless @enfant.date_expiration_piece.nil? %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6">
+                  <dt>Date d'expiration pièce:</dt>
+                </div>
+                <div class="col-sm-6">
+                  <dd class="mb-1"><%= @enfant.date_expiration_piece.strftime("%d/%m/%Y") unless @enfant.date_expiration_piece.nil?%></dd>
+                </div>
+              </d1>
+              <%end%>
+
+              <% if @enfant.nin_generer?  and @enfant.extrait_naissance?%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Numéro d'identification générer:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @enfant.nin_generer %></dd>
+                  </div>
+                </d1>
+                <% end %>
+              </div>
+
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

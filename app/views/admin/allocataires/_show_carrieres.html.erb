@@ -1,0 +1,69 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+        <h3>Régime Général</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Entreprise</th>
+            <th scope="col">Période</th>
+<!--            <th scope="col">Régime</th>-->
+            <th scope="col">Salaires</th>
+<!--            <th scope="col">Points</th>-->
+            <th scope="col">Points Calculés</th>
+            <th scope="col">Etat</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @allocataire.carrieres_prestation.regime_general.each do |carriere| %>
+            <tr class="<%= 'bg-danger' if carriere.points.to_i.zero? %>">
+              <td><%= carriere.exercice %></td>
+              <td><%= carriere.try :raison_sociale %></td>
+              <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+<!--              <td><%#= carriere.regime %></td>-->
+              <td align="right"><%= format_cfa(carriere.salaire1 + carriere.salaire2, false) %></td>
+<!--              <td align="right"><%#= carriere.POINTS %></td>-->
+              <td align="right"><%= carriere.points %></td>
+              <td align="right"><%= carriere.etat %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+
+        <h3>Régime Cadre</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Entreprise</th>
+            <th scope="col">Période</th>
+<!--            <th scope="col">Régime</th>-->
+            <th scope="col">Salaires</th>
+<!--            <th scope="col">Points</th>-->
+            <th scope="col">Points Calculés</th>
+            <th scope="col">Etat</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @allocataire.carrieres_prestation.regime_cadre.each do |carriere| %>
+            <tr class="<%= 'bg-danger' if carriere.points.to_i.zero? %>">
+              <td><%= carriere.exercice %></td>
+              <td><%= carriere.try :raison_sociale %></td>
+              <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+              <!--              <td><%#= carriere.regime %></td>-->
+              <td align="right"><%= format_cfa(carriere.salaire1 + carriere.salaire2, false) %></td>
+              <!--              <td align="right"><%#= carriere.POINTS %></td>-->
+              <td align="right"><%= carriere.points %></td>
+              <td align="right"><%= carriere.etat %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

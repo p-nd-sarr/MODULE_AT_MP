@@ -1,0 +1,2 @@
+module Admin::GesadmsHelper
+end

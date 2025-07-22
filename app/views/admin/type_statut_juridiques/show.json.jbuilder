@@ -1,0 +1,1 @@
+json.partial! "admin_type_statut_juridiques/admin_type_statut_juridique", admin_type_statut_juridique: @admin_type_statut_juridique

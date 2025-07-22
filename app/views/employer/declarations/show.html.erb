@@ -1,0 +1,100 @@
+<%= content_for :titre_page, "Détails de la déclaration  #{@declaration.ID_DECLARATION}" %>
+
+<div class="row">
+  <div class="col-lg-2">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+        </div>
+        <h5>Date déclaration</h5>
+      </div>
+      <div class="ibox-content">
+        <h1 class="no-margins"><%= @declaration.DATE_DECLARATION %></h1>
+
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-2">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+        </div>
+        <h5>Montant</h5>
+      </div>
+      <div class="ibox-content">
+        <h1 class="no-margins"><%= @declaration.MONTANT_DECLARE %></h1>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-2">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <div class="ibox-tools">
+        </div>
+        <h5>Effectif</h5>
+      </div>
+      <div class="ibox-content">
+
+        <div class="row">
+          <div class="col-md-6">
+            <h1 class="no-margins"><%= @declaration.EFFECTIF == nil ? 0 :  @declaration.EFFECTIF %></h1>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="ibox ">
+
+
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-lg-12">
+    <div class="ibox ">
+      <div class="ibox-title">
+        <h5>Liste des salariés déclarés</h5>
+        <div class="ibox-tools">
+          <a href="" style="color: #1ab394"><i class="fa fa-download" ></i> Exporter</a>
+        </div>
+      </div>
+      <div class="ibox-content">
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+
+              <th scope="col">ID </th>
+              <th scope="col">Entité </th>
+              <th scope="col">Code agence </th>
+              <th scope="col">Matricule Ipres </th>
+              <th scope="col">Régime </th>
+              <th scope="col">Salaire </th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @ligne_declarations.each do |ligne| %>
+            <tr>
+              <td><%= ligne.ID_DECLARATION %></td>
+              <td><%= ligne.CODE_ENTITE %></td>
+              <td><%= ligne.CODE_AGENCE %></td>
+              <td><%= ligne.MAT_IPRES %></td>
+              <td><%= ligne.CODE_REGIME_DECLARE %></td>
+              <td><%= ligne.SAL_VERSE %></td>
+            </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

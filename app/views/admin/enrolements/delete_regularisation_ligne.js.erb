@@ -1,0 +1,8 @@
+<% if @ligne.supprime %>
+  $('#delete_regularisation_ligne_id_<%= @ligne.id %>' ).hide();
+  $('#total_supprime').html('<%= @total_supprime %>');
+<% else %>
+  $('#delete_regularisation_ligne_id_<%= @ligne.id %>' ).show();
+
+  alert('La ligne #<%= @ligne.id %> ne peut pas etre supprimer');
+<% end %>

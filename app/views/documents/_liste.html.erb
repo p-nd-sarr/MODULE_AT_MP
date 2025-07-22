@@ -1,0 +1,97 @@
+<% if include_add %>
+  <div style="text-align: right">
+    <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#document-modal-form-<%= object.class.name %><%= object.id %>">Ajouter
+      document
+    </button>
+  </div>
+  <br>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-12">
+    <table class="table table-bordered table-condensed">
+      <thead>
+      <tr>
+        <th width="">Documents obligatoires</th>
+        <th scope="col">Autres Documents</th>
+        <th width="">Documents à renouveler</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr>
+        <td>
+          <ul>
+            <% for type_document in type_documents_obligatoires.keys %>
+              <li class="<%= object.uploaded?(type_document) ? 'text-info' : 'text-danger' %>"><%= Document.human_enum_name(:type_document, type_document) %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <% for type_document in (type_documents.keys - type_documents_obligatoires.keys) %>
+              <li class="<%= object.uploaded?(type_document) ? 'text-info' : '' %>"><%= Document.human_enum_name(:type_document, type_document) %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td>
+          <ul>
+            <% Document.expired(object).each do |document| %>
+              <li class=""><%= Document.human_enum_name(:type_document, document.type_document) %></li>
+            <% end %>
+          </ul>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <% documents.each do |document| %>
+    <div class="col-lg-4">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: center;">
+          <h5><%= document.type_document_human %></h5>
+        </div>
+        <div class="panel-body" style="height: 200px">
+          <a href=<%= url_for(document.document) %> target="_blank">
+            <div class="col-sm-6 col-sm-offset-3">
+              <div class="text-center">
+                <%= image_tag('missing_logo.png', height: 50) %>
+                <%# if document.document.previewable? %>
+                  <%#= image_tag document.document.preview(resize: "500x500>"), class: "m-t-xs img-responsive", target: :_blank %>
+                <%# elsif document.document.filename.extension_without_delimiter.to_s == 'pdf' %>
+<!--                  <embed src=<%#= url_for(document.document) %>, width="50px" , height="50px"/>-->
+                <%# elsif document.document.filename.extension_without_delimiter.to_s.in?(['jpg', 'png', 'jpeg']) %>
+<!--                  <img src=<%#= url_for(document.document) %>, width="50px" , height="50px"/>-->
+                <%# end %>
+              </div>
+            </div>
+          </a>
+          <div class="col-sm-12 tooltip-demo">
+            <br>
+            <%unless document.date_delivrance_piece.nil? %>
+              <h5>Date de délivrance :  <%= l document.date_delivrance_piece %> </h5>
+            <%end %>
+
+            <% unless document.date_expiration.nil? %>
+              <%if document.date_expiration <= Date.today %>
+                <h5 class="text-danger">Document expiré depuis :  <%= l document.date_expiration %> </h5>
+              <% else %>
+                <h5>Expire le :  <%= l document.date_expiration %> </h5>
+              <% end %>
+            <% end %>
+            <h5>Commentaires :</h5>
+            <p style="max-height: 2em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-toggle="tooltip" data-placement="top" title data-original-title=" <%= document.commentaire %>">
+              <%= document.commentaire %>
+            </p>
+          </div>
+        </div>
+        <% if include_delete %>
+          <div class="panel-footer" style="text-align: center;">
+            <%= link_to 'supprimer', document_path(document, back_url: back_url), method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'fa fa-trash btn btn-outline btn-danger' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

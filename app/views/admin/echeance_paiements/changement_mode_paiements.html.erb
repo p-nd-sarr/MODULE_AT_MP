@@ -1,0 +1,43 @@
+<%= content_for :titre_page, "Liste modification mode paiements   [#{ @echeance_paiement.periode_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_fin.strftime("%d/%m/%Y")}]" %>
+
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Numero Dossier </th>
+        <th scope="col">Numéro Allocataire</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Mode paiement</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @modifier_mode_paiements.each do |mode_paiement| %>
+        <tr>
+          <td><%= mode_paiement.id %></td>
+          <td><%= mode_paiement.numero_dossier %></td>
+          <td><%= mode_paiement.numero_allocataire %></td>
+          <td><%= mode_paiement.prenom %></td>
+          <td><%= mode_paiement.nom %></td>
+          <td><%= mode_paiement.mode_paiement %></td>
+          <td><%= mode_paiement.workflow_state %></td>
+          <td style="width: 75px">
+            <%= link_to 'dossier', [:admin, mode_paiement.allocataire, mode_paiement], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,515 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="col-lg-4">
+        <%= link_to admin_dossier_prestations_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Prestations familiales</h5>
+            </div>
+            <div class="ibox-content product-box">
+              <h2 class="no-margins"><%= DossierPrestation.where(conjoint_id: nil).count %></h2>
+              <div class="stat-percent text-success font-bold">
+                <%= @total_demande.zero? ? 0 : DossierPrestation.where(conjoint_id: nil).count * 100 / @total_demande %>%
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total demande</small>
+              <% if current_user.gestionnaire_compte_allocataire? %>
+                <div style="text-align:center">
+                  <%= link_to ' Ajouter dossier', new_admin_dossier_prestation_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-lg-4">
+        <%= link_to admin_liquidation_retraites_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Liquidations retraite</h5>
+            </div>
+            <div class="ibox-content">
+              <h2 class="no-margins"><%= LiquidationRetraite.count %></h2>
+              <div class="stat-percent text-success font-bold">
+                <%= @total_demande.zero? ? 0 : LiquidationRetraite.count * 100 / @total_demande %>%
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total demande</small>
+              <% if current_user.gestionnaire_compte_allocataire? %>
+                <div style="text-align:center">
+                  <%= link_to ' Ajouter demande', new_admin_liquidation_retraite_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-lg-4">
+        <%= link_to admin_arret_travails_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Arrêts travails</h5>
+            </div>
+            <div class="ibox-content">
+              <h2 class="no-margins"><%= ArretTravail.count %></h2>
+              <div class="stat-percent text-success font-bold">
+                <%= @total_demande.zero? ? 0 : ArretTravail.count * 100 / @total_demande %>%
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total demande</small>
+              <% if current_user.gestionnaire_compte_allocataire? %>
+                <div style="text-align:center">
+                  <%= link_to ' Ajouter dossier', new_admin_arret_travail_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-lg-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Évolution des dossiers</h5>
+            <div class="ibox-tools">
+              <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                <label class="btn btn-xs btn-white active" data-toggle="pill" href="#men">
+                  <input type="radio" id="option1" name="options"> Mensuelle </label>
+                <label class="btn btn-xs btn-white" data-toggle="pill" href="#anu">
+                  <input type="radio" id="option1" name="options"> Annuelle </label>
+              </div>
+            </div>
+          </div>
+          <div class="tab-content">
+            <div id="men" class="tab-pane fade in active">
+              <%= render 'chart_mensuelle' %>
+            </div>
+
+            <div id="anu" class="tab-pane fade">
+              <%= render 'chart_annuelle' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="ibox">
+          <div class="ibox-title">
+
+            <h5>Demandes</h5>
+            <span class="label label-success">Total <%= @total_demande %></span>
+            <div class="ibox-tools">
+              <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                <label class="btn btn-xs btn-white active" data-toggle="pill" href="#mensuelle">
+                  <input type="radio" id="option3" name="options"> Mensuelle </label>
+                <label class="btn btn-xs btn-white" data-toggle="pill" href="#annuelle">
+                  <input type="radio" id="option4" name="options"> Annuelle </label>
+              </div>
+            </div>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-lg-12 tab-content" style="margin-bottom: 60px; margin-top: 30px">
+                <div id="mensuelle" class="tab-pane fade in active">
+                  <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                    <label class="btn btn-outline btn-white dim " data-toggle="pill" href="#jan">
+                      <input type="radio" id="opt1" name="options"> Jan </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#fev">
+                      <input type="radio" id="opt2" name="options"> Fév </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#mar">
+                      <input type="radio" id="opt3" name="options"> Mar </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#avr">
+                      <input type="radio" id="opt4" name="options"> Avr </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#mai">
+                      <input type="radio" id="opt5" name="options"> Mai </label>
+                    <label class="btn btn-outline btn-white active dim" data-toggle="pill" href="#juin">
+                      <input type="radio" id="opt6" name="options"> Jui </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#juil">
+                      <input type="radio" id="opt7" name="options"> Juil </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#aou">
+                      <input type="radio" id="opt8" name="options"> Aoû </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#sep">
+                      <input type="radio" id="opt9" name="options"> Sep </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#oct">
+                      <input type="radio" id="opt10" name="options"> Oct </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#nov">
+                      <input type="radio" id="opt11" name="options"> Nov </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#dec">
+                      <input type="radio" id="opt12" name="options"> Déc </label>
+                  </div>
+                </div>
+                <div id="annuelle" class="tab-pane fade">
+                  <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                    <label class="btn btn-outline btn-white dim " data-toggle="pill" href="#an1">
+                      <input type="radio" id="opt13" name="options"> 2015 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an2">
+                      <input type="radio" id="opt14" name="options"> 2016 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an3">
+                      <input type="radio" id="opt15" name="options"> 2017 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an4">
+                      <input type="radio" id="opt16" name="options"> 2018 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an5">
+                      <input type="radio" id="opt17" name="options"> 2019 </label>
+                    <label class="btn btn-outline btn-white active dim" data-toggle="pill" href="#an6">
+                      <input type="radio" id="opt18" name="options"> 2020 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an7">
+                      <input type="radio" id="opt19" name="options"> 2021 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an8">
+                      <input type="radio" id="opt20" name="options"> 2022 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an9">
+                      <input type="radio" id="opt21" name="options"> 2023 </label>
+                    <label class="btn btn-outline btn-white dim" data-toggle="pill" href="#an10">
+                      <input type="radio" id="opt22" name="options"> 2024 </label>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive" style="margin-bottom: 40px;">
+              <table class="table table-hover no-margins">
+                <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Soumis</th>
+                  <th scope="col">Validés</th>
+                  <th scope="col">Rejetés</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <td><small>Prestations familiales</small></td>
+                  <td>
+                    <%= DossierPrestation.workflow_etat(:soumis).count %>
+                    <br>
+                    <span class="text-navy">
+                       <%= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:soumis).count * 100 / DossierPrestation.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= DossierPrestation.workflow_etat(:valide).count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:valide).count * 100 / DossierPrestation.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= DossierPrestation.workflow_etat(:rejete).count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= DossierPrestation.count.zero? ? 0 : DossierPrestation.workflow_etat(:rejete).count * 100 / DossierPrestation.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><small>Liquidations retraités</small></td>
+                  <td>
+                    <%= LiquidationRetraite.with_soumis_state.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_soumis_state.count * 100 / LiquidationRetraite.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= LiquidationRetraite.with_dossier_valide_state.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_dossier_valide_state.count * 100 / LiquidationRetraite.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= LiquidationRetraite.with_dossier_rejete_state.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_dossier_rejete_state.count * 100 / LiquidationRetraite.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><small>Arrêts travails</small></td>
+                  <td>
+                    <%= ArretTravail.instruction.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%#= ArretTravail.count.zero? ? 0 : ArretTravail.soumis.count * 100 / ArretTravail.count %>%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= ArretTravail.accepte.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= ArretTravail.count.zero? ? 0 : ArretTravail.accepte.count * 100 / ArretTravail.count %>%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= ArretTravail.rejete.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= ArretTravail.count.zero? ? 0 : ArretTravail.rejete.count * 100 / ArretTravail.count %>%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><small>Indemnités congés maternité</small></td>
+                  <td>
+                    <%= DossierMaternite.soumis.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= DossierMaternite.count.zero? ? 0 : DossierMaternite.soumis.count * 100 / DossierMaternite.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= DossierMaternite.valide.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= DossierMaternite.count.zero? ? 0 : DossierMaternite.valide.count * 100 / DossierMaternite.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    <%= DossierMaternite.rejete.count %>
+                    <br>
+                    <span class="text-navy">
+                      <%= DossierMaternite.count.zero? ? 0 : DossierMaternite.rejete.count * 100 / DossierMaternite.count %>
+                      %
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><small>Maladies professionnelles</small></td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><small>Prestation extériure CAF</small></td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-levelf-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                <tr>
+                  <td><small>Prestation extériure IPRES</small></td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                  <td>
+                    0
+                    <br>
+                    <span class="text-navy">
+                      0%
+                      <i class="fa fa-level-up"></i>
+                    </span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <%= link_to admin_dossier_maternites_path do %>
+        <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>Indemnités congés maternité</h5>
+          </div>
+          <div class="ibox-content">
+            <h2 class="no-margins"><%= DossierMaternite.count %></h2>
+            <div class="stat-percent text-success font-bold">
+              <%= @total_demande.zero? ? 0 : DossierMaternite.count * 100 / @total_demande %>%
+              <i class="fa fa-bolt"></i>
+            </div>
+            <small>Total demande</small>
+            <br>
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <div style="text-align:center">
+                <%= link_to ' Ajouter dossier', new_admin_dossier_maternite_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-4">
+      <%= link_to admin_maladie_professionnelles_path do %>
+        <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>Maladies professionnelles</h5>
+          </div>
+          <div class="ibox-content">
+            <h2 class="no-margins"><%= MaladieProfessionnelle.count %></h2>
+            <div class="stat-percent text-success font-bold">
+              <%= @total_demande.zero? ? 0 : MaladieProfessionnelle.count * 100 / @total_demande %>%
+              <i class="fa fa-bolt"></i>
+            </div>
+            <small>Total demande</small>
+            <br>
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <div style="text-align:center">
+                <%= link_to ' Ajouter demande', new_admin_maladie_professionnelle_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-4">
+      <%= link_to admin_prestation_exterieures_path do %>
+        <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>Prestations extérieures CAF</h5>
+          </div>
+          <div class="ibox-content">
+            <h2 class="no-margins"><%= PrestationExterieure.count %></h2>
+            <div class="stat-percent text-success font-bold">
+              <%= @total_demande.zero? ? 0 : PrestationExterieure.count * 100 / @total_demande %>%
+              <i class="fa fa-bolt"></i>
+            </div>
+            <small>Total demande</small>
+            <br>
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <div style="text-align:center">
+                <%= link_to ' Ajouter demande', new_admin_prestation_exterieure_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-4">
+      <%= link_to admin_prestation_exterieures_path do %>
+        <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>Prestations extérieures IPRES</h5>
+          </div>
+          <div class="ibox-content">
+            <h2 class="no-margins">0</h2>
+            <div class="stat-percent text-success font-bold">
+              0%
+              <i class="fa fa-bolt"></i>
+            </div>
+            <small>Total demande</small>
+            <br>
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <div style="text-align:center">
+                <%= link_to ' Ajouter demande', new_admin_prestation_exterieure_path, class: 'btn btn-success btn-xs fa fa-plus', style: 'margin-top:15px;' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Utilisateurs</h5>
+          <span class="label label-success">Total <%= User.count %></span>
+        </div>
+        <div class="ibox-content">
+          <div class="feed-activity-list" style="height:700px; overflow-x:scroll">
+
+            <% for type_profil in User::TYPE_PROFIL.keys.collect %>
+              <%= link_to admin_users_path(type_profil: type_profil) do %>
+                <div class="feed-element feed_el_h" style="padding:5px;">
+                  <small><%= User.human_enum_name(:type_profil, type_profil) %></small>
+                  <div class="tooltip-demo">
+                    <%= User.try(type_profil).count %>
+                    <div class="stat-percent text-warning font-bold" style="margin-left: 10px" data-toggle="tooltip" data-placement="top" title data-original-title="Non activés">
+                      <%= User.try(type_profil).count.zero? ? 0 : (User.try(type_profil).count - User.try(type_profil).actifs.count) * 100 / User.try(type_profil).count %>
+                      %
+                      <i class="fa fa-bolt"></i>
+                    </div>
+                    <div class="stat-percent text-navy font-bold" data-toggle="tooltip" data-placement="top" title data-original-title="Activés">
+                      <%= User.try(type_profil).count.zero? ? 0 : User.try(type_profil).actifs.count * 100 / User.try(type_profil).count %>
+                      %
+                      <i class="fa fa-bolt"></i>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>UTILISATEURS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= current_user.client.users.count %> / <%= current_user.client.contrat_client_en_cours.nombre_max_user %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>IMMEUBLES</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= current_user.immeubles.count %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>LOCAUX</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= current_user.locaux.count %> / <%= current_user.client.contrat_client_en_cours.nombre_max_appartement %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>LOCATAIRES</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= current_user.locataires.count %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>CAUTIONS ENCAISSEES</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa current_user.contrat_locataires.actifs.sum(:montant_caution) %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>PAIEMENTS EN ATTENTE</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa current_user.facture_locataires.non_payees.sum(:montant) %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>PAIEMENTS EN ATTENTE DU MOIS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa current_user.facture_locataires.non_payees.du_mois.sum(:montant) %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>TOTAL PAIEMENTS DU MOIS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa current_user.facture_locataires.payees_du_mois.sum(:montant) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

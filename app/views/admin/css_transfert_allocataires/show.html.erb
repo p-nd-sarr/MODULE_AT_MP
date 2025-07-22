@@ -1,0 +1,251 @@
+<%= content_for :titre_page, "Détails CSS Transfert Allocataire [#{ CssTransfertAllocataire.human_enum_name(:workflow_state, @css_transfert_allocataire.workflow_state)}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_css_transfert_allocataires_path, 'data-turbolinks': false, class: 'btn btn-white btn-xs' %>
+  <% if @css_transfert_allocataire.creation? and current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Editer', edit_admin_css_transfert_allocataire_path(@css_transfert_allocataire), 'data-turbolinks': false, class: 'btn btn-white btn-xs' %>
+  <% end %>
+  <br> <br>
+  <% @css_transfert_allocataire.current_state.events.values.each { |event| %>
+    <% event = event.first %>
+    <% if event.meta[:types_profils].include?(current_user.type_profil.to_sym) %>
+      <%= link_to event.meta[:label], admin_css_transfert_allocataire_change_transfert_allocataire_statut_path(@css_transfert_allocataire, event.name), 'data-turbolinks': false, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-primary btn-xs' if event.meta[:back] == false and @css_transfert_allocataire.can_display(current_user) %>
+      <br>
+      <%= link_to "Retourner demande", '#', "data-toggle" => "modal", 'data-target' => '#retourner', class: 'btn btn-primary btn-xs' if event.meta[:back] == true and @css_transfert_allocataire.can_display(current_user) %>
+      <%= render 'admin/css_transfert_allocataires/modal_retour', object: event.name if event.meta[:back] == true %>
+    <% end %>
+  <% } %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5> &nbsp;
+          </div>
+          <div class="ibox-content">
+            <% unless @css_transfert_allocataire.ajoute_par.nil? %>
+              <h5><strong class="text-navy">Crée Par</strong>
+                : <%= (@css_transfert_allocataire.ajoute_par.try(:full_name)) unless @css_transfert_allocataire.ajoute_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de création</strong>
+                : <%= (@css_transfert_allocataire.created_at.strftime("%d/%m/%Y")) unless @css_transfert_allocataire.created_at.nil? %>
+              </h5>
+              <hr>
+            <% end %>
+            <% unless @css_transfert_allocataire.soumis_par.nil? %>
+              <h5><strong class="text-navy">Soumis Par</strong>
+                : <%= (@css_transfert_allocataire.soumis_par.try(:full_name)) unless @css_transfert_allocataire.soumis_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de soumission</strong>
+                : <%= (@css_transfert_allocataire.date_soumission.strftime("%d/%m/%Y")) unless @css_transfert_allocataire.date_soumission.nil? %>
+              </h5>
+              <hr>
+            <% end %>
+            <% unless @css_transfert_allocataire.valide_par.nil? %>
+              <h5><strong class="text-navy">Validé Par</strong>
+                : <%= (@css_transfert_allocataire.valide_par.try(:full_name)) unless @css_transfert_allocataire.valide_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de validation</strong>
+                : <%= (@css_transfert_allocataire.date_validation.strftime("%d/%m/%Y")) unless @css_transfert_allocataire.date_validation.nil? %>
+              </h5>
+              <hr>
+            <% end %>
+            <% unless @css_transfert_allocataire.retourne_par.nil? %>
+              <h5><strong class="text-navy">Retourné Par</strong>
+                : <%= (@css_transfert_allocataire.retourne_par.try(:full_name)) unless @css_transfert_allocataire.retourne_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date retour</strong>
+                : <%= (@css_transfert_allocataire.date_retour.strftime("%d/%m/%Y")) unless @css_transfert_allocataire.date_retour.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Motif retour</strong>
+                : <%= (@css_transfert_allocataire.motif_retour) unless @css_transfert_allocataire.motif_retour.nil? %>
+              </h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la demande</h5>
+          </div>
+          <div class="ibox-content">
+            <p>
+              <strong>Numéro d'affiliation :</strong>
+              <%= @css_transfert_allocataire.numero_affiliation %>
+              (<%= Psrm::Participant.find_by_matric(@css_transfert_allocataire.numero_affiliation).full_name unless Psrm::Participant.find_by_matric(@css_transfert_allocataire.numero_affiliation).nil? %>
+              )
+            </p>
+            <p>
+              <strong>Employeur source :</strong>
+              <%= Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_source_id).fhrsoc unless Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_source_id).nil? %>
+              ( <%= Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_source_id).fhnum unless Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_source_id).nil? %>
+              )
+
+            </p>
+            <p>
+              <strong>Employeur destination :</strong>
+              <%= Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_destination_id).fhrsoc unless Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_destination_id).nil? %>
+              ( <%= Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_destination_id).fhnum unless Psrm::Employeur.find_by_fhnum(@css_transfert_allocataire.employeur_destination_id).nil? %>
+              )
+            </p>
+            <p>
+              <strong>État :</strong>
+              <%= CssTransfertEmployeur.human_enum_name(:workflow_state, @css_transfert_allocataire.workflow_state) unless @css_transfert_allocataire.workflow_state.nil? %>
+            </p>
+            <p>
+              <strong>Agence source :</strong>
+              <%= Admin::Agence.find(@css_transfert_allocataire.agence_source_id).description_prest %>
+            </p>
+            <p>
+              <strong>Agence destination :</strong>
+              <%= Admin::Agence.find(@css_transfert_allocataire.agence_destination_id).description_prest %>
+            </p>
+            <p>
+              <strong>Date transfert :</strong>
+              <%= l @css_transfert_allocataire.date_transfert unless @css_transfert_allocataire.date_transfert.nil? %>
+            </p>
+            <p>
+              <strong>Date Embauche :</strong>
+              <%= l @css_transfert_allocataire.date_embauche unless @css_transfert_allocataire.date_embauche.nil? %>
+            </p>
+            <p>
+              <strong>Commentaire :</strong>
+              <%= @css_transfert_allocataire.commentaire %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5> Dossiers liés à l'allocataire </h5>
+        </div>
+        <div class="ibox-content">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Prestation</th>
+              <th scope="col">Date création</th>
+              <th scope="col">Numéro dossier</th>
+              <th scope="col">Numéro Employeur</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Supprimé?</th>
+              <th scope="col">Incomplet?</th>
+              <th scope="col">Details</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @salary.arret_travails.nil? %>
+              <% @salary.arret_travails.each do |arret| %>
+                <tr>
+
+                  <td>
+                    <span class="btn btn-success btn-sm dim "><i class="fa fa-folder"></i> Accident de travail </span>
+                  </td>
+                  <td> <%= arret.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+                  <td> <%= arret.num_dossier %> </td>
+                  <td><%= arret.workflow_state %> </td>
+                  <td style="width: 75px"><%= link_to 'Détails', admin_arret_travail_path(arret), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+                </tr>
+              <% end %>
+            <% end %>
+
+            <% unless @salary.dossier_prestations.nil? %>
+              <% @salary.dossier_prestations.each do |dossier| %>
+                <tr>
+                  <td>
+                    <span class="btn btn-warning btn-sm  "><i class="fa fa-folder"></i>
+                      Prestation Familiale <%= '- PPN / ' + dossier.conjoint.full_name unless dossier.conjoint_id.nil? %>
+                    </span>
+                  </td>
+                  <td> <%= dossier.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+                  <td> <%= dossier.num_dossier %></td>
+                  <td> <%= dossier.employeur_actuel %></td>
+                  <td><%= dossier.etat %></td>
+                  <td><%= state_yes_no dossier.deleted %></td>
+                  <td><%= state_yes_no dossier.incomplete %></td>
+                  <td style="width: 75px"><%= link_to 'Détails', admin_dossier_prestation_path(dossier), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+                </tr>
+              <% end %>
+            <% end %>
+
+            <% unless @salary.dossier_maternites.nil? %>
+              <% @salary.dossier_maternites.each do |dossier| %>
+                <tr>
+                  <td>
+                    <span class="btn btn-warning btn-sm dim form-control"><i class="fa fa-folder"></i> Dossier de maternité </span>
+                  </td>
+                  <td> <%= dossier.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+                  <td> <%= dossier.num_dossier %></td>
+                  <td><%= dossier.etat %></td>
+                  <td><%= state_yes_no dossier.deleted %></td>
+                  <td><%= state_yes_no dossier.incomplete %></td>
+                  <td style="width: 75px"><%= link_to 'Détails', admin_dossier_maternite_path(dossier), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+                </tr>
+              <% end %>
+            <% end %>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Échéances liées à l'allocataire (Numéro employeur : <%= @css_transfert_allocataire.employeur_source_id %>
+            ) </h5>
+        </div>
+        <div class="ibox-content">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Échéance</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Paiement?</th>
+              <th scope="col">Details</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @echeance_dossiers.each do |dossier| %>
+              <tr>
+                <td>
+                    <span class="btn btn-warning btn-sm  "><i class="fa fa-folder"></i>
+                      Échéance ID <%= dossier.echeance_caisse.id %>
+                    </span>
+                </td>
+                <td> <%= dossier.echeance_caisse.trimestre %></td>
+                <td> <%= dossier.echeance_caisse.annee %></td>
+                <td><%= state_yes_no dossier.get_amount_paid > 0 %></td>
+                <td style="width: 75px"><%= link_to 'Détails', admin_echeance_caisse_dossier_path(dossier.echeance_caisse, dossier.echeance_caisse_employeur.id, dossier), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

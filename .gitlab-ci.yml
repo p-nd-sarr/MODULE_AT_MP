@@ -1,0 +1,94 @@
+image: ruby:2.7.8
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - vendor/ruby
+
+stages:
+  - build
+  - deploy
+
+
+build_app:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+  script:
+    - docker login -u $CI_JOB_USERNAME -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE_APP:$CI_COMMIT_REF_SLUG .
+    - docker push $CI_REGISTRY_IMAGE_APP:$CI_COMMIT_REF_SLUG
+  only:
+    - dev
+    - master
+  tags:
+    - prestation
+
+build_worker:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker info
+  script:
+    - docker login -u $CI_JOB_USERNAME -p $CI_JOB_TOKEN $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE_WORKER:$CI_COMMIT_REF_SLUG -f ./docker/worker/Dockerfile .
+    - docker push $CI_REGISTRY_IMAGE_WORKER:$CI_COMMIT_REF_SLUG
+  only:
+    - dev
+    - master
+  tags:
+    - prestation
+
+
+.deploy: &deploy
+  stage: deploy
+  environment:
+    name: $env
+    url: $url
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$DEPLOYMENT_PRIVATE_KEY_STAGING")
+    - mkdir -p ~/.ssh
+    # - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    - gem install bundler -v 2.4.22 --no-document #gem install bundler --no-document
+    - bundle config set path 'vendor/ruby'
+    - bundle config set with 'development'
+    - bundle install -j $(nproc) --without production preprod staging recette --path vendor/ruby
+  script:
+    - bundle exec cap $env deploy
+
+#deploy_staging:
+#  <<: *deploy
+#  variables:
+#    env: staging
+#    url: https://devsecusocialeapp.ipres.sn
+#  only:
+#    - dev
+#  tags:
+#    - prestation
+#
+#deploy_recette:
+#  <<: *deploy
+#  variables:
+#    env: recette
+#    url: https://recettesecusocialeapp.ipres.sn
+#  only:
+#    - recette
+#  tags:
+#    - prestation
+#
+#deploy_production:
+#  <<: *deploy
+#  variables:
+#    env: production
+#    url: https://caissesecusociale.ipres.sn
+#  only:
+#    - master
+#  tags:
+#    - prestation

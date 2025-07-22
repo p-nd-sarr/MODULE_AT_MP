@@ -1,0 +1,120 @@
+<div class="row" style="margin-top: 30px;">
+  <div class="col-lg-9">
+  </div>
+  <div class="col-sm-3" style="text-align: right;">
+    <% unless @demande_liquidation.assur_residence_valid? %>
+      <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#periode">Ajouter une période
+      </button>
+      <div class="modal inmodal" id="periode" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <%= bootstrap_form_for(@periode_assurancePR, url: admin_liquidation_retraite_france_ajouter_periode_assurance_PR_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>
+            <div class="modal-content animated fadeIn">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">x</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Ajouter une période d'assurance (ou equivalente)</h4>
+              </div>
+              <div class="modal-body">
+                <%= f.date_select :date_debut, label: "Du",
+                                  start_year: (Date.today - 50.year).year, end_year: (Date.today + 42.year).year %>
+                <%= f.date_select :date_fin, label: "Au",
+                                  start_year: (Date.today - 50.year).year, end_year: (Date.today + 42.year).year %>
+                <%= f.number_field :trimestre_assurance, label: "Trimestres", required: true %>
+                <%= f.number_field :trimestre_equivalente, label: "Trimestres eq.", required: true %>
+              </div>
+              <div class="modal-footer form-group">
+                <%= f.button 'Valider', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+
+  <div class="row" style="margin-left: 15%;">
+    <div class="col-sm-9">
+      <h2 style="text-align: center"><strong> Périodes d'Assurances Accomplies en France </strong></h2>
+      <hr>
+    </div>
+  </div>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Périodes</th>
+      <th scope="col">Nbre Trim. Assur.</th>
+      <th scope="col">Nbre Trim. (per. équiv.)</th>
+      <th colspan="2"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @periode_assurances_PR.each do |periode_assurance| %>
+      <tr>
+        <td>Du <%= l periode_assurance.date_debut %> au <%= l periode_assurance.date_fin %> </td>
+        <td style="text-align: right;"><%= periode_assurance.trimestre_assurance %></td>
+        <td style="text-align: right;"><%= periode_assurance.trimestre_equivalente %></td>
+
+        <td width="75px">
+          <%= link_to 'supprimer', admin_liquidation_retraite_france_destroy_periode_assurance_path(@demande_liquidation, periode_assurance.id),
+                      method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' unless @demande_liquidation.assur_residence_valid? %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+    <tfoot>
+    <tr>
+      <td>Total</td>
+      <td style="text-align: right;">
+        <span style="font-weight: bold">
+          <%= m11 = @periode_assurances_PR.sum(&:trimestre_assurance) %>
+        </span>
+        <% if m11 > 1 %>
+          trimestres
+        <% elsif m11 == 1 %>
+          trimestre
+        <% end %>
+      </td>
+      <td style="text-align: right;">
+        <span style="font-weight: bold">
+          <%= m12 = @periode_assurances_PR.sum(&:trimestre_equivalente) %>
+        </span>
+        <% if m12 > 1 %>
+          trimestres
+        <% elsif m12 == 1 %>
+          trimestre
+        <% end %>
+      </td>
+    </tr>
+    </tfoot>
+  </table>
+
+
+</div>
+
+
+
+<%# if @periode_assurances_PR.size > 0 %>
+<!--      <div class="row" style="margin-left: 20%;">-->
+<!--        <div class="col-sm-8">-->
+<!--          <hr>-->
+<!--          <div class="panel panel-info">-->
+<!--            <div class="panel-body">-->
+<!--              <div class="table-responsive" style="margin-top: 5px">-->
+<!--                <br>-->
+<!--                <h5>-->
+<!--                  <strong>Nombre de trimestres de salariat :</strong> &nbsp; ???-->
+<%#= @demande_liquidation.participant.nb_trimestre_travail unless @demande_liquidation.participant.nil? %>
+
+<!--                </h5>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <hr>-->
+<!--        </div>-->
+<!--      </div>-->
+<%# end %>

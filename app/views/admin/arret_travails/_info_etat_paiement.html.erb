@@ -1,0 +1,81 @@
+<div class="row" style="margin-top: 20px;">
+  <div class="col-md-9">
+    <h3>Ordre de paiement des frais et des idemnités </h3>
+    <small><span class="label label-info">Total : <%= number_to_currency(@payment_orders_fr.where(statut: [:paye, :en_cours]).sum(:montant), unit: 'XOF') %></span>
+    </small>
+  </div>
+  <div class="col-md-12" style="margin-top: 20px;">
+    <% if @transactions_fr.nil? or @transactions_fr.empty? %>
+      <h2>Pas de Paiements à afficher</h2>
+    <% else %>
+      <h2>Paiements</h2>
+      <%= paginate @payment_orders_fr %>
+      <table class="table table-bordered table-condensed table-hover" style="margin-bottom: 50px;" id="paiements_id">
+        <thead>
+        <tr style="font-size: 12px;">
+          <th>Numéro ordre</th>
+          <th>Dossier</th>
+          <th>Montant Net</th>
+          <th>Mode Paiement</th>
+          <th>Date paiement</th>
+          <th>Etat</th>
+          <th>Voir Ordre</th>
+        </tr>
+        </thead>
+        <% @payment_orders_fr.each do |paiement| %>
+          <tr>
+            <td><%= paiement.numero_format %></td>
+            <td><%= paiement.dossier_type %>#<%= paiement.dossier_id %></td>
+            <td><%= paiement.compta_transactions.sum(:montant) %></td>
+            <td><%= paiement.compta_transactions.first.mode_paiement_human unless paiement.compta_transactions.first.nil? %></td>
+            <td><%= paiement.created_at %></td>
+            <td><%= paiement.statut_human %></td>
+            <td><%= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_arret_travail_at_frais_engage_show_recu_path(@demande_arret_travail, paiement.compta_transactions.first.dossier.id, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  </div>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+  <div class="col-md-9">
+    <h3>Ordres de paiement des idemnités </h3>
+    <small><span class="label label-info">Total : <%= number_to_currency(@payment_orders_dpt.where(statut: [:paye, :en_cours]).sum(:montant), unit: 'XOF') %></span>
+    </small>
+  </div>
+  <div class="col-md-12" style="margin-top: 20px;">
+    <% if @transactions_dpt.nil? or @transactions_dpt.empty? %>
+      <h2>Pas de Paiements à afficher</h2>
+    <% else %>
+      <%= paginate @payment_orders_dpt %>
+      <table class="table table-bordered table-condensed table-hover" style="margin-bottom: 50px;" id="paiements_id">
+        <thead>
+        <tr style="font-size: 12px;">
+          <th>Numéro ordre</th>
+          <th>Dossier</th>
+          <th>Montant Net</th>
+          <th>Mode Paiement</th>
+          <th>Date paiement</th>
+          <th>Etat</th>
+          <th>Voir Ordre</th>
+        </tr>
+        </thead>
+
+        <% @payment_orders_dpt.each do |paiement| %>
+          <tr>
+            <td><%= paiement.numero_format %></td>
+            <td><%= paiement.dossier_type %>#<%= paiement.dossier_id %></td>
+            <td><%= paiement.compta_transactions.sum(:montant) %></td>
+            <td><%= paiement.compta_transactions.first.mode_paiement_human unless paiement.compta_transactions.first.nil? %></td>
+            <td><%= paiement.created_at %></td>
+            <td><%= paiement.statut_human %></td>
+            <td><%= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_arret_travail_at_decompte_show_recu_path(@demande_arret_travail, paiement.compta_transactions.first.dossier.id, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<%= content_for :titre_page, "Historique du dossier" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_prestation.nil? %>
+    Allocataire : <%= @dossier_prestation.full_name %> <br>
+    Employeur : <%= Psrm::Employeur.find_by_fhnum(@dossier_prestation.employeur_actuel).fhrsoc unless Psrm::Employeur.find_by_fhnum(@dossier_prestation.employeur_actuel).nil? %> ( <%= Psrm::Employeur.find_by_fhnum(@dossier_prestation.employeur_actuel).fhnum unless Psrm::Employeur.find_by_fhnum(@dossier_prestation.employeur_actuel).nil? %> )
+    <br>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' unless @dossier_prestation.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <% if @pf_historics.nil? %>
+        Historique vide !
+      <% else %>
+        <h3>Parcours du dossier</h3>
+        <hr>
+        <%= paginate @pf_historics %>
+        <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+          <thead>
+          <tr>
+            <th scope="col">Numéro Employeur</th>
+            <th scope="col">Agence</th>
+            <th scope="col">Emploi actuel ?</th>
+            <th scope="col">Date d'embauche</th>
+            <th scope="col">Date de transfert</th>
+            <th scope="col">Date de création</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @pf_historics.each do |pf_historic| %>
+            <tr>
+              <td><%= pf_historic.psrm_employeur.fhnum unless pf_historic.psrm_employeur.nil? %></td>
+              <td><%= pf_historic.admin_agence.description_prest unless pf_historic.admin_agence.nil? %></td>
+              <td><%= state_yes_no pf_historic.is_current? %></td>
+              <td><%= pf_historic.date_embauche unless pf_historic.date_embauche.nil? %></td>
+              <td><%= pf_historic.transfer_date unless pf_historic.transfer_date.nil? %></td>
+              <td><%= pf_historic.created_at unless pf_historic.created_at.nil? %></td>
+              <td>
+                <%= link_to 'Détails', admin_dossier_prestation_details_pf_historics_path(@dossier_prestation, pf_historic), 'data-turbolinks': false, class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @pf_historics %>
+      <% end %>
+    </div>
+  </div>
+</div>

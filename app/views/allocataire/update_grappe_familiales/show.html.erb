@@ -1,0 +1,132 @@
+<%= content_for :titre_page, "Détails déclaration de décès" %>
+
+<%= content_for :actions_page do %>
+
+ <%= link_to 'Liste demandess', allocataire_update_grappe_familiales_url, class: 'btn btn-white btn-sm' %>
+
+<% end %>
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+            <h5>Details allocataire</h5>
+        </div>
+        <div class="ibox-content">
+
+        
+          
+          <p>
+            <strong>Numéro allocataire:</strong>
+            <%= @update_grappe_familiale.num_affiliation %>
+          </p>
+            <p>
+              <strong>Prenom allocataire:</strong>
+              <%= @allocataire.prenom %>
+          </p>
+            <p>
+              <strong>Nom allocataire:</strong>
+              <%= @allocataire.nom %>
+          </p>
+
+            </div>
+          </div>
+
+        </div>
+
+      <div class="col-sm-12">
+          <div class="ibox">
+            <div class="ibox-title">
+              <h5>Details mise à jour grappe familiale</h5>
+            </div>
+            <div class="ibox-content">
+            <p>
+              <strong>Numéro de la demande:</strong>
+              <%= @update_grappe_familiale.id %>
+          </p>
+          <p>
+              <strong>Type de demande:</strong>
+              <%= @update_grappe_familiale.type_demande %>
+          </p>
+          <% if @update_grappe_familiale.soumis? %>
+            <p>
+              <strong>Date de soumission :</strong>
+              <%= @update_grappe_familiale.date_soumission%>
+            </p>
+           
+            <p>
+                <strong>Etat:</strong>
+                <%= @update_grappe_familiale.etat %>
+            </p>
+        <%end%>
+    
+            <% if @update_grappe_familiale.valide?%>
+              <p>
+                  <strong>Date validation:</strong>
+                  <%= @update_grappe_familiale.date_validation %>
+              </p>
+               <p>
+              <strong>Etat:</strong>
+               <%= @update_grappe_familiale.etat %>
+             </p>
+            <% end %>
+              
+            <% if @update_grappe_familiale.affecte? %>
+            <p>
+              <strong>Date affectation:</strong>
+              <%= @update_grappe_familiale.affectation_allocataire_date %>         
+           </p>
+            <p>
+              <strong>Affecté par:</strong>
+               <%= @update_grappe_familiale.affecter_allocataire.full_name %> </h5>      
+           </p>
+           <p>
+              <strong>Etat:</strong>
+              <%= @update_grappe_familiale.etat %>         
+           </p>
+
+        <% end%>
+        <% if @update_grappe_familiale.rejete? %>
+          <p>
+            <strong>Motif du rejet:</strong>
+            <%= @update_grappe_familiale.motif_rejet %>       
+          </p>
+
+           <p>
+            <strong>Traité le:</strong>
+            <%= @update_grappe_familiale.traite_le %>       
+          </p>
+           <p>
+            <strong>Traité par:</strong>
+            <%= @update_grappe_familiale.traite_par.prenom %>       
+          </p>
+          <p>
+            <strong>Etat:</strong>
+            <%= @update_grappe_familiale.etat %>
+          </p>
+        <% end%>
+        
+            </div>
+          </div>
+
+        </div>
+          <div class="col-sm-12">
+          <div class="ibox">
+            <div class="ibox-title">
+              <h5>Listes documents fournis</h5>
+              
+            </div>
+            <div class="ibox-content">
+              <%unless @update_grappe_familiale.attachment.nil?%>
+                <p>
+                    <strong>Certificat de divorce :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive img-card-size img-bordered") , @update_grappe_familiale.attachment, target: :_blank %>
+                </p>
+                <% end%>
+            </div>
+          </div>
+
+        </div>
+      </div>
+</div>
+

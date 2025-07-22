@@ -1,0 +1,199 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="m-b-md">
+      <h2>Informations à l'inscription</h2>
+    </div>
+  </div>
+</div>
+
+<% unless @user.image_profile.nil?%>
+  <% if @user.image_profile.attached?%>
+  <div class="row">
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"> <%= image_tag @user.image_profile.variant(resize: "200x200") if @user.image_profile.attached?%></dd>
+      </div>
+    </d1>
+  </div>
+  <% end %>
+<% end %>
+
+<div class="row">
+  <div class="col-lg-6">
+
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-right" style="text-align: right;">
+        <dt>Etat:</dt>
+      </div>
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1">
+          <% if @user.actif? %>
+            <span class="label label-primary">Activé</span>
+          <% else %>
+            <span class="label label-warning">Non activé</span>
+          <% end %>
+        </dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-4" style="text-align: right;">
+        <dt>Email:</dt>
+      </div>
+      <div class="col-sm-4" style="text-align: left;">
+        <dd class="mb-1"><%= @user.email %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-4" style="text-align: right;">
+        <dt>Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-4" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @user.prenom %> <%= @user.nom %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-right" style="text-align: right;">
+        <dt>Sexe:</dt>
+      </div>
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @user.sexe.nil? ? '-' : User.human_enum_name(:sexe, @user.sexe) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-right" style="text-align: right;">
+        <dt>Téléphone:</dt>
+      </div>
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @user.phone_national %></dd>
+      </div>
+    </d1>
+
+    <% if @user.salarie? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Date de naissance:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.date_naissance %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Lieu de naissance:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.lieu_naissance %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>NIN:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.nin %></dd>
+        </div>
+      </d1>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+    <% unless @user.num_ipres.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Ancien numéro IPRES:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.num_ipres %></dd>
+        </div>
+      </d1>
+    <% end %>
+
+    <% unless @user.num_css.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Ancien numero CSS:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.num_css %></dd>
+        </div>
+      </d1>
+    <% end %>
+
+    <% unless @user.numero_matricule_solde.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Matricule Solde:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"> <% @user.numero_matricule_solde %> </dd>
+        </div>
+      </d1>
+    <% end %> 
+
+    <% unless @user.created_by.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Ajouté par:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.created_by.try(:full_name) %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-right" style="text-align: right;">
+        <dt>Inscrit le:</dt>
+      </div>
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= l @user.created_at %></dd>
+      </div>
+    </d1>
+
+    <% if @user.cni_file.attached? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>CNI:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"> <%= link_to(image_tag('missing_logo.png', size: "250x250>", class: "m-t-xs img-responsive"), @user.cni_file, target: :_blank) if @user.cni_file.attached? %></dd>
+        </div>
+      </d1>
+    <% end %>
+
+    <% unless @user.autres_informations_utiles.nil? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Autres informations:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"> <% @user.try(:autres_informations_utiles) %> </dd>
+        </div>
+      </d1>
+    <% end %>
+
+
+     <% unless @user.activated_by.nil? %>
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-right" style="text-align: right;">
+        <dt>Activé par:</dt>
+      </div>
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @user.activated_by.try(:full_name) %></dd>
+      </div>
+    </d1>
+    <% end %>
+    <% if @user.user_back_office? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-4 text-sm-right" style="text-align: right;">
+          <dt>Agence:</dt>
+        </div>
+        <div class="col-sm-4 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @user.admin_agence.try(:description_prest) %></dd>
+        </div>
+      </d1>
+    <% end %>
+  </div>
+</div>

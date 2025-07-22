@@ -1,0 +1,78 @@
+<div class="row">
+  <div class="col-sm-4">
+    <% unless @immatriculation.id == nil or @immatriculation.documents_valide? %>
+    <%= link_to "Je valide tous les documents", employer_immatriculation_maintien_valider_documents_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <%end %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-8">
+    <% current_user.document_immatriculations.each do |document_immatriculation| %>
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Type document</th>
+          <th scope="col">commentaire</th>
+          <% if @immatriculation != nil && !@immatriculation.documents_valide %>
+          <th scope="col">Actions</th>
+            <%end  %>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= DocumentImmatriculation.human_enum_name(:type_document, document_immatriculation.type_document) %></td>
+            <td><%= document_immatriculation.commentaire %></td>
+            <% if @immatriculation != nil && !@immatriculation.documents_valide %>
+            <td>
+              <a href="<%= url_for(document_immatriculation.document) %>" target="_blank"> <button class="btn btn-outline btn-danger btn-xs"> Retirer</button></a>
+              <a href="<%= url_for(document_immatriculation.document) %>" target="_blank"> <button class="btn btn-outline btn-primary btn-xs"> Prévisualiser</button></a>
+            </td>
+              <% end %>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
+</div>
+
+<% if @immatriculation != nil  %>
+  <div class="ibox ">
+    <div class="ibox-title">
+      <h5>Liste des documents</h5>
+    </div>
+    <div class="ibox-content">
+      <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+          <th scope="col"  style="width: 300px">Type</th>
+          <th scope="col" style="width: 500px">Choisir document</th>
+          <th scope="col" style="width: 100px">Action</th>
+        </tr>
+        </thead>
+        <% DocumentImmatriculation::TYPE_DOCUMENT.each do |document_name| %>
+          <tbody>
+          <%= bootstrap_form_for([:employer, @document_immatriculation], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <tr>
+              <td >
+                <%= f.hidden_field :type_document, value:document_name.first%>
+                <%=DocumentImmatriculation.human_enum_name(:type_document, document_name.first)%>
+              </td>
+              <td>
+                <%= f.file_field :document, label: '&nbsp;'.html_safe %>
+              </td>
+
+              <td>
+
+                <%= f.button 'Valider', class: 'btn btn-outline btn-primary btn-xs' %>
+
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        <% end %>
+      </table>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,1 @@
+json.partial! "indemnite_conges_maternites/indemnite_conges_maternite", indemnite_conges_maternite: @indemnite_conges_maternite

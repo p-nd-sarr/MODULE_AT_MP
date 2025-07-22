@@ -1,0 +1,131 @@
+<%= content_for :titre_page do %>
+  Détails Allocation Prenatale -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_prestation.num_dossier}", admin_dossier_prestation_path(@dossier_prestation), class: 'text-info' %>
+  </span>
+<% end %>
+<%#= content_for :titre_page, "Détails allocation_prenatale" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation), class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <% if @allocation_prenatale.creation? or current_user.chef_agence? or current_user.gestionnaire_compte_allocataire? %>
+    <%= (link_to 'Modifier', edit_admin_dossier_prestation_allocation_prenatale_path(@dossier_prestation, @allocation_prenatale), class: 'btn btn-white btn-sm') if @allocation_prenatale.creation? and @dossier_prestation.current_state < :cloturer %>
+  <% end %>
+  <%= (link_to 'Liquider', admin_dossier_prestation_allocation_prenatale_soumettre_path(@dossier_prestation, @allocation_prenatale), class: 'btn btn-primary btn-sm') if @allocation_prenatale.creation? and current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer %>
+  <%= link_to 'Supprimer', [:admin, @dossier_prestation, @allocation_prenatale], method: :delete, data: {confirm: 'En êtes vous sûr?'}, id: 'dd_hover', class: 'btn btn-danger btn-sm' if @allocation_prenatale.creation? and current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer  %>
+  <% if @allocation_prenatale.soumis? %>
+    <%= (link_to 'Valider', admin_dossier_prestation_allocation_prenatale_valider_path(@dossier_prestation, @allocation_prenatale), class: 'btn btn-primary btn-sm') if @allocation_prenatale.soumis? and current_user.chef_agence? and @dossier_prestation.current_state < :cloturer and DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, conjoint_id: nil, etat: :valide) %>
+    <%= link_to 'Rejeter',admin_dossier_prestation_allocation_prenatale_rejet_volet_path(@dossier_prestation,@allocation_prenatale), class: 'btn btn-danger btn-sm' if @allocation_prenatale.soumis? and current_user.chef_agence?%>
+    <%= link_to 'Retourner volet',admin_dossier_prestation_allocation_prenatale_retour_path(@dossier_prestation, @allocation_prenatale), class: 'btn btn-warning btn-sm' if @allocation_prenatale.soumis? and current_user.chef_agence? and @dossier_prestation.current_state < :cloturer %>
+  <% end %>
+  <%= link_to 'Retourner volet', admin_dossier_prestation_allocation_prenatale_retour_path(@dossier_prestation, @allocation_prenatale), class: 'btn btn-warning btn-sm' if @allocation_prenatale.valide? and current_user.comptable? and not @allocation_prenatale.paiement? and @dossier_prestation.current_state < :cloturer %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row" style="margin-top:20px;">
+    <div class="col-lg-6 col-lg-offset-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2><%= AllocationPrenatale.human_enum_name(:volet, @allocation_prenatale.volet) %> </h2>
+        </div>
+        <div class="feed-activity-list" style="padding:20px;">
+
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Dossier prestation: </strong><%= @allocation_prenatale.dossier_prestation.num_dossier %>
+              </div>
+            </div>
+
+            <div class="feed-element">
+              <div class="media-body text-navy">
+                <strong>Date début grossesse (approximative): </strong> <%= @allocation_prenatale.grossesse.date_grossesse %>
+              </div>
+            </div>
+          <% unless @allocation_prenatale.created_at.nil? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de création:</strong>
+                  <%= l @allocation_prenatale.created_at %>
+              </div>
+            </div>
+          <% end %>
+
+          <%if @allocation_prenatale.date_liquidation? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de liquidation:</strong> <%= @allocation_prenatale.date_liquidation %>
+              </div>
+            </div>
+          <% end %>
+
+          <%if @allocation_prenatale.date_visite? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de présentation chez le médecin:</strong> <%= l @allocation_prenatale.date_visite %>
+              </div>
+            </div>
+          <% end %>
+
+          <%if @allocation_prenatale.date_etablissement? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date d'établissement:</strong> <%= l @allocation_prenatale.date_etablissement %>
+              </div>
+            </div>
+          <% end %>
+
+          <%if @allocation_prenatale.date_depot? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de saisie:</strong> <%= l @allocation_prenatale.date_depot %>
+              </div>
+            </div>
+          <% end %>
+
+          <%if @allocation_prenatale.date_reception? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de réception:</strong> <%= l @allocation_prenatale.date_reception %>
+              </div>
+            </div>
+          <% end %>
+
+          <%if @allocation_prenatale.date_validation? %>
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Date de validation</strong> <%= l @allocation_prenatale.date_validation %>
+              </div>
+            </div>
+          <%end %>
+
+          <div class="feed-element">
+            <div class="media-body ">
+              <strong>Est repris? :</strong> <%= state_yes_no @allocation_prenatale.est_repris %>
+            </div>
+          </div>
+
+            <div class="feed-element">
+              <div class="media-body ">
+                <strong>Commentaire:</strong>
+                  <p>
+                    <%= @allocation_prenatale.commentaire %>
+                  </p>
+              </div>
+            </div>
+
+            <div class="feed-element">
+              <div class="media-body">
+                <div style="text-align:center;">
+                  <a href="<%= url_for(@allocation_prenatale.document) %>" target="_blank">
+                    <%= image_tag 'missing_logo.png', size: "500x500>", class: "m-t-xs img-responsive" %>
+                    <%#= image_tag @allocation_prenatale.document.preview(resize: "500x500>"), class: "m-t-xs img-responsive" %>
+                  </a>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<style type="text/css">
+  label[title="required"] {
+    display: none;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+
+<ul class="text-danger">
+  <%# if @extinction_allocataire.documents.where(type_document: [:cni, :attestation_travail, :certificat_mariage, :passeport, :certificat_deces]).empty? %>
+    <%# <li>Veuillez ajouter une copie du CNI ou passeport ou carte consulaire</li> %>
+  <%# end %>
+</ul>
+
+
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <h2>Liste des documents</h2>
+    </div>
+    <%# unless @admin_reversion_veuve_salary.documents_valide! %>
+      <div class="col-lg-8">
+        <div class="alert alert-info alert-dismissable">
+          <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">x</font>
+            </font>
+          </button>
+          <font style="vertical-align: inherit;">
+            <font style="vertical-align: inherit;"><span class="fa fa-info-o"></span> Veuillez renseigner des documents
+              au format PDF</font>
+          </font>
+        </div>
+      </div>
+    <%# end %>
+  </div>
+
+
+
+<% if @extinction_allocataire.creation? %>
+<%= render 'documents/liste',
+           object: @extinction_allocataire,
+           documents: @extinction_allocataire.documents,
+           include_add: @extinction_allocataire.creation?,
+           include_delete: @extinction_allocataire.creation?,
+           type_documents: ExtinctionAllocataire::TYPE_DOCUMENT,
+           type_documents_obligatoires: ExtinctionAllocataire::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_allocataire_extinction_allocataire_path(@allocataire,@extinction_allocataire)
+%>
+
+  <%= render 'documents/modal_form',
+            type_documents: ExtinctionAllocataire::TYPE_DOCUMENT,
+            document: Document.new(documentable: @extinction_allocataire),
+             back_url: admin_allocataire_extinction_allocataire_path(@allocataire,@extinction_allocataire)
+  %>
+<% else %>
+<%= render 'documents/liste',
+           object: @extinction_allocataire,
+           documents: @extinction_allocataire.documents,
+           include_add: false, 
+           include_delete: false, 
+           type_documents: ExtinctionAllocataire::TYPE_DOCUMENT,
+           type_documents_obligatoires: ExtinctionAllocataire::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_allocataire_extinction_allocataire_path(@allocataire,@extinction_allocataire)
+%>
+<%end%>

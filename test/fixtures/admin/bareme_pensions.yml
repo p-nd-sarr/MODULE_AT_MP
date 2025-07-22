@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  admin_type_regime: one
+  date_debut_validite: 2020-01-22
+  date_fin_validite: 2020-01-22
+  valeur_point_annuelle: 1.5
+  valeur_point_trimestrielle: 1.5
+  valeur_point_bimestrielle: 1.5
+  valeur_point_mensuelle: 1.5
+
+two:
+  admin_type_regime: two
+  date_debut_validite: 2020-01-22
+  date_fin_validite: 2020-01-22
+  valeur_point_annuelle: 1.5
+  valeur_point_trimestrielle: 1.5
+  valeur_point_bimestrielle: 1.5
+  valeur_point_mensuelle: 1.5

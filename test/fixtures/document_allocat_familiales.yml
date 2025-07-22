@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  allocation_familiale: one
+  type_document: 1
+  commentaire: MyText
+  date_depot: 2020-02-16
+
+two:
+  allocation_familiale: two
+  type_document: 1
+  commentaire: MyText
+  date_depot: 2020-02-16

@@ -1,0 +1,50 @@
+<%= content_for :titre_page, "Détails admin_salaire_annuel" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_salaire_annuels_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_salaire_annuel_path(@admin_salaire_annuel), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_salaire_annuel', new_admin_salaire_annuel_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Annee:</strong>
+                  <%= @admin_salaire_annuel.annee %>
+                </p>
+
+                            <p>
+                  <strong>Coefficient:</strong>
+                  <%= @admin_salaire_annuel.coefficient %>
+                </p>
+
+                            <p>
+                  <strong>Date effet:</strong>
+                  <%= @admin_salaire_annuel.date_effet %>
+                </p>
+
+                            <p>
+                  <strong>Date reval:</strong>
+                  <%= @admin_salaire_annuel.date_reval %>
+                </p>
+
+                            <p>
+                  <strong>Plancher:</strong>
+                  <%= @admin_salaire_annuel.plancher %>
+                </p>
+
+                            <p>
+                  <strong>Plafond:</strong>
+                  <%= @admin_salaire_annuel.plafond %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

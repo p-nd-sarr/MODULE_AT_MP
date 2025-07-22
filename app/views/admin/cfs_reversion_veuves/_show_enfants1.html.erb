@@ -1,0 +1,65 @@
+<% unless @conjoints.nil? or @conjoints.empty? %>
+  <fieldset>
+    <legend>Conjoints:</legend>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Date de naissance</th>
+        <th scope="col">Date de mariage</th>
+        <th scope="col">NIN</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @conjoints.valide.each do |epouse| %>
+        <tr>
+          <td><%= epouse.nom %></td>
+          <td><%= epouse.prenom %></td>
+          <td><%= l epouse.date_naissance %></td>
+          <td><%= l epouse.date_mariage %></td>
+          <td><%= epouse.numero_piece %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </fieldset>
+<% end %>
+
+<br>
+<% unless @enfants.nil? or @enfants.empty? %>
+  <fieldset>
+    <legend>Enfants:</legend>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Date de naissance</th>
+        <th scope="col">Nom mère</th>
+        <th scope="col">Prénom mère</th>
+        <th scope="col">Nom père</th>
+        <th scope="col">Prénom père</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @enfants.valide.each do |enfant| %>
+        <tr>
+          <td><%= enfant.nom %></td>
+          <td><%= enfant.prenom %></td>
+          <td><%= l enfant.date_naissance %></td>
+          <td><%= enfant.nom_mere %></td>
+          <td><%= enfant.prenom_mere %></td>
+          <td><%= enfant.nom_pere %></td>
+          <td><%= enfant.prenom_pere %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </fieldset>
+<% end %>
+
+<h1>Pas de conjoints pour ce salarié</h1>
+

@@ -1,0 +1,2 @@
+class BaremeImpot < ApplicationRecord
+end

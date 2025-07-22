@@ -1,0 +1,104 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+      <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prénom allocataire' %>
+      <%= f.search_field :allocataire_prenom_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom allocataire' %>
+      <%= f.search_field :allocataire_nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :type_ayant_droit_eq, 'Type' %>
+      <%= f.select :type_ayant_droit_eq, ReversionVeuve.type_ayant_droits.to_a.map { |w| [ReversionVeuve.human_enum_name(:type_ayant_droit, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prénom ayant droit' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom ayant droit' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :workflow_state_eq, 'Etat' %>
+      <%= f.select :workflow_state_eq, ReversionVeuve.workflow_spec.states.keys.map { |k| [ReversionVeuve.workflow_spec.states[k].meta[:label], k] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :ajoute_par_id_eq, 'Ouvert par' %>
+      <%= f.collection_select :ajoute_par_id_eq, User.for_created_by_search.order(:prenom), :id, :full_name_with_profile,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :admin_agence_id_eq, 'Agence de création' %>
+      <%= f.collection_select :admin_agence_id_eq, Admin::Agence.ipres.order(:description_prest), :id, :description_prest,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>
+
+<br>
+
+<b>Nombre de dossiers : <%= format_entier @total %></b> <br><br>
+
+<%= paginate @reversion_veuves %>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Type</th>
+    <th scope="col">Numéro allocataire</th>
+    <th scope="col">Prénom allocataire</th>
+    <th scope="col">Nom allocataire</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Date naissance</th>
+    <th scope="col">Lieu naissance</th>
+    <th scope="col">Date d'ajout</th>
+    <th scope="col">État</th>
+    <th colspan="2"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @reversion_veuves.each do |reversion_veuve| %>
+    <tr>
+      <td><%= reversion_veuve.type_ayant_droit_human %></td>
+      <td><%= reversion_veuve.numero_allocataire %></td>
+      <td><%= reversion_veuve.allocataire.try(:prenom) %></td>
+      <td><%= reversion_veuve.allocataire.try(:nom) %></td>
+      <td><%= reversion_veuve.prenom %></td>
+      <td><%= reversion_veuve.nom %></td>
+      <td><%= reversion_veuve.date_naissance %></td>
+      <td><%= reversion_veuve.lieu_naissance %></td>
+      <td><%= l reversion_veuve.created_at %></td>
+      <td><%= ReversionVeuve.workflow_spec.states[reversion_veuve.workflow_state.to_sym].meta[:label]  %></td>
+      <td style="width: 75px">
+        <%= link_to 'détails', [:admin, reversion_veuve.allocataire, reversion_veuve], class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @reversion_veuves %>

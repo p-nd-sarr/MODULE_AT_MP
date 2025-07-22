@@ -1,0 +1,57 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'NUMERO ORDRE',
+      'NUMERO ALLOCATAIRE',
+      'ANCIEN NUMERO IPRES',
+      'PRENOM',
+      'NOM',
+      'MODE DE PAIEMENT',
+      'DETAILS',
+      'MONTANT TOTAL',
+      'REGION',
+      'ZONE',
+      'ID BHS',
+      'ID CCP',
+      'LIBELLE CCP',
+      'SUCCURSALE CNCAS',
+      'CODE BANQUE',
+      'NUMERO COMPTE',
+      'AGENCE',
+      'REGIME',
+      'CATEGORIE',
+      'ADRESSE DOMICILE',
+      'VILLE',
+      'CODE CAISSE PAIEMENT',
+      'EST REPRIS ?',
+  ]
+  sheet.add_row titre, :b => true
+  @ordre_paiements.each do |ordre_paiement|
+    sheet.add_row [
+                      ordre_paiement.numero_format,
+                      ordre_paiement.numero_allocataire,
+                      ordre_paiement.allocataire.ipres_ancien_matric,
+                      ordre_paiement.allocataire.prenom,
+                      ordre_paiement.allocataire.nom,
+                      ordre_paiement.allocataire.mode_paiement_human,
+                      ordre_paiement.compta_transactions.map{ |compta_transaction| "#{compta_transaction.description} : #{format_cfa compta_transaction.montant, false}" }.join("\n"),
+                      format_cfa(ordre_paiement.montant, false),
+                      ordre_paiement.allocataire.admin_region.try(:designation),
+                      ordre_paiement.allocataire.zone,
+                      ordre_paiement.allocataire.infos_paiement_id_bhs,
+                      ordre_paiement.allocataire.infos_paiement_id_ccp,
+                      ordre_paiement.allocataire.infos_paiement_libelle_ccp,
+                      ordre_paiement.allocataire.infos_paiement_succursale_cncas,
+                      ordre_paiement.allocataire.compte_bancaire_code_banque,
+                      ordre_paiement.allocataire.rib,
+                      ordre_paiement.allocataire.admin_agence.try(:code_psrm),
+                      ordre_paiement.allocataire.regime,
+                      ordre_paiement.allocataire.categorie_human,
+                      ordre_paiement.allocataire.adresse_domicile,
+                      ordre_paiement.allocataire.adresse_ville,
+                      ordre_paiement.allocataire.code_caisse_paiement,
+                      ordre_paiement.allocataire.est_repris?,
+                  ]
+  end
+end

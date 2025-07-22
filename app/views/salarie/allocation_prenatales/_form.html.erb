@@ -1,0 +1,65 @@
+<%= bootstrap_form_for([:salarie, @dossier_prestation, @allocation_prenatale], layout: :horizontal) do |f| %>
+  <%#= f.alert_message 'aa' %>
+  <%= f.hidden_field :grossesse_id, value: @grossesse.id %>
+  <%= f.select :volet, @grossesse.volets_eligibles.keys.collect { |volet|
+    [AllocationPrenatale.human_enum_name(:volet, volet), volet] },
+               label: 'N° Volet', help: "Seul les volets sur la liste sont éligibles pour cette grossesse" %>
+  <%= f.file_field :document, label: 'Document', required: true %>
+  <%= f.text_area :commentaire, label: 'Commentaire' %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', salarie_dossier_prestation_allocation_prenatales_path(@dossier_prestation), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+
+
+
+
+
+
+
+
+
+<!-- <div class="ibox ">
+  <div class="ibox-title">
+    <h5>les volets eligibles</h5>
+  </div>
+  <div class="ibox-content">
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+      <tr>
+        <th scope="col"  style="width: 300px">Volet</th>
+        <th scope="col" style="width: 500px">Choisir document</th>
+        <th scope="col" style="width: 100px">Action</th>
+      </tr>
+      </thead>
+      <% AllocationPrenatale::VOLET.each do |volet_number| %>
+        <tbody>
+        <%= bootstrap_form_for([:salarie, @dossier_prestation, @allocation_prenatale], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <%#= f.alert_message 'aa' %>
+          <tr>
+            <td >
+                <%= f.hidden_field :grossesse_id, value: @grossesse.id %>
+              <%=AllocationPrenatale.human_enum_name(:volet, volet_number.first)%>
+            </td>
+            <td>
+              <%= f.file_field :document, label: '&nbsp;'.html_safe %>
+            </td>
+
+
+            <td>
+                <%= f.button 'Valider', class: 'btn btn-primary' %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
+</div> -->

@@ -1,0 +1,124 @@
+<%= form_with(model: [:admin, dossier_prestation_ged], local: true, class: 'form-horizontal') do |form| %>
+  <% if dossier_prestation_ged.errors.any? %>
+    <div class="alert alert-danger">
+      <h4><%= pluralize(dossier_prestation_ged.errors.count, "erreur") %> ont empêché l'enregistrement:</h4>
+      <ul>
+        <% dossier_prestation_ged.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <h3>Informations personnelles</h3>
+  <div class="form-group">
+    <%= form.label :num_affiliation, "Numéro d'affiliation", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :num_affiliation, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :nom, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :nom, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :prenom, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :prenom, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :sexe_salarie, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :sexe_salarie, DossierPrestationGed::SEXE.keys.map { |s| [s.to_s.humanize, s] }, { include_blank: true }, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :date_naissance, "Date de naissance", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_naissance, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :lieu_naissance, "Lieu de naissance", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :lieu_naissance, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :nin, "NIN", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :nin, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :nationalite, class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.select :nationalite, DossierPrestationGed::NATIONALITE.keys.map { |n| [n.to_s.humanize, n] }, { include_blank: true }, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :telephone, "Téléphone", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :telephone, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :adresse_domicile, "Adresse", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :adresse_domicile, class: 'form-control' %>
+    </div>
+  </div>
+
+  <br>
+  <h3>Informations professionnelles</h3>
+  <div class="form-group">
+    <%= form.label :employeur_actuel, "Employeur actuel", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :employeur_actuel, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :date_embauche, "Date d'embauche", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_embauche, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :date_reception, "Date de réception", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.date_field :date_reception, class: 'form-control' %>
+    </div>
+  </div>
+
+
+  <br>
+  <h3>Informations GED</h3>
+  <div class="form-group">
+    <%= form.label :id_item, "Réf", class: 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
+      <%= form.text_field :id_item, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+  <div class="form-group">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler',(@dossier_prestation_ged.persisted? ? [:admin, dossier_prestation_ged] : admin_dossier_prestation_geds_path), class: 'btn btn-white' %>
+      <%= form.submit 'Enregistrer', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

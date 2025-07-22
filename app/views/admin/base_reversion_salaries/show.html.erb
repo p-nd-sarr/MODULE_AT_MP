@@ -1,0 +1,467 @@
+
+<%= content_for :titre_page, " Reversion avant liquidation ( #{@reversion_veuve_salarie.workflow_state})" %>
+<!--------------------------------------Information dossier-------------------------------------------->
+<%= content_for :titre_page_autres_details do %>
+  <p><strong>N° Dossier: </strong> <%= @reversion_veuve_salarie.numero_dossier %> </p>
+  <p><strong>Etat du dossier: </strong> <span class="text-warning"><%= @reversion_veuve_salarie.workflow_state %></span>
+  </p>
+  <p><strong>Date ouverture: </strong>  <%= @reversion_veuve_salarie.created_at.strftime("%d/%m/%Y") %> </p>
+  <p><strong>Ouvert par: </strong> <%= @reversion_veuve_salarie.ajoute_par.email %>
+    (<%= @reversion_veuve_salarie.ajoute_par.type_profil %>)</p>
+  <% unless @reversion_veuve_salarie.motif.nil? %>
+    <strong>Motif retour du dossier: </strong>
+    <span class="text-warning"><%= (" #{@reversion_veuve_salarie.motif} ") unless @reversion_veuve_salarie.motif.nil? %> </span>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_base_reversion_salaries_path, class: 'btn btn-white btn-sm' %>
+  <!-- Création et soumission de la demande -->
+  <% if @reversion_veuve_salarie.creation? %>
+    <%= link_to 'Editer', edit_admin_base_reversion_salary_path(@reversion_veuve_salarie), class: 'btn btn-white btn-sm' %>
+    <%= (link_to 'Supprimer', admin_base_reversion_salary_path(@reversion_veuve_salarie), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn btn-danger btn-sm') %>
+
+    <% if @reversion_veuve_salarie.pret_pour_soumission? and current_user.can_allocataire? and (current_user == @reversion_veuve_salarie.ajoute_par or current_user == @reversion_veuve_salarie.affecte_a) %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre</button>
+    <% end %>
+  <% end %>
+  <%= render 'soumission_form' %>
+
+  <% if current_user.chef_service_allocation? and @reversion_veuve_salarie.creation? %>
+    <br> <br>
+    <span>
+          <a data-toggle="modal" data-target="#affectation_agent" id="" class="btn btn-primary  btn-xs"> Affectation dossier </a>
+    </span>
+  <% end %>
+
+  <!-- Demande instruite -->
+  <% if @reversion_veuve_salarie.soumis? and (current_user.chef_section_instruction? or current_user.can_instruction?) %>
+    <!-- <%= (link_to 'Instruire Dossier', admin_base_reversion_salary_instruire_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>-->
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation1">Valider
+      l'instruction
+    </button>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier" style="float: right; margin-left: 3px;">RETOURNER
+      DOSSIER
+    </button>
+
+  <% end %>
+
+  <!-- Affecter validation des carrieres à un gestionnaire salarié -->
+  <% if @reversion_veuve_salarie.instruit? and current_user.chef_service_cotisation?%>
+    <%if @reversion_veuve_salarie.affectation_salarie.nil?  %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-salarie" id="affecter_salarie_id">
+        Affecter Validation fiche Carrières
+      </button>
+    <% else %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-salarie" id="affecter_salarie_id">
+        Reaffecter Validation fiche Carrières
+      </button>
+    <% end %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+  <%= render 'modal_affectation_salarie' %>
+
+  <!-- Le gestionnaire salarié soumet les lignes de carrieres pour les remboursements -->
+  <% unless @reversion_veuve_salarie.not_completed?%>
+    <% if @reversion_veuve_salarie.instruit? and @reversion_veuve_salarie.affecter_salarie == current_user and (@reversion_veuve_salarie.carrieres_prestation.traite.size == @reversion_veuve_salarie.carrieres_prestation.size) %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation2">Soumettre la validation des carrières</button>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+    <% end %>
+  <% end %>
+
+
+  <!-- chef service cotisation valide lignes de carrieres soumises -->
+  <% if @reversion_veuve_salarie.carriere_soumis? and (@reversion_veuve_salarie.carrieres_prestation.traite.size == @reversion_veuve_salarie.carrieres_prestation.size) %>
+    <% if current_user.chef_service_cotisation? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation3">Valider carrières</button>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier">RETOUR DOSSIER
+      </button>
+    <% end %>
+  <% end %>
+
+     <!-- chef service liquidation liquide la demande et fait une affectation aux gestionnaires allocataire -->
+  <% if @reversion_veuve_salarie.can_affecte_gestionnaire?  and current_user.chef_section_liquidation? and @reversion_veuve_salarie.cotisation_valide?%>
+    <% if @reversion_veuve_salarie.affectation_allocataire.nil? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+        Affecter la Demande Allocation
+      </button>
+    <% else %>
+       <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+        Reaffecter la Demande Allocation
+      </button>
+    <% end %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+  <%= render 'modal_affectation_allocataire' %>
+
+     <!-- Le gestionnaire allocataire verifie et soumet le recap pour la validation -->
+  <% if @reversion_veuve_salarie.cotisation_valide? and (@reversion_veuve_salarie.affecter_allocataire == current_user) and (@dossier_reversion_salaries.recap_soumis.size == @dossier_reversion_salaries.eligibles.size) %>
+     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation4">SOUMISSION RECAP</button>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier">RETOUR DOSSIER</button>
+  <% end %>
+
+     <!-- Le chef service liquidation valide le recap -->
+  <% if @reversion_veuve_salarie.recap_soumis? and current_user.chef_section_liquidation? %>
+
+    <% if @dossier_reversion_salaries.recap_valide.size == @dossier_reversion_salaries.eligibles.size%>
+     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation5">Valider Recap et Reversion</button>
+     <!-- <%= (link_to 'Valider Recap et Reversion', admin_base_reversion_salary_liquidation_valide_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm')  %> -->
+    <% end %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier">RETOUR DOSSIER</button>
+  <% end %>
+
+      <!-- Le chef service allocataire valide la liquidation -->
+  <% if @reversion_veuve_salarie.liquidation_valide? and current_user.chef_service_allocation?  %>
+    <% if !@reversion_veuve_salarie.traite? and (@dossier_reversion_salaries.valide.size == @dossier_reversion_salaries.eligibles.size)%>
+      <!--<%= (link_to 'Valider', admin_base_reversion_salary_dossier_valide_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if !@reversion_veuve_salarie.traite? %> -->
+           <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#action_liquidation6">Valider dossier</button>
+      <%= (link_to 'Rejeter', admin_base_reversion_salary_rejeter_path(@reversion_veuve_salarie), class: 'btn btn-danger btn-sm') unless @reversion_veuve_salarie.traite? %>
+    <% end %>
+    <%unless @reversion_veuve_salarie.traite?%>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_dossier"style="float: right; margin-left: 3px;">Retourner Dossier</button>
+    <%end%>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+
+  <div class="row">
+
+    <div class="progressbar-wrapper">
+      <ul class="progressbar">
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :creation %>">Création</li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :soumis %>">Soumission</li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :instruit %>">Instruction</li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :carriere_soumis %>">Soumission Carrières </li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :cotisation_valide %>">Validation Carrières</li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :recap_soumis %>">Soumission Recap et Reversions</li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :liquidation_valide %>">Validation Recap et Reversions</li>
+        <li class="<%= ("active") if @reversion_veuve_salarie.current_state >= :dossier_valide %>">Validation Dossier</li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+          <div class="col-md-6">
+            <h4>
+              N° affiliation: <%= @reversion_veuve_salarie.numero_affiliation %>
+            </h4>
+            <% unless @reversion_veuve_salarie.numero_dossier.nil? %>
+              <h4>
+                N° dossier: <%= @reversion_veuve_salarie.numero_dossier %>
+              </h4>
+            <% end %>
+          </div>
+            <!-- Signaler dossiers incomplets-->
+            <%= render 'action_dossiers_incomplets' %>
+          <div class="wrapper wrapper-content">
+            <% if @reversion_veuve_salarie.creation? %>
+              <% if @reversion_veuve_salarie.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+            <% if @reversion_veuve_salarie.cotisation_valide? %>
+              <p class="text-warning">
+                Merci de soumettre le récap de chaque dossier de reversion pour pouvoir soumettre le récap du dossier donneur
+              </p>
+            <% end %>
+             <% if @reversion_veuve_salarie.recap_soumis? %>
+              <p class="text-warning">
+                Merci de valider le récap de chaque dossier de reversion pour pouvoir valider le récap du dossier global
+              </p>
+            <% end %>
+            <% if @reversion_veuve_salarie.liquidation_valide? %>
+              <p class="text-warning">
+                Merci de valider tous les dossiers de reversion pour pouvoir valider le dossier global
+              </p>
+            <% end %>
+            <ul class="nav nav-tabs" style="font-size:10px">
+              <!--  <span class="pull-right small text-muted">1406 Elements</span>-->
+              <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Information du défunt
+                <%= '<span class="label label-warning">à valider</span>'.html_safe if !@reversion_veuve_salarie.etat_civil_demandeur_valide? %>
+                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.etat_civil_demandeur_valide? %>
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Documents
+                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @reversion_veuve_salarie.documents_valide? %>
+                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.documents_valide? %>
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-users"></i>Grappe familiale
+                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @reversion_veuve_salarie.epouses_valide? and @reversion_veuve_salarie.enfants_valide? %>
+                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.epouses_valide? and @reversion_veuve_salarie.enfants_valide? %>
+              </a></li>
+
+              <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-users"></i>Dossier demandeur
+                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @reversion_veuve_salarie.dossier_demandeur_valide? %>
+                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.dossier_demandeur_valide? %>
+              </a></li>
+
+              <li class="">
+                <a data-toggle="tab" href="#tab-5"><i class="fa fa-briefcase"></i>Carrière <%=!@reversion_veuve_salarie.carriere_valide? %>
+                  <% if @reversion_veuve_salarie.current_state < :carriere_soumis %>
+                    <%= '<span class="label label-warning">à valider par un Gestionnaire Salarié</span>'.html_safe unless @reversion_veuve_salarie.carriere_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.carriere_valide? %>
+                  <% end %>
+                </a>
+              </li>
+
+              <li class="">
+                <a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Recap des points
+                  <% if @reversion_veuve_salarie.cotisation_valide? %>
+                    <%= '<span class="label label-warning">Récap à soumettre par agent liquid.</span>'.html_safe unless @reversion_veuve_salarie.recap_soumis?  %>
+                  <% end %>
+                </a>
+              </li>
+
+              <li class=""><a data-toggle="tab" href="#tab-7"><i class="fa fa-folder"></i>Dossier de Reversion
+                 <% if @reversion_veuve_salarie.recap_soumis? %>
+                  <%= '<span class="label label-warning">Récap à valider par chef liquid. </span>'.html_safe if @reversion_veuve_salarie.recap_point_valide? %>
+                <% end %>
+                </a>
+              </li>
+
+              <li class="">
+              <a data-toggle="tab" href="#tab-8"><i class="fa fa-folder"></i>Historiques
+              </a>
+              </li>
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@reversion_veuve_salarie.etat_civil_demandeur_valide? and current_user.can_allocataire? and @reversion_veuve_salarie.ajoute_par == current_user %>
+                    <%= link_to "Je valide les informations sur l'état civil", admin_base_reversion_salary_valider_etat_civil_demandeur_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                  <% end %>
+                   <hr>
+                  <%= render 'show_etat_civil' %>
+                </div>
+              </div>
+
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@reversion_veuve_salarie.documents_valide? and current_user.can_allocataire?  %>
+                    <%= link_to "Je valide tous les documents", admin_base_reversion_salary_valider_documents_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                <%= render 'show_documents' %>
+                  <br>
+                </div>
+              </div>
+
+              <div id="tab-3" class="tab-pane">
+                <div class="row">
+                  <div class="col-lg-12" style="margin-top: 30px">
+                    <div class="panel-body">
+                      <div class="panel-group" id="accordion">
+                        <div class="panel panel-default" style="padding: 10px">
+                          <div class="panel-heading">
+                            <h5 class="panel-title">
+                              <a data-toggle="collapse" data-parent="#accordion" href="#conjoint1">
+                                <span class="fa fa-users"></span> Conjoints
+                                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @reversion_veuve_salarie.epouses_valide? %>
+                                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.epouses_valide? %>
+                              </a>
+                            </h5>
+                          </div>
+                          <div class="panel-collapse collapse" id="conjoint1" style="padding-top: 20px">
+                            <div class="full-height-scroll">
+                              <br>
+                              <% if !@reversion_veuve_salarie.epouses_valide? and current_user.can_allocataire? and @reversion_veuve_salarie.ajoute_par == current_user %>
+                                <%= link_to "Je valide les informations sur les epouses", admin_base_reversion_salary_valider_epouses_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                              <% end %>
+                              <hr>
+                              <%= render 'show_epouses' %>
+                            </div>
+                          </div>
+                        </div> <!-- End panel default enfant -->
+
+                        <div class="panel panel-default" style="padding: 10px">
+                          <div class="panel-heading">
+                            <h5 class="panel-title">
+                              <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                                <span class="fa fa-users"></span> Enfants
+                                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @reversion_veuve_salarie.enfants_valide? %>
+                                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @reversion_veuve_salarie.enfants_valide? %>
+                              </a>
+                            </h5>
+                          </div>
+                          <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                            <div class="full-height-scroll">
+                              <br>
+                              <% if !@reversion_veuve_salarie.enfants_valide? and current_user.can_allocataire? and @reversion_veuve_salarie.ajoute_par == current_user %>
+                                <%= link_to "Je valide les informations sur les enfants", admin_base_reversion_salary_valider_enfants_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                              <% end %>
+                              <hr>
+                              <%= render 'show_enfants' %>
+                            </div>
+                          </div>
+                        </div> <!-- End panel default enfant -->
+                      </div>
+                    </div>
+                  </div> <!-- End col -->
+                </div> <!-- End row -->
+              </div> <!-- End tab-3 -->
+
+              <div id="tab-4" class="tab-pane">
+                <div class="full-height-scroll">
+                    <br>
+                    <% if !@reversion_veuve_salarie.dossier_demandeur_valide? and current_user.can_allocataire? and (@dossier_reversion_salaries.eligibles.size==@dossier_reversion_salaries.soumis.size) %>
+                      <%= link_to "Je valide les demandes de reversions", admin_base_reversion_salary_dossier_demandeur_valide_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_dossier_demandeur' %>
+                </div>
+              </div>
+
+                <div id="tab-5" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'show_carrieres_prestation' %>
+                    <% if @reversion_veuve_salarie.creation? %>
+                      <%= link_to "Faire une demande d'intégration de carrière", admin_carrieres_path %>
+                    <% end %>
+                  </div>
+                </div>
+
+               <div id="tab-6" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                   <% if @reversion_veuve_salarie.affecter_allocataire == current_user %>
+                      <%= link_to "Je valide recap des points", admin_base_reversion_salary_recap_point_valide_path(@reversion_veuve_salarie), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' unless @reversion_veuve_salarie.recap_point_valide?  %>
+                       <hr>
+                  <% end %>
+
+                  <%= render 'show_tableau_recapitulatif_points' %>
+
+                </div>
+               </div>
+
+               <div id="tab-7" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                      <%= render 'show_dossier_reversion' %>
+
+                  </div>
+               </div>
+
+              <div id="tab-8" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                    <%= render 'show_historiques' %>
+                  <br>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Retour du dossier de liquidation -->
+<%= render 'retourner_dossier' %>
+<!-- Fin retour dossier -->
+<%= render 'action_commentaire' %>
+<%= render 'affectation_agent' %>
+
+
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 2%;
+    }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 11%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>

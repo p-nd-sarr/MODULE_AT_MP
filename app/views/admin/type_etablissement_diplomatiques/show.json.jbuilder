@@ -1,0 +1,1 @@
+json.partial! "admin_type_etablissement_diplomatiques/admin_type_etablissement_diplomatique", admin_type_etablissement_diplomatique: @admin_type_etablissement_diplomatique

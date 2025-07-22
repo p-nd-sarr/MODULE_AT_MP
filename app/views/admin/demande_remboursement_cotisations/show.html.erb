@@ -1,0 +1,439 @@
+<%= content_for :titre_page, "Détails demande de remboursement [#{@demande_remboursement_cotisation.workflow_state}]" %>
+<%= content_for :actions_page do %>
+
+     <!-- Création et soumission de la demande -->
+  <%= link_to 'Retour', admin_demande_remboursement_cotisations_path, class: 'btn btn-white btn-sm' %> 
+  <% if @demande_remboursement_cotisation.creation? %>
+    <%#= link_to 'Modifier', edit_admin_demande_remboursement_cotisation_path(@demande_remboursement_cotisation), class: 'btn btn-white btn-sm' %>
+    <% if @demande_remboursement_cotisation.pret_pour_soumission? and current_user.can_allocataire? and @demande_remboursement_cotisation.ajoute_par == current_user %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre</button>
+    <% end %>
+  <% end %>
+
+
+     <!-- Demande instruite -->
+  <% if @demande_remboursement_cotisation.soumis? %>
+    <%= (link_to 'Instruire Dossier', admin_demande_remboursement_cotisation_instruire_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_instruction? %>
+    <%#= (link_to 'Retourner Dossier', admin_demande_remboursement_cotisation_retour_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_section_instruction? %>
+    <% if current_user.chef_section_instruction? %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+    <% end%>
+  <% end %>
+
+    <!-- Affecter la demande à un gestionnaire salarié -->
+  <% if @demande_remboursement_cotisation.instruit? and @demande_remboursement_cotisation.affectation_salarie.nil? and current_user.chef_service_cotisation?%>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-salarie" id="affecter_salarie_id">
+      Affecter Validation fiche Remboursements
+    </button>
+  <% end %>
+
+
+     <!-- Le gestionnaire salarié soumet les lignes de carrieres pour les remboursements -->
+  <% if @demande_remboursement_cotisation.instruit? and @demande_remboursement_cotisation.affecter_salarie == current_user  and (@demande_remboursement_cotisation.remboursement_cotisations.soumis.size > 0) %>
+      <%= link_to "Soumettre la validation des remboursements", admin_demande_remboursement_cotisation_valider_carriere_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+      <%= (link_to 'Retour Dossier', admin_demande_remboursement_cotisation_retour_path(@demande_remboursement_cotisation), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+  
+    <!-- chef service cotisation valide lignes de carrieres soumises -->
+  <% if @demande_remboursement_cotisation.carriere_soumis? and (@demande_remboursement_cotisation.remboursement_cotisations.traite.size == @demande_remboursement_cotisation.remboursement_cotisations.size) %>
+      <%= (link_to 'Valider les remboursements', admin_demande_remboursement_cotisation_cotisation_valide_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_service_cotisation? %>
+      <%= (link_to 'Retourner Dossier', admin_demande_remboursement_cotisation_retour_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_service_cotisation? %>
+    <% end %>
+
+     <!-- chef service liquidation liquide la demande et fait une affectation aux gestionnaires allocataire -->
+  <% if @demande_remboursement_cotisation.can_affecte_gestionnaire? and @demande_remboursement_cotisation.affectation_allocataire.nil? and current_user.chef_section_liquidation?%>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+      Affecter la Demande Allocation
+    </button>
+  <% end %>
+
+     <!-- Le gestionnaire allocataire verifie et soumet le recap pour la validation -->
+  <% if @demande_remboursement_cotisation.cotisation_valide? and @demande_remboursement_cotisation.affecter_allocataire == current_user %>
+    <%= (link_to "Soumettre la validation du tableau", admin_demande_remboursement_cotisation_valider_recapitulatif_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @demande_remboursement_cotisation.affecter_allocataire.nil? %>
+    <%= (link_to 'Retour Dossier', admin_demande_remboursement_cotisation_retour_path(@demande_remboursement_cotisation), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+     <!-- Le chef service liquidation valide le recap -->
+  <% if @demande_remboursement_cotisation.recap_soumis? %>
+    <%= (link_to 'Valider Tableau Recapitulatif', admin_demande_remboursement_cotisation_liquidation_valide_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_liquidation? %>
+    <%= (link_to 'Retourner Dossier', admin_demande_remboursement_cotisation_retour_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_section_liquidation? %>
+  <% end %>
+
+      <!-- Le chef service allocataire valide la liquidation -->
+  <% if @demande_remboursement_cotisation.liquidation_valide? and current_user.chef_service_allocation? %>
+    <%= (link_to 'Valider', admin_demande_remboursement_cotisation_dossier_valide_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @demande_remboursement_cotisation.traite? %>
+    <%= (link_to 'Rejeter', admin_demande_remboursement_cotisation_rejeter_path(@demande_remboursement_cotisation), class: 'btn btn-danger btn-sm') unless @demande_remboursement_cotisation.traite? %>
+    <%unless @demande_remboursement_cotisation.traite?%>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif" style="float: right; margin-left: 3px;">Retourner
+        Dossier
+      </button>
+    <% end %>
+  <% end %>
+  <!-- Le Dp effectue le bon à payer   -->
+  <% if @demande_remboursement_cotisation.dossier_valide? and current_user.directeur_prestation? %>
+    <%= (link_to 'BON A PAYER', admin_demande_remboursement_cotisation_regulariser_remboursement_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+  <% end %>
+  <% if @demande_remboursement_cotisation.remboursement_regularise? and current_user.directeur_prestation? %>
+    <%= (link_to 'recue', admin_demande_remboursement_cotisation_show_recue_remboursement_path(@demande_remboursement_cotisation, format: :pdf), class: 'btn btn-warning btn-sm') %>
+  <% end %>
+
+  <!-- L'inspection valide la demande   -->
+  <% if @demande_remboursement_cotisation.remboursement_regularise? and current_user.inspection? %>
+    <%= (link_to 'Valider la demande', admin_demande_remboursement_cotisation_validation_inspection_path(@demande_remboursement_cotisation), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+  <% end %>
+  <% if @demande_remboursement_cotisation.validation_inspection? %>
+    <%= (link_to 'Voir ordre de paiement', admin_demande_remboursement_cotisation_payment_order_path(@demande_remboursement_cotisation, format: :pdf), target: '_blank', 'data-turbolinks': false, class: 'btn btn-warning btn-sm') %>
+  <% end %>
+<% end %>
+
+
+<!-- Retour du dossier de liquidation -->
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif du retour de la demande de remboursement</h4>
+        </div>
+          <%= bootstrap_form_for(@demande_remboursement_cotisation, url: admin_demande_remboursement_cotisation_retourner_process_path(@demande_remboursement_cotisation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                      <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+        <%end%>
+      </div>
+  </div>
+</div>
+ <!-- Fin retour dossier -->
+
+<div class="wrapper wrapper-content">
+
+  <div class="row">
+    <p>
+      <span style="color: red"><%= (" Motif :  #{@demande_remboursement_cotisation.motif} ") unless @demande_remboursement_cotisation.motif.nil? %> </span>
+    </p>
+  
+    <div class="progressbar-wrapper">
+      <ul class="progressbar">
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :creation %>">Création</li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :soumis %>">Soumission</li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :instruit %>">Instruction</li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :carriere_soumis %>">Soumission Remboursements</li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :cotisation_valide %>">Validation Remboursements
+        </li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :recap_soumis %>">Soumission Recap</li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :liquidation_valide %>">Validation Recap</li>
+        <li class="<%= ("active") if @demande_remboursement_cotisation.current_state >= :dossier_valide %>">Validation Dossier</li>
+      </ul>
+    </div>
+  </div>
+
+   <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <h4>
+            N° affiliation: <%= @demande_remboursement_cotisation.numero_affiliation %>
+          </h4>
+          <%unless @demande_remboursement_cotisation.num_dossier.nil?%>
+            <h4>
+              N° dossier: <%= @demande_remboursement_cotisation.num_dossier %>
+            </h4>
+          <%end%>
+          <div class="wrapper wrapper-content">
+            <% if @demande_remboursement_cotisation.creation? %>
+              <% if @demande_remboursement_cotisation.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs">
+                <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil Demandeur
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_remboursement_cotisation.etat_civil_demandeur_valide? %>
+                </a></li>
+             
+             
+                <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Documents
+                  <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_remboursement_cotisation.documents_valide! %>
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-briefcase"></i>Carrière
+                  <% if @demande_remboursement_cotisation.instruit? and  @demande_remboursement_cotisation.affecter_salarie==current_user %>
+                   <%= '<span class="label label-warning">Soumission carrieres pour remboursement</span>'.html_safe unless @demande_remboursement_cotisation.remboursement_cotisations.soumis.size > 0 %>
+                  <% end %>
+                </a></li>
+                
+                    <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Remboursement de cotisation
+                    </a></li>
+                     <li class="">
+                   <a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Récap des remboursements
+                    <% if @demande_remboursement_cotisation.traitement_en_cours? or @demande_remboursement_cotisation.soumis? %>
+                      <%= '<span class="label label-warning">à valider par un Gestionnaire Allocataire</span>'.html_safe unless @demande_remboursement_cotisation.recap_soumis? %>
+                    <% end %>
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Historiques
+                  </a></li>
+
+              </ul>
+              <div class="tab-content">
+                  <div id="tab-1" class="tab-pane active">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% if !@demande_remboursement_cotisation.etat_civil_demandeur_valide? and current_user.can_allocataire? and @demande_remboursement_cotisation.ajoute_par == current_user %>
+                        <%= link_to "Je valide les informations sur l'état civil", admin_demande_remboursement_cotisation_valider_etat_civil_demandeur_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_etat_civil' %>
+                    </div>
+                  </div>
+                  <div id="tab-2" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% if !@demande_remboursement_cotisation.documents_valide? and current_user.can_allocataire?  %>
+                        <%= link_to "Je valide tous les documents", admin_demande_remboursement_cotisation_valider_documents_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_documents' %>
+                    </div>
+                  </div>
+                  <div id="tab-3" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                
+                      <%= render 'show_carrieres_prestation' %>
+                    
+                    </div>
+                  </div>
+                  <div id="tab-4" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                        <%= render 'show_remboursement_cotisation' %>
+                    </div>
+                  </div>
+                  <div id="tab-5" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_tableau_recapitulatif_remboursements' %>
+                    </div>
+                  </div>
+                <div id="tab-6" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+
+                      <div class="row">
+                        <div class="col-lg-4">
+                          <h5>Ouvert Par: <%= @demande_remboursement_cotisation.ajoute_par.full_name %></h5>
+                          <h5>Date de création: <%= @demande_remboursement_cotisation.created_at.strftime("%d/%m/%Y") %></h5>
+                        </div>
+
+                        <div class="col-lg-4">
+                          <h5>Soumis à l'instruction: <%= @demande_remboursement_cotisation.ajoute_par.full_name %></h5>
+                          <h5>Date de
+                            soumission:  <%= (@demande_remboursement_cotisation.date_soumission.strftime("%d/%m/%Y")) unless @demande_remboursement_cotisation.date_soumission.nil? %> </h5>
+                        </div>
+
+                        <div class="col-lg-4">
+                          <h5>Instrui
+                            par: <%= (@demande_remboursement_cotisation.instruit_par.full_name) unless @demande_remboursement_cotisation.instruit_par.nil? %></h5>
+                          <h5>Date
+                            insctruction:  <%= (@demande_remboursement_cotisation.instruit_le.strftime("%d/%m/%Y")) unless @demande_remboursement_cotisation.instruit_le.nil? %> </h5>
+                        </div>
+
+                      </div>
+
+                      <hr>
+
+                      <div class="row">
+
+                        <div class="col-lg-4">
+                          <h5>Validé Par
+                            : <%= (@demande_remboursement_cotisation.valider_par.try(:full_name)) unless @demande_remboursement_cotisation.valider_par.nil? %> </h5>
+                          <h5>Date de validation
+                            : <%= (@demande_remboursement_cotisation.valider_le.strftime("%d/%m/%Y")) unless @demande_remboursement_cotisation.valider_le.nil? %></h5>
+                        </div>
+
+                        <div class="col-lg-4">
+                          <h5>Gestionnaire
+                            allocataire: <%= (@demande_remboursement_cotisation.affecter_allocataire.full_name) unless @demande_remboursement_cotisation.affecter_allocataire.nil? %> </h5>
+                          <h5>Date
+                            Affectation: <%= (@demande_remboursement_cotisation.affectation_allocataire_date.strftime("%d/%m/%Y")) unless @demande_remboursement_cotisation.affectation_allocataire_date.nil? %></h5>
+                        </div>
+
+                        <div class="col-lg-4">
+                          <h5>Gestionnaire
+                            salarié:<%= (@demande_remboursement_cotisation.affecter_salarie.full_name) unless @demande_remboursement_cotisation.affecter_salarie.nil? %> </h5>
+                          <h5>Date
+                            Affectation: <%= (@demande_remboursement_cotisation.affectation_salarie_date.strftime("%d/%m/%Y")) unless @demande_remboursement_cotisation.affectation_salarie_date.nil? %></h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= render 'soumission_form' %>
+
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@demande_remboursement_cotisation, url: admin_demande_remboursement_cotisation_affecter_allocataire_path(@demande_remboursement_cotisation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @demande_remboursement_cotisation.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+
+<% unless @gestionnaires_salaries.nil? %>
+  <div class="modal inmodal" id="affecter-one-salarie" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@demande_remboursement_cotisation, url: admin_demande_remboursement_cotisation_affecter_salarie_path(@demande_remboursement_cotisation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @demande_remboursement_cotisation.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_salarie, @gestionnaires_salaries, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+</div>
+
+
+
+
+
+
+<style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 11%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>

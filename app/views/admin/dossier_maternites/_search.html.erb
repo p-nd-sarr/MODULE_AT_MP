@@ -1,0 +1,72 @@
+<h3>Critères de recherche</h3>
+<br>
+
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :num_affiliation_cont, 'Numéro Affiliation' %>
+      <%= f.search_field :num_affiliation_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+      <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :prenom_cont, 'Prénom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :admin_agence_id_eq, 'Agence de gestion' %>
+      <%= f.collection_select :admin_agence_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-3">
+      <%= f.label :nin_cont, 'NIN' %>
+      <%= f.search_field :nin_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-3">
+      <%= f.label :etat_eq, 'Etat' %>
+      <%= f.select :etat_eq, DossierMaternite.etats.to_a.map { |etat| [DossierMaternite.human_enum_name(:etat, etat[0]), etat[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-3">
+      <%= f.label :est_repris_eq, 'Est repris?' %>
+      <%= f.select :est_repris_eq, [['Non', 0], ['Oui', 1]],
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="hr-line-dashed"></div>
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_maternites_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_maternites_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

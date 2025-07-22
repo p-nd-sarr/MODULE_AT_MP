@@ -1,0 +1,166 @@
+<div class="row">
+  <div class="col-lg-12" style="text-align: right;">
+    <% if @regularisation_pension.creation? and  @regularisation_pension.ajoute_par == current_user %>
+        <%= link_to ' Modifier', edit_admin_regularisation_pension_path(@regularisation_pension), class:"btn btn-outline btn-white fa fa-edit" %>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-folder"></span> N° Dossier: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.try(:numero_dossier) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.try(:prenom) %> <%= @regularisation_pension.try(:nom) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-comment"></span> Commentaire gestionnaire:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.try(:comment_gestionnaire) %> </dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date ouverture:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.created_at.strftime("%d/%m/%Y") %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-home"></span> Agence: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.ajoute_par.agence.description_prest%></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Ouvert par: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.ajoute_par.try(:email) %> (<%=@regularisation_pension.ajoute_par.type_profil%>)</dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Motif de regularisation:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1">
+          <%= RegularisationPension.human_enum_name(:motif_regularisation_pension, @regularisation_pension.motif_regularisation_pension) %>
+          </dd>
+      </div>
+    </d1>
+
+       <%if @regularisation_pension.annulation_de_suspension_avec_rappel? %>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+              <dt><span class="fa fa-calendar"></span> Date début:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= @regularisation_pension.date_debut_regularisation.strftime("%d/%m/%Y") unless @regularisation_pension.date_debut_regularisation.nil? %></dd>
+          </div>
+        </d1>
+
+         <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+              <dt><span class="fa fa-calendar"></span> Date fin:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= @regularisation_pension.date_fin_regularisation.strftime("%d/%m/%Y") unless @regularisation_pension.date_fin_regularisation.nil?  %></dd>
+          </div>
+        </d1>
+
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+              <dt><span class="fa fa-file"></span> Duree suspension:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left" style="text-align: left;">
+              <dd class="mb-1"><%= @regularisation_pension.calcul_duree_suspension %> (mois)</dd>
+          </div>
+        </d1>
+
+        
+      <% end %>
+
+
+
+
+  <%if @regularisation_pension.regularisation_pour_les_majorants? %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Nombre d'enfants à prendre en charge:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @regularisation_pension.nb_enfant_a_regulariser %> enfant(s) </dd>
+      </div>
+    </d1>
+
+      <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Pourcentage majoration:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @regularisation_pension.pourcentage_majoration %> %</dd>
+      </div>
+    </d1>
+  <% end %>
+  <%if @regularisation_pension.autre_motif? %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Montant à régulariser:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @regularisation_pension.autre_montant %> CFA </dd>
+      </div>
+    </d1>
+   <% end %>
+ 
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-credit-card"></span> Mode de paiement:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= LiquidationRetraite.human_enum_name(:mode_paiement, @regularisation_pension.allocataire.mode_paiement) unless @regularisation_pension.allocataire.mode_paiement.nil? %>
+          </dd>          
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-12" style="text-align: center; font-size: 11px; color: rgb(50, 50 50);">
+          <% if @regularisation_pension.allocataire.virement? %>
+            <div class="notes">
+                <p><strong style="font-style: italic;" class="text-info">Nom banque:</strong> <%= @regularisation_pension.allocataire.compte_bancaire_nom_banque %></p>
+                <p><strong style="font-style: italic;" class="text-info">Code banque:</strong> <%= @regularisation_pension.allocataire.compte_bancaire_code_banque %></p>
+                <p><strong style="font-style: italic;" class="text-info">Code guichet:</strong> <%= @regularisation_pension.allocataire.compte_bancaire_code_guichet %></p>
+                <p><strong style="font-style: italic;" class="text-info">Numéro compte:</strong> <%= @regularisation_pension.allocataire.compte_bancaire_numero_compte %></p>
+            </div>
+          <% end %>
+      </div>
+    </d1>    
+  </div>
+</div>
+
+
+
+
+

@@ -1,0 +1,73 @@
+<%= render 'documents/liste',
+           object: @dossier_prestation,
+           documents: @dossier_prestation.documents,
+           include_add: [@dossier_prestation.creation?, @dossier_prestation.valid?, @dossier_prestation.soumis?],
+           include_delete: @dossier_prestation.creation?,
+           type_documents: DossierPrestation::TYPE_DOCUMENT,
+           type_documents_obligatoires: DossierPrestation::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_dossier_prestation_path(@dossier_prestation)
+%>
+
+<%= render 'documents/modal_form',
+           type_documents: DossierPrestation::TYPE_DOCUMENT,
+           document: Document.new(documentable: @dossier_prestation),
+           back_url: admin_dossier_prestation_path(@dossier_prestation)
+%>
+
+<%if @dossier_prestation.conjoint.nil? %>
+  <!-- document Conjoints -->
+  <div class="row" style="margin-top:20px;">
+    <div class="col-lg-12">
+      <hr>
+      <h2>Documents des conjoints </h2>
+    </div>
+    <% @conjoints.each do |conjoint| %>
+
+      <div class="col-lg-2" style="margin-top: 10px;">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="text-align: center;height: 50px;">
+            <% if conjoint.extrait_naissance.attached? %>
+              <h5>
+                <%= conjoint.prenom %> <%= conjoint.nom %>
+                <%= Conjoint.human_enum_name(:type_piece, conjoint.type_piece) unless conjoint.type_piece.nil? %>
+              </h5>
+            <% end %>
+          </div>
+          <div class="panel-body"  style="min-height: 150px">
+            <%= link_to image_tag('missing_logo.png', size: "400x400>", class: "m-t-xs img-responsive"), conjoint.extrait_naissance, target: :_blank if conjoint.extrait_naissance.attached?%>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+<%# document conjoints fin %>
+
+  <!-- document avec la Conjointe -->
+  <div class="row" style="margin-top:20px;">
+    <div class="col-lg-12">
+      <hr>
+      <h2>Documents des conjoints </h2>
+    </div>
+    <% @conjoints.each do |conjoint| %>
+
+      <div class="col-lg-2" style="margin-top: 10px;">
+        <div class="panel panel-default">
+          <div class="panel-heading" style="text-align: center;height: 50px;">
+            <% if conjoint.extrait_naissance.attached? %>
+              <h5>
+                <%= conjoint.prenom %> <%= conjoint.nom %>: Certificat de mariage
+              </h5>
+            <% end %>
+          </div>
+          <div class="panel-body"  style="min-height: 150px">
+            <%= link_to image_tag('missing_logo.png', size: "400x400>", class: "m-t-xs img-responsive"), conjoint.certificat_mariage, target: :_blank  if conjoint.certificat_mariage.attached?%>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+<%# documents avec conjoint fin %>
+
+<% end %>

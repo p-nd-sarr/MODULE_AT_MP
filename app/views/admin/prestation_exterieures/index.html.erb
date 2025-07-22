@@ -1,0 +1,459 @@
+<%= content_for :titre_page, 'Demandes De Prestation exterieure' %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Ajouter une demande', new_admin_prestation_exterieure_path, class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Dossiers en attente de validation</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-success font-bold">
+            0%
+            <i class="fa fa-bolt"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Dossiers en attente de soumission</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-info font-bold">
+            0%
+            <i class="fa fa-level-up"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Dossiers actifs</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-info font-bold">
+            0%
+            <i class="fa fa-level-up"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Evolution des demandes</h5>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-9" style="height: 200px">
+              <%= area_chart PrestationExterieure.group(:etat).group_by_day(:created_at).count, height: "200px" %>
+            </div>
+            <div class="col-lg-3">
+              <ul class="stat-list">
+                <li>
+                  <h2 class="no-margins"></h2>
+                  <small>Soumis</small>
+                  <div class="stat-percent">
+                    0%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: <%= LiquidationRetraite.count.zero? ? 0 : LiquidationRetraite.with_soumis_state.count * 100 / LiquidationRetraite.count %>%" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins">0</h2>
+                  <small>Validé</small>
+                  <div class="stat-percent">
+                    0%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: 0%" class="progress-bar"></div>
+                  </div>
+                </li>
+                <li>
+                  <h2 class="no-margins">0</h2>
+                  <small>Rejeté</small>
+                  <div class="stat-percent">
+                    0%
+                    <i class="fa fa-level-up text-navy"></i>
+                  </div>
+                  <div class="progress progress-mini">
+                    <div style="width: 0%" class="progress-bar"></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="m-t-md">
+            <small class="float-right" style="float: right;">
+              <i class="fa fa-clock-o"></i>
+              Update on 16.12.2020
+            </small>
+            <small><strong>Analysis of sales</strong> the value has been change over time and last month reach a
+              level</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: -50px; min-height: 300px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <h5>Demandes de prestations exterieures</h5>
+          <span class="label label-warning">Total demande <%= PrestationExterieure.count %></span>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <%= search_form_for @q, url: admin_prestation_exterieures_path do |f| %>
+            <div class="row">
+              <div class="col-sm-3">
+                <%= f.label :numero_secu_social_cont, 'N° sécurité sociale' %>
+                <%= f.search_field :numero_secu_social_cont, class: 'form-control' %>
+              </div>
+
+              <div class="col-sm-3">
+                <%= f.label :prenom_cont, 'Prénom' %>
+                <%= f.search_field :prenom_cont, class: 'form-control' %>
+              </div>
+
+              <div class="col-sm-3">
+                <%= f.label :nom_cont, 'Nom' %>
+                <%= f.search_field :nom_cont, class: 'form-control' %>
+              </div>
+
+              <div class="col-sm-3">
+                <%= f.label :numero_caf_cont, 'N° CAF' %>
+                <%= f.search_field :numero_caf_cont, class: 'form-control' %>
+              </div>
+            </div>
+            <div class="hr-line-dashed"></div>                
+            <%= f.submit class: 'btn btn-primary' %>
+          <% end %>           
+          <br>
+          
+          <div class="row">
+            <div class="col-sm-7 m-b-xs">
+              <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                <label class="btn btn-sm btn-white active" data-toggle="pill" href="#tous">
+                  <input type="radio" id="option1" name="options"> Tous
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#creation">
+                  <input type="radio" id="option1" name="options"> En cours de création
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#soumis">
+                  <input type="radio" id="option1" name="options"> Soumis
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#valides">
+                  <input type="radio" id="option2" name="options"> validés </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#rejetes">
+                  <input type="radio" id="option3" name="options"> Rejetés
+                </label>
+                <label class="btn btn-sm btn-white" data-toggle="pill" href="#suspendus">
+                  <input type="radio" id="option4" name="options"> Suspendus
+                </label>
+              </div>
+            </div>
+            <!--<div class="col-sm-3">
+              <%= search_form_for @q, url: admin_prestation_exterieures_path do |f| %>
+                <div class="input-group mb-3" style="float: right;">
+                  <%= f.search_field :prenom_or_nom_or_numero_dossier_cont, class: "form-control form-control-sm", placeholder: "Search", style: "width:150px; position: relative; z-index: 1" %>
+                  <div class="input-group-append" style="float: right; position:relative; z-index: 2">
+                    <%= f.submit "Go!", :class => "btn btn-sm btn-primary", :style => "height:34px" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>-->
+            <% if current_user.gestionnaire_compte_allocataire? %>
+              <div class="col-sm-2">
+                <%= link_to ' AJOUTER', new_admin_prestation_exterieure_path, class: 'fa fa-plus btn btn-w-m btn-outline btn-success', style: 'height: 34px' %>
+              </div>
+            <% end %>
+          </div> 
+          <div class="tab-content">
+            <div id="tous" class="tab-pane fade in active">
+              <%= paginate @prestation_exterieures %>
+              <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th align="center">Prénom</th>
+                  <th align="center">Nom</th>
+                  <th align="center">Date de naissance</th>
+                  <th align="center">Lieu de naissance</th>
+                  <th align="center">Etat</th>
+                  <th align="center">Statut dossier</th>
+                  <th align="center">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @prestation_exterieures.each do |prestation| %>
+                  <tr>
+                    <td><%= prestation.numero_dossier %></td>
+                    <td><%= prestation.prenom %></td>
+                    <td><%= prestation.nom %></td>
+                    <td><%= prestation.date_naissance.strftime('%d/%m/%Y') unless prestation.date_naissance.nil? %></td>
+                    <td><%= prestation.lieu_naissance %></td>
+                    <td><%= "#{PrestationExterieure.human_enum_name(:state, prestation.current_state)}" %></td>
+                    <td> <%= prestation.get_status? ? 'Complet' : 'Incomplet' %> </td>
+                    <td>
+                      <%= link_to 'détails', admin_prestation_exterieure_path(prestation.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                      <% if prestation.creation? %>
+                        <%= link_to 'supprimer', admin_prestation_exterieure_path(prestation.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                      <% end %>
+                      <% if prestation.current_state >= :dossier_valide %>
+                        <%= link_to 'Télécharger état', admin_prestation_exterieure_generate_etat_path(prestation, prestation.id, format: :pdf), class: 'btn btn-outline btn-danger btn-xs', target: '_blank' %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @prestation_exterieures %>
+            </div>
+            <div id="creation" class="tab-pane fade in">
+              <%= paginate @prestation_exterieures_crees %>
+              <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th align="center">Prénom</th>
+                  <th align="center">Nom</th>
+                  <th align="center">Date de naissance</th>
+                  <th align="center">Lieu de naissance</th>
+                  <th align="center">Etat</th>
+                  <th align="center">Statut dossier</th>
+                  <th align="center">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @prestation_exterieures_crees.each do |prestation| %>
+                  <tr>
+                    <td><%= prestation.numero_dossier %></td>
+                    <td><%= prestation.prenom %></td>
+                    <td><%= prestation.nom %></td>
+                    <td><%= prestation.date_naissance.strftime('%d/%m/%Y') unless prestation.date_naissance.nil? %></td>
+                    <td><%= prestation.lieu_naissance %></td>
+                    <td><%= "#{PrestationExterieure.human_enum_name(:state, prestation.current_state)}" %></td>
+                    <td> <%= prestation.get_status? ? 'Complet' : 'Incomplet' %> </td>
+                    <td>
+                      <%= link_to 'détails', admin_prestation_exterieure_path(prestation.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                      <% if prestation.creation? %>
+                        <%= link_to 'supprimer', admin_prestation_exterieure_path(prestation.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                      <% end %>
+                      <% if prestation.current_state >= :dossier_valide %>
+                        <%= link_to 'Télécharger état', admin_prestation_exterieure_generate_etat_path(prestation, prestation.id, format: :pdf), class: 'btn btn-outline btn-danger btn-xs', target: '_blank' %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @prestation_exterieures_crees %>
+            </div>
+            <div id="soumis" class="tab-pane fade in">
+              <%= paginate @prestation_exterieures_soumis %>
+              <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th align="center">Prénom</th>
+                  <th align="center">Nom</th>
+                  <th align="center">Date de naissance</th>
+                  <th align="center">Lieu de naissance</th>
+                  <th align="center">Etat</th>
+                  <th align="center">Statut dossier</th>
+                  <th align="center">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @prestation_exterieures_soumis.each do |prestation| %>
+                  <tr>
+                    <td><%= prestation.numero_dossier %></td>
+                    <td><%= prestation.prenom %></td>
+                    <td><%= prestation.nom %></td>
+                    <td><%= prestation.date_naissance.strftime('%d/%m/%Y') unless prestation.date_naissance.nil? %></td>
+                    <td><%= prestation.lieu_naissance %></td>
+                    <td><%= "#{PrestationExterieure.human_enum_name(:state, prestation.current_state)}" %></td>
+                    <td> <%= prestation.get_status? ? 'Complet' : 'Incomplet' %> </td>
+                    <td>
+                      <%= link_to 'détails', admin_prestation_exterieure_path(prestation.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                      <% if prestation.creation? %>
+                        <%= link_to 'supprimer', admin_prestation_exterieure_path(prestation.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                      <% end %>
+                      <% if prestation.current_state >= :dossier_valide %>
+                        <%= link_to 'Télécharger état', admin_prestation_exterieure_generate_etat_path(prestation, prestation.id, format: :pdf), class: 'btn btn-outline btn-danger btn-xs', target: '_blank' %>
+                      <% end %>
+                    </td>
+
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @prestation_exterieures_soumis %>
+            </div>
+            <div id="valides" class="tab-pane fade in">
+              <%= paginate @prestation_exterieures_valides %>
+              <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th align="center">Prénom</th>
+                  <th align="center">Nom</th>
+                  <th align="center">Date de naissance</th>
+                  <th align="center">Lieu de naissance</th>
+                  <th align="center">Etat</th>
+                  <th align="center">Statut dossier</th>
+                  <th align="center">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @prestation_exterieures_valides.each do |prestation| %>
+                  <tr>
+                    <td><%= prestation.numero_dossier %></td>
+                    <td><%= prestation.prenom %></td>
+                    <td><%= prestation.nom %></td>
+                    <td><%= prestation.date_naissance.strftime('%d/%m/%Y') unless prestation.date_naissance.nil? %></td>
+                    <td><%= prestation.lieu_naissance %></td>
+                    <td><%= "#{PrestationExterieure.human_enum_name(:state, prestation.current_state)}" %></td>
+                    <td> <%= prestation.get_status? ? 'Complet' : 'Incomplet' %> </td>
+                    <td>
+                      <%= link_to 'détails', admin_prestation_exterieure_path(prestation.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                      <% if prestation.creation? %>
+                        <%= link_to 'supprimer', admin_prestation_exterieure_path(prestation.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                      <% end %>
+                      <% if prestation.current_state >= :dossier_valide %>
+                        <%= link_to 'Télécharger état', admin_prestation_exterieure_generate_etat_path(prestation, prestation.id, format: :pdf), class: 'btn btn-outline btn-danger btn-xs', target: '_blank' %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @prestation_exterieures_valides %>
+            </div>
+            <div id="rejetes" class="tab-pane fade in">
+              <%= paginate @prestation_exterieures_rejetes %>
+              <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th align="center">Prénom</th>
+                  <th align="center">Nom</th>
+                  <th align="center">Date de naissance</th>
+                  <th align="center">Lieu de naissance</th>
+                  <th align="center">Etat</th>
+                  <th align="center">Statut dossier</th>
+
+                  <th align="center">Options</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @prestation_exterieures_rejetes.each do |prestation| %>
+                  <tr>
+                    <td><%= prestation.numero_dossier %></td>
+                    <td><%= prestation.prenom %></td>
+                    <td><%= prestation.nom %></td>
+                    <td><%= prestation.date_naissance.strftime('%d/%m/%Y') unless prestation.date_naissance.nil? %></td>
+                    <td><%= prestation.lieu_naissance %></td>
+                    <td><%= "#{PrestationExterieure.human_enum_name(:state, prestation.current_state)}" %></td>
+                    <td> <%= prestation.get_status? ? 'Complet' : 'Incomplet' %> </td>
+                    <td>
+                      <%= link_to 'détails', admin_prestation_exterieure_path(prestation.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                      <% if prestation.creation? %>
+                        <%= link_to 'supprimer', admin_prestation_exterieure_path(prestation.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                      <% end %>
+                      <% if prestation.current_state >= :dossier_valide %>
+                        <%= link_to 'Télécharger état', admin_prestation_exterieure_generate_etat_path(prestation, prestation.id, format: :pdf), class: 'btn btn-outline btn-danger btn-xs', target: '_blank' %>
+                      <% end %>
+                    </td>
+
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @prestation_exterieures_rejetes %>
+            </div>
+            <div id="suspendus" class="tab-pane fade in">
+              <%= paginate @prestation_exterieures_suspendus %>
+              <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+                <thead>
+                <tr>
+                  <th scope="col">N° Dossier</th>
+                  <th align="center">Prénom</th>
+                  <th align="center">Nom</th>
+                  <th align="center">Date de naissance</th>
+                  <th align="center">Lieu de naissance</th>
+                  <th align="center">Etat</th>
+                  <th align="center">Statut dossier</th>
+
+                  <th align="center">Options</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                <% @prestation_exterieures_suspendus.each do |prestation| %>
+                  <tr>
+                    <td><%= prestation.numero_dossier %></td>
+                    <td><%= prestation.prenom %></td>
+                    <td><%= prestation.nom %></td>
+                    <td><%= prestation.date_naissance.strftime('%d/%m/%Y') unless prestation.date_naissance.nil? %></td>
+                    <td><%= prestation.lieu_naissance %></td>
+                    <td><%= "#{PrestationExterieure.human_enum_name(:state, prestation.current_state)}" %></td>
+                    <td> <%= prestation.get_status? ? 'Complet' : 'Incomplet' %> </td>
+                    <td>
+                      <%= link_to 'détails', admin_prestation_exterieure_path(prestation.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                      <% if prestation.creation? %>
+                        <%= link_to 'supprimer', admin_prestation_exterieure_path(prestation.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                      <% end %>
+                      <% if prestation.current_state >= :dossier_valide %>
+                        <%= link_to 'Télécharger état', admin_prestation_exterieure_generate_etat_path(prestation, prestation.id, format: :pdf), class: 'btn btn-outline btn-danger btn-xs', target: '_blank' %>
+                      <% end %>
+                    </td>
+
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @prestation_exterieures_suspendus %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

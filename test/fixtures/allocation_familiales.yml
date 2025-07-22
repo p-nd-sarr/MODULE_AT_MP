@@ -1,0 +1,35 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dossier_prestation: one
+  enfant: one
+  date_soumission: 2020-02-15
+  date_validation: 2020-02-15
+  valide_par_id: 1
+  user: one
+  ajoute_par_id: 1
+  traite_le: 2020-02-15 17:10:00
+  traite_par_id: 1
+  motif_rejet: MyString
+  montant_paiement: 1
+  paiement: false
+  etat: 1
+  trimestre: 1
+  annee: 1
+
+two:
+  dossier_prestation: two
+  enfant: two
+  date_soumission: 2020-02-15
+  date_validation: 2020-02-15
+  valide_par_id: 1
+  user: two
+  ajoute_par_id: 1
+  traite_le: 2020-02-15 17:10:00
+  traite_par_id: 1
+  motif_rejet: MyString
+  montant_paiement: 1
+  paiement: false
+  etat: 1
+  trimestre: 1
+  annee: 1

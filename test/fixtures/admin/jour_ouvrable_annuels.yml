@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  mois: MyString
+  mois_en_chiffre: 1
+  nombre_jour_ouvrable: 1
+
+two:
+  mois: MyString
+  mois_en_chiffre: 1
+  nombre_jour_ouvrable: 1

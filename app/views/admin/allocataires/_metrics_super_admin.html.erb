@@ -1,0 +1,58 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>CLIENTS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= Client.count %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>UTILISATEURS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= User.count %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>PAIEMENTS EN ATTENTE</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa FactureClient.non_payees.sum(:montant_total) %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>PAIEMENTS EN ATTENTE DU MOIS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa FactureClient.non_payees.du_mois.sum(:montant_total) %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>TOTAL PAIEMENTS DU MOIS</h5>
+        </div>
+        <div class="ibox-content text-right">
+          <h1 class="no-margins"><%= format_cfa FactureClient.payees_du_mois.sum(:montant_total) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

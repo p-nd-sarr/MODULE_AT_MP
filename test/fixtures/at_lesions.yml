@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nature_lesion: 1
+  code_nature_lesion: MyString
+  siege_lesion: 1
+  code_siege_lesion: MyString
+  arret_travail: one
+
+two:
+  nature_lesion: 1
+  code_nature_lesion: MyString
+  siege_lesion: 1
+  code_siege_lesion: MyString
+  arret_travail: two

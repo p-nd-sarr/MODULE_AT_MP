@@ -1,0 +1,20 @@
+<%= content_for :titre_page, "Modification Allocation Prenatale #{@allocation_prenatale.volet_human }" %>
+
+<%= bootstrap_form_for([:salarie, @dossier_prestation, @allocation_prenatale], layout: :horizontal) do |f| %>
+  <%#= f.alert_message 'aa' %>
+  <%= f.hidden_field :grossesse_id, value: @grossesse.id %>
+  <%# <%= f.select :volet, @grossesse.volets_eligibles.keys.collect { |volet|
+    [AllocationPrenatale.human_enum_name(:volet, volet), volet] },
+               label: 'N° Volet', help: "Seul les volets sur la liste sont éligibles pour cette grossesse" %>
+  <%= f.file_field :document, label: 'Document', required: true %>
+  <%= f.text_area :commentaire, label: 'Commentaire' %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', salarie_dossier_prestation_allocation_prenatales_path(@dossier_prestation), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

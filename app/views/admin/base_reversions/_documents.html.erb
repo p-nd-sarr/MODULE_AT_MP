@@ -1,0 +1,15 @@
+<%= render 'documents/liste',
+           object: @base_reversion,
+           documents: @base_reversion.documents,
+           include_add: true,
+           include_delete: true,
+           type_documents: BaseReversion::TYPE_DOCUMENT,
+           type_documents_obligatoires: BaseReversion::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_allocataire_base_reversions_path(@allocataire)
+%>
+
+<%= render 'documents/modal_form',
+           type_documents: BaseReversion::TYPE_DOCUMENT,
+           document: Document.new(documentable: @base_reversion),
+           back_url: admin_allocataire_base_reversions_path(@allocataire)
+%>

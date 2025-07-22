@@ -1,0 +1,115 @@
+<%= content_for :titre_page, 'Conjoints' %>
+
+<%= content_for :actions_page do %>
+  <% if is_active_action?('en_attente') %>
+    <%= link_to 'Afficher tout', admin_conjoints_path, class: 'btn btn-white btn-sm' %>
+    <%# else %>
+    <%#= link_to 'En attente de validation', en_attente_admin_conjoints_path, class: 'btn btn-white btn-sm' %>
+  <% end %>
+  <%= link_to 'Ajouter un(e) conjoint(e)', new_admin_conjoint_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5> Affichage de la liste des conjoints </h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <%= search_form_for @q, url: admin_conjoints_path do |f| %>
+                <div class="input-group col-lg-12">
+                  <div class="col-lg-10">
+                    <%= f.search_field :prenom_or_nom_or_numero_affiliation_or_prenom_salarie_or_nom_salarie_or_numero_piece_cont, class: "form-control form-control-sm", placeholder: "Entrer le numéro de l'affiliation, le nom ou le prénom d'un salarié ou nom, prénom ou NIN d'un conjoint", style: "width:100%; position: relative; z-index: 1" %>
+                  </div>
+                  <div class="input-group-append col-lg-2" style="padding-left: 0px;">
+                    <%= f.submit "Chercher conjoint", :class => "btn btn-outline btn-success", :style => "height:34px" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-lg-12">
+              <% if @conjoints.count.zero? %>
+                <h2 style="text-align:center; margin-top:50px">La liste des conjoints est vide !!!</h2>
+              <% else %>
+                <%= paginate @conjoints %>
+                <table class="footable table table-stripped table-hover" data-page-size="8" data-filter="#filter" style="margin-top: 20px;">
+                  <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Prénom & nom du conjoint</th>
+                    <th scope="col">Date de naissance</th>
+                    <th scope="col">Date du mariage</th>
+                    <th scope="col">Situation</th>
+                    <th scope="col">Prénom & nom du salarié</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Est repris?</th>
+                    <th scope="col">Supprimé?</th>
+                    <th scope="col">Incomplet?</th>
+                    <th colspan="2"></th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <% @conjoints.each do |conjoint| %>
+                    <tr>
+                      <td></td>
+                      <td><%= conjoint.prenom %> <%= conjoint.nom %></td>
+                      <td><%= l conjoint.date_naissance %></td>
+                      <td><%= l conjoint.date_mariage %></td>
+                      <td><%= Conjoint.human_enum_name(:etat_conjoint, conjoint.etat_conjoint) %></td>
+                      <td><%= conjoint.prenom_salarie %> <%= conjoint.nom_salarie %></td>
+                      <td><%= Conjoint.human_enum_name(:etat, conjoint.etat) %></td>
+                      <td><%= state_yes_no conjoint.est_repris %></td>
+                      <td><%= state_yes_no conjoint.deleted %></td>
+                      <td><%= state_yes_no conjoint.incomplete %></td>
+                      <td style="width: 75px">
+                        <%= link_to 'Détails', admin_conjoint_path(conjoint), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <%# unless DossierPrestation.find_by_conjoint_id(conjoint.id) %>
+                      <!--                        <td width="90px" class="dropdown">-->
+                      <!--                          <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Actions-->
+                      <!--                            <span class="caret"></span>-->
+                      <!--                          </button>-->
+                      <!--                          <ul class="dropdown-menu" style="background-color:rgb(240,240,240)">-->
+                      <!--                            <li>-->
+                              <%#= (link_to 'Modifier', edit_admin_conjoint_path(conjoint), id: "dd_hover") %>
+<!--                            </li>-->
+<!--                            <li>-->
+                              <%#= (link_to 'Supprimer', admin_conjoint_path(conjoint), method: :delete, data: { confirm: 'En êtes vous sûr?' }, id: "dd_hover") %>
+<!--                            </li>-->
+<!--                          </ul>-->
+<!--                        </td>-->
+                      <%# end %>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+                <%= paginate @conjoints %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

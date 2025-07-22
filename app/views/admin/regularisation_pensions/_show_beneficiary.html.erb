@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-lg-12" style="text-align: right;">
+    <% if @regularisation_pension.creation? and @regularisation_pension.ajoute_par == current_user %>
+      <%= link_to ' Ajouter', admin_regularisation_pension_new_beneficiary_path(@regularisation_pension), class: "btn btn-outline btn-white fa fa-edit" if @regularisation_pension.reg_beneficiary.nil? %>
+      <%= link_to ' Modifier', admin_regularisation_pension_edit_beneficiary_path(@regularisation_pension.reg_beneficiary), class: "btn btn-outline btn-white fa fa-edit" unless @regularisation_pension.reg_beneficiary.nil? %>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.reg_beneficiary.try(:prenom) %> <%= @regularisation_pension.reg_beneficiary.try(:nom) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.reg_beneficiary.date_naissance.strftime("%d/%m/%Y") unless @regularisation_pension.reg_beneficiary.nil? or @regularisation_pension.reg_beneficiary.date_naissance.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-card"></span> NIN:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.reg_beneficiary.try(:nin) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @regularisation_pension.reg_beneficiary.try(:telephone) %></dd>
+      </div>
+    </d1>
+  </div>
+</div>

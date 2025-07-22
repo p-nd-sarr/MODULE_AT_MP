@@ -1,0 +1,249 @@
+<%= bootstrap_form_for([:admin, @dossier_maternite, @indemnite_conges_maternite]) do |f| %>
+  <%#= f.alert_message 'aa' %>
+  <%= f.alert_message 'Veuillez joindre à nouveau le document.' %>
+  <div style="padding-bottom:20px" id="conges">
+    <p class="text-danger">
+      <% if @dossier_maternite.decedee? %>
+        <strong> Salariée décédée, le <%= l (@dossier_maternite.date_deces) %> </strong>
+      <% end %>
+    </p>
+    <p class="text-warning">
+      <strong>Date Départ En Congés
+        :</strong> &nbsp;<%= l(@dossier_maternite.debut_conges) unless @dossier_maternite.debut_conges.nil? %>
+    </p>
+  </div>
+  <%= f.select :tranche_paiement, @dossier_maternite.tranches_eligibles.keys.collect { |tranche_paiement|
+    [IndemniteCongesMaternite.human_enum_name(:tranche_paiement, tranche_paiement), tranche_paiement] },
+               label: 'Tranche Paiement', help: "Seules les tranches sur la liste sont éligibles." %>
+
+  <div id="accouchement">
+    <%= f.select :lieu_accouchement,
+                 IndemniteCongesMaternite::LIEU_ACCOUCHEMENT.keys.collect { |lieu_accouchement|
+                   [IndemniteCongesMaternite.human_enum_name(:lieu_accouchement, lieu_accouchement), lieu_accouchement] },
+                 label: "Lieu Accouchement", required: false %>
+    <%= f.date_select :date_accouchement, label: "Date Accouchement",
+                      start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+    <%= f.file_field :attestation_accouchement, label: "Certificat d'accouchement", required: false %>
+  </div>
+  <div id="reprise">
+    <div class="text-info" style="padding-bottom:20px">
+      <strong>Date Accouchement
+        :</strong> &nbsp; <%= l(@dossier_maternite.date_accouchement_reel) unless @dossier_maternite.date_accouchement_reel.nil? %>
+    </div>
+    <div class="text-warning" style="padding-bottom:20px">
+<!--      <strong>Date Reprise Prévue :</strong> &nbsp;-->
+      <strong>Date de fin de congés prévue :</strong>
+      <%= l(@dossier_maternite.date_accouchement_reel + 56.days) unless @dossier_maternite.date_accouchement_reel.nil? %>
+    </div>
+    <%#= f.date_select :date_reprise_service, label: "Date Fin Congés", start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+
+
+    <%= f.check_box :cas_force_majeur, label: "Cas de force majeur" %>
+
+    <div id="cfm">
+      <%= f.file_field :document_cas_force_majeur, label: 'Document', required: false %>
+    </div>
+
+    <%= f.check_box :prolongation, label: "Demande de prolongation?" %>
+
+    <div id="prolongation_oui">
+      <%= f.file_field :certificat_non_reprise, label: 'Certificat de non reprise', required: false %>
+      <%= f.file_field :certificat_medical, label: 'Certificat médical', required: false %>
+      <%= f.number_field :jours_prolongation, label: 'Nombre de jours', required: false %>
+      <%#= f.date_select :date_reprise_reelle, label: "Date Reprise réelle", start_year: Date.today.year, end_year: (Date.today + 1.year).year %>
+    </div>
+  </div>
+
+  <div id="prolongation_non">
+    <%= f.file_field :certificat_reprise, label: 'Certificat de reprise', required: false %>
+  </div>
+
+  <%= f.check_box :decedee, label: "Décédée" %>
+  <div class="col-lg-12" style="margin-top:10px; padding-bottom: 2px;" id="decedee_oui">
+    <div class="row">
+      <div class="col-lg-6">
+        <%= f.date_field :date_deces, label: "Date Décès", min: Date.today - 1.year,
+                         max: Date.today %>
+      </div>
+    </div>
+    <div class="content clearfix">
+      <h3 class="text-navy" style="font-weight:bold">Informations Mandataire</h3>
+      <div class="hr-line-dashed"></div>
+      <div class="row">
+        <div class="form-group" style="align-content: center">
+          <div class="col-lg-12">
+            <%= f.text_field :nin_mandataire, label: 'N° Identification' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :prenom_mandataire, label: "Prénom" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :nom_mandataire, label: "Nom" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.file_field :certificat_deces, label: 'Certificat de décès', required: false %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.file_field :procuration_legalisee, label: 'Procuration légalisée', required: false %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.file_field :certificat_heredite, label: "Certificat d'hérédité", required: false %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--  <div class="hr-line-dashed"></div>-->
+
+  <div class="form-group row">
+    <div class="col-sm-9 col-sm-offset-3" style="text-align:right">
+      <%= link_to 'Annuler', admin_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          afficherDate();
+          chargerInfosDecedee();
+          chargerInfosCasForceMajeur();
+          chargerInfosProlongation();
+          afficherCertifReprise();
+          //$('#prolongation_non').hide();
+
+
+          $("#indemnite_conges_maternite_tranche_paiement").change(function () {
+              afficherDate()
+              afficherCertifReprise();
+          });
+
+          $("#indemnite_conges_maternite_decedee").change(function () {
+              chargerInfosDecedee()
+          });
+
+          $("#indemnite_conges_maternite_cas_force_majeur").change(function () {
+              chargerInfosCasForceMajeur()
+          });
+
+          $("#indemnite_conges_maternite_prolongation").change(function () {
+              chargerInfosProlongation()
+          });
+
+          function chargerInfosDecedee() {
+              if (indemnite_conges_maternite_decedee.checked == true) {
+                  $("#indemnite_conges_maternite_date_deces").attr("disabled", false)
+                  $("#indemnite_conges_maternite_nin_mandataire").attr("disabled", false)
+                  $("#indemnite_conges_maternite_nom_mandataire").attr("disabled", false)
+                  $("#indemnite_conges_maternite_prenom_mandataire").attr("disabled", false)
+                  $('#decedee_oui').show();
+              } else {
+                  $("#indemnite_conges_maternite_date_deces").attr("disabled", true)
+                  $("#indemnite_conges_maternite_nin_mandataire").attr("disabled", true)
+                  $("#indemnite_conges_maternite_nom_mandataire").attr("disabled", true)
+                  $("#indemnite_conges_maternite_prenom_mandataire").attr("disabled", true)
+                  $('#decedee_oui').hide();
+              }
+          }
+
+          function chargerInfosCasForceMajeur() {
+              if (indemnite_conges_maternite_cas_force_majeur.checked == true) {
+                  $('#cfm').show();
+              } else {
+                  $('#cfm').hide();
+              }
+          }
+
+          function chargerInfosProlongation() {
+              if (indemnite_conges_maternite_prolongation.checked == true) {
+                  $('#prolongation_oui').show();
+                  $('#prolongation_non').hide();
+
+                  $('#indemnite_conges_maternite_date_reprise_reelle_3i').prop("disabled", false).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_2i').prop("disabled", false).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_1i').prop("disabled", false).val('');
+              } else {
+                  $('#prolongation_oui').hide();
+                  $('#prolongation_non').show();
+
+                  $('#indemnite_conges_maternite_date_reprise_reelle_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_1i').prop("disabled", true).val('');
+              }
+          }
+
+          function afficherCertifReprise() {
+              $('#prolongation_non').hide();
+              var tranche = $('#indemnite_conges_maternite_tranche_paiement').val();
+              if (tranche === 'avant_acouchement') {
+                  $('#prolongation_non').hide();
+              } else if (tranche === 'apres_acouchement') {
+                  $('#prolongation_non').hide();
+              } else if (tranche === 'apres_reprise') {
+                  $('#prolongation_non').show();
+                  chargerInfosCasForceMajeur();
+              } else if (tranche === 'tranche_prolongation') {
+                  $('#prolongation_non').show();
+              }
+          }
+
+          function afficherDate() {
+              var tranche = $('#indemnite_conges_maternite_tranche_paiement').val();
+              if (tranche === 'avant_acouchement') {
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop("disabled", true).val('');
+
+                  $('#indemnite_conges_maternite_date_reprise_reelle_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_1i').prop("disabled", true).val('');
+
+                  $('#conges').show();
+                  $('#accouchement').hide();
+                  //$('#prolongation_non').hide();
+                  $('#reprise').hide();
+                  $('#cfm').hide();
+              } else if (tranche === 'apres_acouchement') {
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop("disabled", false).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop("disabled", false).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop("disabled", false).val('');
+
+                  $('#indemnite_conges_maternite_date_reprise_reelle_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_1i').prop("disabled", true).val('');
+
+                  //$('#conges').hide();
+                  $('#accouchement').show();
+                  //$('#prolongation_non').hide();
+                  $('#reprise').hide();
+                  $('#cfm').hide();
+              } else if (tranche === 'apres_reprise') {
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop("disabled", true).val('');
+
+                  $('#indemnite_conges_maternite_date_reprise_reelle_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_reprise_reelle_1i').prop("disabled", true).val('');
+
+                  //$('#conges').hide();
+                  $('#accouchement').hide();
+                  //$('#prolongation_non').show();
+                  $('#reprise').show();
+                  chargerInfosCasForceMajeur();
+              } else if (tranche === 'tranche_prolongation') {
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop("disabled", true).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop("disabled", true).val('');
+
+                  //$('#conges').hide();
+                  //$('#prolongation_non').show();
+                  $('#accouchement').hide();
+                  $('#reprise').hide();
+              }
+          }
+      })
+  </script>
+<% end %>

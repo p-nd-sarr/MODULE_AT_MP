@@ -1,0 +1,21 @@
+<%= bootstrap_form_for(@admin_agence, layout: :horizontal) do |f| %>
+  <%= f.select :type_agence,
+               Admin::Agence.type_agences.keys.collect { |type_agence| [Admin::Agence.human_enum_name(:type_agence, type_agence), type_agence] },
+               label: 'Type de profil' %>
+  <%= f.text_field :code %>
+  <%= f.text_field :description_ebs %>
+  <%= f.text_field :code_prest %>
+  <%= f.text_field :description_prest %>
+  <%= f.text_field :code_psrm %>
+  <%= f.text_field :description_psrm %>
+  <%= f.text_field :code_site %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_agences_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

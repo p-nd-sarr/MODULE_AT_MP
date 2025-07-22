@@ -1,0 +1,225 @@
+<%= content_for :titre_page, "Détails du chargement déclaration manquante pour #{@employeur.fhnum}" %>
+
+<%= content_for :actions_page do %>
+  <% if @declaration_chargement.fichier_valide? and current_user.chef_service_cotisation? %>
+    <%= link_to 'Valider', admin_employeur_declaration_manquante_charger_valider_path(@employeur, @declaration_manquante, @declaration_chargement), 'data-turbolinks': false, class: 'btn btn-primary btn-sm' %>
+    <%#= link_to 'Rejeter', admin_employeur_declaration_manquante_charger_rejeter_path(@employeur, @declaration_manquante, @declaration_chargement), 'data-turbolinks': false, class: 'btn btn-danger btn-sm' %>
+    <button type="button" class="btn btn-danger btn-sm" data-turbolinks="false" data-toggle="modal" data-target="#rejet_declaration_manquante">Rejeter</button>
+  <% end %>
+  <%= link_to 'Télécharger le fichier', @declaration_chargement.fichier, class: 'btn btn-white btn-sm', target: :_blank %>
+  <%= link_to 'Retour', admin_employeur_path(@employeur), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Employeur</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'information_employeur' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Déclaration manquante</h5>
+        </div>
+        <div class="ibox-content">
+          <p>
+            <strong>Exercice:</strong>
+            <%= @declaration_manquante.exercice %>
+          </p>
+          <p>
+            <strong>Regime:</strong>
+            <%= @declaration_manquante.regime %>
+          </p>
+          <p>
+            <strong>Effectif:</strong>
+            <%= @declaration_manquante.effectif %>
+          </p>
+          <p>
+            <strong>Code aggence:</strong>
+            <%= @declaration_manquante.code_agence %>
+          </p>
+          <p class="text-danger">
+            <strong>Chargé par:</strong>
+            <%= @declaration_chargement.created_by.full_name %>
+          </p>
+          <p class="text-danger">
+            <strong>Chargé le:</strong>
+            <%= @declaration_chargement.created_at %>
+          </p>
+          <p class="text-danger">
+            <strong>Statut:</strong>
+            <%= @declaration_chargement.statut %>
+          </p>
+          <% if @declaration_chargement.rejete? %>
+            <p class="text-danger">
+              <strong>Motif Rejet:</strong>
+              <%= @declaration_chargement.motif_rejet %>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-content">
+
+          <div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#contenu_fichier" aria-controls="home" role="tab" data-toggle="tab">Contenu du fichier</a></li>
+              <% if @declaration_chargement.valide? %>
+                <li role="presentation">
+                  <a href="#carrieres" aria-controls="profile" role="tab" data-toggle="tab">Carrières chargées</a></li>
+                <li role="presentation">
+                  <a href="#salaries" aria-controls="messages" role="tab" data-toggle="tab">Salariés chargés</a></li>
+              <% end %>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+              <div role="tabpanel" class="tab-pane active" id="contenu_fichier">
+                <br>
+                <table class="table table-bordered table-condensed table-hover">
+                  <thead>
+                  <tr>
+                    <th>Ligne</th>
+                    <th>Exercice</th>
+                    <th>Numéro affiliation</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Date entrée</th>
+                    <th>Date sortie</th>
+                    <th>Salaire soumis a cotisation</th>
+                    <th>Salaire reel</th>
+                    <th>NIN</th>
+                    <th>Date naissance</th>
+                    <th></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <% @declaration_chargement.declaration_chargement_lignes.order(:numero_ligne).each do |ligne| %>
+                    <tr class="<%= 'danger' if ligne.erreur? %>">
+                      <td><%= ligne.numero_ligne %></td>
+                      <td><%= ligne.exercice %></td>
+                      <td><%= ligne.numero_affiliation %></td>
+                      <td><%= ligne.nom %></td>
+                      <td><%= ligne.prenom %></td>
+                      <td><%= "#{ligne.jour_entree}/#{ligne.mois_entree}/#{ligne.annee_entree}" %></td>
+                      <td><%= "#{ligne.jour_sortie}/#{ligne.mois_sortie}/#{ligne.annee_sortie}" %></td>
+                      <td class="text-right"><%= format_cfa ligne.salaire_soumis, false %></td>
+                      <td class="text-right"><%= format_cfa ligne.salaire_reel, false %></td>
+                      <td><%= ligne.nin %></td>
+                      <td><%= ligne.date_naissance %></td>
+                      <td>
+                        <% if ligne.erreur? %>
+                          <button type="button" class="btn btn-info btn-sm"
+                                  data-container="body"
+                                  data-toggle="popover"
+                                  data-placement="left"
+                                  data-content="<%= ligne.details_erreur.join(', ') %>">
+                            détails erreurs
+                          </button>
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+              <% if @declaration_chargement.valide? %>
+                <div role="tabpanel" class="tab-pane" id="carrieres">
+                  <br>
+                  <table class="table table-bordered table-condensed table-hover">
+                    <thead>
+                    <tr>
+                      <th scope="col">Employé</th>
+                      <th scope="col">Période</th>
+                      <th scope="col">Salaire</th>
+                      <th scope="col">Points</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @declaration_chargement.declaration_carrieres.each do |carriere| %>
+                      <tr>
+                        <td><%= carriere.prenom %> <%= carriere.nom %></td>
+                        <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+                        <td align="right"><%= format_cfa(carriere.salaire_rg + carriere.salaire_rcc, false) %></td>
+                        <td align="right"><%= carriere.points_rg + carriere.points_rc %></td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="salaries">
+                  <br>
+                  <table class="table table-bordered table-condensed table-hover">
+                    <thead>
+                    <tr>
+                      <th scope="col">Matricule</th>
+                      <th scope="col">Ancien Matricule IPRES</th>
+                      <th scope="col">Ancien Matricule CSS</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Date de naissance</th>
+                      <th scope="col">Régime</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <% @declaration_chargement.declaration_participants.each do |salarie| %>
+                      <tr>
+                        <td><%= salarie.matric %></td>
+                        <td><%= salarie.ipres_ancien_matric %></td>
+                        <td><%= salarie.css_ancien_matric %></td>
+                        <td><%= salarie.prenom %></td>
+                        <td><%= salarie.nom %></td>
+                        <td><%= salarie.date_naissance %></td>
+                        <td><%= salarie.regime %></td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              <% end %>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal inmodal" id="rejet_declaration_manquante" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_tag(url: admin_employeur_declaration_manquante_charger_rejeter_path(@employeur, @declaration_manquante, @declaration_chargement)) do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h5 class="modal-title">Rejet chargement déclaration manquante</h5>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :motif_rejet, label: 'Motif du rejet', class: 'form-control', required: true %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-danger">Rejeter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

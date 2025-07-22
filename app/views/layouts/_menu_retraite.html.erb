@@ -1,0 +1,49 @@
+<li class="<%= 'active' if is_active_controller('salarie/carrieres') %>">
+  <%= link_to salarie_carrieres_path do %>
+      <i class="fa fa-briefcase"></i> <span class="nav-label">Ma carrière</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('salarie/conjoints') or
+    is_active_controller('salarie/enfants') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Ma grappe familiale</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/epouses') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/conjoints') %>"><%= link_to 'Mes conjoints', salarie_conjoints_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/enfants') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/enfants') %>"><%= link_to 'Mes enfants', salarie_enfants_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('salarie/demande_liquidation_retraires') or
+    is_active_controller('salarie/enfants') %>">
+  <a href="#"> <i class="fa fa-folder"></i> <span class="nav-label">Documents du dossier de demande de liquidation</span> <span class="fa arrow"></span></a>
+
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/demande_liquidation_retraires') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/demande_liquidation_retraires') %>"><%= link_to 'Prestation Viellesse', salarie_liquidation_retraites_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/dossier_prestations') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/dossier_prestations') %>"><%= link_to 'Prestations Familiales', salarie_dossier_prestations_path %></li>
+  </ul>
+
+
+</li>
+<li class="<%= 'active' if is_active_controller('salarie/demande_liquidation_retraires') or
+    is_active_controller('salarie/enfants') %>">
+  <a href="#"> <i class="fa fa-folder"></i> <span class="nav-label">Demande de révision de carrière</span> <span class="fa arrow"></span></a>
+
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/demande_liquidation_retraires') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/demande_liquidation_retraires') %>"><%= link_to 'Prestation Viellesse', salarie_liquidation_retraites_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/dossier_prestations') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/dossier_prestations') %>"><%= link_to 'Prestations Familiales', salarie_dossier_prestations_path %></li>
+  </ul>
+
+
+</li>
+
+<!--<li class="<%#= 'active' if is_active_controller('salarie/demande_liquidation_retraires') %>">-->
+  <%#= link_to salarie_liquidation_retraites_path do %>
+<!--      <i class="fa fa-folder"></i> <span class="nav-label">Mes demandes de prestation</span>-->
+  <%# end %>
+<!--</li>-->

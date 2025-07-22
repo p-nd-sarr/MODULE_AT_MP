@@ -1,0 +1,40 @@
+<%= content_for :titre_page, "Pension alimentaire, allocataire : #{@allocataire.numero_allocataire}" %>
+
+<%= content_for :actions_page do %>
+  <%= (link_to 'Nouvelle Demande de Pension', new_admin_allocataire_pension_alimentaire_path(@allocataire), class: 'btn btn-primary btn-sm') if current_user.agent_direction_juridique? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Telephone</th>
+        <th scope="col">Adresse</th>
+        <th scope="col">Date demande</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @pension_alimentaires.each do |pension_alimentaire| %>
+        <tr>
+          <td><%= pension_alimentaire.id %></td>
+          <td><%= pension_alimentaire.nom %></td>
+          <td><%= pension_alimentaire.prenom %></td>
+          <td><%= pension_alimentaire.telephone %></td>
+          <td><%= pension_alimentaire.adresse %></td>
+          <td><%= pension_alimentaire.etat %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, @allocataire, pension_alimentaire], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

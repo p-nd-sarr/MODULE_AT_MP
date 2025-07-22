@@ -1,0 +1,1 @@
+json.partial! "admin_demande_carte_allocataires/admin_demande_carte_allocataire", admin_demande_carte_allocataire: @admin_demande_carte_allocataire

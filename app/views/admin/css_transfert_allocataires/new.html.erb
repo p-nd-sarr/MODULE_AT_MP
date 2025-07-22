@@ -1,0 +1,139 @@
+<%= content_for :titre_page, "Ajout Css Transfert Allocataire" %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Info Allocataire </h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/css_transfert_allocataires/info_dossier' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Formulaire d'ajout</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          load_salary();
+
+          $('#css_transfert_allocataire_numero_affiliation').change(function () {
+              load_salary();
+          });
+
+          function load_salary() {
+              const matric = $('#css_transfert_allocataire_numero_affiliation').val();
+              const label_to_show_matric = $('#salary_matric')[0];
+              const label_to_show_full_name = $('#salary_full_name')[0];
+              const label_to_show_ancien_num_css = $('#salary_ancien_num_css')[0];
+              const label_to_show_fhrsoc = $('#salary_employeur')[0];
+              const label_to_show_code = $('#employeur_code')[0];
+
+              // Helper to reset fields
+              function reset_fields() {
+                  label_to_show_matric.textContent = '';
+                  label_to_show_full_name.textContent = '';
+                  label_to_show_ancien_num_css.textContent = '';
+                  label_to_show_fhrsoc.textContent = 'Raison sociale introuvable';
+                  label_to_show_code.textContent = '';
+                  //$('#submit_button').attr('disabled', true);
+              }
+
+              if (matric) {
+                  $.ajax({
+                      url: `/admin/salaries/${matric}.json`,
+                      method: 'get',
+                      dataType: 'json',
+                      success: function (data) {
+                          if (data) {
+                              label_to_show_matric.textContent = matric;
+                              label_to_show_full_name.textContent = `${data.prenom} ${data.nom}`;
+                              label_to_show_ancien_num_css.textContent = data.css_ancien_matric || '';
+
+                              const fhnum = $('#css_transfert_allocataire_employeur_source_id').val();
+                              if (fhnum) {
+                                  load_employer(fhnum);
+                              } else {
+                                  label_to_show_code.textContent = '';
+                              }
+
+                              $('#submit_button').attr('disabled', false);
+                          } else {
+                              reset_fields();
+                          }
+                      },
+                      error: function () {
+                          reset_fields();
+                      }
+                  });
+              } else {
+                  reset_fields();
+              }
+          }
+
+          function load_employer(fhnum) {
+              const label_to_show_fhrsoc = $('#salary_employeur')[0];
+              const label_to_show_code = $('#employeur_code')[0];
+
+              $.ajax({
+                  url: `/admin/dossier_prestations/employeur/${fhnum}.json`,
+                  method: 'get',
+                  dataType: 'json',
+                  success: function (c_data) {
+                      if (c_data && c_data.fhrsoc) {
+                          label_to_show_fhrsoc.textContent = c_data.fhrsoc;
+
+                          if (c_data.code_agence_css) {
+                              load_agency(c_data.code_agence_css);
+                          } else {
+                              label_to_show_code.textContent = '';
+                          }
+                      } else {
+                          label_to_show_fhrsoc.textContent = 'Raison sociale introuvable';
+                          label_to_show_code.textContent = '';
+                      }
+                  },
+                  error: function () {
+                      label_to_show_fhrsoc.textContent = 'Raison sociale introuvable';
+                      label_to_show_code.textContent = '';
+                  }
+              });
+          }
+
+          function load_agency(code_agence_css) {
+              const label_to_show_code = $('#employeur_code')[0];
+
+              $.ajax({
+                  url: `/agences/single_agence/${code_agence_css}.json`,
+                  method: 'get',
+                  dataType: 'json',
+                  success: function (d_data) {
+                      if (d_data) {
+                          label_to_show_code.textContent = `${d_data.description_prest} ${d_data.code_agence_css}`;
+                      } else {
+                          label_to_show_code.textContent = '';
+                      }
+                  },
+                  error: function () {
+                      label_to_show_code.textContent = '';
+                  }
+              });
+          }
+      });
+  </script>
+<% end %>
+

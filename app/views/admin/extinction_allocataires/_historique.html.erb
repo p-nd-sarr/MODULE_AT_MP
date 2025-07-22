@@ -1,0 +1,44 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-12">
+        <div class="ibox">
+            <div class="ibox-title">
+              <h5>Historique</h5>
+            </div>
+            <div class="ibox-content">
+              <div class="row">
+                <div class="col-lg-12">
+                  <h5>Créer Par
+                    : <%= @extinction_allocataire.ajoute_par.try(:full_name) unless @extinction_allocataire.ajoute_par.nil? %> </h5>
+                  <h5>Date de création
+                    : <%= @extinction_allocataire.created_at.strftime("%d/%m/%Y") unless @extinction_allocataire.created_at.nil? %></h5>
+                  <h5>Date de soumission
+                    : <%= @extinction_allocataire.date_soumission.strftime("%d/%m/%Y") unless @extinction_allocataire.date_soumission.nil? %></h5>
+                  <hr>
+                  <h5>Affecter
+                    à: <%= @extinction_allocataire.affecter_allocataire.full_name unless @extinction_allocataire.affectation_allocataire.nil? %> </h5>
+                  <h5>Date
+                    Affectation: <%= @extinction_allocataire.affectation_allocataire_date.strftime("%d/%m/%Y") unless @extinction_allocataire.affectation_allocataire_date.nil? %></h5>
+                  <hr>
+                  <h5>Verifié Par
+                    : <%= @extinction_allocataire.verifie_par.try(:full_name) unless @extinction_allocataire.verifie_par.nil? %> </h5>
+                  <h5>Date de vérification
+                    : <%= @extinction_allocataire.date_verification.strftime("%d/%m/%Y") unless @extinction_allocataire.date_verification.nil? %></h5>
+
+                  <hr>
+                  <h5>Validé Par
+                    : <%= @extinction_allocataire.valider_par.try(:full_name) unless @extinction_allocataire.valider_par.nil? %> </h5>
+                  <h5>Date de validation
+                    : <%= @extinction_allocataire.date_validation.strftime("%d/%m/%Y") unless @extinction_allocataire.date_validation.nil? %></h5>
+                  <hr>
+                  <h5>Rejeté
+                    par: <%= @extinction_allocataire.traite_par.full_name unless @extinction_allocataire.traite_par.nil? %> </h5>
+                  <h5>Date
+                    rejet: <%= @extinction_allocataire.traite_le.strftime("%d/%m/%Y") unless @extinction_allocataire.traite_le.nil? %></h5>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+  </div>
+</div>

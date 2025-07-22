@@ -1,0 +1,88 @@
+<%= content_for :titre_page, "Détails Allocataire. Matricule : #{@matricule}" %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_client_path, class: 'btn btn-primary btn-sm' %>
+  <form role="form" class="form-inline">
+    <div class="form-group">
+      <label for="matricule" class="sr-only">Matricule</label>
+      <input type="number" placeholder="Matricule" id="matricule" name="matricule" value="<%= params[:matricule] %>"
+             class="form-control">
+    </div>
+    <button class="btn btn-white" type="submit">Rechercher</button>
+  </form>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>PERIODE D'ACTIVITE</h5>
+          <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>TOTAL POINTS</h5>
+          <h1 class="no-margins"><%= format_cfa @total_points, false %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>LINEAIRE ?</h5>
+          <h1 class="no-margins"><%= state_yes_no Psrm::Carriere.lineaire?(@matricule) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ibox">
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-lg-4">
+          <b>NOM :</b> <%= @allocataire.try :nom %> <br>
+          <b>PRENOM :</b> <%= @allocataire.try :prenom %> <br>
+          <b>DATE DE NAISSANCE :</b> <%= @allocataire.try :date_naissance %> <br>
+          <b>TELEPHONE :</b> <%= @allocataire.try :telephone %> <br>
+          <b>NIN :</b> <%= @allocataire.try :numero_identification_nationale %> <br>
+          <b>RUE :</b> <%= @allocataire.try :adresse_rue %> <br>
+          <b>VILLE :</b> <%= @allocataire.try :adresse_ville %> <br>
+        </div>
+
+        <div class="col-lg-4">
+          <b>DATE JOUISSANCE :</b> <%= (l @allocataire.try :FAENTR) unless @allocataire.nil? %> <br>
+          <b>AGE REVOLU :</b> <%= @allocataire.try :FAAGE %> <br>
+          <b>SITUATION MATRIMONIALE :</b> <%= @allocataire.try :FAMTNL %> <br>
+          <b>NOMBRE EPOUSES :</b> <%= @allocataire.try :FAEPOU %> <br>
+          <b>NOMBRE D'ENFANTS :</b> <%= @allocataire.try :FAENFF %> <br>
+          <b>NOMBRE D'ENFANTS VEUVE :</b> <%= @allocataire.try :FAENFV %> <br>
+        </div>
+
+        <div class="col-lg-4">
+          <b>DATE EXTINCTION :</b> <%= @allocataire.try :FADFIN %> <br>
+          <b>CODE EXTINCTION :</b> <%= @allocataire.try :FACFIN %> <br>
+          <b>NUMERO DOSSIER :</b> <%= @allocataire.try :FADOSS %> <br>
+          <b>MONTANT PENSION :</b> <%= @allocataire.try :FAPENS %> <br>
+          <b>MONTANT RAPPEL :</b> <%= @allocataire.try :FARAPL %> <br>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+        <%= render 'carrieres/liste',
+                   carrieres: @carrieres,
+                   show_employeur: true,
+                   show_employe: false %>
+      </div>
+    </div>
+  </div>
+</div>

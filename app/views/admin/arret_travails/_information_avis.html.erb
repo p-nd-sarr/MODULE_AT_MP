@@ -1,0 +1,288 @@
+<%page_anchor_tag= 'tab-3'%>
+<%if @demande_arret_travail.peut_avoir_avis?(current_user) && @demande_arret_travail.peut_ajouter_avis?(current_user)%>
+  <%= bootstrap_form_for(@at_avi, url:  admin_arret_travail_add_avi_path(@demande_arret_travail), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+    <%= f.alert_message "Please fix the errors below." %>
+    <div class="ibox">
+      <div class="ibox-title">
+        <h5 style="text-decoration: underline;">Ajouter avis </h5>
+      </div>
+      <div class="ibox-content">
+        <% if current_user.dprp? or current_user.medecin_conseil?%>
+          <div class="row ">
+            <div class="col-lg-12 mt-2">
+              <div class="alert alert-info">
+                <font style="vertical-align: inherit;">
+                  <font style="vertical-align: inherit;">
+                    <h3 class="text-left">
+                      <p class="text-left">
+                        <span><strong>Observation du directeur AT:   </strong>  <%= (" #{@demande_arret_travail.desc_dprp} ") if !@demande_arret_travail.desc_dprp.nil? and current_user.dprp? %> </span>
+                        <span><strong>Observation du directeur AT:   </strong>  <%= (" #{@demande_arret_travail.desc_medecin} ") if !@demande_arret_travail.desc_medecin.nil? and current_user.medecin_conseil? %> </span>
+                      </p>
+                    </h3>
+                  </font>
+                </font>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <div class="row">
+          <div class="col-sm-6 col-md-12 b-r">
+            <%=hidden_field_tag :custom_page, 'information_avis'%>
+            <%=f.hidden_field :arret_travail_id, value: @demande_arret_travail.id%>
+            <%=hidden_field_tag :anchor_tag, page_anchor_tag%>
+            <%=f.hidden_field :fait_par, value: current_user.id%>
+            <%=f.hidden_field :fait_par_profil, value: current_user.type_profil%>
+            <%=f.text_area :description %>
+            <%= f.select :avis, AtAvi::AVIS.keys.collect { |item| [AtAvi.human_enum_name(:avis, item), item] }, label: 'Avis' %> 
+          </div>
+        
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+      </div>
+    </div>
+    <div class="hr-line-dashed"></div>
+    <div class="form-group row">
+      <div class="col-sm-4 pull-right">
+        <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider Avis', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  <% end %>
+<%end%>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h5 style="text-decoration: underline;">Avis </h5>
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow=<%=@demande_arret_travail.avis_restant_pour_cent%> aria-valuemin="0" aria-valuemax="100" style=<%="width:"+@demande_arret_travail.avis_restant_pour_cent.to_s+'%;'%>>
+        <%=@demande_arret_travail.avis_restant%>
+      </div>
+    </div>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Profil</th>
+          <th scope="col">avis</th>
+          <th scope="col">Description</th>
+          <th scope="col">Fait_par</th>
+          <th scope="col">Fait_le</th>
+           <th colspan="2">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @demande_arret_travail.at_avis.each do |avi| %>
+          <tr>
+            <td><%=avi.fait_par_profil%></td>
+            <td><%=avi.avis%></td>
+            <td><%=avi.description%></td>
+            <td><%=avi.avis_de%></td>
+              <td><%=avi.created_at.strftime("%d/%m/%Y à %H:%M")%></td>
+            <%if avi.can_update_or_delete?(current_user)  %>
+              <td>
+                <%= (link_to 'Modifier',edit_admin_arret_travail_at_avi_path(@demande_arret_travail,id: avi), data: { confirm: 'En êtes vous sûr?' },class: 'btn btn-outline btn-warning btn-xs') %>
+              </td>
+              <td style="width: 75px">
+                  <%#= (link_to 'Supprimer',admin_arret_travail_at_avi_path(@demande_arret_travail, id: avi), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs') %>
+                   <%= link_to 'Supprimer',[:admin, @demande_arret_travail, avi],method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+              </td> 
+           <%end%>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+      <div class="col-sm-12 col-md-12">
+        <%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-8", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message "Please fix the errors below." %>
+          <div class="col-sm-4 col-md-4 box2">
+            <% if @demande_arret_travail.accident_cause_par_tiers.nil?%>
+              <%= f.check_box :accident_cause_par_tiers, label:"Recours contre tiers(RCT)", disabled: !current_user.dajc?, id:"rebour_tiers", option: @demande_arret_travail.accident_cause_par_tiers%>
+            <% else %>
+                <%= f.check_box :accident_cause_par_tiers,checked: true, label:"Recours contre tiers(RCT)", disabled: !current_user.dajc?, id:"rebour_tiers", option: @demande_arret_travail.accident_cause_par_tiers%>
+            <% end %>
+          </div>
+          <div id="detail_rebour_tiers" style="display: none;">
+            <div class="col-sm-4 col-md-4">
+              <%= f.text_field :prenom_civilement_responsable, label: "Prénom civilement responsable"%>
+            </div>
+            <div class="col-sm-4 col-md-4">
+              <%= f.text_field :nom_tiers , label: 'Nom'%>
+            </div>
+            <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">    
+              <%= f.text_field :adresse_tiers, label:"Adresse tiers"%>
+            </div>
+            <!-- Responsable -->
+            <div class="col-sm-4 col-md-4" style="margin-top: 20px;">
+              <%= f.text_field :raison_sociale_assureur, label:"Raison sociale"%>
+            </div>
+            <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">
+              <%= f.text_field :adresse_assureur, label: "Adresse assureur"%>
+            </div>
+            <div class="col-sm-4 col-md-4 " style="margin-top: 20px;">
+              <%= f.text_field :numero_police_assurance, label: "Numéro de la police d’assurance"%>
+            </div>
+            <div class="form-group col-md-12">
+              <div class="col-sm-3 col-sm-offset-9" style="text-align: right;">
+                <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                <%# if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+                <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+                <%#end%>
+              </div>
+            </div>
+          </div>
+        <%end%>
+      </div>
+  </div>
+</div>
+
+<%if @demande_arret_travail.peut_ajouter_avis_dprp?(current_user)%>
+  <div class="wrapper wrapper-content">
+    <div class="ibox-content">
+      <%= bootstrap_form_for([:admin, @demande_arret_travail] , label_col: "col-sm-8", control_col: "col-sm-8") do |f| %>
+      
+        <%= f.alert_message "Please fix the errors below." %>
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5 style="text-decoration: underline;">Demander enquête DPRP </h5>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-10 box2">
+                <%= f.check_box :active_enquete_dprp, label: "Activer Enquete DPRP?", disabled: @demande_arret_travail.accepte?, option: @demande_arret_travail.active_enquete_dprp, id: "enquete_drpr" %>
+                <div id="detail_enquete_drpr" style="display: none;">
+                  <%= f.text_area :desc_dprp, size: "70x5", label:"Description: " %>
+                </div>
+                <div class="form-group row">
+                  <div class="form-group col-md-12">
+                    <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                    <%= f.button 'Envoyer', class: 'btn btn-primary',disabled: @demande_arret_travail.accepte? %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+      <%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-8", control_col: "col-sm-8") do |f| %>
+        <%= f.alert_message "Please fix the errors below." %>
+        <div class="ibox ">
+          <div class="ibox-title">
+            <h5 style="text-decoration: underline;">Demander avis Médecin conseil </h5>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-sm-6 col-md-12 b-r">
+                <%#=hidden_field_tag :custom_page, 'information_avis'%>
+                <%#=hidden_field_tag :anchor_tag, page_anchor_tag%>
+                <div class="col-sm-10 box2">
+                  <%= f.check_box :active_avis_medecin, label:"Activer avis medecin",disabled: @demande_arret_travail.accepte?, option: @demande_arret_travail.active_avis_medecin, id:"avis_medecin" %>
+                  <div id="detail_avis_medecin" style="display: none;">
+                    <%= f.text_area :desc_medecin, size: "70x5", label:"Description: " %>
+                      <div class="hr-line-dashed"></div>
+                 
+                  </div>
+                     <div class="form-group row">
+                      <div class="form-group col-md-12">
+                        <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                        <%# if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+                        <%= f.button 'Envoyer', class: 'btn btn-primary',disabled: @demande_arret_travail.accepte? %>
+                        <%#end%>
+                      </div>
+                    </div>
+                </div>
+                
+              </div>
+            
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<%end%>
+
+
+
+
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+     
+        var rebours_tiers= setCheckBoxVal('#rebour_tiers');
+        var enquete_drpr= setCheckBoxVal('#enquete_drpr');
+        var avis_medecin= setCheckBoxVal('#avis_medecin');
+    
+        if(rebours_tiers){
+          tiersVisibility();
+        }
+        if (enquete_drpr){
+          enquetDrprVisibility();
+        }
+        if (avis_medecin){
+          avisMedecinVisibility();
+        }
+        
+      
+        $('#rebour_tiers').change(function() {
+          tiersVisibility();
+
+        });
+
+        $('#enquete_drpr').change(function() {
+          enquetDrprVisibility();
+        });
+
+        $('#avis_medecin').change(function() {
+          avisMedecinVisibility();
+        });
+
+      function tiersVisibility() {
+       var check_avec_tiers=document.getElementById("rebour_tiers");
+         var elem2=document.getElementById("detail_rebour_tiers");
+         if (check_avec_tiers.checked == true) {
+          elem2.style.display="block";
+         }
+         else{
+           elem2.style.display="none";
+         } 
+      }
+
+      function enquetDrprVisibility() {
+         var check_avec_enquete=document.getElementById("enquete_drpr");
+         var elem2=document.getElementById("detail_enquete_drpr");
+         if (check_avec_enquete.checked == true) {
+          elem2.style.display="block";
+         }
+         else{
+           elem2.style.display="none";
+         } 
+      }
+
+      function avisMedecinVisibility() {
+         var check_avec_enquete=document.getElementById("avis_medecin");
+         var elem2=document.getElementById("detail_avis_medecin");
+         if (check_avec_enquete.checked == true) {
+          elem2.style.display="block";
+         }
+         else{
+           elem2.style.display="none";
+         } 
+      }
+
+      function setCheckBoxVal(tagNameId) {
+        var option = $(tagNameId).attr('option');
+        console.log(option);
+        if (option == 'true') {
+          $(tagNameId).prop( "checked", true );
+        } else{
+          $(tagNameId).prop( "checked", false );
+        }    
+      }
+   });
+  </script>
+  
+<% end %>

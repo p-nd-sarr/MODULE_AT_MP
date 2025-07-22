@@ -1,0 +1,102 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-6">
+      <h2><span class="fa fa-calendar"> Création: </span></h2>
+      <hr class="no-margins">
+      <br>
+
+      <p><strong>Ouvert Par: </strong> <%= @regularisation_pension.ajoute_par.full_name %></p>
+      <p><strong>Date de création: </strong> <%= @regularisation_pension.created_at.strftime("%d/%m/%Y à %H:%M") %>
+      </p>
+    </div>
+
+    <div class="col-lg-6">
+      <h2><span class="fa fa-calendar"> Soumission:  </span></h2>
+      <hr class="no-margins">
+      <br>
+      <p><strong>Soumis
+        par: </strong><%= @regularisation_pension.soumis_par.full_name unless @regularisation_pension.soumis_par.nil? %>
+      </p>
+      <p><strong>Date de
+        soumission: </strong> <%= (@regularisation_pension.date_soumission.strftime("%d/%m/%Y à %H:%M")) unless @regularisation_pension.date_soumission.nil? %>
+      </p>
+    </div>
+  </div>
+
+  <br><br>
+
+  <div class="row">
+
+    <div class="col-lg-6">
+      <h2><span class="fa fa-calendar"> Validation en agence </span></h2>
+      <hr class="no-margins">
+      <br>
+      <p>
+        <strong>Par: </strong> <%= @regularisation_pension.validation_agence_par.full_name unless @regularisation_pension.validation_agence_par.nil? %>
+      </p>
+      <p><strong> Date de
+        validation: </strong> <%= @regularisation_pension.date_validation_agence.strftime("%d/%m/%Y à %H:%M") unless @regularisation_pension.date_validation_agence.nil? %>
+      </p>
+    </div>
+
+    <div class="col-lg-6">
+      <h2><span class="fa fa-calendar"> Validation chef section liquidation </span></h2>
+      <hr class="no-margins">
+      <br>
+      <p>
+        <strong>Par: </strong> <%= @regularisation_pension.validation_chef_section_par.full_name unless @regularisation_pension.validation_chef_section_par.nil? %>
+      </p>
+      <h5><strong> Date de
+        validation: </strong>  <%= (@regularisation_pension.date_validation_chef_section.strftime("%d/%m/%Y à %H:%M")) unless @regularisation_pension.date_validation_chef_section.nil? %>
+      </h5>
+    </div>
+
+  </div>
+
+  <br><br>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <h2><span class="fa fa-calendar"> Validation chef service </span></h2>
+      <hr class="no-margins">
+      <br>
+      <p>
+        <strong>Par: </strong> <%= @regularisation_pension.validation_service_par.full_name unless @regularisation_pension.validation_service_par.nil? %>
+      </p>
+      <h5><strong> Date de
+        validation: </strong>  <%= (@regularisation_pension.date_validation_service.strftime("%d/%m/%Y à %H:%M")) unless @regularisation_pension.date_validation_service.nil? %>
+      </h5>
+    </div>
+
+    <div class="col-lg-6">
+      <h2><span class="fa fa-calendar"> Validation directeur prestation </span></h2>
+      <hr class="no-margins">
+      <br>
+      <p>
+        <strong>Par: </strong> <%= @regularisation_pension.validation_direction_par.full_name unless @regularisation_pension.validation_direction_par.nil? %>
+      </p>
+      <p><strong>Date de
+        validation: </strong>  <%= (@regularisation_pension.date_validation_dp.strftime("%d/%m/%Y à %H:%M")) unless @regularisation_pension.date_validation_dp.nil? %>
+      </p>
+    </div>
+
+  </div>
+
+  <br><br>
+
+  <div class="row">
+    <% unless @regularisation_pension.validation_inspection_par.nil? %>
+      <div class="col-lg-6">
+        <h2><span class="fa fa-calendar"> Validation inspection technique </span></h2>
+        <hr class="no-margins">
+        <br>
+        <p>
+          <strong>Par: </strong> <%= @regularisation_pension.validation_inspection_par.full_name unless @regularisation_pension.validation_inspection_par.nil? %>
+        </p>
+        <p><strong>Date de
+          validation: </strong>  <%= (@regularisation_pension.date_validation_inspection.strftime("%d/%m/%Y à %H:%M")) unless @regularisation_pension.date_validation_inspection.nil? %>
+        </p>
+      </div>
+    <% end %>
+  </div>
+</div>

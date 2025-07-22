@@ -1,0 +1,29 @@
+<p>
+  <strong>Prénom:</strong>
+  <%= @dossier_maternite.try(:prenom) %>
+</p>
+<p>
+  <strong>Nom:</strong>
+  <%= @dossier_maternite.try(:nom) %>
+</p>
+<p>
+  <strong>Date de naissance:</strong>
+  <%= @dossier_maternite.try(:date_naissance) %>
+</p>
+
+<p>
+  <strong>Sexe:</strong>
+  <%= @dossier_maternite.try(:sexe_salarie) %>
+</p>
+<p>
+  <strong>Adresse domicile:</strong>
+  <%= @dossier_maternite.try(:adresse_domicile) %>
+</p>
+<p>
+  <strong>Téléphone:</strong>
+  <%= @dossier_maternite.try(:telephone) %>
+</p>
+<p>
+  <strong>Etat:</strong>
+  <%= DossierMaternite.human_enum_name(:etat, @dossier_maternite.etat) %>
+</p>

@@ -1,0 +1,36 @@
+<%= content_for :titre_page, 'Admin Convention Collectives' %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Ajouter', new_admin_convention_collective_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th width="10px">ID</th>
+                <th scope="col">Code</th>
+                <th scope="col">Description</th>
+            <th colspan="2"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @admin_convention_collectives.each do |admin_convention_collective| %>
+    <tr>
+      <td><%= link_to "##{admin_convention_collective.id}", admin_convention_collective %></td>
+                <td><%= admin_convention_collective.code %></td>
+                <td><%= admin_convention_collective.description %></td>
+            <td style="width: 75px">
+        <%= link_to 'modifier', edit_admin_convention_collective_path(admin_convention_collective), class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'supprimer', admin_convention_collective, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+      </td>
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .container {
+        color: black;
+    }
+
+    .with_border {
+        border: 1px solid black;
+    }
+
+    th, td {
+        padding: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <table style="width: 100%;" class="with_border">
+    <tbody>
+    <tr>
+      <td class="with_border">
+        <img style="height: 100px; border-radius: 100%"
+             src="data:image/png;base64,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" alt="">
+      </td>
+      <td class="text-center with_border" style="font-size: 15px; vertical-align: middle">
+        INSTITUTION DE PREVOYANCE RETRAITE DU SENEGAL
+        <br> <br>
+        <strong>
+          RECEPISSE DE DEMANDE DE RENOUVELLEMENT DE CARTE ALLOCATAIRE
+        </strong>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        <table style="width: 100%; font-size: 18px">
+          <tr>
+            <td style="width: 50%;">
+              <strong>Date : </strong> <%=l @demande.created_at.to_date %>
+            </td>
+            <td rowspan="3" class=" text-center">
+              <% if @demande.photo.attached? %>
+                <img style="height: 100px;"
+                     src="data:;base64,<%= Base64.encode64(@demande.photo.download) %> alt="">
+              <% end %>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Numéro document : </strong> <%= @demande.numero_document %>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Agence d'enregistrement : </strong> <%= @demande.agence_enregistrement.try(:description_prest) %>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <br>
+              Votre demande de renouvellement de carte allocataire biométrique a bien été enregistrée avec les informations
+              suivantes :
+              <br>
+              <br>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <strong>Nom : </strong> <%= @demande.nom %>
+            </td>
+            <td>
+              <strong>Numéro allocataire : </strong> <%= @demande.allocataire.numero_allocataire %>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <strong>Prénom : </strong> <%= @demande.prenom %>
+            </td>
+            <td>
+              <strong>Catégorie : </strong> <%= @demande.allocataire.categorie %>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <strong>Date de naissance : </strong> <%= l @demande.date_naissance %>
+            </td>
+            <td>
+              <strong>Adresse : </strong> <%= @demande.adresse %>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <strong>Téléphone : </strong> <%= @demande.telephone %>
+            </td>
+            <td>
+              <strong>Numéro carte nationale d’identité : </strong> <%= @demande.nin %>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <strong>Email : </strong> <%= @demande.email %>
+            </td>
+            <td>
+              <strong>Agence de retrait : </strong> <%= @demande.agence_retrait.try(:description_prest) %>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <br><br>
+              Votre carte sera disponible à l&#39;Agence de retrait choisie dans un délai moyen de 45 jours à compter de la date
+              d&#39;enregistrement.
+              <br><br>
+            </td>
+          </tr>
+
+          <tr>
+            <td colspan="2">
+              <strong>Ce récépissé n&#39;est valable qu&#39;accompagné de la CNI, auprès de toutes les agences de l&#39;IPRES, les partenaires de
+              paiement et centres médico-sociaux.</strong>
+              <br><br>
+              <br><br>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <strong>Il est valide jusqu&#39;au <%=l (@demande.created_at.to_date + 45.days) %>.</strong>
+              <br><br><br><br>
+              <br><br><br><br>
+            </td>
+            <td style="vertical-align: top">
+              <br> <br>
+              <strong>
+                SIGNATURE ET CACHET
+              </strong>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
+

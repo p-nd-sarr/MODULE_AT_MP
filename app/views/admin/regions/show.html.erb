@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_region" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_regions_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_region_path(@admin_region), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter admin_region', new_admin_region_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Designation:</strong>
+              <%= @admin_region.designation %>
+            </p>
+
+            <p>
+              <strong>Code:</strong>
+              <%= @admin_region.code %>
+            </p>
+
+            <p>
+              <strong>Pays:</strong>
+              <%= @admin_region.admin_country.description %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

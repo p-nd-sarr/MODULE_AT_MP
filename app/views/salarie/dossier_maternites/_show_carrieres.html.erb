@@ -1,0 +1,177 @@
+<style type="text/css">
+  .no-text {
+    font-size: 0px;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+<div class="row">
+  <div class="col-lg-12">
+    Délai de stage : <span class="label label-success" style="font-size:13px"><%= @dossier_maternite.delai unless @dossier_maternite.delai_stage.nil? %></span>
+  </div>
+  <div class="col-lg-12">
+    <div class="col-lg-7">
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-id-badge"></span> N° immatriculation employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.num_immatriculation unless @dossier_maternite.num_immatriculation.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-id-badge"></span> Raison sociale employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.raison_sociale unless @dossier_maternite.raison_sociale.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-phone"></span> Téléphone employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.tel_employeur unless @dossier_maternite.tel_employeur.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-envelope"></span> Email employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.email_employeur unless @dossier_maternite.email_employeur.nil? %>
+        </div>
+      </d1>
+    </div>
+
+    <div class="col-lg-5">
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-address-card"></span> Adresse employeur :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.adresse_employeur unless @dossier_maternite.adresse_employeur.nil? %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Date embauche :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <dd class="mb-1"><%= l(@dossier_maternite.date_embauche) unless @dossier_maternite.date_embauche.nil? %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-file"></span> Subrogation :</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <% unless @dossier_maternite.subrogation.nil? %>
+            <% if @dossier_maternite.subrogation? %>
+              Oui
+            <% else %>
+              Non
+            <% end %>
+          <% end %>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-money"></span> Salaire :</dt>
+        </div>
+        <div class="col-sm-6" style="text-align: left;">
+          <%= @dossier_maternite.montant_salaire unless @dossier_maternite.montant_salaire.nil? %>
+        </div>
+      </d1>
+    </div>
+  </div>
+
+  <div class="col-lg-12">
+    <hr>
+  </div>
+  <% unless @carriere_dossier_maternites.nil? or @carriere_dossier_maternites.empty? %>
+    <div class="col-lg-12">
+      <div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+        <table class="table table-striped">
+          <thead class="thead-primary">
+          <tr>
+            <th scope="col">Année</th>
+            <th scope="col">Trimestre</th>
+            <th scope="col">1er mois</th>
+            <th scope="col">2eme mois</th>
+            <th scope="col">3eme mois</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @carriere_dossier_maternites.each do |tdp| %>
+            <tr>
+              <% if tdp.presence_en_heure? %>
+                <% unite = 'h' %>
+              <% else %>
+                <% unite = 'jrs' %>
+              <% end %>
+              <td><%= tdp.annee %></td>
+              <td><%= CarriereDossierMaternite.human_enum_name(:trimestre, tdp.trimestre) %></td>
+              <td><%= tdp.premier_mois.to_s + ' ' + unite %></td>
+              <td><%= tdp.deuxiem_mois.to_s + ' ' + unite %></td>
+              <td><%= tdp.troisiem_mois.to_s + ' ' + unite %></td>
+
+              <td style="width: 75px">
+                <%= link_to 'détails', admin_dossier_maternite_path(@dossier_maternite), class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+              <td style="width: 75px">
+                <%= link_to "supprimer", admin_dossier_maternite_destroy_carriere_path(@dossier_maternite, tdp.id),
+                            method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'},class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+<!--<div class="row" style="margin-top:20px">-->
+<!--  <div class="col-lg-12" style="text-align:center;">-->
+<!--    <button type="button" class="btn btn-outline btn-success" data-toggle="modal" data-target="#tdp">Renseigner le temps-->
+<!--      de présence-->
+<!--    </button>-->
+<!--  </div>-->
+<!--</div>-->
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#ajouter_document_tdp").click(function () {
+            $('#ajouter_document_tdp').hide();
+            $('#new_carriere_dossier_maternite').show();
+            return false;
+        });
+    })
+</script>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+          var input = document.getElementById('label-ext');
+          var infoArea = document.getElementById('doc-name');
+          input.addEventListener('change', showFileName);
+
+          function showFileName(event) {
+              var input = event.srcElement;
+              var fileName = input.files[0].name;
+              infoArea.textContent = fileName;
+          }
+      });
+  </script>
+<% end %>

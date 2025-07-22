@@ -1,0 +1,213 @@
+<% if @revision_pension.current_state >= :cotisation_valide %>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Régime Général</th>
+      <th scope="col">Régime Cadre</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+      <td>Points de cotisation</td>
+      <td><%= @revision_pension.points_cotisation_rg %></td>
+      <td><%= @revision_pension.points_cotisation_rc %></td>
+    </tr>
+    <tr>
+      <td>Points de minoration</td>
+      <td><%= @revision_pension.points_minoration_rg %></td>
+      <td><%= @revision_pension.points_minoration_rc %></td>
+    </tr>
+    <tr>
+      <td>Points de majoration</td>
+      <td><%= @revision_pension.points_majoration_rg %></td>
+      <td><%= @revision_pension.points_majoration_rc %></td>
+    </tr>
+    <tr>
+      <td>Points de base</td>
+      <td><%= @revision_pension.points_base_rg %></td>
+      <td><%= @revision_pension.points_base_rc %></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h4>Montant à payer suite à la révision de carrière</h4>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <td>periode Début</td>
+      <td>Période Fin</td>
+      <td>Point Révisé RG</td>
+      <td>Valeur mensuel point RG</td>
+      <td>Montant mensuel RG</td>
+      <td>Point Révisé RCC</td>
+      <td>Valeur mensuel point RCC</td>
+      <td>Montant mensuel RCC</td>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @revision_pension.montant_revisions.order(annee: :asc).each do |montant_revision| %>
+      <tr>
+        <td><%= l montant_revision.periode_debut %></td>
+        <td><%= l montant_revision.periode_fin %></td>
+        <td><%= montant_revision.points_cotisation_rg %></td>
+        <td><%= montant_revision.calcul_barem_reg.round(2) %></td>
+        <td><%= montant_revision.calcul_allocation_regime_general.ceil %></td>
+        <td><%= montant_revision.points_cotisation_rc %></td>
+        <td><%= montant_revision.calcul_barem_rcc.round(2) %></td>
+        <td><%= montant_revision.calcul_allocation_regime_cadre.ceil %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <h3>Montant à régulariser : <%= format_cfa @revision_pension.montant_revision_total %></h3> <br>
+
+  <!-- Afficher a titre informatif le tableeau récap apres revision et mise à jour -->
+
+  <h4>Tableau récapitulatif des points de l'allocataire après la validation de la révision</h4>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Régime Général</th>
+      <th scope="col">Régime Cadre</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr>
+      <td>Points de cotisation</td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.points_rg) %></td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.points_rc) %></td>
+    </tr>
+    <tr>
+      <td>Points gratuits</td>
+      <td class="text-right">0</td>
+      <td class="text-right">0</td>
+    </tr>
+    <tr>
+      <td>Points de base</td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.points_base_rg) %></td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.points_base_rc) %></td>
+    </tr>
+    <tr>
+      <td>Points de minoration</td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.point_minoration_rg || 0) %></td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.point_minoration_rc || 0) %></td>
+    </tr>
+
+    <tr>
+      <td>Points de majoration</td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.point_majoration_rg || 0) %></td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.point_majoration_rc || 0) %></td>
+    </tr>
+    <tr>
+      <td>Points à servir</td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.points_servis_rg) %></td>
+      <td class="text-right"><%= format_entier (@revision_pension.allocataire.points_servis_rc) %></td>
+    </tr>
+    </tbody>
+  </table>
+
+
+<% else %>
+  <h4> Les carrières ne sont pas encore soumises pour validation.</h4>
+<% end %>
+
+
+<div class="modal inmodal" id="tableaux_recap" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@carriere, url: admin_allocataire_revision_pension_ajouter_carriere_path(@allocataire, @revision_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Tableau recap </h4>
+        </div>
+        <div class="modal-body" style="background-color: #fff">
+          <% @revision_pension.montant_revisions.order(annee: :asc).each do |montant_revision| %>
+
+            <div id="<%= "montant_#{montant_revision.id}"%>" style="background-color: #fff">
+            <h5>Période : <%= "#{l montant_revision.periode_debut} au #{l montant_revision.periode_fin}" %></h5>
+            <table class="table table-bordered" >
+              <thead>
+              <tr>
+                <th scope="col"></th>
+                <th scope="col">Régime Général</th>
+                <th scope="col">Régime Cadre</th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <tr>
+                <td>Points de cotisation</td>
+                <td><%= montant_revision.calcul_points_regime_general %></td>
+                <td><%= montant_revision.calcul_points_regime_cadre %></td>
+              </tr>
+              <tr>
+                <td>Points de minoration</td>
+                <td><%= montant_revision.calcul_points_minoration_regime_general %></td>
+                <td><%= montant_revision.calcul_points_minoration_regime_cadre %></td>
+              </tr>
+              <tr>
+                <td>Points de base</td>
+                <td><%= montant_revision.calcul_points_base_regime_general %></td>
+                <td><%= montant_revision.calcul_points_base_regime_cadre %></td>
+              </tr>
+              <tr>
+                <td>Points de majoration</td>
+                <td><%= montant_revision.calcul_points_majoration_regime_general %></td>
+                <td><%= montant_revision.calcul_points_majoration_regime_cadre %></td>
+              </tr>
+              <tr>
+                <td>Points à servir</td>
+                <td><%= montant_revision.calcul_points_servis_regime_general %></td>
+                <td><%= montant_revision.calcul_points_servis_regime_cadre %></td>
+              </tr>
+              <tr>
+                <td>Points gratuits</td>
+                <td><%= montant_revision.calcul_points_gratuits_regime_general %></td>
+                <td><%= montant_revision.calcul_points_gratuits_regime_cadre %></td>
+              </tr>
+              </tbody>
+            </table>
+
+              <h5>Montant Pension</h5>
+              <h5>Régime Général: <%= format_cfa montant_revision.montant_revision_rg %></h5>
+              <h5>Régime Cadre: <%= format_cfa montant_revision.montant_revision_rc%></h5>
+            </div>
+          <% end %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal" >Fermer</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+          <% @revision_pension.montant_revisions.each do |montant_revision| %>
+
+          $('#montant_<%=montant_revision.id %>').hide();
+
+          <% end %>
+
+          $("button").click(function() {
+              $('#' + this.id.replace("button_", "")).show();
+          });
+      })
+  </script>
+<% end %>

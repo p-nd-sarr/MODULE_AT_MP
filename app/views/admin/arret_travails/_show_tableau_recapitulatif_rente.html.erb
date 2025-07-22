@@ -1,0 +1,39 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">Montant</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr>
+    <td>Salaire annuel</td>
+      <td><%= @demande_arret_travail.at_consolidation.salaire_annuel %></td>
+  </tr>
+  <tr>
+    <td>Taux utile</td>
+    <td><%= @demande_arret_travail.at_consolidation.taux_utile %>%</td>
+  </tr>
+    <tr>
+    <td>âge à la conversion </td>
+    <td><%=@demande_arret_travail.at_consolidation.age_conversion%> années</td>
+  </tr>
+  <tr>
+    <td>Prix du franc de rente </td>
+     <td><%=@demande_arret_travail.at_consolidation.prix_franc_rente%> </td>
+  </tr>
+
+  <tr>
+    <td>Montant annuel rente</td>
+     <td><%=@demande_arret_travail.at_consolidation.montant_annuel_rente%> </td>
+  </tr>
+    <tr>
+    <td>Type de versement de la rente</td>
+     <td><%=@demande_arret_travail.at_consolidation.type_versement_rente%> </td>
+  </tr>
+  </tbody>
+</table>
+<h3>
+Montant <%=@demande_arret_travail.at_consolidation.type_versement_rente %> est : <%=@demande_arret_travail.at_consolidation.montant_versement %> Franc CFA
+</h3>

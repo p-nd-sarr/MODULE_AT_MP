@@ -1,0 +1,50 @@
+<%= content_for :titre_page do %>
+  Liste des employeurs
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Chargements EDI', chargements_edi_admin_employeurs_path, class: 'btn btn-primary btn-sm' %>
+  <%= link_to 'Déclarations manquantes', declarations_manquantes_admin_employeurs_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'search_employeur' %>
+    <% if @employeurs.count.zero? %>
+      <h2 style="text-align:center">
+        <hr>
+        La liste est vide !!!
+      </h2>
+    <% else %>
+      <br>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Numéro Unique</th>
+          <th scope="col">Numéro Ipres</th>
+          <th scope="col">Numéro CSS</th>
+          <th scope="col">Raison Sociale</th>
+          <th scope="col">Telephone</th>
+          <th colspan="2"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @employeurs.each do |employeur| %>
+          <tr>
+            <td><%= employeur.fhnum %></td>
+            <td><%= employeur.ancien_num_ipres %></td>
+            <td><%= employeur.ancien_num_css %></td>
+            <td><%= employeur.fhrsoc %></td>
+            <td><%= employeur.fhtel %></td>
+            <td style="width: 75px">
+              <%= link_to 'Détails', admin_employeur_path(employeur.id), class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @employeurs %>
+
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<%= content_for :titre_page, "Motif du rejet de la demande de reversion" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= bootstrap_form_for(@cfs_reversion_veuve, url: admin_cfs_reversion_veuve_rejeter_process_path(@cfs_reversion_veuve), layout: :horizontal) do |f| %>
+      <%= f.text_area :motif, label: 'Motif' %>
+
+      <div class="hr-line-dashed"></div>
+
+      <div class="form-group row">
+        <div class="col-sm-4 col-sm-offset-2">
+          <%= link_to 'Annuler', admin_cfs_reversion_veuves_path, class: 'btn btn-white' %>
+          <%= f.button 'Rejeter', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+</div>
+</div>

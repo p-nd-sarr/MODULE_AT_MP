@@ -1,0 +1,205 @@
+<% if @demande_liquidation.current_state >= :cotisation_valide %>
+  <% cache @demande_liquidation do %>
+    <h4>Nom et Prénom: <%= @demande_liquidation.prenom %> <%= @demande_liquidation.nom %></h4>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">Régime Général</th>
+        <th scope="col">Régime Cadre</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% if @demande_liquidation.allocataire.nil? %>
+        <tr>
+          <td>Points de cotisation</td>
+          <td><%= @demande_liquidation.calcul_points_regime_general %></td>
+          <td><%= @demande_liquidation.calcul_points_regime_cadre %></td>
+        </tr>
+        <tr>
+          <td>Points gratuits</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points de base</td>
+          <td><%= @demande_liquidation.calcul_points_base_regime_general %></td>
+          <td><%= @demande_liquidation.calcul_points_base_regime_cadre %></td>
+        </tr>
+        <tr>
+          <td>Points de minoration</td>
+          <td><%= @demande_liquidation.calcul_points_minoration_regime_general %></td>
+          <td><%= @demande_liquidation.calcul_points_minoration_regime_cadre %></td>
+        </tr>
+
+        <tr>
+          <td>Points de majoration</td>
+          <td><%= @demande_liquidation.calcul_points_majoration_regime_general %></td>
+          <td><%= @demande_liquidation.calcul_points_majoration_regime_cadre %></td>
+        </tr>
+
+        <tr>
+          <td>Points Complémentaire</td>
+          <td><%= @demande_liquidation.calcul_points_complementaires %></td>
+          <td><%= @demande_liquidation.calcul_points_complementaires %></td>
+        </tr>
+
+
+        <tr>
+          <td>Points à servir</td>
+          <td><%= @demande_liquidation.calcul_points_servis_regime_general %></td>
+          <td><%= @demande_liquidation.calcul_points_servis_regime_cadre %></td>
+        </tr>
+      <% else %>
+        <tr>
+          <td>Points de cotisation</td>
+          <td><%= @demande_liquidation.allocataire.points_rg %></td>
+          <td><%= @demande_liquidation.allocataire.points_rc %></td>
+        </tr>
+        <tr>
+          <td>Points gratuits</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points de base</td>
+          <td><%= @demande_liquidation.allocataire.points_base_rg %></td>
+          <td><%= @demande_liquidation.allocataire.points_base_rc %></td>
+        </tr>
+        <tr>
+          <td>Points de minoration</td>
+          <td><%= @demande_liquidation.allocataire.point_minoration_rg %></td>
+          <td><%= @demande_liquidation.allocataire.point_minoration_rc %></td>
+        </tr>
+
+        <tr>
+          <td>Points de majoration</td>
+          <td><%= @demande_liquidation.allocataire.point_majoration_rg %></td>
+          <td><%= @demande_liquidation.allocataire.point_majoration_rc %></td>
+        </tr>
+
+        <tr>
+          <td>Points complémentaires</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+
+        <tr>
+          <td>Points à servir</td>
+          <td><%= @demande_liquidation.allocataire.points_servis_rg %></td>
+          <td><%= @demande_liquidation.allocataire.points_servis_rc %></td>
+        </tr>
+        <% if not @demande_liquidation.allocataire.versement_unique? %>
+          <tr>
+            <td>Valeur Point Mensuel</td>
+            <td><%= @demande_liquidation.montant_valeur_point_rg %></td>
+            <td><%= @demande_liquidation.montant_valeur_point_rc %></td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+
+    <h3>
+      Durée d'affiliation :
+      <%#= format_cfa @demande_liquidation.calcul_allocation %>
+      <%= @demande_liquidation.nb_mois_travail %> mois
+    </h3>
+
+    <h3>
+      <% if @demande_liquidation.allocataire.nil? %>
+        <% if @demande_liquidation.versement_mensuel? %>
+          Pension mensuelle :
+        <% else %>
+          Versement unique :
+        <% end %>
+        <%= format_cfa @demande_liquidation.calcul_allocation + @demande_liquidation.calcul_subvention %>
+      <% else %>
+        <% if @demande_liquidation.allocataire.versement_unique? %>
+          Versement unique :
+        <% else %>
+          Pension mensuelle :
+        <% end %>
+        <%= format_cfa @demande_liquidation.allocataire.montant_net unless @demande_liquidation.allocataire.nil?%>
+      <% end %>
+    </h3>
+
+    <% montant_subvention = @demande_liquidation.allocataire.try(:montant_subvention) || @demande_liquidation.calcul_subvention %>
+
+    <% unless montant_subvention.zero? %>
+      <h3>
+        Montant subvention:
+        <%= format_cfa montant_subvention %>
+      </h3>
+    <% end %>
+
+    <h3>
+      Date d'entrée en jouissance
+      : <%= (@demande_liquidation.calcul_date_jouissance).strftime('%d-%m-%Y') %>
+    </h3>
+    <br>
+
+    <br>
+
+    <h5 class="text-info">
+      Taux de majoration :
+      <%= @demande_liquidation.allocataire.try(:pourcentage_majoration) || @demande_liquidation.taux_majoration %>%
+    </h5>
+
+    <h5 class="text-info">
+      Taux de minoration Régime Général
+      : <%= @demande_liquidation.allocataire.try(:pourcentage_minoration_rg) || @demande_liquidation.taux_minoration_rg %>
+      %
+      <br>
+      Taux de minoration Régime
+      Cadre: <%= @demande_liquidation.allocataire.try(:pourcentage_minoration_rc) || @demande_liquidation.taux_minoration_rc %>
+      %
+
+    </h5>
+
+    <div>
+      <%#= @demande_liquidation.carriere.taux_majoration %>
+      <% if @demande_liquidation.creation? or @demande_liquidation.soumis? %>
+        <strong>
+          <em>sous réserve de validation définitive de la demande</em>
+        </strong>
+      <% elsif @demande_liquidation.dossier_valide? %>
+        <strong>
+          <em>sous réserve de révision du dossier</em>
+        </strong>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <h4> Les carrières ne sont pas encore validées.</h4>
+<% end %>
+
+<% if @demande_liquidation.dossier_valide? and @demande_liquidation.versement_mensuel? %>
+  <% cache [@demande_liquidation, @demande_liquidation.calcul_date_jouissance] do %>
+    <% @tableau_rappel, @montant_total_rappel, @date_prochain_rappel = @demande_liquidation.tableau_rappel %>
+    <hr>
+    <h3>TABLEAU EXPLICATIF DU RAPPEL</h3>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <tr>
+        <td>Mois</td>
+        <td>Montant</td>
+      </tr>
+      <% @tableau_rappel.each do |rappel| %>
+        <tr>
+          <td><%= rappel[0] %></td>
+          <td><%= format_cfa rappel[1] %></td>
+        </tr>
+      <% end %>
+    </table>
+    <hr>
+    <h5><strong>Montant Rappel Total: </strong> <%= format_cfa @montant_total_rappel %></h5>
+
+    <h5><strong>Prochain Paiement: </strong>
+      <%= @date_prochain_rappel.beginning_of_month.strftime("%d/%m/%Y") %> - <%= @date_prochain_rappel.end_of_month.strftime("%d/%m/%Y") %>
+      <%= format_cfa (@demande_liquidation.calcul_allocation + @demande_liquidation.calcul_subvention)%>
+    </h5>
+  <% end %>
+<% end %>

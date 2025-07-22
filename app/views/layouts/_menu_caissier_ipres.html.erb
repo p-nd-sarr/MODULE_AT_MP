@@ -1,0 +1,11 @@
+<li class="<%= 'active' if is_active_controller('caisse/paiements') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Factures</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('caisse/paiements') %>">
+    <li class="<%= 'active' if is_active_controller('caisse/paiements') and is_active_action('index') %>">
+      <%= link_to 'Toutes les factures', caisse_paiements_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('caisse/paiements') and is_active_action('mine') %>">
+      <%= link_to 'Que j''ai payé', mine_caisse_paiements_path %>
+    </li>
+  </ul>
+</li>

@@ -1,0 +1,64 @@
+<div class="row" style="margin-top: 20px;">
+  <div class="col-lg-12">
+    <div class="m-b-md">
+      <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+        <button type="button" class="btn btn-success btn-outline" data-toggle="modal" data-target="#infoSalarieAT" style="float: right;"><span class="fa fa-edit"></span> Modifier les informations</button>
+      <%end%>
+      
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-6">
+    
+   <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Infirmite anterieure accident:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.infirmite_anterieure_accident ? 'OUI' : 'NON' %></dd>
+      </div>
+    </d1>
+      
+    
+  </div>
+  <div class="col-lg-6">
+    
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Taux infirmité anterieur accident:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.taux_infirmite_anterieure_accident %></dd>
+      </div>
+    </d1>
+    
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Numéro rente anterieur accident:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.numero_rente_infirmite_anterieure_accident %></dd>
+      </div>
+    </d1>
+  </div>
+</div>
+<% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+  <div class="row">
+        <div class="col-lg-12">
+          <d1 class="row mb-0">
+            <div class="col-sm-2" style="text-align: right;">
+              <dt>Progression: </dt>
+            </div>
+            <div class="col-sm-10" style="text-align: left;">
+              <dd>
+                <div class="progress m-b-1">
+                  <div style="width: 60%" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+                </div>
+                <small style="padding-top: 0px;">Profile complet à 60%</small>
+              </dd>
+            </div>
+          </d1>
+        </div>
+  </div>
+<%end%>

@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_jour_ouvrable_annuel" %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Retour', admin_jour_ouvrable_annuels_path, class: 'btn btn-white btn-sm' %>
+  <%#= link_to 'Modifier', edit_admin_jour_ouvrable_annuel_path(@admin_jour_ouvrable_annuel), class: 'btn btn-white btn-sm' %>
+  <%#= link_to 'Ajouter admin_jour_ouvrable_annuel', new_admin_jour_ouvrable_annuel_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Prénom:</strong>
+              <%= @icm_modifier_info_personnelle.prenom unless @icm_modifier_info_personnelle.nil? %>
+            </p>
+
+            <p>
+              <strong>Nom:</strong>
+              <%= @icm_modifier_info_personnelle.nom unless @icm_modifier_info_personnelle.nil? %>
+            </p>
+
+            <p>
+              <strong>Téléphone:</strong>
+              <%= @icm_modifier_info_personnelle.telephone unless @icm_modifier_info_personnelle.nil? %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

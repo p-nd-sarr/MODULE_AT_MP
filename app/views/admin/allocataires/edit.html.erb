@@ -1,0 +1,11 @@
+<%= content_for :titre_page, "Modification allocataire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_allocataire_path(@allocataire), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'form' %>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+<%= content_for :titre_page, 'Demande Remboursement Cotisations' %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Demande de liquidation de pension</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-success font-bold">
+            0%
+            <i class="fa fa-bolt"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Demande de régularisaton de pension</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-info font-bold">
+            0%
+            <i class="fa fa-level-up"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Demande de modification de dossier</h5>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margin">0</h1>
+          <div class="stat-percent text-info font-bold">
+            0%
+            <i class="fa fa-level-up"></i>
+          </div>
+          <small>Nombre de demande</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" style="margin-top: -50px; min-height: 300px;">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-content">
+          <%= render 'search' %>
+          <br>
+          <%= render 'liste' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

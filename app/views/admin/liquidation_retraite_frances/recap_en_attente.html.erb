@@ -1,0 +1,13 @@
+<%= content_for :titre_page, "Demandes de liquidation retraité en attente de validation Recap" %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Ajouter une demande', new_admin_liquidation_retraite_france_path, class: 'btn btn-primary btn-sm' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'liste' %>
+  </div>
+</div>

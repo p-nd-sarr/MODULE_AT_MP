@@ -1,0 +1,144 @@
+<%= content_for :titre_page, "#{User.human_enum_name(:type_profil, @type_profil) if @type_profil}" %>
+
+<%= content_for :actions_page do %>
+  <div class="dropdown">
+    <button class="btn btn-danger btn-sm btn-outline dropdown-toggle" type="button" data-toggle="dropdown">
+      <span class="fa fa-users"></span> Types d'utilisateurs <span class="caret"></span>
+    </button>
+    <div class="ibox dropdown-menu" style="height: 300px; overflow-y: auto; background-color: rgba(150,150,150,0.8);">
+      <div class="ibox-content">
+        <div class="file-manager">
+          <ul class="folder-list">
+            <% for type_profil in User::TYPE_PROFIL.keys.collect %>
+              <li>
+                <%= link_to User.human_enum_name(:type_profil, type_profil), admin_users_path(type_profil: type_profil) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Liste des comptes</h5> <span class="label label-warning"><%= @users.count %></span>
+          <div class="ibox-tools">
+            <%= link_to ' Ajouter un compte', new_admin_user_path, class: 'fa fa-plus btn btn-primary btn-xs' %>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <%= search_form_for @q, url: request.path do |f| %>
+                <div class="row">
+                  <div class="col-sm-3">
+                    <%= f.label :prenom_cont, 'Prénom' %>
+                    <%= f.search_field :prenom_cont, class: 'form-control' %>
+                  </div>
+                  <div class="col-sm-3">
+                    <%= f.label :nom_cont, 'Nom' %>
+                    <%= f.search_field :nom_cont, class: 'form-control' %>
+                  </div>
+                  <div class="col-sm-3">
+                    <%= f.label :email_cont, 'Email' %>
+                    <%= f.search_field :email_cont, class: 'form-control' %>
+                  </div>
+                  <div class="col-sm-3">
+                    <%= f.label :type_profil_eq, 'Type Profil' %>
+                    <%= f.select :type_profil_eq, User.type_profils.to_a.map { |w| [User.human_enum_name(:type_profil, w[0]), w[1]] },
+                                 {:include_blank => true}, class: 'form-control' %>
+                  </div>
+                </div>
+
+                <div class="hr-line-dashed"></div>
+
+                <%= f.submit class: 'btn btn-primary' %>
+              <% end %>
+
+              <%#= search_form_for @q, url: admin_users_path do |f| %>
+              <!--                <div class="input-group col-lg-12">-->
+              <!--                  <div class="col-lg-10">-->
+              <%#= f.search_field :prenom_or_nom_or_email_or_type_profil_cont, class: "form-control form-control-sm", placeholder: "Entrer le nom, le prénom, le profil ou l'e-mail d'un utilisateur", style: "width:100%; position: relative; z-index: 1" %>
+              <!--                  </div>-->
+              <!--                  <div class="input-group-append col-lg-2" style="padding-left: 0px;">-->
+              <%#= f.submit "Chercher utilisateur", :class => "btn btn-outline btn-success", :style => "height:34px" %>
+              <!--                  </div>-->
+              <!--                </div>-->
+              <%# end %>
+
+            </div>
+            <div class="col-lg-12">
+              <%= paginate @users %>
+              <% if @users.count.zero? %>
+                <h2 style="text-align:center">
+                  <hr>
+                  La liste est vide !!!
+                </h2>
+              <% else %>
+                <table class="footable table" data-page-size="8" data-filter="#filter" style="margin-top: 30px;">
+                  <thead>
+                  <tr>
+                    <th scope="col">Prénom</th>
+                    <th scope="col">Nom</th>
+                    <% if !@type_profil %>
+                      <th scope="col">Profil</th>
+                    <% end %>
+                    <th scope="col">Email</th>
+                    <th scope="col">Téléphone</th>
+                    <th scope="col">Actif?</th>
+                    <th colspan="2"></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <% @users.each do |user| %>
+                    <tr>
+                      <td><%= user.prenom %></td>
+                      <td><%= user.nom %></td>
+                      <% if !@type_profil %>
+                        <td><%= user.type_profil %>
+                        </td>
+                      <% end %>
+                      <td><%= user.email %></td>
+                      <td><%= user.phone_national %></td>
+                      <td><%= state_yes_no user.actif? %></td>
+                      <td style="width: 75px">
+                        <%= link_to 'Détails', [:admin, user], class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <td width="90px" class="dropdown">
+                        <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Actions
+                          <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <%= link_to 'Modifier', edit_admin_user_path(user) %>
+                          </li>
+                          <li>
+                            <% unless current_user == user %>
+                              <% if user.actif? %>
+                                <%= link_to 'Désactiver', admin_user_desactiver_path(user) %>
+                              <% else %>
+                                <%= link_to 'Activer', admin_user_activer_path(user) %>
+                              <% end %>
+                            <% end %>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+              <%= paginate @users %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

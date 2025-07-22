@@ -1,0 +1,12 @@
+<li class="<%= 'active' if is_active_controller('admin/dossier_juridiques') %>">
+  <a href="#"><i class="fa fa-folder"></i>
+    <span class="nav-label">Gestion affaires juridiques</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/utilisateurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/dossier_juridiques') and is_active_action('index') %>">
+      <%= link_to 'Accueil', admin_dossier_juridiques_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/dossier_juridiques') and is_active_action('new') %>">
+      <%= link_to "Ajouter un dossier", new_admin_dossier_juridique_path %>
+    </li>
+  </ul>
+</li>

@@ -1,0 +1,119 @@
+<%= content_for :titre_page, "Modification mode paiement pour en vérification" %>
+<%= content_for :actions_page do %>
+<button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#affectation_multiple">
+    Affectation multiple
+</button>
+
+<div class="modal inmodal" id="affectation_multiple" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+    <%= form_tag  affectation_multiple_admin_modifier_mode_paiements_path, method: :post do %>
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">x</span>
+            <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">Affectation multiple </h4>
+        </div>
+        <div class="modal-body">
+            <label>Choisis un gestionnaire</label>
+            <%= select_tag 'user_id', options_for_select(User.gestionnaire_compte_allocataire.collect{ |u| [u.email, u.id] }), class: 'form-control' %> <br>
+            <table class="table table-striped" style="margin-top: 20px">
+
+             <label>Séléctionner les dossiers à affecter</label>
+                <thead>
+                    <tr>
+                        <th data-sort-ignore="true"><input type="checkbox" id="selectAll"></input></th>
+                        <th scope="col">Matricule</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Mode paiement</th>
+                        <th scope="col">Etat</th>
+                
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% @modifier_mode_paiements.each do |modifier_mode_paiement| %>
+                        <tr>
+                            <td><%= check_box_tag "at_ids[]", modifier_mode_paiement.id, false, class: 'selectable' %></td>
+                        
+                            <td><%= modifier_mode_paiement.numero_allocataire %></td>
+                            <td><%= modifier_mode_paiement.prenom %></td>
+                            <td><%= modifier_mode_paiement.nom %></td>
+                            <td><%= modifier_mode_paiement.mode_paiement %></td>
+                            <td><%= modifier_mode_paiement.workflow_state %></td>
+                            
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <%= submit_tag "affecter", class: "btn btn-primary btn-sm" %>
+        </div>
+        </div>
+    </div>
+    <% end %>
+</div>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+        <div class="form-group row">
+          
+            <div class="col-sm-4">
+                <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+                <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+            </div>
+
+            <div class="col-sm-4">
+                <%= f.label :mode_paiement_eq, 'Mode de paiement' %>
+                <%= f.select :mode_paiement_eq, ModifierModePaiement.mode_paiements.to_a.map { |w| [ModifierModePaiement.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                    { :include_blank => true }, class: 'form-control' %>
+            </div>
+
+            <div class="col-sm-4">
+                <%= f.label :workflow_state_eq, 'Etat' %>
+                <%= f.select :workflow_state_eq, ModifierModePaiement.workflow_spec.states.keys.map { |k| [ModifierModePaiement.workflow_spec.states[k].meta[:label], k] },
+                    { :include_blank => true }, class: 'form-control' %>
+            </div>
+        </div>   
+
+        <div class="col-sm-12">
+            <div class="hr-line-dashed"></div>
+            <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+            <%#= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+            <div class="hr-line-dashed"></div>
+        </div>
+    <% end %>
+
+     <%= render "liste_modifier_mode_paiement" %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= en_attente_affectation_admin_modifier_mode_paiements_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= en_attente_affectation_admin_modifier_mode_paiements_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

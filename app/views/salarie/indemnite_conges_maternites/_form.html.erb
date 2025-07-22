@@ -1,0 +1,94 @@
+<%= bootstrap_form_for([:salarie, @dossier_maternite, @indemnite_conges_maternite], layout: :horizontal) do |f| %>
+  <%= f.alert_message 'aa' %>
+  <%= f.select :tranche_paiement, IndemniteCongesMaternite::TRANCHE_PAIEMENT.keys.collect{ |tranche_paiement|
+    [IndemniteCongesMaternite.human_enum_name(:tranche_paiement, tranche_paiement), tranche_paiement] },
+               label: 'Tranche Paiement' %>
+  <div id="conges">
+    <%= f.date_select :debut_conges, label: "Debut Congés",
+                      start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+  </div>
+  <div id="accouchement">
+    <%= f.date_select :date_accouchement, label: "Date Accouchement",
+                      start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+    <%= f.file_field :attestation_accouchement, label: 'Attestation accouchement', required:false %>
+  </div>
+  <div id="reprise">
+    <%= f.date_select :date_reprise_service, label: "Date Reprise",
+                      start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+    <%= f.file_field :certificat_reprise, label: 'Certificat reprise', required:false %>
+  </div>
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', salarie_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+          afficherDate();
+
+          $("#indemnite_conges_maternite_tranche_paiement").change(function () {
+              afficherDate()
+          });
+
+          function afficherDate() {
+              var tranche = $('#indemnite_conges_maternite_tranche_paiement').val();
+              if (tranche === 'avant_acouchement') {
+                  $('#indemnite_conges_maternite_debut_conges_3i').prop( "disabled", false ).val('');
+                  $('#indemnite_conges_maternite_debut_conges_2i').prop( "disabled", false ).val('');
+                  $('#indemnite_conges_maternite_debut_conges_1i').prop( "disabled", false ).val('');
+
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop( "disabled", true ).val('');
+
+                  $('#indemnite_conges_maternite_date_reprise_service_3i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_reprise_service_2i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_reprise_service_1i').prop( "disabled", true ).val('');
+
+                  $('#conges').show();
+                  $('#accouchement').hide();
+                  $('#reprise').hide();
+              } else if (tranche === 'apres_acouchement') {
+                  $('#indemnite_conges_maternite_debut_conges_3i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_debut_conges_2i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_debut_conges_1i').prop( "disabled", true ).val('');
+
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop( "disabled", false ).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop( "disabled", false ).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop( "disabled", false ).val('');
+
+                  $('#indemnite_conges_maternite_date_reprise_service_3i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_reprise_service_2i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_reprise_service_1i').prop( "disabled", true ).val('');
+
+                  $('#conges').hide();
+                  $('#accouchement').show();
+                  $('#reprise').hide();
+              }else if (tranche === 'apres_reprise') {
+                  $('#indemnite_conges_maternite_debut_conges_3i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_debut_conges_2i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_debut_conges_1i').prop( "disabled", true ).val('');
+
+                  $('#indemnite_conges_maternite_date_accouchement_3i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_2i').prop( "disabled", true ).val('');
+                  $('#indemnite_conges_maternite_date_accouchement_1i').prop( "disabled", true ).val('');
+
+                  $('#indemnite_conges_maternite_date_reprise_service_3i').prop( "disabled", false ).val('');
+                  $('#indemnite_conges_maternite_date_reprise_service_2i').prop( "disabled", false ).val('');
+                  $('#indemnite_conges_maternite_date_reprise_service_1i').prop( "disabled", false ).val('');
+
+                  $('#conges').hide();
+                  $('#accouchement').hide();
+                  $('#reprise').show();
+              }
+          }
+      })
+  </script>
+<% end %>

@@ -1,0 +1,37 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numéro affiliation',
+      'Ancien numéro IPRES',
+      'Prénom',
+      'Nom',
+      'Sexe',
+      'Adresse rue',
+      'Adresse ville',
+      'Nombre epoux/epouses',
+      'Nombre enfants',
+      'Catégorie',
+      'Mode de paiement',
+      'Etat',
+      'Est repris?',
+  ]
+  sheet.add_row titre, :b => true
+  @allocataires.each do |allocataire|
+    sheet.add_row [
+                      allocataire.numero_allocataire,
+                      allocataire.ipres_ancien_matric,
+                      allocataire.prenom,
+                      allocataire.nom,
+                      allocataire.sexe,
+                      allocataire.adresse_rue,
+                      allocataire.adresse_ville,
+                      allocataire.nombre_epouses,
+                      allocataire.nombre_enfants,
+                      allocataire.categorie_human,
+                      allocataire.mode_paiement_human,
+                      allocataire.etat_human,
+                      allocataire.est_repris?,
+                  ]
+  end
+end

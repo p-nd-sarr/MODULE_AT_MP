@@ -1,0 +1,23 @@
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de rejet du dossier </h4>
+      </div>
+      <%= bootstrap_form_for(@at_rechute, url: admin_at_rechute_rejet_dossier_path(@at_rechute)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

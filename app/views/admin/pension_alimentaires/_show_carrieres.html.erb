@@ -1,0 +1,173 @@
+<% if @revision_pension.instruit? and @revision_pension.affectation_salarie == current_user and ( @revision_pension.integration_carriere? or  @revision_pension.justification_integration?) %>
+<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#create_carriere" id="create_carriere_id">
+  Ajouter carrière
+</button>
+  <% end %>
+
+<h3>Régime Général</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Période</th>
+    <th scope="col">Régime</th>
+    <th scope="col">Salaire 1</th>
+    <th scope="col">Salaire 2</th>
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Points</th>
+    <th scope="col">Etat</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @carrieres.regime_general.each do |carriere| %>
+    <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+      <td><%= carriere.exercice %></td>
+      <td><%= carriere.ref_employeur %></td>
+      <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+      <td><%= carriere.type_regime.code %></td>
+      <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+      <td align="right"><%= carriere.points %></td>
+      <td align="right"><%= carriere.etat %></td>
+      <% if @revision_pension.affectation_salarie == current_user  %>
+
+        <td style="width: 75px">
+          <%= (link_to 'valider', admin_allocataire_revision_pension_valider_ligne_carriere_path(@allocataire, @revision_pension, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or  carriere.rejete? %>
+        </td>
+
+        <td style="width: 75px">
+          <%= (link_to 'rejeté', admin_allocataire_revision_pension_rejeter_ligne_carriere_path(@allocataire, @revision_pension, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or carriere.rejete? %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>Régime Cadre</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Période</th>
+    <th scope="col">Régime</th>
+    <th scope="col">Salaire 1</th>
+    <th scope="col">Salaire 2</th>
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Points</th>
+    <th scope="col">Etat</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @carrieres.regime_cadre.each do |carriere| %>
+    <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+      <td><%= carriere.exercice %></td>
+      <td><%= carriere.ref_employeur %></td>
+      <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+      <td><%= carriere.type_regime.code %></td>
+      <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+      <td align="right"><%= carriere.points %></td>
+      <td align="right"><%= carriere.etat %></td>
+
+      <% if @revision_pension.affectation_salarie == current_user  %>
+        <td style="width: 75px">
+          <%= (link_to 'valider', admin_allocataire_revision_pension_valider_ligne_carriere_path(@allocataire, @revision_pension, carriere_id: carriere.id), class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or  carriere.rejete? %>
+        </td>
+        <td style="width: 75px">
+          <%= (link_to 'rejeté', admin_allocataire_revision_pension_rejeter_ligne_carriere_path(@allocataire, @revision_pension, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or  carriere.rejete? %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+
+<div class="modal inmodal" id="create_carriere" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@carriere, url: admin_allocataire_revision_pension_ajouter_carriere_path(@allocataire, @revision_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter carrière </h4>
+        </div>
+        <div class="modal-body">
+
+          <%= f.text_field :ref_employeur , label:'Numéro Employeur',  class:'form-control' %>
+
+          <%= f.collection_select :type_regime_id, Admin::TypeRegime.all,:id,:description, include_blank: true, label: 'Type Regime', tag: 'type_regime', required: true  %>
+
+          <%= f.select :exercice,Date.today.year-60 .. Date.today.year+0 %>
+
+          <%= f.date_select :date_entree, label: "Date d'entrée",
+                            start_year: (Date.today - 50.year).year, end_year: Date.today.year%>
+
+          <%= f.date_select :date_sortie, label: "Date de sortie",
+                            start_year: (Date.today - 50.year).year, end_year: Date.today.year%>
+
+          <%= f.text_field :salaire1, label:'Salaire 1',  class:'form-control' %>
+
+          <%= f.text_field :salaire2, label:'Salaire 2',  class:'form-control' %>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+          $('#soumettre_button_id').hide();
+
+          var exercice =  $('#carriere_exercice').val();
+          var date_entree =  $('#carriere_date_entree_1i').val();
+          var date_sortie =  $('#carriere_date_sortie_1i').val();
+          if(exercice === date_entree && exercice === date_sortie){
+              console.log('true');
+              $('#soumettre_button_id').show();
+          } else{
+              $('#soumettre_button_id').hide();
+          }
+
+          $("#carriere_date_entree_1i").change(function () {
+              var exercice =  $('#carriere_exercice').val();
+              var date_entree =  $('#carriere_date_entree_1i').val();
+              var date_sortie =  $('#carriere_date_sortie_1i').val();
+
+              if(exercice === date_entree && exercice === date_sortie){
+                  $('#soumettre_button_id').show();
+              } else{
+                  $('#soumettre_button_id').hide();
+              }
+          });
+
+          $("#carriere_date_sortie_1i").change(function () {
+              var exercice =  $('#carriere_exercice').val();
+              var date_entree =  $('#carriere_date_entree_1i').val();
+              var date_sortie =  $('#carriere_date_sortie_1i').val();
+
+              if(exercice === date_entree && exercice === date_sortie){
+                  $('#soumettre_button_id').show();
+              } else{
+                  $('#soumettre_button_id').hide();
+              }
+          });
+      })
+  </script>
+<% end %>

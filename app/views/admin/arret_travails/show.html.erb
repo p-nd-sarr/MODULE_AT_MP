@@ -1,0 +1,680 @@
+<%= content_for :titre_page, " Dossier arrêt de travail" %>
+ 
+<!--------------------------------------Information dossier-------------------------------------------->
+  <%= content_for :titre_page_autres_details do %>
+  
+  <% unless @demande_arret_travail.est_journalier? %>
+    NUMERO AFFILIATION : <strong><%= @demande_arret_travail.try(:numero_affiliation) %></strong> <br/>
+  <% else %>
+    NUMERO AFFILIATION : <strong><%= @demande_arret_travail.try(:nin_salarie) %></strong> <br/>
+  <% end %>
+  <!-- NUMERO AFFILIATION : <strong><%= @demande_arret_travail.numero_affiliation %></strong> <br/> -->
+  NUMERO SINISTRE : <strong><%= @demande_arret_travail.num_dossier %></strong> <br/>
+  ETAT :  <span class="label label-info"> <strong> <%= @demande_arret_travail.etat %></strong></span> <br/>
+  STATUS : <%= @demande_arret_travail.current_state %> <br/>
+  Date de saisie : <%= @demande_arret_travail.created_at.strftime("%d/%m/%Y") %> <br/>
+  Agence: <%= @demande_arret_travail.admin_agence.description_prest unless @demande_arret_travail.admin_agence.nil? %>
+  <br/>
+  Créer par: <%= @demande_arret_travail.user.email unless @demande_arret_travail.user.nil? %> (<%= @demande_arret_travail.user.type_profil unless @demande_arret_travail.user.nil? %>)
+  <br/><br/>
+  <% if @demande_arret_travail.peut_modification_exceptionnelle?(current_user) %>
+    <div class="row">
+      <div class="col-md-12 text-left">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#modificationExceptionnelleModal">Modification Exceptionnelle</button>
+        <%= render 'modal_modification_exceptionnelle' %>
+      </div>
+    </div>
+  <% end %>
+  <br/><br/>
+
+  <!-- Alerte===================================================================================================== -->
+  <% unless @demande_arret_travail.decision_commission_rejet.nil? %>
+    <h3>
+      <strong>Décision comité rejet: </strong>
+      <span class="text-danger"><%= ("#{@demande_arret_travail.decision_commission_rejet} ") %> </span>
+    </h3>
+  <% end %>
+
+  <h3>
+      <p class="text-danger">
+        <span><%= (" Alerte :  #{@demande_arret_travail.controle_date_naissance} ") unless @demande_arret_travail.controle_date_naissance.nil? %> </span>
+      </p>
+  </h3>
+
+  <h3>
+    <p class="text-danger">
+      <span><%= (" Motif retour Dossier :  #{@demande_arret_travail.motif} ") unless @demande_arret_travail.motif.nil? %> </span>
+    </p>
+  </h3>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour Acuueil', admin_arret_travails_path, class: 'btn btn-white btn-sm' %>
+
+  <% if @demande_arret_travail.document_valid? && @demande_arret_travail.creation? %>
+    <td>
+      <%= link_to 'Recipissé de dépôt', admin_arret_travail_recipisse_dossier_at_path(@demande_arret_travail, format: :pdf), class: 'btn btn-primary btn-sm', target: "_blank" %>
+    </td>
+  <% end %>
+
+  <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+    <%= link_to 'Editer', edit_admin_arret_travail_path(@demande_arret_travail), class: "btn btn-outline btn-white fa fa-edit" %>
+    <%= (link_to 'Supprimer', admin_arret_travail_path(@demande_arret_travail), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+  <!--------------------------------------Soumission de la demande-------------------------------------------->
+  <% if @demande_arret_travail.pret_pour_soumission?(current_user) %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionSalaireModal" id="soumettre_id">Soumettre</button>
+  <% end %>
+
+  <%if @demande_arret_travail.chef_agence_peut_soumettre?(current_user)%>
+    <%= link_to "Soumettre Chef ATMP",  admin_arret_travail_soumission_chef_atmp_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">
+      RETOUR DOSSIER
+    </button>
+  <%end%>
+
+  <!--------------------------------------Affectation Redacteur-------------------------------------------->
+  <%if @demande_arret_travail.chef_division_at_peut_affecter_redacteur?(current_user)%>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=<%="#affectation_modal_"+@demande_arret_travail.id.to_s%> id="affectation_id">Affecter rédacteur</button>
+     <!--<button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">
+      RETOUR DOSSIER
+    </button>-->
+  <%end%>
+
+  <%if @demande_arret_travail.redacteur_peut_soumettre_avis?(current_user) %>
+     <%= link_to "Soumettre avis",  admin_arret_travail_soumettre_avis_redacteur_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_redacteur">
+      RETOUR DOSSIER
+    </button>
+  <%end%>
+   
+   <%if !@demande_arret_travail.date_soumission_redacteur.nil? and @demande_arret_travail.avis_redacteur? and !@demande_arret_travail.peut_ajouter_avis?(current_user) and current_user.dajc?%>
+     <%= link_to "Soumettre avis",  admin_arret_travail_soumettre_avis_dajc_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+  <%end%>
+
+  <%if @demande_arret_travail.chefServiceAt_peut_soumettre_avis?(current_user)%>
+     <%= link_to "Soumettre avis",  admin_arret_travail_soumettre_avis_chefService_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+  <%end%>
+
+  <!--------------------------------------Soumission Chef Service AT------------------------------------------------------>
+  <%if  @demande_arret_travail.redacteur_peut_soumettre?(current_user)%>
+    <%= link_to "Soumettre Chef Service AT",  admin_arret_travail_soumission_chef_division_at_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">
+      RETOUR DOSSIER
+    </button>
+  <%end%>
+  
+  <%if @demande_arret_travail.chef_division_at_peut_soumettre?(current_user) && @demande_arret_travail.avis_completer?%>
+    <%= link_to "Soumettre Directeur",  admin_arret_travail_soumission_directeur_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">
+      RETOUR DOSSIER
+    </button>
+  <%end%>
+  
+
+  <!--------------------------------------Acceptation par le directeur at--------------------------------------------> 
+  <%if @demande_arret_travail.dir_at_can_accepte?(current_user)%>
+    <%= link_to "Accepter",  admin_arret_travail_directeur_accepte_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">
+      RETOUR DOSSIER
+    </button>
+    <%= link_to "Soumettre comité",  admin_arret_travail_directeur_rejete_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-warning btn-sm' %>
+  <%end%>
+
+  <!--------------------------------------Soumission commission rejet par le directeur-------------------------------------------------------------------------------> 
+  <%if  @demande_arret_travail.directeur_peut_agir?(current_user) && @demande_arret_travail.avis_completer?%>
+    
+   
+  <%end%>
+
+
+ <!---------------------------------Affectation technicien--------------------------------------------------------------->
+  <%if  @demande_arret_travail.can_affecter_tech?(current_user) %>
+    <%if @demande_arret_travail.est_affecte_tech?%>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=<%="#affectation_modal_"+@demande_arret_travail.id.to_s%> id="affectation_id">Re-affecter tech</button>
+    <%else%> 
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=<%="#affectation_modal_"+@demande_arret_travail.id.to_s%> id="affectation_id">Affecter tech</button>
+    <%end%>
+   
+  <%end%>
+  
+
+  <%if  @demande_arret_travail.soumis_comite? && current_user.redacteur? %>
+    <%#= link_to "Acceptation comission",  admin_arret_travail_acceptation_commission_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-success btn-sm' %>
+    <%#= link_to "Rejet comission",  admin_arret_travail_rejet_commission_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm' %>
+     <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#motif">Saisir avis comité
+      </button>
+      <%= render 'modal_saisi_commission_rejet' %>
+  <%end%>
+
+  <%if  @demande_arret_travail.avis_comite? && current_user.directeur_at? %>
+    <%= link_to "Accepter",  admin_arret_travail_directeur_accepte_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-success btn-sm' %>
+    <%= link_to "Rejeter",  admin_arret_travail_rejet_commission_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm' %>
+  <%end%>
+
+  <%if @demande_arret_travail.guerison_soumis? && (current_user.chef_division_at?||current_user.chef_agence?) %>
+    <%= link_to "valider la demande de guérison",  admin_arret_travail_valider_demande_cloture_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-success btn-sm' %>
+  <% end%>
+
+  
+
+  <!-- Retour du dossier de liquidation -->
+<div class="modal inmodal" id="motif" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de retour du dossier arret travail</h4>
+      </div>
+        <%= bootstrap_form_for(@demande_arret_travail, url: admin_arret_travail_retourner_process_path(@demande_arret_travail)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<!-- Fin retour dossier -->
+
+<!-- Retour du dossier de AT pour le rédacteur-->
+<div class="modal inmodal" id="retourner_redacteur" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Motif de retour du dossier arret travail</h4>
+      </div>
+        <%= bootstrap_form_for(@demande_arret_travail, url: admin_arret_travail_retourner_redacteur_path(@demande_arret_travail)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :motif, label: 'Motif' %>
+        </div>
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+<!-- Fin retour dossier -->
+  
+<% end %>
+
+  
+
+<div class="wrapper wrapper-content animated fadeIn">
+
+  <!---------------------------Start ProgressBar-------------------------------------------->
+  <div class="progressbar-wrapper">
+    <ul class="progressbar">
+      <li class="<%= ("active") if @demande_arret_travail.current_state >= :creation %>">Création</li>
+      <% if @demande_arret_travail.creer_en_agence?  %>
+        <li class="<%= ("active") if @demande_arret_travail.current_state >= :en_instruction %>">Chef agence</li>
+      <% end %>
+      <li class="<%= ("active") if @demande_arret_travail.current_state >= :soumis_chefService %>">chef service AT</li>
+      <li class="<%= ("active") if @demande_arret_travail.current_state >= :affecte_redacteur %>">Rédacteur</li>
+      <li class="<%= ("active") if @demande_arret_travail.current_state >= :avis_redacteur %>">DAJC</li>
+      <li class="<%= ("active") if @demande_arret_travail.current_state >= :avis_dajc %>">chef service AT</li>
+      <li class="<%= ("active") if @demande_arret_travail.current_state >= :soumis_directeur %>">Directeur AT</li>
+      <% if @demande_arret_travail.soumis_comite? or @demande_arret_travail.avis_comite? or @demande_arret_travail.dossier_rejete? %>
+        <li class="<%= ("active") if @demande_arret_travail.current_state >= :soumis_comite %>">Comité </li>
+        <li class="<%= ("active") if @demande_arret_travail.current_state >=:avis_comite %>">Avis comite </li>
+       
+        <% if @demande_arret_travail.dossier_rejete? %>
+           <li class="rejet <%= ("active") if @demande_arret_travail.current_state ==:dossier_rejete %>">Rejeté </li>
+        <% end %>
+        
+        <% if @demande_arret_travail.accepte? %>
+           <li class="<%= ("active") if @demande_arret_travail.current_state ==:accepte %>">Accepte </li>
+        <% end %>
+      <% else %>
+         <li class="<%= ("active") if @demande_arret_travail.current_state >= :accepte %>">Accepté</li>
+      <% end %>
+      <% if @demande_arret_travail.gueris? %>
+        <li class="gueris <%= ("active") if @demande_arret_travail.current_state >= :gueris %> ">Guéris</li>
+      <% end %>
+
+      <% if @demande_arret_travail.rechute? %>
+        <li class="rechute <%= ("active") if @demande_arret_travail.current_state >= :rechute %> ">Rechute</li>
+      <% end %>  
+    </ul> 
+
+  </div><!--End ProgressBar"-->
+  <!-----------------------------End ProgressBar----------------------------------------------->
+
+
+
+  <div class="row m-t-lg">
+    <div class="col-lg-12 col-md-12">
+    
+      <div class="ibox">
+      
+        <div class="ibox-content">
+        <div class="row">
+            <div class="col-lg-9" style="text-align:left;padding-top:10px">
+              <button class="btn btn-outline btn-success btn-sm" data-toggle="modal" data-target="#historiques">Historiques</button>
+              <%= render 'historiques' %>
+
+              <%if (@demande_arret_travail.accepte? || @demande_arret_travail.rechute?)  && (current_user.technicien_at? || current_user.technicien_direction_at?)  %>  
+                <%#= link_to "Guérison",  admin_arret_travail_cloture_dossier_form_path(@demande_arret_travail),  class: "btn btn-outline btn-primary btn-sm" %>
+                 <%= link_to "Guérison",  new_admin_arret_travail_at_guerison_path(@demande_arret_travail),  class: "btn btn-outline btn-primary btn-sm" %>
+              <% end%>
+
+              <% unless @demande_arret_travail.at_guerison.nil? %>
+                <%= link_to "Voir guérison",  admin_arret_travail_at_guerison_path(@demande_arret_travail, @demande_arret_travail.at_guerison),  class: "btn btn-outline btn-warning btn-sm" %>
+              <% end%>
+
+              <%if @demande_arret_travail.current_state >= :accepte && (current_user.technicien_at? || current_user.technicien_direction_at?) && @demande_arret_travail.at_consolidation.nil? && @demande_arret_travail.at_rente_famille.nil? and !@demande_arret_travail.dossier_rejete? %>
+                 <%= link_to "Ouvrir rente victime", new_admin_arret_travail_at_consolidation_path(@demande_arret_travail), class: "btn btn-outline btn-warning btn-sm" %>
+                <%= render 'modal_add_consolidation' %>
+              <% end %>
+
+              <% unless @demande_arret_travail.at_consolidation.nil? %>
+                 <%= link_to "Voir la consolidation",  admin_arret_travail_at_consolidation_path(@demande_arret_travail, @demande_arret_travail.at_consolidation),  class: "btn btn-outline btn-warning btn-sm" %>
+              <% end%>
+              <%if @demande_arret_travail.current_state >= :accepte && (current_user.technicien_at? || current_user.technicien_direction_at?) && @demande_arret_travail.at_rente_famille.nil? and !@demande_arret_travail.dossier_rejete? %>
+                 <%= link_to "Ouvrir Rente famille",  new_admin_arret_travail_at_rente_famille_path(@demande_arret_travail),  class: "btn btn-outline btn-danger btn-sm" %>
+              <% end %>
+
+              <% unless @demande_arret_travail.at_rente_famille.nil? %>
+                 <%= link_to "Voir rente famille",  admin_arret_travail_at_rente_famille_path(@demande_arret_travail, @demande_arret_travail.at_rente_famille),  class: "btn btn-outline btn-danger btn-sm" %>
+              <% end%>
+             
+              <%if @demande_arret_travail.gueris? && (current_user.technicien_at? || current_user.technicien_direction_at?) && @demande_arret_travail.at_rechute.nil?  %>
+                <%= link_to "Rechute",  new_admin_arret_travail_at_rechute_path(@demande_arret_travail),  class: "btn btn-outline btn-primary btn-sm" %>
+              <% end%>
+
+              <% unless @demande_arret_travail.at_rechute.nil? %>
+                 <%= link_to "Voir rechute",  admin_arret_travail_at_rechute_path(@demande_arret_travail, @demande_arret_travail.at_rechute),  class: "btn btn-outline btn-danger btn-sm" %>
+              <% end%>
+
+              <%if @demande_arret_travail.gueris? && (current_user.chef_agence? || current_user.chef_division_at?)  %>
+                <%= link_to "Annuler la guérison",  admin_arret_travail_annulation_guerison_form_path(@demande_arret_travail),  class: "btn btn-outline btn-info btn-sm" %>
+              <% end%>
+            </div>
+          </div>
+              
+          <div class="tabs-container" style="margin-top: 20px;">        
+            <ul class="nav nav-tabs" id='mes_navbars' style="font-size: 11px;">
+              <li class="nav-item tab-link-top">
+                <a class="nav-link" data-toggle="tab" href="#tab-1">Informations Gén.
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.info_salarie_valid? and @demande_arret_travail.info_employeur_valid? and @demande_arret_travail.document_valid? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.info_salarie_valid? and @demande_arret_travail.info_employeur_valid? and @demande_arret_travail.document_valid? %>   
+                </a>
+              </li>
+              <li class="nav-item tab-link-top">
+                <a data-toggle="tab" href="#tab-2">Détails Accident
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.detail_accident_valid? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.detail_accident_valid? %>     
+                </a>
+              </li>
+              <% if @demande_arret_travail.current_state >:creation %>
+                <li class="nav-item tab-link-top">
+                  <a data-toggle="tab" href="#tab-3">Avis  
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.avis_completer? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.avis_completer? %> 
+                  </a>
+                </li>
+              <% end %>
+              <% if @demande_arret_travail.current_state >= :accepte%>
+                <li class="nav-item tab-link-top">
+                  <a data-toggle="tab" href="#tab-4">Eléments du salaire</a>
+                </li>
+                <li class="nav-item tab-link-top">
+                  <a data-toggle="tab" href="#tab-5">IJ
+                      <% if @demande_arret_travail.creation? %>
+                        <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.frais_indemnité_valid? %>
+                        <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.frais_indemnité_valid? %> 
+                      <% end %>
+                  </a>
+                </li>
+
+                <li class="nav-item tab-link-top">
+                  <a data-toggle="tab" href="#tab-6">Frais engagés
+                      <% if @demande_arret_travail.creation? %>
+                        <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.frais_indemnité_valid? %>
+                        <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.frais_indemnité_valid? %> 
+                      <% end %>
+                  </a>
+                </li>
+
+                <li class="nav-item tab-link-top">
+                  <a data-toggle="tab" href="#tab-7">Ordres de paiement</a>
+                </li>
+                <li class="nav-item tab-link-top">
+                  <% if @demande_arret_travail.current_state >= :annulation_guerison_soumise %>
+                    <a data-toggle="tab" href="#tab-9">Annulation guérison
+                    <% if @demande_arret_travail.annulation_guerison_soumise?%>
+                      <%= '<span class="label label-warning">à valider par mc </span>'.html_safe unless @demande_arret_travail.gueris? %>
+                    <% end %> 
+                    </a>
+                  <% end %>
+                </li>
+
+              <% end %>
+            </ul>
+            <div class="tab-content">
+
+              <div id="tab-1" class="tab-pane tab-pane-section" >
+                <div class="row">
+                  <div class="col-lg-12" style="margin-top: 30px">
+                     <div class="panel-body">
+                       <div class="panel-group" id="accordion">
+                         <div class="panel panel-default" style="padding: 10px">
+                           <div class="panel-heading">
+                             <h5 class="panel-title">
+                               <a data-toggle="collapse" data-parent="#accordion" href="#infoSalarie">
+                                  <span class="fa fa-user"></span> Informations Générales Salarié
+                                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.info_salarie_valid?%>
+                                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.info_salarie_valid?%>
+                               </a>
+                             </h5>
+                           </div>
+                           <div class="panel-collapse collapse" id="infoSalarie" style="padding-top: 20px">
+                              <% unless  @demande_arret_travail.info_salarie_valid?%>
+                                <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                                   <%= link_to "Validation des informations du  salarié", "/admin/arret_travails/#{@demande_arret_travail.id}/at_valid_custom_page/information_salarie", 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                               <% end %>
+                             <% end %>
+                             <%= render 'details_info_salarie' %>
+                           </div>
+                         </div> <!-- End panel default salarie -->
+                         <div class="panel panel-default" style="padding: 10px">
+                           <div class="panel-heading">
+                             <h5 class="panel-title">
+                               <a data-toggle="collapse" data-parent="#accordion" href="#infoProSalarie">
+                                 <span class="fa fa-user"></span> Informations Professionnelles Salarié
+                                 <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.info_pro_salarie_valid? %>
+                                 <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.info_pro_salarie_valid? %>
+                               </a>
+                             </h5>
+                           </div>
+                           <div class="panel-collapse collapse" id="infoProSalarie" style="padding-top: 20px">
+                             <% unless @demande_arret_travail.info_pro_salarie_valid? %>
+                               <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                                 <%= link_to "Validation des informations professionnelles du  salarié", "/admin/arret_travails/#{@demande_arret_travail.id}/at_valid_custom_page/information_pro_salarie", 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                               <% end %>
+                             <% end %>
+                             <%= render 'details_info_pro_salarie' %>
+                            </div>
+                         </div> <!-- End panel default Pro salarie -->
+                         <div class="panel panel-default" style="padding: 10px">
+                           <div class="panel-heading">
+                             <h5 class="panel-title">
+                               <a data-toggle="collapse" data-parent="#accordion" href="#infoEmployeur">
+                                  <span class="fa fa-user"></span> Employeur
+                                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.info_employeur_valid? %>
+                                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.info_employeur_valid? %>
+                               </a>
+                             </h5>
+                           </div>
+                           <div class="panel-collapse collapse" id="infoEmployeur" style="padding-top: 20px">
+                              <% unless  @demande_arret_travail.info_employeur_valid?%>
+                                <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                                  <%= link_to "Validation des informations de l'employeur", "/admin/arret_travails/#{@demande_arret_travail.id}/at_valid_custom_page/information_employeur", 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                                <% end %>
+                              <% end %>
+                              <%= render 'details_info_employeur' %>                        
+                            </div>
+                          </div> <!-- End panel default document -->
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                             <h5 class="panel-title">
+                               <a data-toggle="collapse" data-parent="#accordion" href="#infoDocument">
+                                  <span class="fa fa-file"></span> Documents
+                                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.document_valid? %>
+                                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.document_valid? %> 
+                               </a>
+                             </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="infoDocument" style="padding-top: 20px">
+                            <div class="full-height-scroll">
+                            <div class="col-md-9">
+                              <% unless  @demande_arret_travail.document_valid?%>
+                                   <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                                    <%= link_to "Validation des documents", admin_arret_travail_valider_documents_path(@demande_arret_travail), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                                    <br>
+                                  <% end %>
+                            <% end %>
+                            </div>
+                            <%= render 'information_document' %>
+                            </div>
+                          </div>
+                        </div> <!-- End panel default document -->
+                       </div>
+                     </div>
+                  </div> <!-- End col -->
+                </div> <!-- End row -->
+              </div> <!-- End tab-1 -->
+
+              <div id="tab-2" class="tab-pane tab-pane-section"  style="padding-top: 20px">
+                <div class="full-height-scroll">                  
+                  <%= render 'detail_accident' %>
+                </div>
+              </div> <!-- End tab-2 -->
+
+              <div id="tab-3" class="tab-pane tab-pane-section" >
+                <div class="full-height-scroll">
+                  <%= render 'information_avis' %>
+                </div>
+              </div><!-- End tab-3 -->
+
+              <% if @demande_arret_travail.current_state >= :accepte%>
+                <div id="tab-4" class="tab-pane tab-pane-section" >
+                  <div class="full-height-scroll">
+                    <%= render 'information_composantes_salaire' %>
+                  </div>
+                </div> <!-- End tab-4 -->
+
+                <div id="tab-5" class="tab-pane tab-pane-section" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <% unless @demande_arret_travail.frais_indemnité_valid?%>
+                      <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                        <%= link_to "Validation des informations sur les frais", "/admin/arret_travails/#{@demande_arret_travail.id}/at_valid_custom_page/information_frais_engage", 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <%end%>
+                    <% end %>
+                    <%= render 'information_ij' %>
+                  </div>
+                </div> <!-- End tab-5 -->
+
+                <div id="tab-6" class="tab-pane tab-pane-section" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <% unless @demande_arret_travail.frais_indemnité_valid?%>
+                      <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                        <%= link_to "Validation des informations sur les frais", "/admin/arret_travails/#{@demande_arret_travail.id}/at_valid_custom_page/information_frais_engage", 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <%end%>
+                    <% end %>
+                    <%= render 'information_frais' %>
+                  </div>
+                </div> <!-- End tab-5 -->
+
+                <div id="tab-7" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <%= render 'info_etat_paiement' %>
+                  </div>
+                </div> <!-- End tab-6 -->
+
+                <div id="tab-8" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <%#= render 'details_cloture_dossier' %>
+                  </div>
+                </div> <!-- End tab-7 -->
+              <% end %>
+                <div id="tab-9" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <%= render 'details_annulation_guerison' %>
+                  </div>
+                </div>
+            </div>        
+          </div>     
+        </div>
+        <%= render 'soumission_form' %>
+        <%= render 'affectation_form', at: @demande_arret_travail %>
+      </div> <!--End ibox content-->
+    </div> <!--End ibox-->
+    </div><!--End col-lg-12-->
+  </div><!--End row-->
+</div><!--END wrapper wrapper-content"-->
+
+<%content_for :javascript do %>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#at_carnet_numero_employeur').change(function () {
+              chargerInfosEmployeur();
+              chargerInfosCarnet()
+          });
+          $('#at_carnet_numero_carnet').change(function () {
+              chargerInfosCarnet();
+          });
+
+          function chargerInfosCarnet() {
+              let ref_carnet = $('#at_carnet_numero_carnet').val();
+              let ref_employeur = $('#at_carnet_numero_employeur').val();
+
+              if (ref_carnet && ref_employeur) {
+                  $.ajax({
+                      url: "/admin/at_vente_carnets/employeur_carnet/" + ref_employeur + "/" + ref_carnet + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          console.log(data)
+                          if (data) {
+                              $("#at_carnet_date_achat").val(data.date_delivrance);
+                          } else {
+                              $("#at_carnet_date_achat").val('');
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#at_carnet_date_achat").val('');
+                      }
+                  });
+              }
+          }
+
+          function chargerInfosEmployeur() {
+              let ref_employeur = $('#at_carnet_numero_employeur').val();
+              if (ref_employeur) {
+                  $.ajax({
+                      url: "/admin/employeurs/single_employeur/" + ref_employeur + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data) {
+                              $("#at_carnet_raison_sociale").val(data.fhrsoc);
+                          } else {
+                              $("#at_carnet_raison_sociale").val('');
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#at_carnet_raison_sociale").val('');
+                      }
+                  });
+              }
+          }
+      });
+      ;
+</script>
+<%end%>
+
+
+<style>
+
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+  .progressbar li.rejet.active:before {
+    background-color: red;
+  }
+
+
+  
+</style>

@@ -1,0 +1,66 @@
+<%= bootstrap_form_for([:admin, @dossier_maternite, @dossier_maternite_avis_tier], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+  <%= f.select :type_avis, DossierMaterniteAvisTier::TYPE_AVIS.keys.collect { |type_avis| [DossierMaterniteAvisTier.human_enum_name(:type_avis, type_avis), type_avis] }, label: 'Type Avis', required: true %>
+  
+  <%= f.select :type_motif, DossierMaterniteAvisTier::TYPE_MOTIF.keys.collect { |type_motif| [DossierMaterniteAvisTier.human_enum_name(:type_motif, type_motif), type_motif] }, label: 'Motif', required: true %>
+
+  <div id="salaire_reference">
+    <%= f.number_field :sal_ref_a_considere, class: 'form-control', label: 'Salaire de référence à considérer' %>
+  </div>
+
+  <div id="nombre_jours">
+    <%= f.number_field :nbre_jours_a_indemnise, class: 'form-control', label: 'Nombre de jours à indemniser' %>
+  </div>
+
+  <%= f.text_area :motif_avis, class: 'form-control', label: 'Commentaire Avis', required: true %>
+
+  <% if @dossier_maternite_avis_tier.creation? && @dossier_maternite_avis_tier.retourne_par.present? %>
+    <div>
+      <%= f.text_area :commentaire, class: 'form-control', label: 'Commentaire sur retour' %>
+    </div>
+  <% end %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', (@dossier_maternite_avis_tier.persisted? ? [:admin, @dossier_maternite, @dossier_maternite_avis_tier] : admin_dossier_maternite_dossier_maternite_avis_tiers_path(@dossier_maternite)), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      charger_type_motif();
+      
+      $("#dossier_maternite_avis_tier_type_motif").change(function () {
+        charger_type_motif();
+      });
+
+      function charger_type_motif() {
+        let type_motif = $('#dossier_maternite_avis_tier_type_motif').val();
+        let salaire_reference = $('#salaire_reference');
+        let nombre_jours = $('#nombre_jours');
+        let input_salaire = $('#dossier_maternite_avis_tier_sal_ref_a_considere');
+        let input_jours = $('#dossier_maternite_avis_tier_nbre_jours_a_indemnise');
+
+        if (type_motif === 'salaire_reference_errone') {
+          salaire_reference.show();
+          nombre_jours.hide();
+          input_salaire.prop('required', true);
+          input_jours.prop('required', false);
+        } else if (type_motif === 'nombre_jours_errone') {
+          salaire_reference.hide();
+          nombre_jours.show();
+          input_salaire.prop('required', false);
+          input_jours.prop('required', true);
+        } else {
+          salaire_reference.hide();
+          nombre_jours.hide();
+        }
+      }
+    });
+  </script>
+<% end %>

@@ -1,0 +1,235 @@
+<%= content_for :titre_page, "Détails de avis à tiers [#{ AvisTier.human_enum_name(:etat, @avis_tier.etat)}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_allocataire_avis_tiers_path(@allocataire), class: 'btn btn-white btn-sm' %>
+  <% if @avis_tier.creation? %>
+    <%= link_to 'Editer', edit_admin_allocataire_avis_tier_path(@allocataire, @avis_tier), class: 'btn btn-white btn-sm' %>
+  <% end %>
+
+  <% if @avis_tier.creation? and current_user.directeur_prestation? %>
+    <%= (link_to 'Valider', admin_allocataire_avis_tier_valider_par_directeur_path(@allocataire, @avis_tier), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+    <%= (link_to 'Rejeter', admin_allocataire_avis_tier_rejeter_path(@allocataire, @avis_tier), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+  <%if @avis_tier.validation_directeur?%>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_avis_tier_lettre_notification_path(@avis_tier, format: :pdf), class: 'btn btn-outline btn-default btn-xs' %>
+  <%end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+    <div class="col-sm-4">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/avis_tiers/infos_allocataire' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <% unless @avis_tier.ajouter_par.nil? %>
+              <h5><strong class="text-navy">Crée et soumis Par</strong>
+                : <%= (@avis_tier.ajouter_par.try(:full_name)) unless @avis_tier.ajouter_par.nil? %> </h5>
+              <h5><strong class="text-navy">Date de création</strong>
+                : <%= (@avis_tier.created_at.strftime("%d/%m/%Y")) unless @avis_tier.created_at.nil? %></h5>
+
+            <% end %>
+
+            <% unless @avis_tier.valider_par.nil? %>
+
+              <h5><strong class="text-navy">Validé Par</strong>
+                : <%= (@avis_tier.valider_par.try(:full_name)) unless @avis_tier.valider_par.nil? %> </h5>
+              <h5><strong class="text-navy">Date de validation</strong>
+                : <%= (@avis_tier.valider_le.strftime("%d/%m/%Y")) unless @avis_tier.valider_le.nil? %></h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-sm-8">
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la demande</h5>
+          </div>
+          <div class="ibox-content">
+
+            <p>
+              <strong>Numero Dossier :</strong>
+              <%= @avis_tier.numero_dossier %>
+            </p>
+
+            <p>
+              <strong>Date de Debut :</strong>
+              <%= (@avis_tier.date_debut.strftime("%d/%m/%Y")) unless @avis_tier.date_debut.nil? %>
+            </p>
+
+
+            <p>
+              <strong>Echeance :</strong>
+              <%= @avis_tier.nombre_echeance %>
+            </p>
+
+            <p>
+              <strong>Commentaire:</strong>
+              <%= @avis_tier.commentaire %>
+            </p>
+
+            <p>
+              <strong>Montant Total de la retenu:</strong>
+              <%= format_cfa @avis_tier.montant  %>
+            </p>
+
+            <p>
+              <strong>Montant mensuel de la retenu:</strong>
+              <%= format_cfa @avis_tier.montant_mensuel  %>
+            </p>
+
+            <!--<p>
+              <strong>Document justificatif:</strong>
+
+              <%# if @avis_tier.document.attached? %>
+                <a href="<%#= url_for(@avis_tier.document) %>" target="_blank">
+                  <%#= image_tag @avis_tier.document.preview(resize: "300x300>"), class: "m-t-xs img-responsive" %>
+                </a>
+              <%# end %>
+            </p>-->
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<div class="modal inmodal" id="valider_par_chef_service" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@avis_tier, url: admin_allocataire_avis_tier_valider_chef_service_path(@allocataire, @avis_tier), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title"> Traite la demande avis à tiers </h4>
+          <small class="font-bold">Montant de la retenue et création de l'allocataire </small>
+        </div>
+        <div class="modal-body">
+          <%= f.number_field :montant, label: 'Montant  de la retenue' %>
+          <%= f.number_field :nombre_echeance, label: 'Nombre Echeance' %>
+
+          <%= f.file_field :document, label: '&nbsp;'.html_safe %>
+
+          <%= f.text_area :commentaire, label: '&nbsp;'.html_safe %>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Valider</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 60%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>

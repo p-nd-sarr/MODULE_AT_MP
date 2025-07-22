@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_ville" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_villes_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_ville_path(@admin_ville), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_ville', new_admin_ville_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Admin departement:</strong>
+                  <%= @admin_ville.admin_departement %>
+                </p>
+
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_ville.code %>
+                </p>
+
+                            <p>
+                  <strong>Designation:</strong>
+                  <%= @admin_ville.designation %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

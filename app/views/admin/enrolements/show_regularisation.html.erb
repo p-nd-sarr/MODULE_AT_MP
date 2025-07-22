@@ -1,0 +1,127 @@
+<%= content_for :titre_page do %>
+  Détails Régularisation Pointage #<%= @regularisation.id %> <br>
+  Total : <%= @total %> <br>
+  Supprimé : <span id='total_supprime'><%= @total_supprime %></span> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', regularisations_admin_enrolements_path, class: 'btn btn-white btn-sm' %>
+  <% if @regularisation.comptabilise? %>
+    <%= link_to 'Paiements', paiements_regularisation_admin_enrolements_path(@regularisation), class: 'btn btn-white btn-sm' %>
+  <% end %>
+  <% if @regularisation.creation? %>
+    <% if (@regularisation.peut_valider?(current_user)) %>
+      <%= (link_to 'Valider', valider_regularisation_admin_enrolements_path(@regularisation), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+    <% end %>
+    <% if (@regularisation.peut_rejeter?(current_user)) %>
+      <%= (link_to 'Rejeter', rejeter_regularisation_admin_enrolements_path(@regularisation), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+          <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :source_eq, 'Source' %>
+          <%= f.select :source_eq, %w[TPE KIT],
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :supprime_eq, 'Supprimé' %>
+          <%= f.select :supprime_eq, [['Oui', true], ['Non', false]],
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :enr_prenom_cont, 'Enrolement Prénom' %>
+          <%= f.search_field :enr_prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :enr_nom_cont, 'Enrolement Nom' %>
+          <%= f.search_field :enr_nom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :pres_prenom_cont, 'Prestation Prénom' %>
+          <%= f.search_field :pres_prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :pres_nom_cont, 'Prestation Nom' %>
+          <%= f.search_field :pres_nom_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @lignes %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col"></th>
+        <th scope="col" colspan="3" class="text-center">Infos enrolement</th>
+        <th scope="col" colspan="3" class="text-center">Infos prestation</th>
+        <th colspan="1"></th>
+      </tr>
+      <tr>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Source</th>
+        <th scope="col">Source matching</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Date naissance</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Date naissance</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @lignes.each do |ligne| %>
+        <tr class="
+          <%= 'warning' if ligne.enr_prenom != ligne.pres_prenom or ligne.enr_nom != ligne.pres_nom %>
+          <%= 'danger' if ligne.supprime? %>
+        ">
+<!--          <td><%#= ligne.id %></td>-->
+          <td><%= link_to ligne.numero_allocataire, admin_allocataire_path(ligne.allocataire_id), target: '_blank' %></td>
+          <td><%= link_to "#{ligne.source}##{ligne.pointage_id}", (ligne.source == 'KIT' ? admin_assure_path(ligne.pointage_id) : admin_assure_tpe_path(ligne.pointage_id)), target: '_blank' %></td>
+          <td><%= ligne.source_matching %></td>
+          <td><%= ligne.enr_prenom %></td>
+          <td><%= ligne.enr_nom %></td>
+          <td><%= ligne.enr_date_naissance %></td>
+          <td><%= ligne.pres_prenom %></td>
+          <td><%= ligne.pres_nom %></td>
+          <td><%= ligne.pres_date_naissance %></td>
+          <td style="width: 75px">
+            <% if not ligne.supprime? and @regularisation.creation? %>
+              <%= link_to 'supprimer',
+                          supprimer_regularisation_ligne_admin_enrolements_path(@regularisation, ligne),
+                          method: :delete,
+                          remote: true,
+                          data: {confirm: 'En êtes vous sûr?'},
+                          class: 'btn btn-outline btn-danger btn-xs',
+                          id: 'delete_regularisation_ligne_id_'+ligne.id.to_s %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @lignes %>
+  </div>
+</div>

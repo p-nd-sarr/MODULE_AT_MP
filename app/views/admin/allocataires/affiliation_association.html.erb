@@ -1,0 +1,41 @@
+<%= content_for :titre_page do %>
+   Affiliation Association
+<% end %>
+<%= content_for :actions_page do %>
+    <%= link_to 'Liste des allocataires', admin_allocataires_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+   <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'infos_gauche' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Formulaire de modification d'affiliation d'association</h5>
+        </div>
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@allocataire, url: admin_allocataire_affilier_association_path(@allocataire)) do |f| %>
+            <div class="form-group">
+              <%= f.collection_select :admin_association_allocataire_id,
+                                      Admin::AssociationAllocataire.all, :id, :name,
+                                      label: 'Association',
+                                      include_blank: true %>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <%= f.submit 'Sauvegarder les modifications', class: 'btn btn-primary btn-sm', data: {confirm: 'voulez vous valider la modification?'}%>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

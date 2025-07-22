@@ -1,0 +1,128 @@
+<%= content_for :titre_page, 'Détails dossier prestaion allocataires' %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12" style="margin-bottom: 25px">
+
+              <div class="dropdown tooltip-demo" style="text-align:right">
+                <a class="nav-link  dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="true"><h4 style="vertical-align: inherit; font-size:40px;"><span class="fa fa-th" data-toggle="tooltip" data-placement="left" title data-original-title="Les services allocataire PF"></span></h4></a>
+                  <ul class="category-list dropdown-menu dropdown-menu-right" style="padding:20px; background-color:rgb(250, 250, 250)">
+
+                      <li class="dd-item" data-id="1" style="display:inline; width:500px">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to 'Modification d\'adresse'%>
+                        </div>
+                      </li>
+
+                      <li class="dd-item" data-id="2" style="display:inline">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to "Mise à jour temps de présence"%>
+                        </div>
+                      </li>
+
+                      <li class="dd-item" data-id="3">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to "Renouvellement pièces justificatives" %>
+                        </div>
+                      </li>                     
+
+                      <li class="dd-item" data-id="4">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to 'Déclaration de chomage' %>
+                        </div>
+                      </li>
+
+                    <li class="dd-item" data-id="6">
+                      <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                        <%= link_to 'Reversion veuve' %>
+                      </div>
+                    </li>
+                    <% unless @dossier_prestation_f.nil? %>
+                      <li class="dd-item" data-id="6">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to 'Maintien de prestations', admin_allocataire_pf_maintien_prestations_path(@dossier_prestation_f.num_affiliation) if @dossier_prestation_f.has_carriere_dossier_prestation? and @dossier_prestation_f.current_state >= :valide and current_user.gestionnaire_compte_allocataire? and @dossier_prestation_f.current_state < :cloturer %>
+                        </div>
+                      </li>
+                    <% end %>
+                  </ul>
+              </div> <!-- dropdown -->
+              <%#= link_to 'Prénatales', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation),
+                          class: 'btn btn-outline btn-primary btn-sm' %>
+
+              <%#= link_to 'Postnatales', admin_dossier_prestation_allocation_postnatales_path(@dossier_prestation),
+                          class: 'btn btn-outline btn-primary btn-sm' %>
+
+              <%#= link_to 'Familiales', admin_dossier_prestation_allocation_familiales_path(@dossier_prestation),
+                          class: 'btn btn-outline btn-primary btn-sm' %>
+            </div>
+            <div class="col-lg-12">
+              <div>
+                <ul class="nav nav-tabs" style="font-size:10px">
+                  <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                  <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil Demandeur
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-calendar"></i>Grappe familiale
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-briefcase"></i>DPPN
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Documents
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Demande de prestation
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Paiements
+                  </a></li>
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane active">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_etat_civil' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-2" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'allocataire_grappe_familiale' %>
+                    </div>
+                  </div>
+                  <div id="tab-3" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'dppn' %>
+                    </div>
+                  </div>
+                  <div id="tab-4" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'list_document' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-5" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'demande_prestation' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-6" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'paiements_prestation_allocatairepf' %>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

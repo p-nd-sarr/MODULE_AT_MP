@@ -1,0 +1,141 @@
+  <div class="row">
+    <div class="col-lg-4">
+
+      <h2 style="color: #1ab394">Identification</h2>
+      <p>
+        <strong>Numéro unique de sécurité sociale:</strong>
+        <%= "" %>
+      </p>
+
+      <p>
+        <strong>Ancien numéro IPRES :</strong>
+        <%= current_user.num_ipres %>
+      </p>
+
+      <p>
+        <strong>Ancien numéro CSS:</strong>
+        <%= current_user.num_css %>
+      </p>
+
+      <p>
+        <strong>Ninéa :</strong>
+        <%= @immatriculation.ninea %>
+      </p>
+      <% unless @immatriculation.hdqt? %>
+        <p>
+          <strong>Ninet:</strong>
+          <%= @immatriculation.ninet %>
+        </p>
+      <% end %>
+
+      <p>
+        <strong>COFI:</strong>
+        <%= @immatriculation.code_identification_fiscale %>
+      </p>
+
+      <p>
+        <strong>Registre de commerce:</strong>
+        <%= @immatriculation.registre_commerce %>
+      </p>
+
+      <p>
+        <strong>Raison sociale:</strong>
+        <%= @immatriculation.raison_sociale %>
+      </p>
+
+      <p>
+        <strong>Numéro Demande:</strong>
+        <%= @immatriculation.id %>
+      </p>
+
+      <% if @immatriculation.soumis? or @immatriculation.valide? %>
+        <p>
+          <strong>Numéro Process flow:</strong>
+          <%= @immatriculation.process_flow_id %>
+        </p>
+      <% end %>
+
+      <% unless @immatriculation.message.nil? %>
+        <p style="color: red">
+          <strong >Message erreur soumission:</strong>
+          <%= @immatriculation.message %>
+        </p>
+      <% end %>
+
+    </div>
+
+    <div class="col-lg-4">
+
+      <h2 style="color: #1ab394">Catégorie d’entreprise</h2>
+      <p>
+        <strong>Type d’établissement:</strong>
+        <%= Immatriculation.human_enum_name(:type_etablissement, @immatriculation.type_etablissement) %>
+      </p>
+
+      <p>
+        <strong>Statut juridique:</strong>
+        <%= @immatriculation.admin_statut_juridique.description %>
+      </p>
+
+      <p>
+        <strong>Activité principale:</strong>
+        <%= @immatriculation.admin_activite_principale.description %>
+      </p>
+
+      <p>
+        <strong>Secteur d’activité :</strong>
+        <%= @immatriculation.admin_secteur_activite.description %>
+      </p>
+
+    </div>
+
+
+    <div class="col-lg-4">
+
+      <h2 style="color: #1ab394">Adresse - Siège social</h2>
+      <p>
+        <strong>Région:</strong>
+        <%= @immatriculation.reprise_region.designation %>
+      </p>
+
+      <p>
+        <strong>Ville:</strong>
+        <%= @immatriculation.reprise_ville.designation %>
+      </p>
+
+      <p>
+        <strong>Commune:</strong>
+        <%= @immatriculation.reprise_commune.designation %>
+      </p>
+
+      <p>
+        <strong>Quartier :</strong>
+        <%= @immatriculation.reprise_quartier.designation %>
+      </p>
+
+      <p>
+        <strong>Adresse :</strong>
+        <%= @immatriculation.adresse %>
+      </p>
+
+      <p>
+        <strong>Email :</strong>
+        <%= @immatriculation.email %>
+      </p>
+
+      <p>
+        <strong>Telephone :</strong>
+        <%= @immatriculation.soumis? %>
+      </p>
+
+    </div>
+
+  </div>
+  <div class="hr-line-dashed"></div>
+
+
+<style>
+  label.required:after {
+    content: " *";
+  }
+</style>

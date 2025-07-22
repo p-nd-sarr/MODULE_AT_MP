@@ -1,0 +1,77 @@
+<h3>Régime Général</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <% if show_employeur %>
+      <th scope="col">Entreprise</th>
+    <% end %>
+    <% if show_employe %>
+      <th scope="col">Employé</th>
+    <% end %>
+    <th scope="col">Période</th>
+    <th scope="col">Salaire</th>
+    <th scope="col">Points</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%unless carrieres.nil? %>
+    <% carrieres.each do |carriere| %>
+      <% unless carriere.salaire_rg.zero? %>
+        <tr class="<%= 'bg-danger' if carriere.calcul_points_rg.zero? %>">
+          <td><%= carriere.exercice %></td>
+          <% if show_employeur %>
+            <td><%= link_to(carriere.fhrsoc, admin_carriere_employeur_path(carriere.fhnum)) unless carriere.employeur.nil? %></td>
+          <% end %>
+          <% if show_employe %>
+            <td><%= carriere.participant.try(:full_name) %></td>
+          <% end %>
+          <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+          <td align="right"><%= format_cfa(carriere.salaire_rg, false) %></td>
+          <td align="right"><%= carriere.calcul_points_rg %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>Régime Cadre</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <% if show_employeur %>
+      <th scope="col">Entreprise</th>
+    <% end %>
+    <% if show_employe %>
+      <th scope="col">Employé</th>
+    <% end %>
+    <th scope="col">Période</th>
+    <th scope="col">Salaire</th>
+    <th scope="col">Points</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%unless carrieres.nil? %>
+    <% carrieres.each do |carriere| %>
+      <% unless carriere.salaire_rcc.zero? %>
+        <tr class="<%= 'bg-danger' if carriere.calcul_points_rcc.zero? %>">
+          <td><%= carriere.exercice %></td>
+          <% if show_employeur %>
+            <td><%= link_to(carriere.fhrsoc, admin_carriere_employeur_path(carriere.fhnum)) unless carriere.employeur.nil? %></td>
+          <% end %>
+          <% if show_employe %>
+            <td><%= carriere.participant.try(:full_name) %></td>
+          <% end %>
+          <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+          <td align="right"><%= format_cfa(carriere.salaire_rcc, false) %></td>
+          <td align="right"><%= carriere.calcul_points_rcc %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>

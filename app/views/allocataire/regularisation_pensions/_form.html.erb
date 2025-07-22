@@ -1,0 +1,64 @@
+<%= bootstrap_form_for([:allocataire, @regularisation_pension],  label_col: "col-sm-4", control_col: "col-sm-6") do |f| %>
+  <%= f.select :motif_regularisation_pension,
+                    RegularisationPension::MOTIF_REGULARISATION_PENSION.keys.collect { |motif_regularisation_pension| [RegularisationPension.human_enum_name(:motif_regularisation_pension, motif_regularisation_pension), motif_regularisation_pension] },
+                   label: 'Motif Regularisation' %> 
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', [:allocataire, @regularisation_pension], class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+ <% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+          annulationSuspension();
+          regularisationMajorant();
+          reordonnancementPension();
+
+          $("#regularisation_pension_motif_regularisation_pension").change(function () {
+              annulationSuspension()
+              regularisationMajorant()
+              reordonnancementPension()
+          });
+
+          function annulationSuspension() {
+              var motif_regularisation_pension = $('#regularisation_pension_motif_regularisation_pension').val();
+              console.log(motif_regularisation_pension);
+              
+              elem_motif_regularisation_pension = $('#regularisation_pension_annulation_de_suspension')
+              if (motif_regularisation_pension === 'annulation_de_suspension') {
+                  elem_motif_regularisation_pension.show();
+              } else {
+                  elem_motif_regularisation_pension.hide();
+              }
+          }
+          function regularisationMajorant() {
+              var motif_regularisation_pension = $('#regularisation_pension_motif_regularisation_pension').val();
+              console.log(motif_regularisation_pension);
+              
+              elem_motif_regularisation_pension = $('#regularisation_pension_regularisation_pour_les_majorants')
+              if (motif_regularisation_pension === 'regularisation_pour_les_majorants') {
+                  elem_motif_regularisation_pension.show();
+              } else {
+                  elem_motif_regularisation_pension.hide();
+              }
+          }
+                  function reordonnancementPension() {
+              var motif_regularisation_pension = $('#regularisation_pension_motif_regularisation_pension').val();
+              console.log(motif_regularisation_pension);
+              
+              elem_motif_regularisation_pension = $('#regularisation_pension_reordonnancement_de_pension')
+              if (motif_regularisation_pension === 'reordonnancement_de_pension') {
+                  elem_motif_regularisation_pension.show();
+              } else {
+                  elem_motif_regularisation_pension.hide();
+              }
+          }
+
+      })
+  </script>
+<% end %>

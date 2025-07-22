@@ -1,0 +1,1 @@
+json.partial! "admin_reversion_veuve_salaries/admin_reversion_veuve_salary", admin_reversion_veuve_salary: @admin_reversion_veuve_salary

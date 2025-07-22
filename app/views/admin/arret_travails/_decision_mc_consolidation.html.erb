@@ -1,0 +1,53 @@
+
+<div class="row">
+  <div class="col-lg-9">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Taux IPP Médecin Conseil: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%=@demande_arret_travail.at_consolidation.taux_ipp_mc%>%</dd>
+      </div>
+    </d1>
+  
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Avis Medecin Conseil: </dt>
+      </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%=@demande_arret_travail.at_consolidation.avis_mc  %></dd>
+        </div>
+    </d1>
+  </div>
+  <% if @demande_arret_travail.at_consolidation.taux_ipp_mc.nil?%>
+  <div class="col-lg-10 " style="text-align: right";>
+    <%= bootstrap_form_for(@at_consolidation, url:  admin_arret_travail_modifier_taux_ipp_path(@demande_arret_travail), method: :put, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <%= f.alert_message "Please fix the errors below." %>
+   
+          <div class="row">
+            <div class="col-sm-6 col-md-12">
+              <%= f.number_field :taux_ipp_mc, label: 'Taux IPP Médecin Conseil: ' %>
+              <%= f.text_area :avis_mc, label: 'Avis medecin conseil: ' %>
+            </div>
+          </div>
+        <div class="form-group row">
+          <div class="col-sm-4 pull-right">
+            <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+            <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+          </div>
+      </div>
+    <% end %>
+  </div>
+  <% end %>
+</div>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,142 @@
+<%= content_for :titre_page, "Dossier #{@dossier_prestation.num_dossier} - Allocation Familiales" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_salarie_dossier_prestation_allocation_familiale_path(@dossier_prestation),
+              class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row" >
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-success float-right">Trimestre 1</span>
+          <h6><%= Date.today.year %></h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri1 = @dossier_prestation.allocation_familiales.trimestre1.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-info float-right">Trimestre 2</span>
+          <h6><%= Date.today.year %></h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri2 = @dossier_prestation.allocation_familiales.trimestre2.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-warning float-right">Trimestre 3</span>
+          <h6><%= Date.today.year %></h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri3 = @dossier_prestation.allocation_familiales.trimestre3.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-warning float-right">Trimestre 4</span>
+          <h6><%= Date.today.year %></h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri4 = @dossier_prestation.allocation_familiales.trimestre4.valide.sum(&:montant_paiement)%>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-danger float-right">Totalisation</span>
+          <h6><%= Date.today.year %></h6>
+          <!--          <h5>User activity</h5>-->
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa triTot = tri1 + tri2 + tri3 + tri4%>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Enfant</th>
+        <th scope="col">Trimestre</th>
+        <th scope="col">Année</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Date Création</th>
+        <th scope="col">Date Liquidation</th>
+        <th scope="col">Montant Liquidé</th>
+        <th scope="col">Date Paiement</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% unless @allocation_familiales.nil? %>
+        <% @allocation_familiales.each do |allocation_familiale| %>
+          <tr>
+            <td> <%= allocation_familiale.enfant.full_name %></td>
+            <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre)%></td>
+            <td><%= allocation_familiale.annee %></td>
+            <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+            <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+            <td>
+              <% unless allocation_familiale.date_validation.nil? %>
+                <%= l allocation_familiale.date_validation %>
+              <%end %>
+            </td>
+            <td><%= allocation_familiale.montant_paiement %></td>
+            <td>
+              <% unless allocation_familiale.date_paiement.nil? %>
+                <%= l allocation_familiale.date_paiement %>
+              <%end %>
+            </td>
+            <td style="width: 75px">
+              <%= link_to 'détails', [:salarie, @dossier_prestation, allocation_familiale],
+                          class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+            <% if allocation_familiale.creation? %>
+              <td style="width: 75px">
+                <%= link_to 'modifier',
+                            edit_salarie_dossier_prestation_allocation_familiale_path(@dossier_prestation, allocation_familiale),
+                            class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+              <% if allocation_familiale.pret_pour_soumission? %>
+                <td style="width: 75px">
+                  <%= link_to 'soumettre',
+                            salarie_dossier_prestation_allocation_familiale_soumission_form_path(@dossier_prestation, allocation_familiale),
+                            class: 'btn btn-outline btn-success btn-xs' %>
+                </td>
+              <%end %>
+              <td style="width: 75px">
+                <%= link_to 'supprimer', [:salarie, @dossier_prestation, allocation_familiale],
+                            method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            <% end %>
+          </tr>
+        <%end %>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

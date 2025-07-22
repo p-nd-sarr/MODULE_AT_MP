@@ -1,0 +1,303 @@
+
+<div class="row" style="margin-left: 16%;">
+  <div class="col-sm-9">
+    <h2 style="text-align: center"><strong> Ressources Personnelles Du(Des) Conjoint(s) </strong></h2>
+    <hr>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12" style="margin-top:-1%;">
+
+    <% if @demande_liquidation.carriere_conjoint? %>
+      <p style="margin-top: 2%;">
+        Le conjoint a exercé ou exerce une activité salarié dont le montant des salaires perçus est indiqué
+        ci-dessous.
+      </p>
+      <% unless @demande_liquidation.salaire_trimestre_conjoint.nil? %>
+        <p style="margin-left: 2%;">
+          - du trimestre précédant la demande :
+          <strong><%= format_cfa @demande_liquidation.salaire_trimestre_conjoint %></strong>
+        </p>
+      <% end %>
+      <% unless @demande_liquidation.salaire_annuel_conjoint.nil? %>
+        <p style="margin-left: 2%;">
+          - de l'année précédant la demande :
+          <strong><%= format_cfa @demande_liquidation.salaire_annuel_conjoint %></strong>
+        </p>
+      <% end %>
+      <% unless @demande_liquidation.date_cess_act_conjoint.nil? %>
+        <p style="margin-left: 2%;">
+          - date de cessation d'activité : <strong><%= l @demande_liquidation.date_cess_act_conjoint %></strong>
+        </p>
+      <% end %>
+    <% end %>
+
+
+    <% if @demande_liquidation.avantage_viellesse_conjoint? %>
+      <p style="margin-top: 2%;">
+        Le conjoint a obtenu le bénéfice de l'avantage
+        <strong><%= LiquidationRetraiteFrance.human_enum_name(:nature_avantage_conjoint, @demande_liquidation.nature_avantage_conjoint) %></strong>
+      </p>
+      <p style="margin-left: 2%;">
+        - le nom de l'institution débitrice :
+        <strong><%= @demande_liquidation.nom_instit_deb_conjoint unless @demande_liquidation.nom_instit_deb_conjoint.nil? %></strong>
+      </p>
+      <p style="margin-left: 2%;">
+        - l'adresse de l'institution débitrice :
+        <strong><%= @demande_liquidation.adresse_instit_deb_conjoint unless @demande_liquidation.adresse_instit_deb_conjoint.nil? %></strong>
+      </p>
+      <p style="margin-left: 2%;">
+        - le numéro de pension ou de la rente :
+        <strong><%= @demande_liquidation.numero_pension_conjoint unless @demande_liquidation.numero_pension_conjoint.nil? %></strong>
+      </p>
+      <p style="margin-left: 2%;">
+        - le montant du dernier trimestre perçu :
+        <strong><%= format_cfa(@demande_liquidation.montant_pension_conjoint, false) unless @demande_liquidation.montant_pension_conjoint.nil? %></strong>
+      </p>
+    <% end %>
+
+    <% if @demande_liquidation.autres_revenus_conjoint? %>
+      <p style="margin-top: 2%;">
+        Le conjoint dispose d'autres revenus que les salaires. <br>La nature et le montant de ces revenus au cours des
+        trois
+        derniers
+        mois et des douze mois précedant la demande sont listés ci-dessous:
+      </p>
+      <div class="panel panel-info">
+        <div class="panel-body">
+          <% unless @demande_liquidation.montant_pension_conjoint.nil? %>
+            <button type="button" class="btn btn-outline btn-info" data-toggle="modal" data-target="#new_revenu_conjoint">
+              <span class="fa fa-plus"></span> Ajouter revenu
+            </button>
+          <% end %>
+          <div class="table-responsive" style="margin-top: 0px">
+            <table class="table table-bordered">
+              <thead class="thead-primary">
+              <tr>
+                <th rowspan="2">Nature des revenus</th>
+                <th colspan="2" style="text-align: center">Montant perçu</th>
+                <th rowspan="2"></th>
+              </tr>
+              <tr>
+                <th scope="col" style="text-align: center">Au cours des trois mois</th>
+                <th scope="col" style="text-align: center">Au cours des douze mois</th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <% @demande_liquidation.revenu_conjoints.each do |revenu| %>
+                <tr>
+                  <td><%= revenu.nature %></td>
+                  <td><%= format_cfa(revenu.montant_trimestriel, false) %></td>
+                  <td><%= format_cfa(revenu.montant_annuel, false) %></td>
+                  <td>
+                    <%= link_to 'supprimer', admin_liquidation_retraite_france_destroy_revenu_conjoint_path(@demande_liquidation, revenu.id),
+                                method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' unless @demande_liquidation.ressources_conjoint_valid? %>
+                  </td>
+                </tr>
+              <% end %>
+              </tbody>
+              <!--              <tfoot>-->
+              <!--              <tr>-->
+              <!--                <td>Total</td>-->
+              <!--                <td> <%#= format_cfa m1 = @revenu_conjoints.sum(&:montant_trimestriel) %> </td>-->
+              <!--                <td> <%#= format_cfa m1 = @revenu_conjoints.sum(&:montant_annuel) %> </td>-->
+              <!--                <td>  </td>-->
+              <!--              </tr>-->
+              <!--              </tfoot>-->
+            </table>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
+
+    <div style="margin-top: 2%;">
+      <% if @demande_liquidation.biens_perso_conjoint? %>
+        <p>
+          Le conjoint posséde des biens personnels, mobiliers et immobiliers ci-dessous :
+        </p>
+        <div class="panel panel-warning">
+          <div class="panel-body">
+            <% unless @demande_liquidation.montant_pension_conjoint.nil? %>
+              <button type="button" class="btn btn-outline btn-warning" data-toggle="modal" data-target="#new_bien">
+                <span class="fa fa-plus"></span> Ajouter un bien
+              </button>
+            <% end %>
+            <div class="table-responsive" style="margin-top: 0px">
+              <table class="table table-bordered">
+                <thead class="thead-primary">
+                <tr>
+                  <th scope="col" style="text-align: center">Description sommaire</th>
+                  <th scope="col" style="text-align: center">Valeur actuelle</th>
+                  <th scope="col" style="text-align: center">Situation - Département - Commune - Rue - n° Lieu dit</th>
+                  <th scope="col" style="text-align: center">Lieu d'imposition et article du rôle</th>
+                  <th scope="col" style="text-align: center">Revenu cadastral actuel</th>
+                  <th scope="col"></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @demande_liquidation.bien_pers_conjoints.each do |bien| %>
+                  <tr>
+                    <td><%= bien.description %></td>
+                    <td><%= format_cfa(bien.valeur_actuelle, false) %></td>
+                    <td><%= bien.situation_departement %></td>
+                    <td><%= bien.lieu_imposition %></td>
+                    <td><%= format_cfa(bien.revenu_cadastral, false) %></td>
+                    <td>
+                      <%= link_to 'supprimer', admin_liquidation_retraite_france_destroy_bien_pers_conjoint_path(@demande_liquidation, bien.id),
+                                  method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' unless @demande_liquidation.ressources_conjoint_valid? %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div style="margin-top: 2%;">
+      <% if @demande_liquidation.biens_donation_conjoint? %>
+        <p>
+          Le conjoint a fait donation des biens mobiliers et immobiliers depuis moins de 5 ans ci-dessous :
+        </p>
+        <div class="panel panel-success">
+          <div class="panel-body">
+            <% unless @demande_liquidation.montant_pension_conjoint.nil? %>
+              <button type="button" class="btn btn-outline btn-success" data-toggle="modal" data-target="#new_donation">
+                <span class="fa fa-plus"></span> Ajouter une donation
+              </button>
+            <% end %>
+            <div class="table-responsive" style="margin-top: 0px">
+              <table class="table table-bordered">
+                <thead class="thead-primary">
+                <tr>
+                  <th scope="col" style="text-align: center">Description sommaire</th>
+                  <th scope="col" style="text-align: center">Valeur actuelle</th>
+                  <th scope="col" style="text-align: center">Situation - Département - Commune - Rue - n° Lieu dit</th>
+                  <th scope="col" style="text-align: center">Nom bénéficiaire</th>
+                  <th scope="col" style="text-align: center">Adresse bénéficiaire</th>
+                  <th scope="col" style="text-align: center">Quantité de bénéficiaires</th>
+                  <th scope="col" style="text-align: center">Date de l'acte de donation</th>
+                  <th scope="col"></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @demande_liquidation.donation_conjoints.each do |donation| %>
+                  <tr>
+                    <td><%= donation.description %></td>
+                    <td><%= format_cfa(donation.valeur_actuelle, false) %></td>
+                    <td><%= donation.situation_departement %></td>
+                    <td><%= donation.nom_beneficiaire %></td>
+                    <td><%= donation.adresse_beneficiaire %></td>
+                    <td><%= format_cfa(donation.quantite, false) %></td>
+                    <td><%= l donation.date_donation %></td>
+                    <td>
+                      <%= link_to 'supprimer', admin_liquidation_retraite_france_destroy_donation_conjoint_path(@demande_liquidation, donation.id),
+                                  method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' unless @demande_liquidation.ressources_conjoint_valid? %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+<!--MODAL AJOUT REVENU CONJOINT-->
+
+<div class="modal inmodal" id="new_revenu_conjoint" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@revenu_conjoint, url: admin_liquidation_retraite_france_ajouter_revenu_conjoint_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter un revenu du conjoint </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :nature, label: 'Nature du revenu', class: 'form-control' %>
+          <%= f.number_field :montant_trimestriel, label: 'Montant perçu au cours des trois mois', class: 'form-control' %>
+          <%= f.number_field :montant_annuel, label: 'Montant perçu au cours des douze mois', class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!--MODAL AJOUT BIEN DU CONJOINT-->
+
+<div class="modal inmodal" id="new_bien" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@bien_pers_conjoint, url: admin_liquidation_retraite_france_ajouter_bien_pers_conjoint_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter un bien du conjoint </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :description, label: 'Description sommaire', class: 'form-control' %>
+          <%= f.number_field :valeur_actuelle, label: 'Valeur actuelle', class: 'form-control' %>
+          <%= f.text_field :situation_departement, label: 'Situation - Département - Commune - Rue - n° Lieu dit', class: 'form-control' %>
+          <%= f.text_field :lieu_imposition, label: "Lieu d'imposition et article du rôle", class: 'form-control' %>
+          <%= f.number_field :revenu_cadastral, label: 'Revenu cadastral actuel', class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<!--MODAL AJOUT DONATION DE BIEN DU CONJOINT-->
+
+<div class="modal inmodal" id="new_donation" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@donation_conjoint, url: admin_liquidation_retraite_france_ajouter_donation_conjoint_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter une donation de bien du conjoint </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :description, label: 'Description sommaire', class: 'form-control' %>
+          <%= f.number_field :valeur_actuelle, label: 'Valeur actuelle', class: 'form-control' %>
+          <%= f.text_field :situation_departement, label: 'Situation - Département - Commune - Rue - n° Lieu dit', class: 'form-control' %>
+          <%= f.text_field :nom_beneficiaire, label: "Nom bénificiaire", class: 'form-control' %>
+          <%= f.text_field :adresse_beneficiaire, label: "Adresse bénificiaire", class: 'form-control' %>
+          <%= f.number_field :quantite, label: 'Quantité des bénéficiaires', class: 'form-control' %>
+          <%= f.date_select :date_donation, label: "Date de l'acte de donation",
+                            start_year: (Date.today - 5.year).year, end_year: (Date.today).year %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

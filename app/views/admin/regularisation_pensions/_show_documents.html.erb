@@ -1,0 +1,43 @@
+<style type="text/css">
+    label[title="required"] {
+        display: none;
+    }
+
+    .invalid-feedback {
+        font-size: 0px;
+    }
+</style>
+
+<div class="row" style="margin-top: 20px;">
+  <div class="col-lg-4">
+    <h2>Liste des documents</h2>
+  </div>
+</div>
+
+<% if @regularisation_pension.creation? %>
+  <%= render 'documents/liste',
+             object: @regularisation_pension,
+             documents: @regularisation_pension.documents,
+             include_add: @regularisation_pension.creation?,
+             include_delete: @regularisation_pension.creation?,
+             type_documents: @regularisation_pension.pension_heredite? ? RegularisationPension::TYPE_DOCUMENT_HEREDITE : RegularisationPension::TYPE_DOCUMENT,
+             type_documents_obligatoires: RegularisationPension::TYPE_DOCUMENT_OBLIGATOIRE,
+             back_url: admin_regularisation_pension_path(@regularisation_pension)
+  %>
+
+  <%= render 'documents/modal_form',
+             type_documents: @regularisation_pension.pension_heredite? ? RegularisationPension::TYPE_DOCUMENT_HEREDITE : RegularisationPension::TYPE_DOCUMENT,
+             document: Document.new(documentable: @regularisation_pension),
+             back_url: admin_regularisation_pension_path(@regularisation_pension)
+  %>
+<% else %>
+  <%= render 'documents/liste',
+             object: @regularisation_pension,
+             documents: @regularisation_pension.documents,
+             include_add: false,
+             include_delete: false,
+             type_documents: @regularisation_pension.pension_heredite? ? RegularisationPension::TYPE_DOCUMENT_HEREDITE : RegularisationPension::TYPE_DOCUMENT,
+             type_documents_obligatoires: RegularisationPension::TYPE_DOCUMENT_OBLIGATOIRE,
+             back_url: admin_regularisation_pension_path(@regularisation_pension)
+  %>
+<% end %>

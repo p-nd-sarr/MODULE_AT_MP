@@ -1,0 +1,97 @@
+<div class="row" style="margin-left: 15%;">
+  <div class="col-sm-9">
+
+    <% unless @periode_assurances_SP.empty? %>
+      <div class="panel panel-info">
+        <div class="panel-body">
+
+          <div class="table-responsive" style="margin-top: 20px">
+            <table class="table table-striped">
+              <thead class="thead-primary">
+              <tr>
+                <th scope="col">Périodes</th>
+                <th scope="col">Nbre Trim. Assur.</th>
+                <th scope="col">Nbre Trim. (per. équiv.)</th>
+                <th colspan="2"></th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <% @periode_assurances_SP.each do |periode_assurance| %>
+                <tr>
+                  <td>Du <%= l periode_assurance.date_debut %> au <%= l periode_assurance.date_fin %> </td>
+                  <td><%= periode_assurance.trimestre_assurance %></td>
+                  <td><%= periode_assurance.trimestre_equivalente %></td>
+
+                  <td width="75px">
+                    <%= link_to 'supprimer', admin_cfs_reversion_veuve_destroy_periode_assurance_path(@cfs_reversion_veuve, periode_assurance.id),
+                                method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' unless @cfs_reversion_veuve.assur_second_pays_valid?%>
+                  </td>
+                </tr>
+              <% end %>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td>Total</td>
+                <td> <%= m11 = @periode_assurances_SP.sum(&:trimestre_assurance) %> trimestres</td>
+                <td> <%= m12 = @periode_assurances_SP.sum(&:trimestre_equivalente) %> trimestres</td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <h5>
+            <strong>Total Général :</strong> &nbsp;<%= m11 + m12 unless m11.nil? || m12.nil? %> trimestres
+          </h5>
+
+        </div>
+      </div>
+    <% end %>
+
+    <% unless @cfs_reversion_veuve.assur_second_pays_valid? %>
+    <hr>
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <%= bootstrap_form_for(@periode_assuranceSP, url: admin_cfs_reversion_veuve_ajouter_periode_assurance_SP_path(@cfs_reversion_veuve),
+                               layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message 'aa' %>
+          <%= f.date_select :date_debut, label: "Du",
+                            start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+          <%= f.date_select :date_fin, label: "Au",
+                            start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+          <%= f.number_field :trimestre_assurance, label: "Trimestres" %>
+          <%= f.number_field :trimestre_equivalente, label: "Trimestres eq." %>
+          <div class="hr-line-dashed"></div>
+
+          <div class="col-sm-4 col-sm-offset-2">
+            <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <% end %>
+
+
+    <%# if @periode_assurances_SP.size > 0 %>
+<!--      <div class="row" style="margin-left: 20%;">-->
+<!--        <div class="col-sm-8">-->
+<!--          <hr>-->
+<!--          <div class="panel panel-info">-->
+<!--            <div class="panel-body">-->
+<!--              <div class="table-responsive" style="margin-top: 5px">-->
+<!--                <br>-->
+<!--                <h5>-->
+<!--                  <strong>Nombre de trimestres de salariat :</strong> &nbsp; ???-->
+                  <%#= @cfs_reversion_veuve.participant.nb_trimestre_travail unless @cfs_reversion_veuve.participant.nil? %>
+
+<!--                </h5>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <hr>-->
+<!--        </div>-->
+<!--      </div>-->
+    <%# end %>
+
+  </div>
+</div>

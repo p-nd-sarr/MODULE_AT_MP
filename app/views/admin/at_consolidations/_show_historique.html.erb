@@ -1,0 +1,75 @@
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-lg-6">
+            <h2> Création: </h2>
+            <hr class="no-margins"> <br>
+
+            <p><strong>Ouvert Par: </strong> <%= @at_consolidation.ajoute_par.full_name unless @at_consolidation.ajoute_par.nil? %></p>
+            <p><strong>Date de création:  </strong> <%= @at_consolidation.created_at.strftime("%d/%m/%Y à %H:%M") %></p>
+        </div>
+
+        <div class="col-lg-6">
+            <h2> Soumission:  </h2>
+                <hr class="no-margins"> <br>
+            <p><strong>Soumis par: </strong><%= @at_consolidation.soumis_par.full_name unless @at_consolidation.soumis_par.nil? %></p>
+            <p><strong>Date de soumission: </strong> <%= (@at_consolidation.date_soumission_tech.strftime("%d/%m/%Y à %H:%M")) unless @at_consolidation.date_soumission_tech.nil? %> </p>
+        </div>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+        <div class="col-lg-6"> 
+            <h2> Validation en agence </h2>
+            <hr class="no-margins"> <br>
+            <p> <strong>Par: </strong> <%= @at_consolidation.valide_chef_agence_par.full_name unless @at_consolidation.valide_chef_agence_par.nil? %></p>
+            <p><strong> Date de validation: </strong> <%= @at_consolidation.date_validation_chef_agence.strftime("%d/%m/%Y à %H:%M") unless @at_consolidation.date_validation_chef_agence.nil?%></p>
+        </div>
+
+        <div class="col-lg-6"> 
+            <h2> Validation medecin conseil: </h2>
+            <hr class="no-margins"> <br>
+            <p> <strong>Par: </strong> <%= @at_consolidation.valide_chef_service_par.full_name unless @at_consolidation.valide_chef_service_par.nil? %></p>
+            <h5><strong> Date de validation: </strong>  <%= (@at_consolidation.date_validation_chef_service.strftime("%d/%m/%Y à %H:%M")) unless @at_consolidation.date_validation_chef_service.nil? %> </h5>
+        </div>
+        
+    </div>
+    
+    <br><br>
+
+    <div class="row">
+        <div class="col-lg-6"> 
+            <h2> Validation service AT</h2>
+            <hr class="no-margins"> <br>
+            <p> <strong>Par: </strong> <%= @at_consolidation.valide_chef_service_par.full_name unless @at_consolidation.valide_chef_service_par.nil? %></p>
+            <h5><strong> Date de validation: </strong>  <%= (@at_consolidation.date_validation_chef_service.strftime("%d/%m/%Y à %H:%M")) unless @at_consolidation.date_validation_chef_service.nil? %> </h5>
+        </div>
+
+        <div class="col-lg-6"> 
+            <h2> Validation direction AT:  </h2>
+             <hr class="no-margins"> <br>
+            <p> <strong>Par: </strong> </p>  <%= @at_consolidation.valide_dir_at_par.full_name unless @at_consolidation.valide_dir_at_par.nil? %>
+            <p><strong> Date de validation: </strong> <%= @at_consolidation.date_validation_directeur_at.strftime("%d/%m/%Y à %H:%M") unless @at_consolidation.date_validation_directeur_at.nil? %></p>
+        </div>
+        
+    </div>
+    
+    <br><br>
+
+    <div class="row">
+        <div class="col-lg-6"> 
+            <h2> Validation audit: </h2>
+             <hr class="no-margins"> <br>
+            <p> <strong>Par: </strong> </p>  <%= @at_consolidation.valide_dir_at_par.full_name unless @at_consolidation.valide_dir_at_par.nil? %>
+            <p><strong> Date de validation: </strong> <%= @at_consolidation.date_validation_directeur_at.strftime("%d/%m/%Y à %H:%M") unless @at_consolidation.date_validation_directeur_at.nil? %></p>
+        </div>
+
+        <div class="col-lg-6"> 
+            <h2> Validation Direction Générale</h2>
+            <hr class="no-margins"> <br>
+            <p> <strong>Par: </strong> <%= @at_consolidation.soumis_par.full_name unless @at_consolidation.soumis_par.nil? %></p>
+            <p> <strong>Date de validation: </strong>  <%= (@at_consolidation.date_validation_directeur_general.strftime("%d/%m/%Y à %H:%M")) unless @at_consolidation.date_validation_directeur_general.nil? %> </p>
+        </div>
+        
+    </div>
+</div>

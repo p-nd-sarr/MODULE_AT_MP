@@ -1,0 +1,161 @@
+<div class="row" style="margin-top: 20px;">
+  <div class="col-lg-12">
+    <div class="m-b-md">
+      <button type="button" class="btn btn-success btn-outline" data-toggle="modal" data-target="#infoSalarie" style="float: right;"><span class="fa fa-edit"></span> Modifier les informations</button>
+      <div class="modal inmodal" id="infoSalarie" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+          <%= bootstrap_form_for([:admin, @demande_maladie_professionnelle], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>
+
+          <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Modifier informations salarié</h4>
+            </div>
+            <div class="modal-body">            
+              <div class="row">
+                <div class="col-md-12 col-sm-12 offset-6">
+                  <h5 style="margin-top: 20px; margin-bottom: 20px;"><span class="label label-info"> Complèter le dossier</span> </h5>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                    <%=hidden_field_tag :custom_page, 'information_salarie'%>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :numero_affiliation, label: 'Numéro affiliation', readonly: true %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :prenom_salarie, label: 'Prénom salarié', readonly: true %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :nom_salarie, label: 'Nom salarié', readonly: true %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :adresse_domiciliaire_salarie, label: 'Adresse domiciliaire' %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :telephone_salarie, label: 'Téléphone' %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.select :situation_matrimoniale_salarie, 
+                          MaladieProfessionnelle::SITUATION_MATRIMONIALE.keys.collect{|sit_mat| [sit_mat, sit_mat]}, label: 'Situation matrimoniale' %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.select :nationalite_salarie, 
+                        ArretTravail::NATIONALITE_SALARIE.keys.collect{|nat| [nat, nat]}, label: 'Nationalité'%>
+                  </div>
+                   <div class="col-sm-6 col-md-6">
+                    <%= f.date_select :date_de_naissance_salarie, label: "Date de naissance",
+                                          start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+                  </div>
+                </div>
+                <div class="col-sm-12 col-md-12">
+                  <hr>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.select :qualification_professionnelle_salarie, 
+                        MaladieProfessionnelle::QUALIFICATION_PROFESSIONNELLE.keys.collect{|item| [item, item]}, label: 'Qualification professionnelle' %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">      
+                    <%= f.text_field :nin_salarie, label: 'NINEA' %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :carnet_accident_travail, label:"Carnet d'accident de travail" %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.date_select :date_embauche_salarie , label: "Date d'embauche",
+                                             start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.number_field :anciennete_salarie %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.select :type_de_contrat_travail_salarie, 
+                        MaladieProfessionnelle::TYPE_DE_CONTRAT_TRAVAIL.keys.collect{|tc| [tc, tc]}, label: 'Type de contrat' %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="modal-footer form-group">
+              <%= link_to 'Annuler', (@demande_maladie_professionnelle.persisted? ? [:admin, @demande_maladie_professionnelle] : admin_maladie_professionnelles_path), class: 'btn btn-white' %>
+              <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+            </div>
+          </div>
+          <%end%>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-5 text-sm-right" style="text-align: right;">
+        <dt>Numéro affiliation: </dt>
+      </div>
+      <div class="col-sm-5 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%=@demande_maladie_professionnelle.numero_affiliation%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-5" style="text-align: right;">
+        <dt>Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-5" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @demande_maladie_professionnelle.prenom_salarie %> <%= @demande_maladie_professionnelle.nom_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-5" style="text-align: right;">
+        <dt>Adresse domiciliaire:</dt>
+      </div>
+      <div class="col-sm-5" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_maladie_professionnelle.adresse_domiciliaire_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-5" style="text-align: right;">
+        <dt>Téléphone:</dt>
+      </div>
+      <div class="col-sm-5" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_maladie_professionnelle.telephone_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-5" style="text-align: right;">
+        <dt>Situation matrimoniale:</dt>
+      </div>
+      <div class="col-sm-5" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_maladie_professionnelle.situation_matrimoniale_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-5" style="text-align: right;">
+        <dt>Nationalité:</dt>
+      </div>
+      <div class="col-sm-5" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_maladie_professionnelle.nationalite_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-5" style="text-align: right;">
+        <dt>Date de naissane:</dt>
+      </div>
+      <div class="col-sm-5" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_maladie_professionnelle.date_de_naissance_salarie %></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-4 text-sm-right" style="text-align: right;">
+        <dt>Qualification professionnelle:</dt>
+      </div>
+      <div class="col-sm-4 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_maladie_professionnelle.qualification_professionnelle_salarie %></dd>
+      </div>
+    </d1>
+  </div>
+</div>

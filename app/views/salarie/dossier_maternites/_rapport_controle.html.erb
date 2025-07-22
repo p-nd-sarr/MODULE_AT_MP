@@ -1,0 +1,89 @@
+<div class="modal inmodal" id="RapportModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-paper-plane modal-icon btn-info"></i>
+        <h4 class="modal-title">
+          Rapport De Controle
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <% if @dossier_maternite.date_rapport.nil? %>
+          <%= bootstrap_form_for(@dossier_maternite, url: admin_dossier_maternite_rapport_controle_soumettre_path(@dossier_maternite),
+                                 layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Une erreur est survenue lors de l'enregistrement du rapport" %>
+
+            <%= f.text_area :rapport_controle, label: "Rapport : " %>
+
+            <h4 style="font-weight: bold;">Document </h4>
+            <div class="btn-file">
+              <label class="no-text">
+                <%= f.file_field :document, hide_label: true, label: 'Document', required: true, id: 'label-ext' %>
+                <div class="btn btn-success" style="margin-top:-20px; margin-left: 1px;">
+                  <span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+              <small id="doc-name"></small>
+            </div>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row">
+              <div class="col-sm-8 col-sm-offset-8">
+                <%= link_to 'Annuler', [:admin, @dossier_maternite], class: 'btn btn-white' %>
+                <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        <% else %>
+          <p>
+            <strong>Date Soumission Rapport :</strong>
+            <%= l @dossier_maternite.date_rapport %>
+          </p>
+          <% unless @dossier_maternite.rapport_controle.nil? %>
+            <p>
+              <strong>Rapport :</strong>
+              <%= @dossier_maternite.rapport_controle %>
+            </p>
+          <% end %>
+          <% unless @dossier_maternite.document.nil? %>
+            <p>
+              <strong>Document :</strong>
+              <%= link_to image_tag('missing_logo.png', size: "300x300>",
+                                    class: "m-t-xs img-responsive"), @dossier_maternite.document, target: :_blank %>
+            </p>
+          <% end %>
+        <% end %>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        // $('input:checkbox').removeAttr('checked');
+        //
+        // $("#soummetre_valide").hide();
+        // var all_checkboxes = $('#SoumissionDossierModal input[type="checkbox"]');
+        //
+        // $(".modal-body").change(function () {
+        //
+        //     if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+        //         $("#soummetre_valide").show();
+        //     } else {
+        //         $("#soummetre_valide").hide();
+        //
+        //     }
+        //
+        // });
+
+    });
+
+</script>

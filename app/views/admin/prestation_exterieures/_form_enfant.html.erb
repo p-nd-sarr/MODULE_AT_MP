@@ -1,0 +1,205 @@
+<%= bootstrap_form_for([:admin, @enfant], url: admin_prestation_exterieure_create_caf_enfant_path(@prestation_exterieure.id), namespace: 'new_enfant', layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="ibox">
+    <div class="ibox-title">
+      <h5 style="text-decoration: underline;"> Ajouter enfant </h5>
+      <div class="ibox-tools">
+        <a class="collapse-link">
+          <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="form-group" style="align-content: center">
+            <%= f.collection_select :caf_conjoint_id, @conjoints, :id, :full_name, label: 'Conjoint', required: true %>
+
+            <%= f.text_field :prenom, label: 'Prénom enfant', required: true %>
+            <%= f.text_field :nom, label: 'Nom enfant', required: true %>
+            <%= f.date_select :date_naissance, label: "Date de naissance",
+                              start_year: (Date.today - 50.year).year, end_year: Date.today.year, required: true %>
+            <div class="alert-danger date_naissance_validation" style="border-radius: 50px; margin-bottom: 5px;">La date
+              de mariage doit être antérieur à la date de naissance
+            </div>
+            <%= f.text_field :lieu_naissance, required: true %>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <%= f.select :sexe,
+                       CafEnfant::SEXE.keys.collect { |sexe| [CafEnfant.human_enum_name(:sexe, sexe), sexe] },
+                       label: "Genre" %>
+          <%= f.select :lien_parente,
+                       CafEnfant::LIEN_PARENTE.keys.collect { |lien_parente| [CafEnfant.human_enum_name(:lien_parente, lien_parente), lien_parente] },
+                       label: "Lien de parenté", required: true %>
+          <%= f.text_field :observations %>
+          <%= f.select :type_piece,
+                       CafEnfant::TYPE_PIECE.keys.collect { |type_piece| [CafEnfant.human_enum_name(:type_piece, type_piece), type_piece] },
+                       label: "Type de pièce" %>
+          <%= f.text_field :numero_piece, label: 'Numero_pièce', required: true %>
+        </div>
+        <x></x>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-5">
+      <%= submit_tag("Annuler", { class: 'btn btn-white', :type => "reset" }) %>
+      <%= f.button 'Valider', id: 'enfant_submit_button', class: 'btn btn-primary btn-xs' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      /* Start section list caf enfant */
+      var enfant_names = document.getElementsByName('caf_enfant[nom]');
+      var enfant_link_parents = document.getElementsByName('caf_enfant[lien_parente]');
+
+      function set_childreen_names(i) {
+          if (enfant_link_parents[i].value === 'mariage' || enfant_link_parents[i].value === 'naturel') {
+              enfant_names[i].value = '<%= @prestation_exterieure.nom %>';
+              enfant_names[i].setAttribute("readonly", 'true');
+          } else {
+              enfant_names[i].removeAttribute("readonly");
+          }
+      }
+
+      <% if  @prestation_exterieure.masculin? %>
+      for (let i = 0; i < enfant_link_parents.length; i++) {
+          set_childreen_names(i)
+
+          enfant_link_parents[i].addEventListener('change', function (event) {
+              set_childreen_names(i)
+          });
+      }
+      <% end %>
+
+      $(document).ready(function () {
+          $.ajax({
+              url: "/admin/caf_conjoints/list_caf_conjoints/" + prestation_id + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      conjoint = data;
+                      html = '';
+
+                      $.each(data, function (key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+                      $(".caf_conjoint_id").each(function () {
+                          $(this).html(html);
+                      });
+                  } else {
+                      $(".caf_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $(".caf_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      });
+      /* End section list caf enfant */
+
+
+      /* Start section form enfant */
+      var conjoint;
+      var prestation_id = <%= @prestation_exterieure.id %>;
+      $(document).ready(function () {
+          $.ajax({
+              url: "/admin/caf_conjoints/list_caf_conjoints/" + prestation_id + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      conjoint = data;
+                      html = '';
+
+                      $.each(data, function (key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+
+                      $("#new_enfant_caf_enfant_caf_conjoint_id").html(html);
+                  } else {
+                      $("#V_caf_enfant_caf_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#new_enfant_caf_enfant_caf_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      });
+
+
+      $(document).ready(function () {
+          $('#new_enfant_label-ext').change(function () {
+              if ($('#new_enfant_label-ext').val() != null) {
+                  $('#new_enfant_label-piece').removeAttr('required')
+              }
+          });
+      });
+
+
+      $(document).ready(function () {
+          $('.date_naissance_validation').hide();
+
+          var date_day_array = document.getElementsByName('caf_enfant[date_naissance(3i)]');
+          var date_month_array = document.getElementsByName('caf_enfant[date_naissance(2i)]');
+          var date_year_array = document.getElementsByName('caf_enfant[date_naissance(1i)]');
+
+          var conjoint_array = document.getElementsByName('caf_enfant[caf_conjoint_id]');
+          var lien_parente_array = document.getElementsByName('caf_enfant[lien_parente]');
+          var date_naiss_label_array = document.getElementsByName('date_naissance_validation');
+
+          addEvent(conjoint_array)
+          addEvent(date_day_array)
+          addEvent(date_month_array)
+          addEvent(date_year_array)
+          addEvent(lien_parente_array)
+
+
+          function addEvent(arrayObject) {
+              for (let i = 0; i < arrayObject.length; i++) {
+                  arrayObject[i].addEventListener('change', function (event) {
+                      setDateNaissance(event, i);
+                  });
+              }
+          }
+
+          function setDateNaissance(event, i) {
+
+              for (let j = 0; j < conjoint.length; j++) {
+                  if (conjoint[j].id == conjoint_array[i].value && lien_parente_array[i].value === "mariage") {
+                      if (conjoint[j].date_mariage < (date_year_array[i].value + '-' + date_month_array[i].value + '-' + date_year_array[i].value)) {
+                          $('.date_naissance_validation').hide();
+                          $('#enfant_submit_button').attr("disabled", false)
+                          return
+                      } else {
+                          $('.date_naissance_validation').show();
+                          $('#enfant_submit_button').attr("disabled", true)
+                          return
+                      }
+                  } else {
+                      $('.date_naissance_validation').hide();
+                      $('#enfant_submit_button').attr("disabled", false)
+                  }
+              }
+          }
+
+
+      });
+
+      /* End section form enfant */
+
+  </script>
+<% end %>

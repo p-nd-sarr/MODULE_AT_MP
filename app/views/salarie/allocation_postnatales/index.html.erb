@@ -1,0 +1,168 @@
+<%= content_for :titre_page, "Dossier #{@dossier_prestation.num_dossier} - Allocation Postnatales" %>
+
+<%= content_for :actions_page do %>
+  <div class="btn-group">
+    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">
+      AJOUTER UNE DEMANDE
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <% for enfant in @dossier_prestation.enfants.valide.order('date_naissance desc') %>
+        <% unless enfant.volets_eligibles.empty? %>
+          <li>
+            <%= link_to enfant.full_name, new_salarie_dossier_prestation_allocation_postnatale_path(@dossier_prestation, enfant_id: enfant.id) %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-warning float-right">4e Volet</span>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%= format_cfa m4 = @dossier_prestation.allocation_postnatales.volet4.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-success float-right">5e Volet</span>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%= format_cfa m5 = @dossier_prestation.allocation_postnatales.volet5.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-primary float-right">7e Volet</span>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%= format_cfa m6 = @dossier_prestation.allocation_postnatales.volet6.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-info float-right">7ème Volet</span>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%= format_cfa m7 = @dossier_prestation.allocation_postnatales.volet7.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-warning float-right">8ème Volet</span>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%= format_cfa m8 = @dossier_prestation.allocation_postnatales.volet8.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-danger float-right">Totalisation</span>
+          <!--          <h5>User activity</h5>-->
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%= format_cfa mTot = m4 + m5 + m6 + m7 + m8 %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% for enfant in @dossier_prestation.enfants_avec_volets.order('date_naissance desc') %>
+    <div class="ibox">
+      <div class="ibox-title">
+        <h5>Enfant : <%= enfant.full_name %> (date naissance : <%= l enfant.date_naissance %>)</h5>
+      </div>
+      <div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Volet</th>
+            <th scope="col">Etat</th>
+            <th scope="col">Montant Liquidé</th>
+            <th scope="col">Date Liquidation</th>
+            <th scope="col">Date Paiement</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @allocation_postnatales.where(enfant: enfant).each do |allocation_postnatale| %>
+            <tr>
+              <td><%= AllocationPostnatale.human_enum_name(:volet, allocation_postnatale.volet) %></td>
+              <td><%= AllocationPostnatale.human_enum_name(:etat, allocation_postnatale.etat) %></td>
+              <td><%= allocation_postnatale.montant_paiement %></td>
+              <td>
+                <% unless allocation_postnatale.date_liquidation.nil? %>
+                  <%= l allocation_postnatale.date_liquidation %>
+                <% end %>
+              </td>
+              <td>
+                <% unless allocation_postnatale.date_paiement.nil? %>
+                  <%= l allocation_postnatale.date_paiement %>
+                <% end %>
+              </td>
+              <td style="width: 75px">
+                <%= link_to 'détails', [:salarie, @dossier_prestation, allocation_postnatale], class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+              <% if allocation_postnatale.creation? %>
+
+              <td style="width: 75px">
+                <%= link_to 'Modifier', edit_salarie_dossier_prestation_allocation_postnatale_path(@dossier_prestation, allocation_postnatale),
+                            class: 'btn btn-outline btn-success btn-xs' %>
+              </td>
+                <td style="width: 75px">
+                  <%= link_to 'modifier', edit_salarie_dossier_prestation_allocation_postnatale_path(@dossier_prestation, allocation_postnatale),
+                              class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+
+                <td style="width: 75px">
+                  <%= link_to 'soumettre', salarie_dossier_prestation_allocation_postnatale_soumission_form_path(@dossier_prestation, allocation_postnatale),
+                              class: 'btn btn-outline btn-success btn-xs' %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'supprimer', [:salarie, @dossier_prestation, allocation_postnatale],
+                              method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+</div>

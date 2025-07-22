@@ -1,0 +1,57 @@
+<%= content_for :titre_page, "Dossier De Prestation / Régularisation Veuves" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}" %> <br>
+  <% unless @dossier_prestation.get_date_deces.nil? %>
+    <strong class="text-info">Date décès :</strong>
+    <%= "#{l @dossier_prestation.get_date_deces}" %>
+  <% end %> <br>
+  <span style="font-style: italic">Est repris?</span> : <%= state_yes_no @dossier_prestation.est_repris %>
+  <% unless @dossier_prestation.date_suspension.nil? %>
+    <br>
+    <strong class="text-info">Date suspension :</strong>
+    <%= "#{l @dossier_prestation.date_suspension}" %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_prestation_all_regularisation_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <%= paginate @echeances %>
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col" style="width: 10px">#</th>
+              <th scope="col">Date génération</th>
+              <th scope="col">Statut</th>
+              <th scope="col">Période</th>
+              <th colspan="1"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @echeances.each do |echeance| %>
+              <tr>
+                <td><%= echeance.id %></td>
+                <td><%= l echeance.created_at %></td>
+                <td><%= EcheanceVeuvesCaisse.workflow_spec.states[echeance.workflow_state.to_sym].meta[:label] %></td>
+                <td><%= l echeance.periode_debut %> - <%= l echeance.periode_fin %></td>
+                <td style="width: 75px">
+                  <%= link_to 'détails', admin_dossier_prestation_regularisation_widow_details_path(@dossier_prestation, echeance.trimestre, echeance.annee), 'data-turbolinks': false, class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <%= paginate @echeances %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

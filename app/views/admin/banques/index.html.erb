@@ -1,0 +1,43 @@
+<%= content_for :titre_page, 'Admin Banques' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_banque_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Code Banque</th>
+        <th scope="col">Code SWIFT</th>
+        <th scope="col">Bank ID</th>
+        <th scope="col">Actif</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_banques.each do |admin_banque| %>
+        <tr>
+          <td><%= admin_banque.nom %></td>
+          <td><%= admin_banque.code %></td>
+          <td><%= admin_banque.code_swift %></td>
+          <td><%= admin_banque.bank_id %></td>
+          <td><%= state_yes_no admin_banque.actif %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_banque, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_banque_path(admin_banque), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_banque, method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

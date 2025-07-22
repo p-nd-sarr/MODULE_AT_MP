@@ -1,0 +1,85 @@
+<div class="ibox" style="margin-top:20px;">
+  <div class="ibox-title" style="background-color:rgb(240, 240, 240)">
+    <div class="ibox-tools">
+      <% if @dossier_juridique.affectation? and @dossier_juridique.is_set_manager(current_user.id) %>
+        <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#honoraires_form<%= @dossier_juridique_honoraire.id %>">
+          <span class="fa fa-plus"></span> Ajouter coût / Honoraire
+        </button>
+      <% end %>
+    </div>
+
+  </div>
+
+  <div class="ibox-content">
+    <br>
+    <%= form_tag(admin_dossier_juridique_path(@dossier_juridique.id), method: :get) do %>
+      <div class="row">
+        <div class="col-sm-9">
+          <div class="col-5">
+            <%= select_tag :type_int, options_for_select([['Juge', 1], ['Avocat', 2], ['Huissier', 3]], params[:type_int]), { class: 'form-control', prompt: 'Choisir un élément' } %>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="badge">
+            <h4>TOTAL : <%= format_cfa @dossier_juridique.get_honoraires(@dossier_juridique_honoraires) %> </h4></div>
+        </div>
+      </div>
+      <div class="hr-line-dashed"></div>
+      <%= submit_tag 'Filtrer', class: 'btn btn-primary', id: 'submit_button', name: nil %>
+    <% end %>
+
+    <br>
+    <%= paginate @dossier_juridique_honoraires %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Intervenat</th>
+        <th scope="col">Nom complet</th>
+        <th scope="col">Montant</th>
+        <th scope="col">Date</th>
+        <th scope="col">Document justificatif</th>
+        <th scope="col">Options</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @dossier_juridique_honoraires.each do |dossier_juridique_honoraire| %>
+        <tr>
+          <% unless dossier_juridique_honoraire.avocats_huissier.nil? %>
+            <td><%= AvocatsHuissier.human_enum_name(:type_intervenant, dossier_juridique_honoraire.avocats_huissier.type_intervenant) unless dossier_juridique_honoraire.avocats_huissier.type_intervenant.nil? %></td>
+          <% else %>
+            <td>Juge</td>
+          <% end %>
+          <% unless dossier_juridique_honoraire.avocats_huissier.nil? %>
+            <td><%= dossier_juridique_honoraire.avocats_huissier.full_name %></td>
+          <% else %>
+            <td><%= dossier_juridique_honoraire.nom_complet_juge %></td>
+          <% end %>
+          <td><%= dossier_juridique_honoraire.montant unless dossier_juridique_honoraire.montant.nil? %></td>
+          <td><%= l(dossier_juridique_honoraire.date_eff) unless dossier_juridique_honoraire.date_eff.nil? %></td>
+          <td>
+            <% if dossier_juridique_honoraire.document_justificatif.attached? %>
+              <a href="<%= url_for(dossier_juridique_honoraire.document_justificatif) %>" target="_blank">
+                <%= image_tag dossier_juridique_honoraire.document_justificatif.preview(resize: "100x20>"), class: "m-t-xs img-responsive" %>
+              </a>
+            <% end %>
+          </td>
+          <% if @dossier_juridique.affectation? and @dossier_juridique.is_set_manager(current_user.id) %>
+            <td>
+              <%= link_to 'Supprimer', admin_dossier_juridique_honoraire_path(dossier_juridique_honoraire), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn-danger btn-xs' %>
+              <button type="button" class="btn btn-xs btn-outline" data-toggle="modal" data-target="#honoraires_form<%= dossier_juridique_honoraire.id %>">
+                <span class="fa fa-edit"></span> Modifier
+              </button>
+            </td>
+            <%= render 'admin/dossier_juridiques/honoraires_modal_form', :object => dossier_juridique_honoraire %>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @dossier_juridique_honoraires %>
+  </div>
+</div>
+
+
+<%= render 'admin/dossier_juridiques/honoraires_modal_form', :object => @dossier_juridique_honoraire %>

@@ -1,0 +1,40 @@
+<%= content_for :titre_page, "Détails at_carnet" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', at_carnets_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_at_carnet_path(@at_carnet), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter at_carnet', new_at_carnet_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Numero carnet:</strong>
+                  <%= @at_carnet.numero_carnet %>
+                </p>
+
+                            <p>
+                  <strong>Arret travail:</strong>
+                  <%= @at_carnet.arret_travail_id %>
+                </p>
+
+                            <p>
+                  <strong>Numero employeur:</strong>
+                  <%= @at_carnet.numero_employeur %>
+                </p>
+
+                            <p>
+                  <strong>Date achat:</strong>
+                  <%= @at_carnet.date_achat %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

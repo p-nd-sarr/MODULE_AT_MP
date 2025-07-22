@@ -1,0 +1,32 @@
+<div class="row" style="margin-top:30;">
+  <div class="col-lg-12">
+    <% if @rentier.enfants.valide.empty? %>
+      <h2>Liste des enfants vide !!! </h2>
+    <% else %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Date de naissance</th>
+        <th scope="col">Nom mère</th>
+        <th scope="col">Prénom mère</th>
+       
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @rentier.enfants.valide.each do |enfant| %>
+        <tr>
+          <td><%= enfant.nom %></td>
+          <td><%= enfant.prenom %></td>
+          <td><%= l enfant.date_naissance %></td>
+          <td><%= enfant.conjoint.nom %></td>
+          <td><%= enfant.conjoint.prenom %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%end%>
+  </div>
+</div>

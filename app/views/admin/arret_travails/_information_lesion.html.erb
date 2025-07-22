@@ -1,0 +1,72 @@
+
+
+
+<div class="row" style="margin-top: 30px;" >
+    <div class="col-lg-9">
+        <h3>Liste lésions</h3>
+    </div>
+    <div class="col-sm-3" style="text-align: right;">
+      <%if @demande_arret_travail.creation?%>
+        <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#lesion1">Ajouter lésion</button>
+      <% end %>
+      <div class="modal inmodal" id="lesion1" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <%= bootstrap_form_for(@at_lesion, url:  admin_arret_travail_ajouter_lesion_path(@demande_arret_travail), label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>
+            <div class="modal-content animated fadeIn">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">x</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Ajouter lésion</h4>
+              </div>
+              <div class="modal-body">
+                <%= f.hidden_field :arret_travail_id, value: @demande_arret_travail.id %>
+                <%= f.select :nature_lesion, AtLesion::NATURE_LESION.keys.collect { |item| [ArretTravail.human_enum_name(:nature_lesion, item), item] }, label: 'Nature lésion', include_blank: 'Selectionner' %>
+                <%= f.select :siege_lesion, AtLesion::SIEGEE_LESION.reject { |k, v| v == 4 || v == 5 || v == 6 || v == 8 }.keys.collect { |item| [ArretTravail.human_enum_name(:siege_lesion, item), item] }, label: 'Siege lésion', include_blank: 'Selectionner' %>
+                <%= f.date_field :created_at, label: "Date CMC" %>
+              </div>
+              <div class="modal-footer form-group">
+                <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                <%= f.button 'Valider', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-lg-12" style="margin-top: 20px;">
+      <table class="table table-bordered table-condensed table-hover" style="margin-bottom: 30px;">
+        <thead>
+        <tr>
+          <th>Date établissement certificat</th>
+          <th>Nature lésion</th>
+          <th>Siege lésion</th>
+          <th colspan="2">Action</th>
+
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @demande_arret_travail.at_lesions.each do |lesion| %>
+          <tr>
+            <td><%=lesion.created_at.strftime('%d/%m/%Y')%></td>
+            <td><%=lesion.nature_lesion%></td>
+            <td><%=lesion.siege_lesion%></td>
+            <% if @demande_arret_travail.creation?%>
+              <td style="width: 75px">
+                <%= (link_to 'Modifier',edit_admin_arret_travail_at_lesion_path(@demande_arret_travail,id: lesion), data: { confirm: 'En êtes vous sûr?' },class: 'btn btn-outline btn-warning btn-xs') %>
+              </td>
+              <td style="width: 75px">
+                <%= link_to 'Supprimer',[:admin, @demande_arret_travail, lesion],method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+              </td> 
+            <% end %>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+</div>

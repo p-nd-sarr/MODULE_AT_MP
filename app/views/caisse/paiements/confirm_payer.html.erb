@@ -1,0 +1,122 @@
+<% content_for :titre_page do %>
+  Confirmation du paiement #<%= @paiement.numero_ordre %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Payer', caisse_paiement_confirm_payer_path(@paiement), class: 'btn btn-primary btn-sm', method: :post,
+                data: { confirm: 'En êtes vous sûr de vouloir procéder au paiement, cette action est irréversible?' } %>
+  <%= link_to 'Retour', caisse_paiements_path, class: 'btn btn-white btn-sm' %>
+  <%#= link_to 'Déclarer décès', caisse_paiement_decede_path(@paiement), class: 'btn btn-warning btn-sm', method: :post,
+                data: { confirm: "En êtes vous sûr de vouloir déclarer le décès, cette action est irréversible?" } %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h1>Montant à payer : <span class="text-navy font-bold"><%= format_cfa @paiement.montant %></span></h1>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Numéro Ordre:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.numero_ordre %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Source:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.source %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Mode de paiement:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.mode_paiement_human %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Détails:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.details %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4" style="text-align: right;">
+            <dt>Période:</dt>
+          </div>
+          <div class="col-sm-4" style="text-align: left;">
+            <dd class="mb-1">
+              <% if @paiement.immediate? %>
+                Immédiate
+              <% else %>
+                <%= "#{ @paiement.periode_debut.strftime("%d/%m/%Y")} au #{@paiement.periode_fin.strftime("%d/%m/%Y")}" %>
+              <% end %>
+            </dd>
+          </div>
+        </d1>
+      </div>
+
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Numéro allocataire:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.numero_allocataire %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Ancien numéro IPRES:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.ipres_ancien_matric %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Prénom:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.prenom %></dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4 text-sm-right" style="text-align: right;">
+            <dt>Nom:</dt>
+          </div>
+          <div class="col-sm-4 text-sm-left" style="text-align: left;">
+            <dd class="mb-1"><%= @paiement.nom %></dd>
+          </div>
+        </d1>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="alert alert-warning">
+      Merci de saisir le Numéro d'Identification National de l'allocataire pour confirmer le paiement
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12">
+        <%= bootstrap_form_tag(url: caisse_paiement_payer_path(@paiement), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.text_field :nin, label: "Numéro d'Identification National", required: true %>
+          <div class="hr-line-dashed"></div>
+
+          <div class="col-sm-4 col-sm-offset-2">
+            <%= f.button 'Payer', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

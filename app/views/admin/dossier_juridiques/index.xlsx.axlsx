@@ -1,0 +1,25 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numéro dossier',
+      'Type dossier',
+      'nom dossier',
+      'Objet dossier',
+      'Requérant',
+      'Défendeur',
+      'Etat'
+  ]
+  sheet.add_row titre, :b => true
+  @dossier_juridiques.each do |t|
+    sheet.add_row [
+                      t.num_dossier,
+                      t.admin_type_dossier_juridique_id,
+                      t.nom_dossier,
+                      t.objet_dossier,
+                      t.requerent,
+                      t.defendeur,
+                      DossierPrestation.workflow_spec.states[t.workflow_state.to_sym].meta[:label]
+                  ]
+  end
+end

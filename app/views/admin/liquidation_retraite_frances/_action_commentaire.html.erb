@@ -1,0 +1,186 @@
+<!-- Soumettre -->
+<div class="modal inmodal" id="action_liquidation0" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Valider l'instruction</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_soumettre_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_affectation_salaire, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Valider l'instruction -->
+<div class="modal inmodal" id="action_liquidation1" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Valider l'instruction</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_instruire_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_instruction, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Soumettre la validation des carrières -->
+<div class="modal inmodal" id="action_liquidation2" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Soumettre la validation des carrières</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_valider_carriere_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_carriere, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Valider Carrière -->
+<div class="modal inmodal" id="action_liquidation3" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Valider Carrières</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_cotisation_valide_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_validation_carriere, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Soumettre la validation du tableau -->
+<div class="modal inmodal" id="action_liquidation4" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Soumettre la validation du tableau</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_valider_recapitulatif_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_tableau, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Valider Tableau Recapitulatif -->
+<div class="modal inmodal" id="action_liquidation5" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Valider Tableau Recapitulatif</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_liquidation_valide_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_validation_tableau, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+<!-- Valider Dossier -->
+<div class="modal inmodal" id="action_liquidation6" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Valider Tableau Recapitulatif</h4>
+      </div>
+      <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_dossier_valide_action_path(@demande_liquidation)) do |f| %>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_validation, label: 'Commentaire' %>
+        </div>
+
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Valider', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

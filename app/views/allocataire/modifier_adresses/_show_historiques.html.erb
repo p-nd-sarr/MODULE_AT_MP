@@ -1,0 +1,44 @@
+<div class="row">
+  <div class="ibox">
+    <div class="ibox-title">
+      <h5>Historiques du dossier de modification mode paiement</h5>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-lg-6">
+          <h5>Ouvert Par: <%= @modifier_adresse.ajoute_par.full_name %></h5>
+          <h5>Date de création: <%= @modifier_adresse.created_at.strftime("%d/%m/%Y") %></h5>
+        </div>
+        <div class="col-lg-6">
+          <h5>Soumis à l'instruction: <%= @modifier_adresse.soumis_par.full_name if @modifier_adresse.soumis_par?  %></h5>
+          <h5>Date de
+            soumission:  <%= (@modifier_adresse.date_soumission.strftime("%d/%m/%Y")) unless @modifier_adresse.date_soumission.nil? %> </h5>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+          <div class="col-lg-3">
+            <h5>Validée Par
+              : <%= (@modifier_adresse.valider_par.try(:full_name)) unless @modifier_adresse.valider_par.nil? %> </h5>
+            <h5>Date de validation
+              : <%= (@modifier_adresse.date_validation.strftime("%d/%m/%Y")) unless @modifier_adresse.date_validation.nil? %></h5>
+          </div>
+
+          <div class="col-lg-3">
+            <h5>Rejetée Par
+              : <%= (@modifier_adresse.traite_par.try(:full_name)) unless @modifier_adresse.traite_par.nil? %> </h5>
+            <h5>Date de rejet
+              : <%= (@modifier_adresse.traite_le.strftime("%d/%m/%Y")) unless @modifier_adresse.traite_le.nil? %></h5>
+          </div>
+            
+
+        <div class="col-lg-3">
+          <h5>Gestionnaire
+            allocataire: <%= (@modifier_adresse.affecter_allocataire.full_name) unless @modifier_adresse.affecter_allocataire.nil? %> </h5>
+          <h5>Date
+            Affectation: <%= (@modifier_adresse.affectation_allocataire_date.strftime("%d/%m/%Y")) unless @modifier_adresse.affectation_allocataire_date.nil? %></h5>
+        </div>
+      </div> 
+    </div>
+  </div>
+</div>

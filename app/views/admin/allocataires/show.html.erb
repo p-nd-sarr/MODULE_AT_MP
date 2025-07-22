@@ -1,0 +1,346 @@
+<%= content_for :titre_page, "Détails Allocataire" %>
+<%= content_for :titre_page_autres_details do %>
+  N° Allocataire : <%= @allocataire.numero_allocataire %> <br>
+  Type Allocataire : <%= @allocataire.categorie %> <br>
+  Arrondi en cours : <%= format_cfa @allocataire.arrondi_en_cours %> <br>
+  <% if @allocataire.actif? %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Carte allocataire".html_safe, admin_allocataire_imprimer_carte_allocataire_path(@allocataire, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+  <% end %>
+
+  <% if not @allocataire.motif_rejet.nil? and @allocataire.inactif? %>
+    <h3 style="color: red"> <u>Motif rejet allocataire: </u></h3>
+    <div class="rejet_allocataire">
+      <p class="text-warning"><%= (" #{@allocataire.motif_rejet} ") unless @allocataire.motif_rejet.nil? %> </p>
+    </div>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Liste des allocataires', admin_allocataires_path, class: 'btn btn-white btn-sm' %>
+  <% if @allocataire.retraite? %>
+    <% if @allocataire.base_reversion.nil? %>
+      <% if current_user.gestionnaire_compte_allocataire? %>
+        <%= (link_to 'Créer base de réversion', new_admin_allocataire_base_reversion_path(@allocataire), class: 'btn btn-success btn-sm') if current_user.gestionnaire_compte_allocataire? %>
+      <% end %>
+    <% else %>
+      <%= (link_to 'Base de reversion', admin_allocataire_base_reversions_path(@allocataire), class: 'btn btn-success btn-sm') %>
+    <% end %>
+  <% end %>
+
+  <% if @allocataire.veuve? %>
+    <% unless @allocataire.base_reversion.nil? %>
+      <%= (link_to 'Base de reversion', admin_allocataire_base_reversions_path(@allocataire), class: 'btn btn-success btn-sm') %>
+    <% end %>
+  <% end %>
+
+  <% unless @allocataire.liquidation_retraite.nil? %>
+    <%= (link_to 'Dossier liquidation', admin_liquidation_retraite_path(@allocataire.liquidation_retraite), class: 'btn btn-success btn-sm') %>
+  <% end %> <br><br>
+
+  <% unless @allocataire.dossier_reversion_salary.nil? %>
+    <%= (link_to 'Dossier Reversion', admin_dossier_reversion_salary_path(@allocataire.dossier_reversion_salary), class: 'btn btn-info btn-sm') %>
+  <% end %>
+  <% unless @allocataire.reversion_veuve.nil? %>
+    <%= (link_to 'Dossier Reversion', admin_allocataire_reversion_veuve_path(@allocataire.reversion_veuve.allocataire.id, @allocataire.reversion_veuve.id), class: 'btn btn-info btn-sm') %>
+  <% end %>
+
+  <% if @allocataire.inactif? and current_user.directeur_prestation? %>
+    <td style="width: 75px">
+      <%= (link_to 'valider', admin_allocataire_valider_path(@allocataire), class: 'btn btn-success btn-sm') if current_user.directeur_prestation? %>
+    </td>
+    <td style="width: 75px">
+      <% if current_user.directeur_prestation? %>
+        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejet_rejet_allocataire">Rejeter
+        </button>
+
+        <%#= link_to 'rejeter', admin_allocataire_rejeter_allocataire_path(@allocataire), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+      <% end %>
+    </td>
+  <% end %>
+
+  <% if @allocataire.valider? and current_user.inspection? %>
+    <td style="width: 75px">
+      <%= (link_to 'valider', admin_allocataire_activer_path(@allocataire), class: 'btn btn-success btn-sm') %>
+    </td>
+    <td style="width: 75px">
+        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejet_rejet_allocataire">Rejeter
+        </button>
+
+        <%#= link_to 'rejeter', admin_allocataire_rejeter_allocataire_path(@allocataire), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+    </td>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <%# les services allocataires %>
+            <div class="row">
+              <div class="col-lg-9" style="text-align:left;padding-top:10px">
+                <%= link_to 'Suspension', admin_allocataire_suspension_allocataires_path(@allocataire), class: "btn btn-outline btn-danger btn-sm" %>
+                <%= link_to 'Révision de pension', admin_allocataire_revision_pensions_path(@allocataire), class: "btn btn-outline btn-primary btn-sm" %>
+                <%= link_to 'Régularisation de pension', admin_allocataire_regularisation_pensions_path(@allocataire), class: "btn btn-outline btn-success btn-sm" %>
+                <%= link_to 'Modification du mode paiement', admin_allocataire_modifier_mode_paiements_path(@allocataire), class: "btn btn-outline btn-warning btn-sm" %>
+                <%= link_to 'Extinction', admin_allocataire_extinction_allocataires_path(@allocataire), class: "btn btn-outline btn-danger btn-sm" %>
+                <%= link_to 'Demande carte', new_admin_demande_carte_allocataire_path(allocataire_id: @allocataire.id), class: "btn btn-outline btn-success btn-sm" %>
+              </div>
+              <%# Autres services allocataires dans le dropdown %>
+              <div class="col-lg-3 form-group">
+                <div class="dropdown tooltip-demo" style="text-align:right">
+                  <a class="nav-link  dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="true">
+                    <h4 style="vertical-align: inherit; font-size:40px;">
+                      <span class="fa fa-th" data-toggle="tooltip" data-placement="left" title data-original-title="Tous les services allocataire"></span>
+                    </h4>
+                  </a>
+                  <ul class="category-list dropdown-menu dropdown-menu-right" style="padding:20px; background-color:rgb(250, 250, 250)">
+                    <div class="row " style="display:inlinem; width:500px">
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="1" style="display:inlinem;">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Suspension', admin_allocataire_suspension_allocataires_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+
+                      <div class="col-md-6">
+                        <% unless @allocataire.suspendus? %>
+                          <li class="dd-item" data-id="1" style="display:inlinem;">
+                            <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                              <%= link_to 'Modification du mode paiement', admin_allocataire_modifier_mode_paiements_path(@allocataire) %>
+                            </div>
+                          </li>
+                        <% end %>
+                      </div>
+                    </div>
+                    <div class="row " style="display:inlinem; width:500px">
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="2" style="display:inline">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to "Modification d'adresse", admin_allocataire_modifier_adresses_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="3">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%#= link_to "Mise à jour grappe familiale", admin_allocataire_update_grappe_familiales_path(@allocataire) %>
+                            <%= link_to 'Extinction', admin_allocataire_extinction_allocataires_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+                    </div>
+
+                    <div class="modal inmodal" id="suspension-modal" tabindex="-1" role="dialog" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <%= bootstrap_form_for(@allocataire, url: admin_allocataire_soumettre_path(@allocataire)) do |f| %>
+                          <div class="modal-content animated bounceInRight">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                              <i class="fa fa-laptop modal-icon"></i>
+                              <h5 class="modal-title">Suspension allocataire
+                                : <%= @allocataire.numero_allocataire %> </h5>
+                            </div>
+                            <div class="modal-body">
+                              <%= f.hidden_field :etat, class: 'form-control', value: 2 %>
+                              <%= f.text_area :motif_suspension, class: 'form-control' %>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                              <button type="submit" class="btn btn-danger">suspendre</button>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+
+
+                    <div class="row " style="display:inlinem; width:500px">
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="4">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Régularisation de pension', admin_allocataire_regularisation_pensions_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="6">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Révision de pension', admin_allocataire_revision_pensions_path(@allocataire) %>
+
+                          </div>
+                        </li>
+                      </div>
+                    </div>
+
+                    <div class="row " style="display:inlinem; width:500px">
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="7">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Voir mes prêts', admin_allocataire_pret_allocataire_lignes_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="8">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Pension Alimentaire', admin_allocataire_pension_alimentaires_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+                    </div>
+                    <div class="row " style="display:inlinem; width:500px">
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="8">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Avis de Tiers', admin_allocataire_avis_tiers_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="9" style="box-shadow:1px 1px 1px #4073FF">
+                          <div class="dd-handle">
+                            <%= link_to 'Paiements', admin_allocataire_paiement_allocataires_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+
+                      <div class="col-md-6">
+                        <li class="dd-item" data-id="8">
+                          <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                            <%= link_to 'Affiliation Association', admin_allocataire_affiliation_association_path(@allocataire) %>
+                          </div>
+                        </li>
+                      </div>
+
+                    </div>
+                  </ul>
+                </div> <!-- dropdown -->
+              </div> <!-- end col-lg-3 -->
+            </div>
+            <div class="row">
+              <div class="col-lg-12">
+                <ul class="nav nav-tabs">
+                  <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil
+
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Conjoints
+
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-calendar"></i>Enfants
+
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>Carrières
+
+                  </a></li>
+                  <li class=""><a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Documents
+                  </a></li>
+
+                  <li class=""><a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Tableau Recap
+
+                  </a></li>
+
+                  <li class=""><a data-toggle="tab" href="#tab-7"><i class="fa fa-folder"></i>Historiques
+
+                  </a></li>
+
+                  <li class=""><a data-toggle="tab" href="#tab-8"><i class="fa fa-folder"></i>Historiques paiements
+
+                  </a></li>
+
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane active">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'etat_civil' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-2" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_epouses' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-3" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_enfants' %>
+                    </div>
+                  </div>
+                  <div id="tab-4" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_carrieres' %>
+                    </div>
+                  </div>
+                  <div id="tab-5" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_documents' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-6" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_tableau_recapitulatif_points' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-7" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'historique' %>
+                    </div>
+                  </div>
+
+
+                  <div id="tab-8" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_historique_paiement' %>
+                    </div>
+                  </div>
+
+                </div> <!-- end tab content -->
+              </div> <!-- end col-lg-12 -->
+            </div> <!-- end row -->
+          </div> <!-- end div wrapper content -->
+        </div> <!-- end ibox-content -->
+      </div> <!-- end ibox -->
+    </div> <!-- end col-lg-12 -->
+  </div> <!-- end row -->
+</div> <!-- end div wrapper content -->
+
+<div class="modal inmodal" id="rejet_rejet_allocataire" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@allocataire, url: admin_allocataire_rejeter_path(@allocataire)) do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h5 class="modal-title">Rejet allocataire
+            : <%= @allocataire.numero_allocataire %> </h5>
+        </div>
+        <div class="modal-body">
+          <%= f.hidden_field :etat, class: 'form-control', value: 6 %>
+          <%= f.text_area :motif_rejet, class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-danger">rejeter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+

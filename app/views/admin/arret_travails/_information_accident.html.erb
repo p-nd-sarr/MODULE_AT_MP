@@ -1,0 +1,314 @@
+<%page_anchor_tag= 'tab-2'%>
+<%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-8", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+<div class="row">
+  <div class="col-md-12 col-sm-12 offset-6">
+    <h5 style="margin-top: 20px; margin-bottom: 20px;"><span class="label label-info"> Complèter le dossier</span> </h5>
+  </div>
+  <div class="col-sm-12 col-md-12">    
+      <%=hidden_field_tag :custom_page, 'information_accident'%>
+      <%=hidden_field_tag :anchor_tag, page_anchor_tag%>
+    <div class="col-sm-6 col-md-6">      
+      <%= f.text_field :nature_du_travail_au_moment_accident, label:"Nature du travail effectué au moment de l’accident", readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div class="col-sm-6 col-md-6">
+      <%= f.text_field :taux_infirmite_anterieure_accident, label:"Taux IPP antérieur", value: @demande_arret_travail.taux_infirmite_anterieure_accident, readonly: true%>
+    </div>
+    <!--div class="col-sm-4 col-md-4">
+      <%= f.text_field :numero_rente_infirmite_anterieure_accident, label:"Numéro rente infirmité antérieure accident", readonly: @demande_arret_travail.read_only?%>
+    </div-->
+    <div class="col-md-12"><hr></div>
+    <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+      <%= f.datetime_select :date_accident , label: "Date de l'accident",
+                           start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year ,disabled: true%>
+    </div>
+    <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+      <%= f.select :lieu_accident, ArretTravail::LIEU_ACCIDENT.keys.collect { |item| [ArretTravail.human_enum_name(:lieu_accident, item), item] }, label: 'Lieu accident' %> 
+    </div>
+    <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+      <%= f.select :nombre_hr_entre_accident_et_prise_travail, (0..10).to_a, label:"Nombre d’heures entre la prise du travail et l’accident du travail", readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div id="debut_at" class="col-sm-6 col-md-6" style="margin-top: 20px;">
+      <%= f.datetime_select :debut_arret_travail , label: "Debut arrêt travail",
+                            start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year%>
+    </div>
+    <div class="col-sm-6 col-md-6 " style="margin-top: 20px;">
+      <%= f.select :consequence_accident_travail, ArretTravail::CONSEQUENCE_ACCIDENT_TRAVAIL.keys.collect { |item| [ArretTravail.human_enum_name(:consequence_accident_travail, item), item] }, label: 'Consequence accident de travail' %> 
+    </div>
+    <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+      <%= f.select :agent_materiel, ArretTravail::AGENT_MATERIEL.keys.collect { |item| [ArretTravail.human_enum_name(:agent_materiel, item), item] }, label: 'Agent Matériel' %> 
+    </div>
+
+    <div class="col-sm-6 col-md-6" style="margin-top: 20px; height: 110px;">
+      <%= f.text_area :cause_circonstances_acccident, label: "Cause et circonstances de l'accident", readonly: @demande_arret_travail.read_only?, style: "height:5em", required: true %>
+    </div>
+    <div class="col-sm-12 col-md-12">
+      <hr>
+      <div class="col-sm-4 col-md-4 box2">
+        <%= f.check_box :avec_constat, label:"Constat effectué par une autorité (OUI/NON)", readonly: @demande_arret_travail.read_only?, id:"avec_constat", option: @demande_arret_travail.avec_constat%>
+      </div>
+      <div class="col-sm-8 col-md-8">
+        <div  id="detail_constat" style="display: none;">
+          <%= f.text_field :detail_constat ,label: 'Détails constat', readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div  id="sans_detail_constat" style="display: block;">
+          <%= f.text_field :raison_absence_constat, label: 'Raison non constat', readonly: @demande_arret_travail.read_only?%>
+        </div>
+      </div>
+    </div>
+    <!-- Avec témoin -->
+    <div class="col-sm-12 col-md-12">
+      <hr>
+      <div class="col-sm-4 col-md-4 box2">
+        <%= f.check_box :avec_temoin, label:"Avec témoin", disabled: @demande_arret_travail.read_only?, id:"avec_temoin",  option: @demande_arret_travail.avec_temoin%>
+      </div>
+      <div id="detail_temoin" style="display: none;">
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :nom_temoin, label:"Nom témoin",readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :adresse_temoin, label:"Adresse témoin",readonly: @demande_arret_travail.read_only?%>
+        </div>
+      </div>
+    </div>
+    <!-- Accident causé par tiers -->
+    <div class="col-sm-12 col-md-12">
+      <hr>
+      <div class="col-sm-4 col-md-4 box2">
+        <%= f.check_box :accident_cause_par_tiers, label:"Accident causé par un tiers", disabled: @demande_arret_travail.read_only?, id:"avec_tiers", option: @demande_arret_travail.accident_cause_par_tiers%>
+      </div>
+      <div id="detail_tiers" style="display: none;">
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :prenom_civilement_responsable, label: "Prénom civilement responsable",readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :nom_tiers , label: 'Nom', readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">    
+          <%= f.text_field :adresse_tiers, label:"Adresse tiers", readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <!-- Responsable -->
+        <div class="col-sm-4 col-md-4" style="margin-top: 20px;">
+          <%= f.text_field :raison_sociale_assureur, readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">
+          <%= f.text_field :adresse_assureur, label: "Adresse assureur",readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-4 col-md-4 " style="margin-top: 20px;">
+          <%= f.text_field :numero_police_assurance, label: "Numéro de la police d’assurance",readonly: @demande_arret_travail.read_only?%>
+        </div>
+      </div>
+    </div>
+    <!-- Personne avisée -->
+    <div class="col-sm-12 col-md-12">
+      <hr>
+      <div class="col-sm-4 col-md-4 box2">
+        <%= f.check_box :personne_avisee, label:"Première personne avisée ?", disabled: @demande_arret_travail.read_only?, id:"personne_avisee"%>
+      </div>
+      <div id="detail_personne_avisee" style="display: none;">
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :nom_personne_avisee, label:"Nom personne avisée", readonly: @demande_arret_travail.read_only?%>
+        </div>
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :adresse_personne_avisee, label:"Adresse personne avisée", readonly: @demande_arret_travail.read_only?%>
+        </div>
+
+        <div class="col-sm-4 col-md-4 col-sm-offset-4">
+          <%= f.text_field :personne_avisee_quand, label:"Personne avisée quand?",readonly: @demande_arret_travail.read_only?%>
+        </div>
+
+        <div class="col-sm-4 col-md-4">
+          <%= f.text_field :personne_avisee_qualite, label:"Personne avisée qualité?",readonly: @demande_arret_travail.read_only?%>
+        </div>
+
+ 
+
+        <div class="col-sm-4 col-md-4 col-sm-offset-4">
+          <%= f.text_field :personne_avisee_par_qui, label:"Personne avisée par qui?",readonly: @demande_arret_travail.read_only?%>
+        </div>
+      </div>
+    </div>
+
+    <!-- Declarant -->
+    <div class="col-sm-12 col-md-12">
+      <hr>
+      <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+        <%= f.text_field :prenom_declarant, label:"Prénom déclarant", readonly: true%>
+      </div>
+      <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+        <%= f.text_field :nom_declarant, label:"Nom déclarant", readonly: true%>
+      </div>
+      <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+        <%= f.datetime_select :date_declaration , label: "Date déclaration", disabled: true,
+                              start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year%>
+      </div>
+      <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+        <%= f.text_field :lieu_declaration, label:"Lieu déclaration", readonly: true%>
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-12">
+      <hr>
+      <div id="incap_partielle" style='display: none;' class="col-sm-6 col-md-6 box2">
+      <%= f.select :incapacite_permanente, ArretTravail::INCAPACITE_PERMANENTE.keys.collect { |item| [ArretTravail.human_enum_name(:incapacite_permanente, item), item] },{:include_blank => 'Aucun'}, label: 'Incapacité permanente' %> 
+        <%#= f.check_box :est_ipp, label:"Est IPP?", disabled: @demande_arret_travail.read_only?, id:"est_ipp"%>
+      </div>
+      <div class="col-sm-6 col-md-6" id="detail_ipp" style="display: none;">
+        <%= f.select :taux_ipp, (0..100).to_a,label:"Taux IPP" , selected: @demande_arret_travail.taux_ipp.to_i, disabled: @demande_arret_travail.read_only?%>
+      </div>
+    </div>
+   
+      <div class="col-sm-6 col-md-6" id="detail_ipt"  style="display: none;">
+          <%= f.select :taux_itt, (0..100).to_a, selected: @demande_arret_travail.taux_itt.to_i  ,label:"Taux IPT", disabled: @demande_arret_travail.read_only?%>
+      </div>
+    
+  <div class="form-group col-md-12">
+    <div class="col-sm-3 col-sm-offset-9" style="text-align: right;">
+      <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+      <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+      <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+      <%end%>
+    </div>
+  </div>
+ </div>
+</div>
+<% end %>
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+        setCheckBoxVal('#avec_constat');
+        constatVisibility();
+         
+        setCheckBoxVal('#avec_temoin');
+        temoinVisibility();
+         
+        setCheckBoxVal('#avec_tiers');
+        tiersVisibility();
+        verify_consequence_accident_travail();
+        verify_incapacite_permanente();
+        
+        $('#arret_travail_consequence_accident_travail').change(function(){
+          verify_consequence_accident_travail();
+        });
+        
+        $('#arret_travail_incapacite_permanente').change(function(){
+          verify_incapacite_permanente();
+        });
+        
+        $('#avec_constat').change(function() {
+          constatVisibility()
+
+        });
+
+      $('#avec_temoin').change(function() {
+         temoinVisibility();
+
+      });
+
+      $('#avec_tiers').change(function() {
+         tiersVisibility();
+
+      });
+
+      $('#personne_avisee').change(function() {
+         var check_personne_avisee=document.getElementById("personne_avisee");
+         var elem3=document.getElementById("detail_personne_avisee");
+         if (check_personne_avisee.checked == true) {
+          elem3.style.display="block";
+         }
+         else{
+           elem3.style.display="none";
+         }
+
+      });
+      $('#est_ipp').change(function() {
+         var check_est_ipp=document.getElementById("est_ipp");
+         var elem4=document.getElementById("detail_ipp");
+         if (check_est_ipp.checked == true) {
+          elem4.style.display="block";
+         }
+         else{
+           elem4.style.display="none";
+         }
+      });
+
+      function constatVisibility() {
+        var check_avec_constat=document.getElementById("avec_constat");
+         var elem=document.getElementById("detail_constat");
+         var elem2=document.getElementById("sans_detail_constat");
+         if (check_avec_constat.checked == true) {
+          elem.style.display="block";
+          elem2.style.display="none";
+         }
+         else{
+           elem.style.display="none";
+           elem2.style.display="block";
+         }
+      }
+      function temoinVisibility() {
+        var check_avec_temoin=document.getElementById("avec_temoin");
+         var elem1=document.getElementById("detail_temoin");
+         if (check_avec_temoin.checked == true) {
+          elem1.style.display="block";
+         }
+         else{
+           elem1.style.display="none";
+         }
+      }
+
+      function tiersVisibility() {
+       var check_avec_tiers=document.getElementById("avec_tiers");
+         var elem2=document.getElementById("detail_tiers");
+         if (check_avec_tiers.checked == true) {
+          elem2.style.display="block";
+         }
+         else{
+           elem2.style.display="none";
+         } 
+      }
+
+      function setCheckBoxVal(tagNameId) {
+        var option = $(tagNameId).attr('option');
+        if (option == 'true') {
+          $(tagNameId).prop( "checked", true );
+        } else{
+          $(tagNameId).prop( "checked", false );
+        }    
+      }
+      
+      function verify_consequence_accident_travail() {
+        var accidentT = $("#arret_travail_consequence_accident_travail option:selected");
+          var debt_at=document.getElementById("debut_at");
+          var incap_partielle=document.getElementById("incap_partielle");
+          if (accidentT.val() == 'arret_travail') {
+           debt_at.style.display = "block";
+          } else {
+             debt_at.style.display = "none";
+          }
+          if (accidentT.val() == 'incapacite') {
+           incap_partielle.style.display = "block";
+          } else {
+             incap_partielle.style.display = "none";
+          }
+      }
+      function verify_incapacite_permanente() {
+        var incap_perm = $("#arret_travail_incapacite_permanente option:selected");
+          var detail_ipp=document.getElementById("detail_ipp");
+          var detail_ipt=document.getElementById("detail_ipt");
+          var incap_partielle=document.getElementById("incap_partielle");
+          if (incap_perm.val() == 'partielle') {
+           detail_ipp.style.display = "block";
+          } else {
+             detail_ipp.style.display = "none";
+          }
+          if (incap_perm.val() == 'totale') {
+           detail_ipt.style.display = "block";
+          } else {
+             detail_ipt.style.display = "none";
+          }
+      }
+
+   });
+  </script>
+  
+<% end %>

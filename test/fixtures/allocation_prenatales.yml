@@ -1,0 +1,21 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dossier_prestation: one
+  debut_grossesse: 2020-02-08
+  volet: 1
+  commentaire: MyText
+  date_soumission: 
+  date_validation: 2020-02-08
+  valide_par_id: 1
+  user: one
+
+two:
+  dossier_prestation: two
+  debut_grossesse: 2020-02-08
+  volet: 1
+  commentaire: MyText
+  date_soumission: 
+  date_validation: 2020-02-08
+  valide_par_id: 1
+  user: two

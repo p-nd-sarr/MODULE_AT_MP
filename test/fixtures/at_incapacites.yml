@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  date_debut: 2020-06-06
+  date_fin: 2020-06-06
+  nombre_jour: 1
+  nombre_heure: 1
+  arret_travail: one
+
+two:
+  date_debut: 2020-06-06
+  date_fin: 2020-06-06
+  nombre_jour: 1
+  nombre_heure: 1
+  arret_travail: two

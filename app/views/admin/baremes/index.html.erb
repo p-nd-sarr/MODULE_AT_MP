@@ -1,0 +1,44 @@
+<%= content_for :titre_page, 'Admin Baremes' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_bareme_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Régime</th>
+        <th scope="col">Période</th>
+        <th scope="col">Période validité</th>
+        <th scope="col">Plafond salaire</th>
+        <th scope="col">Salaire de référence</th>
+        <th scope="col">Taux contractuel</th>
+        <th scope="col">Coefficient <br> (en 1.000.000)</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_baremes.each do |admin_bareme| %>
+        <tr>
+          <td><%= admin_bareme.admin_type_regime.description %></td>
+          <td><%= admin_bareme.periode %></td>
+          <td><%= l admin_bareme.date_debut_validite %> - <%= l admin_bareme.date_fin_validite %></td>
+          <td align="right"><%= format_cfa admin_bareme.plafond_salaire, false %></td>
+          <td align="right"><%= format_cfa admin_bareme.salaire_reference, false %></td>
+          <td align="right"><%= admin_bareme.taux_contractuel %></td>
+          <td align="right"><%= (admin_bareme.coefficient * 1_000_000).ceil(2) %></td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_bareme_path(admin_bareme), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_bareme, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

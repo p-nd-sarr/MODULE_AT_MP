@@ -1,0 +1,7 @@
+{
+    "pgFormatter.commaStart": true,
+    "pgFormatter.formatType": true,
+    "pgFormatter.tabs": true,
+    "pgFormatter.noGrouping": true,
+    "pgFormatter.noComment": true
+}

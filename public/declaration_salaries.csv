@@ -1,0 +1,3 @@
+﻿ matricule; nom; prenom; date_entree; date_sortie; motif_sortie; salaire_soumis; salaire_reel; numero_identite; date_naissance; lieu_naissance; profession; nationalite; sexe
+281201;DIOP;ADAMA;01/01/2018;01/01/2020;;200000;250000;1231234;01/01/2000;Dakar;Informaticien;SEN;FEMME
+2833411;MANE;SALIOU;01/01/2018;01/01/2020;;200000;250000;1231234;01/01/2000;Dakar;Informaticien;SEN;FEMME

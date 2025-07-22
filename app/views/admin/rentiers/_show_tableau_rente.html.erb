@@ -1,0 +1,88 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Montant</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td>Salaire annuel</td>
+      <td><%= @rentier.salaire_annuel %></td>
+    </tr>
+    <tr>
+      <td>Portée à</td>
+        <td>0</td>
+    </tr>
+    <tr>
+      <td>Réduit à</td>
+        <td>0</td>
+    </tr>
+    <tr>
+      <td>taux IPP retenu</td>
+      <td><%= @rentier.at_consolidation.taux_ipp_retenu %></td>
+    </tr>
+    <tr>
+      <td>Taux utile</td>
+      <td><%= @rentier.at_consolidation.taux_utile %>%</td>
+    </tr>
+    <tr>
+      <td>âge à la conversion </td>
+      <td><%=@rentier.age_conversion%> années</td>
+    </tr>
+    <tr>
+      <td>Prix du franc de rente </td>
+      <td><%=@rentier.prix_franc_rente%> </td>
+    </tr>
+
+    <% if @rentier.at_consolidation.versement_unique?%>
+      <td>Montant versement</td>
+        <td><%=@rentier.at_consolidation.montant_versement%> </td>
+      </tr>
+    <% end %>
+
+    <% if @rentier.at_consolidation.versement_mensuel? %>
+      <tr>
+      <td>Montant annuel rente</td>
+        <td><%=@rentier.at_consolidation.montant_annuel_rente%> </td>
+      </tr>
+      <tr>
+        <td>Majoration pour assistance tierce personne</td>
+        <td><%=@rentier.at_consolidation.montant_majoration%> </td>
+      </tr>
+      <tr>
+        <td>Rente majorée</td>
+        <td><%=@rentier.at_consolidation.rente_majoree%> </td>
+      </tr>
+      <tr>
+        <td>Montant mensuel</td>
+        <td><%=@rentier.at_consolidation.montant_mensuel%> </td>
+      </tr>
+    <% end %>
+
+    <% if @rentier.at_consolidation.versement_trimeste? %>
+      <tr>
+        <td>Montant annuel rente</td>
+        <td><%=@rentier.at_consolidation.montant_versement%> </td>
+      </tr>
+      <tr>
+        <td>Montant versement par trimestre</td>
+        <td><%=@rentier.at_consolidation.montant_rente_trimestre%> </td>
+      </tr>
+    <% end %>
+
+  </tbody>
+  
+</table>
+ <div style="text-align: left;">
+    <li>Date consolidation: <%=@rentier.at_consolidation.date_consolidation.strftime("%d/%m/%Y") %></li>
+    <li>Date départ rente: <%=@rentier.at_consolidation.date_depart_rente.strftime("%d/%m/%Y") %></li>
+    <li>Date liquidation rente: <%=@rentier.at_consolidation.date_liquidation.strftime("%d/%m/%Y") %></li>
+    <% if @rentier.at_consolidation.versement_trimeste? or @rentier.at_consolidation.versement_mensuel?%>
+      <li> Nombre de jours du <%=@rentier.at_consolidation.date_depart_rente.strftime("%d/%m/%Y") %> au <%=@rentier.at_consolidation.date_liquidation.strftime("%d/%m/%Y")%> : <%=@rentier.at_consolidation.nombre_jours_echus%> </li>
+      <li> Somme due au <%=@rentier.at_consolidation.date_liquidation.strftime("%d/%m/%Y") %> est :  <%=@rentier.at_consolidation.montant_average%> FCFA</li>
+    <% end %>
+     <span style="text-align: left; "> <strong><i>Capital représentatif de la rente est : <%=@rentier.at_consolidation.capital %> FCFA</i></strong></span>
+  </div>
+

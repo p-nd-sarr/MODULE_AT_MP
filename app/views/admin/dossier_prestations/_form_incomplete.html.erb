@@ -1,0 +1,101 @@
+<%= bootstrap_form_for(@dossier_prestation, url: admin_dossier_prestation_update_incomplete_path(@dossier_prestation), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5 class="text-success">Informations du dossiers</h5>
+          </div>
+          <div class="ibox-content">
+            <d1 class="row mb-0">
+              <div class="col-sm-6">
+                <dt>Numéro affiliation:</dt>
+              </div>
+              <div class="col-sm-6">
+                <dd class="mb-1"><%= @dossier_prestation.num_affiliation %></dd>
+              </div>
+            </d1>
+            <d1 class="row mb-0">
+              <div class="col-sm-6">
+                <dt>Numéro pièce:</dt>
+              </div>
+              <div class="col-sm-6">
+                <dd class="mb-1"><%= @dossier_prestation.nin %></dd>
+              </div>
+            </d1>
+            <d1 class="row mb-0">
+              <div class="col-sm-6">
+                <dt>Date de naissance:</dt>
+              </div>
+              <div class="col-sm-6">
+                <dd class="mb-1"><%= l @dossier_prestation.date_naissance unless @dossier_prestation.date_naissance.nil? %></dd>
+              </div>
+            </d1>
+            <d1 class="row mb-0">
+              <div class="col-sm-6">
+                <dt>Prénom & nom du salarié:</dt>
+              </div>
+              <div class="col-sm-6">
+                <dd class="mb-1"><%= @dossier_prestation.prenom %> <%= @dossier_prestation.nom %></dd>
+              </div>
+            </d1>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5 class="text-success">Formulaire</h5>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="form-group">
+                <%= f.text_field :num_affiliation, label: 'Numéro affiliation' %>
+                <span id="num_aff_error" style="display: none; font-size: 12px; color: red; -webkit-text-stroke-width: medium;">Le numéro d'affiliation doit être numérique</span>
+              </div>
+              <div class="form-group">
+                <%= f.text_field :prenom, label: 'Prénom' %>
+              </div>
+              <div class="form-group">
+                <%= f.text_field :nom, label: 'Nom' %>
+              </div>
+              <div class="form-group" id="id_date_naissance_salarie">
+                <%= f.date_field :date_naissance, label: "Date de naissance", value: '',
+                                 start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class=" col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-6 col-lg-offset-6" style="text-align: right;">
+        <% if @dossier_prestation.incomplete? %>
+          <%= link_to 'Annuler', (incomplete_dossiers_admin_dossier_prestations_path), class: 'btn btn-white' %>
+          <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+        <% end %>
+        <%= (link_to ' Rendre complet', admin_dossier_prestation_set_complete_path(@dossier_prestation), data: { confirm: 'En êtes vous sûr?' }, 'data-turbolinks': false, class: 'btn btn-success btn-outline fa fa-edit') if @dossier_prestation.can_be_completed? %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+          $('#dossier_prestation_num_affiliation').keyup(function () {
+              if (isNaN($("#dossier_prestation_num_affiliation").val())) {
+                  $('#num_aff_error').show();
+                  $('#submit_button').attr("disabled", true)
+              } else {
+                  $('#num_aff_error').hide();
+                  $('#submit_button').attr("disabled", false)
+              }
+          })
+
+      })
+  </script>
+<% end %>

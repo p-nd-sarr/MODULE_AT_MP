@@ -1,0 +1,183 @@
+<%= content_for :titre_page, "Détails ordre de paiement" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Historique des paiements', admin_css_annulation_paiements_path, class: 'btn btn-white btn-sm' unless current_user.chef_agence? %>
+  <%= link_to 'En attente de validation', en_attente_validation_impayes_admin_css_annulation_paiements_path, class: 'btn btn-white btn-sm' if current_user.chef_agence? %>
+
+  <% if (@css_annulation_paiement.paye? or @css_annulation_paiement.en_cours?) and current_user.comptable? %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-<%= @css_annulation_paiement.id %>">Marquer
+      impayé
+    </button>
+    <!-- Motif Impaye -->
+    <div class="modal inmodal" id="modal-<%= @css_annulation_paiement.id %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">x</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h5 class="modal-title">N° ordre <%= @css_annulation_paiement.numero %></h5>
+          </div>
+          <%= bootstrap_form_for(@css_annulation_paiement, url: admin_css_annulation_paiement_marquer_impaye_path(@css_annulation_paiement)) do |f| %>
+            <div class="modal-body">
+              <%= f.text_area :motif_impaye %>
+            </div>
+
+            <div class="modal-footer form-group">
+              <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+              <%= f.button 'Enregister', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if @css_annulation_paiement.marque_impaye? and current_user.chef_agence? %>
+    <%= (link_to 'Rendre impayé', admin_css_annulation_paiement_rendre_impaye_path(@css_annulation_paiement), 'data-turbolinks': false, class: 'btn  btn-danger btn-sm') %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations </h5>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa fa-qrcode"></span> Numero ordre:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @css_annulation_paiement.numero %></dd>
+                  </div>
+                </d1>
+
+                <% unless @css_annulation_paiement.dossier_type == 'EcheanceCaisseLotLiquidation' %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                      <dt><span class="fa fa-qrcode"></span> Numero affiliation:</dt>
+                    </div>
+                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                      <dd class="mb-1"><%= @css_annulation_paiement.numero_allocataire unless @css_annulation_paiement.numero_allocataire.nil? %></dd>
+                    </div>
+                  </d1>
+                <% end %>
+
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa fa-money"></span> Montant:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @css_annulation_paiement.montant %> CFA</dd>
+                  </div>
+                </d1>
+
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa fa-check"></span> Status:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @css_annulation_paiement.statut %> </dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa fa-tasks"></span> Opérations :</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <% @css_annulation_paiement.compta_transactions.each do |compta_transaction| %>
+                      <%= compta_transaction.code_operation %> <br>
+                    <% end %>
+                  </div>
+                </d1>
+
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt><span class="fa fa-folder"></span> Dossier Type:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @css_annulation_paiement.dossier_type %> </dd>
+                  </div>
+                </d1>
+                <% if @css_annulation_paiement.dossier_type == 'EcheanceCaisseLotLiquidation' %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                      <dt><span class="fa fa-users"></span> Raison sociale Employeur:</dt>
+                    </div>
+                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                      <dd class="mb-1"><%= @css_annulation_paiement.dossier.echeance_caisse_employeur.raison_sociale %></dd>
+                    </div>
+                  </d1>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                      <dt><span class="fa fa-bell"></span> Échéance:</dt>
+                    </div>
+                    <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                      <dd class="mb-1"> Trimestre <%= @css_annulation_paiement.dossier.echeance_caisse.trimestre %>
+                        de <%= @css_annulation_paiement.dossier.echeance_caisse.annee %></dd>
+                    </div>
+                  </d1>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-lg-6">
+                <h2> Marqué impayé: </h2>
+                <hr class="no-margins">
+                <br>
+
+                <p><strong>Marqué impayé
+                  Par: </strong> <%= @css_annulation_paiement.impaye_ajoute_par.full_name unless @css_annulation_paiement.impaye_ajoute_par.nil? %>
+                </p>
+                <p><strong>Impayé marqué
+                  le: </strong> <%= @css_annulation_paiement.impaye_ajoute_le.strftime("%d/%m/%Y à %H:%M") unless @css_annulation_paiement.impaye_ajoute_le.nil? %>
+                </p>
+              </div>
+
+              <div class="col-lg-6">
+                <h2> Validé impayé: </h2>
+                <hr class="no-margins">
+                <br>
+                <p><strong>Validé impayé
+                  par: </strong><%= @css_annulation_paiement.impaye_par.full_name unless @css_annulation_paiement.impaye_par.nil? %>
+                </p>
+                <p><strong>Validéé
+                  le: </strong> <%= (@css_annulation_paiement.impaye_le.strftime("%d/%m/%Y à %H:%M")) unless @css_annulation_paiement.impaye_le.nil? %>
+                </p>
+              </div>
+            </div>
+            <br> <br>
+            <div class="row">
+              <div class="col-lg-6">
+                <h2> Motif impayé: </h2>
+                <hr class="no-margins">
+                <br>
+                <p>
+                  <strong>Motif: </strong> <%= @css_annulation_paiement.motif_impaye unless @css_annulation_paiement.motif_impaye.nil? %>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

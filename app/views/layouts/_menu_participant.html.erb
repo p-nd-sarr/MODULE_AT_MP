@@ -1,0 +1,41 @@
+<% if current_user.admin? %>
+    <li class="<%= 'active' if is_active_controller('utilisateurs') %>">
+      <%= link_to users_path do %>
+          <i class="fa fa-users"></i> <span class="nav-label">Utilisateurs</span>
+      <% end %>
+    </li>
+<% end %>
+<li class="<%= 'active' if is_active_controller('locataires') %>">
+  <%= link_to locataires_path do %>
+      <i class="fa fa-users"></i> <span class="nav-label">Locataires</span>
+  <% end %>
+</li>
+<li class="<%= 'active' if is_active_controller('contrat_locataires') %>">
+  <%= link_to contrat_locataires_path do %>
+      <i class="fa fa-handshake-o"></i> <span class="nav-label">Contrats locataires</span>
+  <% end %>
+</li>
+<li class="<%= 'active' if is_active_controller('facture_locataires') %>">
+  <%= link_to facture_locataires_path do %>
+      <i class="fa fa-file-o"></i> <span class="nav-label">Factures locataires</span>
+  <% end %>
+</li>
+<li class="<%= 'active' if is_active_controller('type_locaux') or
+    is_active_controller('immeubles') or
+    is_active_controller('locaux') %>">
+  <a href="#"><i class="fa fa-home"></i> <span class="nav-label">Locaux</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('locaux') %>">
+    <li class="<%= 'active' if is_active_controller('locaux') %>"><%= link_to 'Locaux', locaux_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('type_locaux') %>">
+    <li class="<%= 'active' if is_active_controller('type_locaux') %>"><%= link_to 'Type locaux', type_locaux_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('immeubles') %>">
+    <li class="<%= 'active' if is_active_controller('immeubles') %>"><%= link_to 'Immeubles', immeubles_path %></li>
+  </ul>
+</li>
+<li class="<%= 'active' if is_active_controller('configurations') %>">
+  <%= link_to current_user.configuration do %>
+      <i class="fa fa-cog"></i> <span class="nav-label">Configuration</span>
+  <% end %>
+</li>

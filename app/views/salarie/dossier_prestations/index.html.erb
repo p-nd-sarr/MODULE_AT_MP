@@ -1,0 +1,138 @@
+<%= content_for :titre_page, 'Dossier De Prestation' %>
+
+<%= content_for :actions_page do %>
+    <% if current_user.can_add_dossier_prestation? %>
+      <%= link_to 'Ajouter', new_salarie_dossier_prestation_path, class: 'btn btn-primary btn-sm' %>
+    <% end %>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">N° Dossier</th>
+      <% if current_user.homme? %>
+        <th scope="col">Conjointe</th>
+      <% else %>
+        <th scope="col">Conjoint</th>
+      <% end %>
+      <th scope="col">Etat</th>
+      <th scope="col">Date soumission</th>
+      <th scope="col">Date enregistrement</th>
+<!--      <th scope="col">Date traitement</th>-->
+      <th colspan="5"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @dossier_prestations.each do |dossier_prestation| %>
+    <tr>
+      <td><%= dossier_prestation.num_dossier %></td>
+      <td>
+        <%unless dossier_prestation.conjoint.nil? %>
+          <%= dossier_prestation.conjoint.prenom + ' ' + dossier_prestation.conjoint.nom %>
+        <%end %>
+      </td>
+      <td><%= DossierPrestation.human_enum_name(:etat, dossier_prestation.etat) %></td>
+      <td>
+        <% unless dossier_prestation.date_soumission.nil? %>
+          <%= l dossier_prestation.date_soumission %>
+        <%end%>
+      </td>
+
+      <td>
+        <% unless dossier_prestation.date_enregistrement.nil? %>
+          <%= l dossier_prestation.date_enregistrement %>
+        <%end%>
+      </td>
+
+      <!-- debut changement -->
+
+      <td style="width: 75px">
+        <%= link_to 'détails', [:salarie, dossier_prestation], class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <% if (dossier_prestation.soumis? or dossier_prestation.valide?) and current_user == dossier_prestation.ajoute_par  %>
+      <td width="90px" class="dropdown">
+        <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Prestations <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <%= link_to 'prénatales', salarie_dossier_prestation_allocation_prenatales_path(dossier_prestation)%>
+          </li>
+          <li>
+            <%= link_to 'postnatales', salarie_dossier_prestation_allocation_postnatales_path(dossier_prestation)%>
+          </li>
+          <li>
+            <%= link_to 'familiales', salarie_dossier_prestation_allocation_familiales_path(dossier_prestation)%>
+          </li>
+        </ul>
+      </td>
+      <%end%>
+      <td width="90px" class="dropdown">
+        <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <%= link_to 'Historique', salarie_dossier_prestation_historique_dossier_path(dossier_prestation) %>
+          </li>
+          <%unless dossier_prestation.creation? || dossier_prestation.rejete? %>
+            <li>
+              <a href="<%= url_for(salarie_dossier_prestation_recipisse_dossier_path(dossier_prestation, format: :pdf)) %>" target="_blank"> recipissé</a>
+            </li>
+          <%end%>
+        </ul>
+      </td>
+
+      <% if (dossier_prestation.creation? or dossier_prestation.soumis?) and current_user == dossier_prestation.ajoute_par %>
+        <td style="width: 75px">
+            <%= link_to 'supprimer', [:salarie, dossier_prestation], method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                        class: 'btn btn-outline btn-danger btn-xs' %>
+        </td>
+      <% end %>
+
+<!-- fin changement -->
+
+<!--      <td>-->
+        <%# unless dossier_prestation.date_validation.nil? %>
+          <%#= l dossier_prestation.date_validation %>
+        <%#end %>
+<!--      </td>-->
+
+
+    <!-- avant changement de forme  -->
+
+      <!-- <td style="width: 75px">
+        <%# <%= link_to 'détails', [:salarie, dossier_prestation], class: 'btn btn-outline btn-primary btn-xs' %> %>
+      </td> -->
+      <%# <% if (dossier_prestation.soumis? or dossier_prestation.valide?) and current_user == dossier_prestation.ajoute_par  %>
+        <!-- <td style="width: 75px"> -->
+          <%# <%= link_to 'prénatales', salarie_dossier_prestation_allocation_prenatales_path(dossier_prestation),
+                      class: 'btn btn-outline btn-primary btn-xs' %>
+        <!-- </td> -->
+        <!-- <td style="width: 75px"> -->
+          <%# <%= link_to 'postnatales', salarie_dossier_prestation_allocation_postnatales_path(dossier_prestation),
+                      class: 'btn btn-outline btn-info btn-xs' %>
+        <!-- </td> -->
+        <!-- <td style="width: 75px"> -->
+          <%# <%= link_to 'familiales', salarie_dossier_prestation_allocation_familiales_path(dossier_prestation),
+                      class: 'btn btn-outline btn-info btn-xs' %>
+        <!-- </td> -->
+      <%# <% end %>
+      <%# <% if (dossier_prestation.creation? or dossier_prestation.soumis?) and current_user == dossier_prestation.ajoute_par %>
+        <!-- <td style="width: 75px"> -->
+            <%# <%= link_to 'supprimer', [:salarie, dossier_prestation], method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                        class: 'btn btn-outline btn-danger btn-xs' %>
+        <!-- </td> -->
+      <%# <% end %>
+
+      <%# fin avant changement %>
+
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

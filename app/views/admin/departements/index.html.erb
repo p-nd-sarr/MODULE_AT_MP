@@ -1,0 +1,39 @@
+<%= content_for :titre_page, 'Admin Departements' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_departement_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Region</th>
+        <th scope="col">Designation</th>
+        <th scope="col">Code</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_departements.each do |admin_departement| %>
+        <tr>
+          <td><%= admin_departement.admin_region.designation %></td>
+          <td><%= admin_departement.designation %></td>
+          <td><%= admin_departement.code %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_departement, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_departement_path(admin_departement), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_departement, method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

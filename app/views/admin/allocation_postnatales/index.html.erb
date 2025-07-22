@@ -1,0 +1,352 @@
+<%= content_for :titre_page do %>
+  Allocations Postnatales -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_prestation.num_dossier}", admin_dossier_prestation_path(@dossier_prestation), class: 'text-info' %>
+  </span>
+<% end %>
+<%#= content_for :titre_page, "Dossier #{@dossier_prestation.num_dossier} - Allocation Postnatales" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <%= (link_to 'Tout Valider', admin_dossier_prestation_valider_postnatales_path(@dossier_prestation), data: {confirm: 'En êtes vous sûr?'},
+               class: 'btn btn-primary btn-sm') if @dossier_prestation.valide? and current_user.chef_agence? and not @dossier_prestation.allocation_postnatales.soumis.empty? and DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, conjoint_id: nil, etat: :valide) %>
+  <%#= (link_to 'Tout Liquider', admin_dossier_prestation_liquider_postnatales_path(@dossier_prestation), data: {confirm: 'En êtes vous sûr?'},
+               class: 'btn btn-primary btn-sm') if current_user.gestionnaire_compte_allocataire? and not @dossier_prestation.allocation_postnatales.creation.empty? %>
+  <% if current_user.gestionnaire_compte_allocataire? and not @dossier_prestation.allocation_postnatales.creation.empty? %>
+    <%= link_to 'Tout liquider', admin_dossier_prestation_liquider_postnatales_path(@dossier_prestation), class: 'btn btn-primary' if @dossier_prestation.current_state < :cloturer%>
+    <!--   <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#liquiderModal" id="liquider_id">TOUT LIQUIDER</button>-->
+  <%end%>
+
+  <%#if @dossier_prestation.current_state < :cloturer %>
+   <!-- <div class="btn-group">
+      <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">
+        AJOUTER UNE DEMANDE
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <% for enfant in @enfants.valide.order('date_naissance desc') %>
+          <%unless enfant.volets_eligibles.empty? %>
+            <li>
+              <%= ( link_to enfant.full_name, new_admin_dossier_prestation_allocation_postnatale_path(@dossier_prestation, enfant_id: enfant.id)) unless current_user.comptable? %>
+            </li>
+          <%end %>
+        <% end %>
+      </ul>
+    </div> -->
+  <%#end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-2">
+      <div class="ibox volet4">
+        <div class="ibox-title">
+          <h4>Volet 4 </h4>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%#= format_cfa m4 = @dossier_prestation.allocation_postnatales.volet4.nil? ? @dossier_prestation.allocation_postnatales.volet4.valide.sum(&:montant_paiement) : 0 %>
+            <%= format_cfa m4 = @dossier_prestation.allocation_postnatales.volet4.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet5 ">
+        <div class="ibox-title">
+          <h4>Volet 5</h4>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%#= format_cfa m5 = @dossier_prestation.allocation_postnatales.volet5.nil? ? @dossier_prestation.allocation_postnatales.volet5.valide.sum(&:montant_paiement) : 0 %>
+            <%= format_cfa m5 = @dossier_prestation.allocation_postnatales.volet5.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet6">
+        <div class="ibox-title">
+          <h3>Volet 6</h3>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%#= format_cfa m6 = @dossier_prestation.allocation_postnatales.volet6.nil? ? @dossier_prestation.allocation_postnatales.volet6.valide.sum(&:montant_paiement) : 0 %>
+            <%= format_cfa m6 = @dossier_prestation.allocation_postnatales.volet6.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet7">
+        <div class="ibox-title">
+          <h4>Volet 7</h4>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%#= format_cfa m7 = @dossier_prestation.allocation_postnatales.volet7.nil? ? @dossier_prestation.allocation_postnatales.volet7.valide.sum(&:montant_paiement) : 0 %>
+            <%= format_cfa m7 = @dossier_prestation.allocation_postnatales.volet7.valide.sum(&:montant_paiement) %>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet8">
+        <div class="ibox-title">
+          <h4>Volet 8</h4>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <%#= format_cfa m8 = @dossier_prestation.allocation_postnatales.volet8.nil? ? @dossier_prestation.allocation_postnatales.volet8.valide.sum(&:montant_paiement) : 0%>
+            <%= format_cfa m8 = @dossier_prestation.allocation_postnatales.volet8.valide.sum(&:montant_paiement)%>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox ">
+        <div class="ibox-title" style="border-bottom:1px solid #1ab394;">
+          <h3><strong class="text-navy">Total</strong></h3>
+        </div>
+        <div class="ibox-content">
+          <h4 class="no-margins">
+            <strong><%= format_cfa mTot = m4 + m5 + m6 + m7 + m8 %></strong>
+          </h4>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-12" style="margin-top:10px; margin-bottom:5px">
+      <h3>DEMANDES D'ALLOCATIONS</h3>
+    </div>
+    <div class="col-lg-12">
+
+      <% if @enfants.empty? %>
+        <div class="ibox-content">
+          <div class="text-center">
+            <h2>La liste des enfants valides pour une demande d'allocations est vide !!</h2>
+          </div>
+        </div>
+      <% else %>
+    <div class="col-lg-12">
+
+
+      <% for enfant in @enfants.order('date_naissance desc') %>
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Enfant : <%= enfant.full_name %> (date naissance : <%= l enfant.date_naissance %>)</h5>
+            <%if @dossier_prestation.current_state < :cloturer and @dossier_prestation.est_legitime_allocation_pre_postnatale_bis?%>
+              <div style="text-align:right">
+                <%# unless enfant.volets_eligibles.empty? or not current_user.gestionnaire_compte_allocataire?  %>
+                <% if enfant.eligible_for_volet_postnatale? and current_user.gestionnaire_compte_allocataire? %>
+                  <%= ( link_to " AJOUTER VOLET", new_admin_dossier_prestation_allocation_postnatale_path(@dossier_prestation, enfant_id: enfant.id), class:'btn btn-primary btn-sm fa fa-plus')%>
+                <% end %>
+              </div>
+            <%end %>
+          </div>
+          <div class="ibox-content">
+
+            <% @dossier_prestation.enfants_avec_volets.where(id: enfant.id).each do |enfant_v| %>
+
+              <% if enfant_v.nil? %>
+                <h2> Ajouter une demande </h2>
+              <% else %>
+                <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+                  <thead>
+                  <tr>                    
+                    <th scope="col">N° de liquidation</th>
+                    <th scope="col">Volet</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Date Création</th>
+                    <th scope="col">Date Liquidation</th>
+                    <th scope="col">Montant Liquidé</th>
+                    <th scope="col">Date Validation</th>
+                    <th scope="col">Date Paiement</th>
+                    <th scope="col">Est repris?</th>
+                    <th colspan="2"></th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <% @allocation_postnatales.where(enfant: enfant_v).each do |allocation_postnatale| %>
+                    <%if allocation_postnatale.motif_retour_volet? %>
+                      <p class="text-danger" style="font-style:italic">
+                        <strong>Motif retour volet:</strong> <%= allocation_postnatale.motif_retour_volet %>
+                      </p>
+                    <%end %>
+                    <tr>
+                      <td class="text-success">
+                        <%if allocation_postnatale.num_volet_generer? %>
+                          <%= allocation_postnatale.num_volet_generer %>
+                        <%end %>
+                      </td>
+                      <td><%= AllocationPostnatale.human_enum_name(:volet, allocation_postnatale.volet) %></td>
+                      <td><%= AllocationPostnatale.human_enum_name(:etat, allocation_postnatale.etat) %></td>
+                      <td>
+                        <% unless allocation_postnatale.created_at.nil? %>
+                          <%= l allocation_postnatale.created_at %>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% unless allocation_postnatale.date_soumission.nil? %>
+                          <%= l allocation_postnatale.date_soumission %>
+                        <% end %>
+                      </td>
+                      <td>
+                      <% unless allocation_postnatale.date_soumission.nil? %>
+                        <%= allocation_postnatale.montant_paiement %>
+                      <% end %> 
+                      </td>
+                      <td>
+                        <% unless allocation_postnatale.date_validation.nil? %>
+                          <%= l allocation_postnatale.date_validation %>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% if allocation_postnatale.date_paiement.nil? %>
+                          -
+                        <% else %>
+                          <%= allocation_postnatale.date_paiement %>
+                        <% end %>
+                      </td>
+                      <td>
+                          <%=state_yes_no allocation_postnatale.est_repris %>
+                      </td>
+                      <td style="width: 75px">
+                        <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_postnatale], class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% if allocation_postnatale.creation? and @dossier_prestation.current_state < :cloturer and current_user.gestionnaire_compte_allocataire? %>
+                        <td width="90px" class="dropdown">
+                          <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Action <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" style="background-color:rgb(240,240,240)">
+                            <li>
+                              <%= link_to 'Modifier', edit_admin_dossier_prestation_allocation_postnatale_path(@dossier_prestation, allocation_postnatale), id:"dd_hover"  if allocation_postnatale.creation?%>
+                            </li>
+                            <% if allocation_postnatale.creation? and current_user.gestionnaire_compte_allocataire? %>
+<!--                              <li>-->
+                                <%#= link_to 'Liquider', admin_dossier_prestation_allocation_postnatale_soumission_form_path(@dossier_prestation, allocation_postnatale), id:"dd_hover"  %>
+<!--                              </li>-->
+                              <li>
+                                <%= link_to 'Liquider', admin_dossier_prestation_allocation_postnatale_soumettre_path(@dossier_prestation, allocation_postnatale), id:"dd_hover" if allocation_postnatale.creation?  and current_user.gestionnaire_compte_allocataire? %>
+                              </li>
+
+                              <li>
+                                <%= link_to 'Supprimer', [:admin, @dossier_prestation, allocation_postnatale], method: :delete, data: {confirm: 'En êtes vous sûr?'}, id:"dd_hover"   if allocation_postnatale.creation? %>
+                              </li>
+                            <%end%>
+                            <%if (@dossier_prestation.soumis? or @dossier_prestation.valide?) and allocation_postnatale.soumis? and current_user.chef_agence? %>
+                              <li>
+                                <%= (link_to 'Valider', admin_dossier_prestation_allocation_postnatale_valider_path(@dossier_prestation, allocation_postnatale), id:"dd_hover" ) if allocation_postnatale.soumis? %>
+                              </li>
+                              <li>
+                                <%#= link_to 'Rejeter', [:admin, @dossier_prestation, allocation_postnatale], method: :delete, data: {confirm: 'En êtes vous sûr?'}, id:"dd_hover" %>
+                              </li>
+                            <% end %>
+                          </ul>
+                        </td>
+                      <% elsif (@dossier_prestation.soumis? or @dossier_prestation.valide?) and allocation_postnatale.soumis? and current_user.chef_agence? %>
+                        <td width="90px" class="dropdown">
+                          <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Action <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <%= (link_to 'Valider', admin_dossier_prestation_allocation_postnatale_valider_path(@dossier_prestation, allocation_postnatale)) if allocation_postnatale.soumis? %>
+                            </li>
+                            <li>
+                              <%#= link_to 'Rejeter', [:admin, @dossier_prestation, allocation_postnatale], method: :delete, data: {confirm: 'En êtes vous sûr?'}%>
+                            </li>
+                          </ul>
+                        </td>
+                      <%end%>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+            <% end %>
+
+          </div>
+        </div>
+      <% end %>
+    </div> <!-- end col-lg-12-->
+    <% end %>
+  </div>  <!-- end row-->
+</div>  <!-- end cwrapper content -->
+
+<!--<div class="modal inmodal" id="liquiderModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Liquider tous les volets
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <table class="table table-condensed table-hover">
+          <tr>
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+            <td><strong>Condition 1 : </strong></td>
+
+          </tr>
+
+          <tr>
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+            <td>
+              <strong>Condition 2 : </strong>
+            </td>
+          </tr>
+          <tr>
+
+            <td><input type="checkbox" name="vehicle1" value="Bike">
+            </td>
+
+            <td><strong>Condition 3 : </strong></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%#= link_to 'Valider la Soumission', admin_dossier_prestation_liquider_postnatales_path(@dossier_prestation), class: 'btn btn-primary', id: 'accept_valide' %>
+      </div>
+    </div>
+  </div>
+</div>-->
+</div>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#accept_valide").hide();
+        var all_checkboxes = $('#liquiderModal input[type="checkbox"]');
+
+        $(".modal-body").change(function () {
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#accept_valide").show();
+            } else {
+                $("#accept_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>

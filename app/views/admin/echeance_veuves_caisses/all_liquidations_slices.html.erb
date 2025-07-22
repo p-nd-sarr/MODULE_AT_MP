@@ -1,0 +1,47 @@
+<%= content_for :titre_page, "Historique de liquidations" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Détails échéance caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_veuves_caiss_path(@echeance), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <% if @echeance_lot_liquidations.empty? %>
+        Historique vide !
+      <% else %>
+        <h3>Historique de liquidations de l'échéance  <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %>
+          <br></h3>
+        <hr>
+        <%= paginate @echeance_lot_liquidations %>
+        <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+          <thead>
+          <tr>
+            <th scope="col">Date de liquidation</th>
+            <th scope="col">Date de validation</th>
+            <th scope="col">Date de paiement</th>
+            <th scope="col">Options</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @echeance_lot_liquidations.each do |echeance_lot_liquidation| %>
+            <tr>
+              <td><%= echeance_lot_liquidation.created_at unless echeance_lot_liquidation.created_at.nil? %></td>
+              <td><%= echeance_lot_liquidation.date_validation_ca unless echeance_lot_liquidation.date_validation_ca.nil? %></td>
+              <td><%= echeance_lot_liquidation.date_validation_comptable unless echeance_lot_liquidation.date_validation_comptable.nil? %></td>
+              <td><%= link_to 'détails', admin_echeance_veuves_caiss_liquidation_details_path(@echeance, echeance_lot_liquidation), class: 'btn btn-white btn-sm' %></td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @echeance_lot_liquidations %>
+      <% end %>
+    </div>
+  </div>
+</div>

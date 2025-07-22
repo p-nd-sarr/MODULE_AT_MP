@@ -1,0 +1,37 @@
+
+
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-lg-6">
+          <h2> <span class="fa fa-history"> </span> Création: </h2>
+          <hr class="no-margins"> <br>
+          <p><strong>Ouvert Par: </strong> <%= @modifier_mode_paiement.ajoute_par.full_name unless @modifier_mode_paiement.ajoute_par.nil? %></p>
+          <p><strong>Date de création:  </strong> <%= @modifier_mode_paiement.created_at.strftime("%d/%m/%Y à %H:%M") %></p>
+        </div>
+
+        <div class="col-lg-6">
+          <h2><span class="fa fa-history"> </span> Soumission:  </h2>
+          <hr class="no-margins"> <br>
+          <p><strong>Soumis par: </strong><%= @modifier_mode_paiement.soumis_par.full_name unless @modifier_mode_paiement.soumis_par.nil? %></p>
+          <p><strong>Date de soumission: </strong> <%= (@modifier_mode_paiement.date_soumission.strftime("%d/%m/%Y à %H:%M")) unless @modifier_mode_paiement.date_soumission.nil? %> </p>
+        </div>
+    </div>
+
+    <br><br>
+
+    <div class="row">
+         <div class="col-lg-6">
+            <h2> <span class="fa fa-history"> Validation en agence </h2>
+            <hr class="no-margins"> <br>
+            <p> <strong>chef agence: </strong> <%= @modifier_mode_paiement.traite_par.full_name unless @modifier_mode_paiement.traite_par.nil? %></p>
+            <p><strong> Date de validation: </strong> <%= @modifier_mode_paiement.traite_le.strftime("%d/%m/%Y à %H:%M") unless @modifier_mode_paiement.traite_le.nil?%></p>
+        </div>
+         <div class="col-lg-6"> 
+            <h2> <span class="fa fa-history"> Validation service allocation</h2>
+            <hr class="no-margins"> <br>
+            <p> <strong>Chef service allocation: </strong> <%= @modifier_mode_paiement.valider_par.full_name unless @modifier_mode_paiement.valider_par.nil? %></p>
+            <h5><strong> Date de validation: </strong>  <%= (@modifier_mode_paiement.date_validation.strftime("%d/%m/%Y à %H:%M")) unless @modifier_mode_paiement.date_validation.nil? %> </h5>
+        </div>     
+    </div>
+</div>

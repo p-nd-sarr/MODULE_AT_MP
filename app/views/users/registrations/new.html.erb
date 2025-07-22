@@ -1,0 +1,194 @@
+<div class="loginColumns animated fadeInDown">
+  <div class="row" style="background: #fff; padding: 5%">
+
+    <h2 class="font-bold">Inscription Salarié</h2>
+    <p>
+      Veuillez remplir le formulaire pour vous inscrire en tant que salarié
+    </p>
+    <hr>
+    <%= bootstrap_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.text_field :numero_salarie, label: 'Numéro Unique Salarié', autofocus: true, required: true %>
+        </div>
+        <div class="col-md-6">
+          <%= f.text_field :nin, label: "Numéro d'identification nationale" %>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.text_field :num_ipres, label: 'Ancien Numéro IPRES' %>
+        </div>
+        <div class="col-md-6">
+          <%= f.text_field :num_css, label: 'Ancien Numéro CSS' %>
+        </div>
+      </div>
+      
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.text_field :prenom, label: 'Prénom' %>
+        </div>
+        <div class="col-md-6">
+          <%= f.text_field :nom, label: 'Nom' %>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.text_field :numero_matricule_solde %>
+        </div>
+        <div class="col-md-6">
+          <%= f.select :sexe,
+                       User::TYPE_SEXE.keys.collect { |sexe| [User.human_enum_name(:sexe, sexe), sexe] },
+                       label: 'Sexe' %>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.text_field :telephone, label: 'Téléphone personnel', help: "Spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+        </div>
+       <div class="col-md-6">
+          <%= f.text_field :telephone_bureau, label: 'Téléphone au bureau', help: "Spécifiez l'indicatif du pays (ex: 221 33 000 00 00)" %>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.date_select :date_naissance, label: 'Date de naissance',
+                            start_year: Date.today.year-70,
+                            end_year: Date.today.year-15 %>
+        </div>
+        <div class="col-md-6">
+          <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.text_field :adresse %>
+        </div>
+        <div class="col-md-6">
+          <%= f.text_area :autres_informations_utiles %>
+        </div>
+        
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.file_field :cni_file, label: 'Carte d’identité national (PDF à joindre)',autofocus: true, required: true %>
+        </div>
+          <div class="col-md-6">
+          <%= f.file_field :image_profile %>
+        </div>
+      </div>
+
+      <br/>
+      <h2 class="font-bold">Informations sur l'employeur actuel</h2>
+      <hr>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+           <%= f.text_field :raison_sociale_employeur_actuel, label: "Raison sociale employeur actuel" %>
+        </div>
+
+        <div class="col-md-6">
+          <%= f.text_field :telephone_employeur_actuel, label: "Téléphone employeur actuel" %>
+        </div>
+      </div>
+
+      <div class="row form-group">
+        <div class="col-md-6">
+          <%= f.file_field :certificat_travail_actuel, label: 'Certificat de travail (PDF à joindre)' %>
+        </div>
+      </div>
+
+      <br/>
+      <h2 class="font-bold">Informations les employeurs précédents</h2>
+      <hr>
+
+      <div class="input_fields_wrap row form-group">
+        <button class="add_field_button btn btn-info">Ajout précédent employeur</button> <br/>
+        <div class="row form-group">
+          <div class="col-md-6">
+            <%= f.text_field :raison_sociale_employeur_actuel, label: "Raison sociale employeur actuel" %>
+          </div>
+
+          <div class="col-md-6">
+            <%= f.text_field :telephone_employeur_actuel, label: "Téléphone employeur actuel" %>
+          </div>
+        </div>
+
+        <div class="row form-group">
+          <div class="col-md-6">
+            <%= f.file_field :certificat_travail_actuel, label: 'Certificat de travail (PDF à joindre)' %>
+          </div>
+        </div>
+       
+
+      </div>
+
+
+      <hr>
+      <div class="row">
+        <div class="col-md-6">
+          <%= f.email_field :email, label: 'Email' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <%= f.password_field :password, label: 'Mot de passe' %>
+        </div>
+        <div class="col-md-6">
+          <%= f.password_field :password_confirmation, label: 'Confirmation du mot de passe' %>
+        </div>
+      </div>
+
+      <hr>
+      <button type="submit" class="btn btn-primary block full-width m-b">S'inscrire</button>
+
+      <%= render "users/shared/links" %>
+    <% end %>
+  </div>
+  <hr/>
+  <div class="row">
+    <div class="col-md-6">
+      <%= image_tag 'logo_ipres.jpg', height: 32 %>
+      <%= image_tag 'logo_css.png', height: 32 %>
+    </div>
+    <div class="col-md-6 text-right">
+      <small>© 2020</small>
+    </div>
+  </div>
+</div>
+
+<style>
+    label.required:after {
+      content: " *";
+    }
+</style>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+    var max_fields      = 10; //maximum input boxes allowed
+    var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
+    var add_button      = $(".add_field_button"); //Add button ID
+    
+    var x = 1; //initlal text box count
+    $(add_button).click(function(e){ //on add input button click
+      e.preventDefault();
+      if(x < max_fields){ //max input box allowed
+        x++; //text box increment
+        $(wrapper).append('<div> <div class="row form-group mt-5"><div class="col-md-6"><input class="form-control" type="text" name="raison_sociale_employeur_precedent[]" placeholder="Raison sociale precedent employeur"/></div> <div class="col-md-6"><input class="form-control" type="text" name="telephone_employeur_precedent[]" placeholder="Téléphone precedent employeur"/> </div> </div> <div class="row"><div class="col-md-6"><input class="form-control" type="file" name=":certificat_travail_precedent[]" placeholder="Certificat de travail" multiple/></div></div> <a href="#" class="remove_field btn btn-danger">Supprimer</a></div>'); //add input box
+      }
+    });
+    
+    $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+      e.preventDefault(); $(this).parent('div').remove(); x--;
+    })
+  });
+  </script>
+<% end %>

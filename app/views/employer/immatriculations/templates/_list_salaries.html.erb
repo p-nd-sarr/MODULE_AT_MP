@@ -1,0 +1,36 @@
+<div class="row">
+
+  <div class="col-sm-7">
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">NIN</th>
+        <th scope="col">Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @salaries.each do |salarie| %>
+        <tr>
+          <td><%= salarie.nom %></td>
+          <td><%= salarie.prenom %></td>
+          <td><%= salarie.numero_piece %></td>
+          <td>
+            <% if salarie.etat != 'retrait' %>
+              <%= link_to "retirer", employer_immatriculation_structure_prives_path(immatriculation_id: @immatriculation.id, salarie_id: salarie.id), 'data-confirm': 'Vous retirez ce salarié ?', class: 'btn btn-outline btn-danger btn-xs' %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @salaries %>
+  </div>
+
+
+  <%= render 'employer/immatriculation_structure_prives/show_items/new_salarie' %>
+
+</div>

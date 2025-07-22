@@ -1,0 +1,50 @@
+<%= paginate @at_consolidations %>
+
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Numéro dossier</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Taux Ipp</th>
+    <th scope="col">Date consolidation</th>
+    <th scope="col">Etat</th>
+    <th colspan="3">Actions </th>
+  </tr>
+  </thead>
+  
+  <tbody>
+  <% @at_consolidations.each do |consolidation| %>
+    <tr>
+      <td></td>
+
+      <td><%=consolidation.arret_travail.num_dossier%></td>
+      <td><%=consolidation.arret_travail.prenom_salarie%></td>
+      <td><%=consolidation.arret_travail.nom_salarie%></td>
+      <td>
+        <% unless consolidation.taux_ipp_mc.nil? %>
+          <%= consolidation.taux_ipp_mc %>%
+        <% else%>
+          <%= !consolidation.taux_ipp_medecin_traitant.nil? ? consolidation.taux_ipp_medecin_traitant : "A déterminer"%>%
+        <% end %>
+      </td>
+      <td>
+        <% unless consolidation.date_consolidation_medecin_conseil.nil? %>
+          <%= consolidation.date_consolidation_medecin_conseil.strftime("%d-%m-%Y") unless consolidation.date_consolidation_medecin_conseil.nil? %>
+        <% else %>
+          <%= !consolidation.date_consolidation_medecin_traitant.nil? ? consolidation.date_consolidation_medecin_traitant.strftime("%d-%m-%Y"): "A déterminer" %>
+        <% end %>
+      </td>
+
+      <td><%=consolidation.workflow_state%></td>
+
+      <td style="width: 75px">
+        <%= link_to 'détails', [:admin, consolidation.arret_travail, consolidation], class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @at_consolidations %>

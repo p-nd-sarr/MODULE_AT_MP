@@ -1,0 +1,19 @@
+<%= content_for :titre_page, 'Historique de paiements' %>
+
+<%= content_for :actions_page do %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/allocataires/search_historiques_paiements' %>
+
+    <br>
+
+    <%= paginate @ordre_paiements %>
+
+    <%= render 'admin/ordre_paiements/liste' %>
+
+    <%= paginate @ordre_paiements %>
+  </div>
+</div>

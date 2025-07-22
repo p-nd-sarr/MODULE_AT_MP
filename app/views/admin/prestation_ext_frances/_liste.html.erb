@@ -1,0 +1,52 @@
+<%= paginate @prestation_ext_frances %>
+
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">N° dossier</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Lieu de naissance</th>
+    <th scope="col">Adresse résidence</th>
+    <th scope="col">Mode de paiement</th>
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @prestation_ext_frances.each do |prestation_ext_france| %>
+    <tr>
+      <td><%= prestation_ext_france.numero_dossier %></td>
+      <td><%= prestation_ext_france.prenom %></td>
+      <td><%= prestation_ext_france.nom %></td>
+      <td><%= l prestation_ext_france.date_naissance %></td>
+      <td><%= prestation_ext_france.lieu_naissance %></td>
+      <td><%= prestation_ext_france.adresse_residence %></td>
+      <td><%= PrestationExtFrance.human_enum_name(:mode_paiement, prestation_ext_france.mode_paiement) unless prestation_ext_france.mode_paiement.nil? %></td>
+
+      <td style="width: 75px">
+        <%= (link_to 'Details', admin_prestation_ext_france_path(prestation_ext_france), class: 'btn btn-outline btn-primary btn-xs') %>
+      </td>
+      <% if prestation_ext_france.soumis? and current_user.chef_service_allocation? %>
+        <td style="width: 75px">
+          <%= (link_to 'Affecter', admin_prestation_ext_france_path(prestation_ext_france), class: 'btn btn-outline btn-primary btn-xs') %>
+        </td>
+      <% end %>
+
+      <% if prestation_ext_france.traitement_en_cours? %>
+        <td style="width: 75px">
+          <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#affecterModal" id="affecter_id" disabled>
+            Deja Affecté
+          </button>
+        </td>
+      <% end %>
+
+      <% if prestation_ext_france.date_soumission? %>
+        <td> <%= link_to 'Récépissé', admin_prestation_ext_france_show_facture_path(prestation_ext_france.id, format: :pdf), class: "btn btn-outline-success my-2 my-sm-0", target: '_blank' %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @prestation_ext_frances %>

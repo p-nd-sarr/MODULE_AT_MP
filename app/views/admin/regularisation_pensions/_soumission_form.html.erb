@@ -1,0 +1,44 @@
+<div class="modal inmodal" id="SoumissionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Soumission demande regularisation de pension
+        </h4>
+
+      </div>
+  
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= link_to 'Valider la soumission', admin_regularisation_pension_soumettre_path(@regularisation_pension), class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#soummetre_valide").hide();
+        var all_checkboxes = $('#SoumissionModal input[type="checkbox"]');
+
+        $(".modal-body").change(function(){
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#soummetre_valide").show();
+            }else{
+                $("#soummetre_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>
+

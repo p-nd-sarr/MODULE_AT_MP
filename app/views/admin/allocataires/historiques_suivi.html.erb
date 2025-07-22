@@ -1,0 +1,43 @@
+<%= content_for :titre_page, 'Liste des Historiques de suivi' %>
+
+<%= content_for :actions_page do %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/allocataires/search_historique' %>
+
+    <br>
+
+    <%= paginate @historique_suivi_allocataires %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Date Validation</th>
+        <th scope="col">Commentaire</th>
+        <th scope="col">Impacte Montant</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @historique_suivi_allocataires.each do |historique| %>
+        <tr>
+          <td><%= historique.allocataire.nom %></td>
+          <td><%= historique.allocataire.prenom %></td>
+          <td><%= historique.allocataire.numero_allocataire %></td>
+          <td><%= historique.date_validation.strftime("%d/%m/%Y") %></td>
+          <td><%= historique.commentaire %></td>
+          <td><%= historique.impacte_montant_paiement? ? "OUI" : "NON" %></td>
+
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @historique_suivi_allocataires %>
+  </div>
+</div>

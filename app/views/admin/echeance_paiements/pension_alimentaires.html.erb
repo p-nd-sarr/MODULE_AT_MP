@@ -1,0 +1,46 @@
+<%= content_for :titre_page, "Liste des pensions alimentaires  [#{ @echeance_paiement.periode_variation_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_variation_fin.strftime("%d/%m/%Y")}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%#= render 'admin/allocataires/search' %>
+
+    <br>
+
+    <%= paginate @pension_alimentaires %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Montant</th>
+        <th scope="col">Montant versement</th>
+        <th scope="col">Etat</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @pension_alimentaires.each do |pension_alimentaire| %>
+        <tr>
+          <td><%= pension_alimentaire.numero_allocataire %></td>
+          <td><%= pension_alimentaire.prenom %></td>
+          <td><%= pension_alimentaire.nom %></td>
+          <td><%= pension_alimentaire.montant %></td>
+          <td><%= pension_alimentaire.montant_versement %></td>
+          <td><%= pension_alimentaire.etat_human %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, pension_alimentaire.allocataire, pension_alimentaire], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @pension_alimentaires %>
+  </div>
+</div>

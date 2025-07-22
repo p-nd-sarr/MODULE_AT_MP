@@ -1,0 +1,75 @@
+<div class="modal inmodal" id="PaiementModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+        <% if @dossier_maternite.indemnite_conges_maternites.valide.non_paye.empty?  %>
+          <i class="fa fa-close modal-icon btn-danger"></i>
+          <h4 class="modal-title">
+            Pas de paiement à valider
+          </h4>
+
+        <% else %>
+          <i class="fa fa-check modal-icon btn-primary"></i>
+          <h4 class="modal-title">
+            Valider Odre de Paiement
+          </h4>
+        <% end %>
+
+      </div>
+      <div class="modal-body">
+        <% unless @dossier_maternite.indemnite_conges_maternites.valide.non_paye.empty? %>
+          <h5>Tranches ICM</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Tranche</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @dossier_maternite.indemnite_conges_maternites.valide.non_paye.each do |indemnite_conges_maternite| %>
+              <tr>
+                <td><%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, indemnite_conges_maternite.tranche_paiement) %></td>
+                <td><%= IndemniteCongesMaternite.human_enum_name(:etat, indemnite_conges_maternite.etat) %></td>
+                <td>
+                  <% unless indemnite_conges_maternite.created_at.nil? %>
+                    <%= l indemnite_conges_maternite.created_at %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless indemnite_conges_maternite.date_soumission.nil? %>
+                    <%= l indemnite_conges_maternite.date_soumission %>
+                  <% end %>
+                </td>
+                <td><%= format_cfa indemnite_conges_maternite.montant_paiement %></td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= link_to 'Valider odre de paiement', admin_dossier_maternite_valider_paiement_path(@dossier_maternite), class: 'btn btn-primary', id: 'valider_paiement' %>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="application/javascript">
+    $(document).ready(function () {
+        <% if  @dossier_maternite.indemnite_conges_maternites.valide.non_paye.empty?  %>
+        $("#valider_paiement").hide();
+        <% else %>
+        $("#valider_paiement").show();
+        <%end %>
+    });
+</script>

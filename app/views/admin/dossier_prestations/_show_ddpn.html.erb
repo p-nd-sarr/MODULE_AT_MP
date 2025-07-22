@@ -1,0 +1,33 @@
+<% if (@dossier_prestation.conjoint.nil?) %>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Nom</th>
+      <th scope="col">Prénom</th>
+      <th scope="col">Date de mariage</th>
+      <th scope="col">Situation avec le salarie</th>
+      <th scope="col">Options</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @conjoints.valide.each do |conjoint| %>
+      <tr>
+        <td><%= conjoint.nom %></td>
+        <td><%= conjoint.prenom %></td>
+        <td><%= l conjoint.date_naissance %></td>
+        <td><%= conjoint.etat_conjoint %></td>
+        <td>
+          <% unless DossierPrestation.exists?(conjoint_id: conjoint) %>
+            <%= (link_to 'Créer dossier de prestation', admin_dossier_prestation_create_dossier_conjoint_path(@dossier_prestation, conjoint),
+                         data: {confirm: 'En êtes vous sûr?'}, id: "dd_hover", class: 'btn btn-primary btn-sm dim pull-right') %>
+          <% else %>
+            <%= link_to 'Voir dossier avec le conjoint', admin_dossier_prestation_path(DossierPrestation.where(conjoint_id: conjoint).pluck(:id).first), class: 'btn btn-outline btn-primary btn-xs pull-right' %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+<% end %>

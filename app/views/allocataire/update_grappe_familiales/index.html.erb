@@ -1,0 +1,77 @@
+<%= content_for :titre_page, "Mise à jour grappe familiale" %>
+
+<%= content_for :actions_page do %>
+ <%= link_to 'Accueil', allocataire_root_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Nouvelle Déclaration', allocataire_ajouter_declaration_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+  <h3>Enfants</h3>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Type déclaration</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @update_grappe_enfants.each do |update_grappe_enfant| %>
+       <%enfant=Enfant.find(update_grappe_enfant.enfant_id)rescue nil %>
+        <tr>
+          <td><%= update_grappe_enfant.num_affiliation %></td>
+          <td><%= enfant.try(:prenom) %></td>
+          <td><%= enfant.try(:nom) %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:type_demande, update_grappe_enfant.type_demande) %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:etat, update_grappe_enfant.etat) %></td>
+        
+        <td style="width: 75px">
+          <%= link_to 'détails', [:allocataire, update_grappe_enfant], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+      </tr>
+         <% end %>
+      
+      </tbody>
+    </table>
+
+    <h3>Conjoints</h3>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Type déclaration</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @update_grappe_conjoints.each do |update_grappe_conjoint| %>
+      
+        <tr>
+         <%conjoint=Conjoint.find(update_grappe_conjoint.conjoint_id)%>
+          <td><%= conjoint.numero_affiliation %></td>
+          <td><%= conjoint.prenom %></td>
+          <td><%= conjoint.nom %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:type_demande, update_grappe_conjoint.type_demande) %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:etat, update_grappe_conjoint.etat) %></td>
+           
+        
+          <td style="width: 75px">
+        
+              <%= link_to 'détails', [:allocataire, update_grappe_conjoint], class: 'btn btn-outline btn-primary btn-xs' %>
+          
+        </td>
+        </tr>
+         <% end %>
+      
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+
+<p>
+  <strong>Prénom:</strong>
+  <%= @allocataire.try(:prenom) %>
+</p>
+<p>
+  <strong>Nom:</strong>
+  <%= @allocataire.try(:nom) %>
+</p>
+<p>
+  <strong>Date de naissance:</strong>
+  <%= @allocataire.try(:date_naissance) %>
+</p>
+
+<p>
+  <strong>Adresse domicile:</strong>
+  <%= @allocataire.try(:adresse_rue) %>
+</p>
+
+<p>
+  <strong>Téléphone:</strong>
+  <%= @allocataire.try(:telephone) %>
+</p>
+<p>
+  <strong>Nombre d'épouse:</strong>
+  <%= @allocataire.try(:nombre_epouses) %>
+</p>
+<p>
+  <strong>Nombre d'enfants:</strong>
+  <%= @allocataire.try(:nombre_enfants) %>
+</p>

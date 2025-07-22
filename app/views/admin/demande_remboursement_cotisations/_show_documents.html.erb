@@ -1,0 +1,74 @@
+<style type="text/css">
+  label[title="required"] {
+    display: none;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+
+<ul class="text-danger">
+  <% if @demande_remboursement_cotisation.documents.where(type_document: [:cni, :attestation_travail, :certificat_mariage, :passeport, :carte_consulaire]).empty? %>
+    <li>Veuillez ajouter une copie du CNI ou passeport ou carte consulaire</li>
+  <% end %>
+  <% if @demande_remboursement_cotisation.virement? and @demande_remboursement_cotisation.documents.rib.empty? %>
+    <li>Veuillez ajouter un Relevé d'Identité Bancaire (RIB) pour les paiements par virement bancaire</li>
+  <% end %>
+   <% if @demande_remboursement_cotisation.quitter_definitivement_pays? and @demande_remboursement_cotisation.documents.autorisation_sortir_pays.empty? %>
+    <li>Veuillez ajouter le Relevé autorisation de sortir du pays</li>
+  <% end %>
+</ul>
+
+
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <h2>Liste des documents</h2>
+    </div>
+    <% unless @demande_remboursement_cotisation.documents_valide! %>
+      <div class="col-lg-8">
+        <div class="alert alert-info alert-dismissable">
+          <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">x</font>
+            </font>
+          </button>
+          <font style="vertical-align: inherit;">
+            <font style="vertical-align: inherit;"><span class="fa fa-info-o"></span> Veuillez renseigner des documents
+              au format PDF</font>
+          </font>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+
+
+<% if @demande_remboursement_cotisation.creation? %>
+<%= render 'documents/liste',
+           object: @demande_remboursement_cotisation,
+           documents: @demande_remboursement_cotisation.documents,
+           include_add: @demande_remboursement_cotisation.creation?,
+           include_delete: @demande_remboursement_cotisation.creation?,
+           type_documents: DemandeRemboursementCotisation::TYPE_DOCUMENT,
+           type_documents_obligatoires: DemandeRemboursementCotisation::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_demande_remboursement_cotisation_path(@demande_remboursement_cotisation)
+%>
+
+  <%= render 'documents/modal_form',
+            type_documents: DemandeRemboursementCotisation::TYPE_DOCUMENT,
+            document: Document.new(documentable: @demande_remboursement_cotisation),
+            back_url:admin_demande_remboursement_cotisation_path(@demande_remboursement_cotisation)
+  %>
+<% else %>
+<%= render 'documents/liste',
+           object: @demande_remboursement_cotisation,
+           documents: @demande_remboursement_cotisation.documents,
+           include_add: false, 
+           include_delete: false, 
+           type_documents: DemandeRemboursementCotisation::TYPE_DOCUMENT,
+           type_documents_obligatoires: DemandeRemboursementCotisation::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_demande_remboursement_cotisation_path(@demande_remboursement_cotisation)
+%>
+<%end%>

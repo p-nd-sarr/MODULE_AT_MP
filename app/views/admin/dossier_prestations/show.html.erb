@@ -1,0 +1,442 @@
+<%= content_for :titre_page, "Détails Dossier De Prestation [#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_prestation.conjoint.nil? %>
+    Avec : <%= @dossier_prestation.conjoint.full_name unless @dossier_prestation.conjoint.nil? %> <br>
+  <% end %>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}" %> <br>
+  <% unless @dossier_prestation.get_maintien_prestations_active.nil? %>
+    pour cause de <%= MaintienPrestation.human_enum_name(:type_maintien, @dossier_prestation.get_maintien_prestations_active.type_maintien) unless @dossier_prestation.get_maintien_prestations_active.type_maintien.nil? %>
+    <br>
+  <% end %>
+  <span style="font-style: italic">Est repris?</span> : <%= state_yes_no @dossier_prestation.est_repris %>
+  <% if @dossier_prestation.has_cloture_request? %>
+    Demande de clôture soumise le
+    <%= @dossier_prestation.get_cloture_request.created_at.strftime('%Y%m%d') unless @dossier_prestation.get_cloture_request.nil? %>
+    <br>
+  <% end %>
+  <% if @dossier_prestation.has_rejected_cloture_request? %>
+    Demande de clôture rejetée le <%= @dossier_prestation.get_rejected_cloture_request.created_at.strftime('%Y%m%d') %>
+    <span>
+      <a data-toggle="modal" data-target="#rejet_demande" id="" class="btn btn-danger btn-sm"> Voir motif </a>
+    </span>
+    <%= render 'admin/dossier_prestations/rejet_demande_cloture', object: @dossier_prestation.get_rejected_cloture_request %>
+    <br>
+  <% end %>
+  <% unless @dossier_prestation.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @dossier_prestation.date_soumission}" %>
+  <% end %>
+  <% if @dossier_prestation.creation? and @dossier_prestation.motif_retour? %>
+    <br>
+    <strong class="text-info">Motif retour dossier :</strong>
+    <%= @dossier_prestation.motif_retour %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_dossier_prestation_path(@dossier_prestation.find_base_folder), class: 'btn btn-white  btn-xs' unless @dossier_prestation.conjoint.nil? %>
+  <%= link_to 'Retour Accueil PF', admin_dossier_prestations_path, class: 'btn btn-white btn-sm' %>
+  <% if @dossier_prestation.conjoint_id.nil? %>
+    <span>
+      <a data-toggle="modal" data-target="#beneficiaire" id="" class="btn btn-primary  btn-xs"> Bénéficiaire </a>
+    </span>
+  <% end %>
+  <% if @dossier_prestation.creation? %>
+    <br> <br>
+    <%= (link_to 'Modifier', edit_admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white  btn-xs') if @dossier_prestation.creation? and (current_user == @dossier_prestation.ajoute_par or current_user == @dossier_prestation.affecte_a) %>
+    <%= (link_to 'Supprimer', [:admin, @dossier_prestation], method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                 class: 'btn btn-danger  btn-xs') if @dossier_prestation.creation? and (current_user == @dossier_prestation.ajoute_par or current_user == @dossier_prestation.affecte_a) %>
+
+    <% if @dossier_prestation.pret_pour_soumission? and (current_user == @dossier_prestation.ajoute_par or current_user == @dossier_prestation.affecte_a) and current_user.gestionnaire_compte_allocataire? %>
+      <!--      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionDossierModal" id="soumettre_id">Soumettre-->
+      <!--      </button>-->
+      <%= link_to 'Soumettre', admin_dossier_prestation_soumettre_path(@dossier_prestation), class: 'btn btn-primary  btn-xs' %>
+    <% end %>
+    <% if current_user.chef_agence? %>
+      <span>
+          <a data-toggle="modal" data-target="#affectation_agent" id="" class="btn btn-primary  btn-xs"> Affectation dossier </a>
+        </span>
+    <% end %>
+  <% end %>
+  <% unless @dossier_prestation.has_cloture_request? %>
+    <% if @dossier_prestation.can_cloture? and @dossier_prestation.conjoint_id.nil? %>
+      <br> <br>
+      <span>
+          <a data-toggle="modal" data-target="#cloture_modal" id="" class="btn btn-primary  btn-xs"> Soumettre une demande de clôture </a>
+      </span>
+    <% end %>
+  <% end %>
+
+  <% if current_user.chef_agence? and @dossier_prestation.soumis? %>
+    <% if @dossier_prestation.conjoint_id.nil? %>
+      <%= (link_to 'Valider', admin_dossier_prestation_valider_path(@dossier_prestation), class: 'btn btn-primary  btn-xs') %>
+    <% else %>
+      <%= (link_to 'Valider', admin_dossier_prestation_valider_path(@dossier_prestation), class: 'btn btn-primary  btn-xs') if DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, etat: :valide, conjoint_id: nil) %>
+    <% end %>
+    <%= (link_to 'Rejeter', admin_dossier_prestation_rejeter_path(@dossier_prestation), class: 'btn btn-danger  btn-xs') %>
+    <%= (link_to 'Retourner le dossier', admin_dossier_prestation_retour_path(@dossier_prestation), class: 'btn btn-warning  btn-xs') %>
+  <% end %>
+
+  <% if current_user.comptable? and not @dossier_prestation.attente_paiement? and (@dossier_prestation.valide? or @dossier_prestation.suspendu?) %>
+    <button type="button" class="btn btn-primary  btn-xs" data-toggle="modal" data-target="#PaiementModal" id="soumettre_id">Valider
+      Paiement
+    </button>
+  <% end %>
+<% end %>
+
+<% if @dossier_prestation.conjoint.nil? %>
+  <div class="wrapper wrapper-content">
+    <div class="row">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="progressbar-wrapper">
+              <ul class="progressbar">
+                <li class="<%= ("active") if @dossier_prestation.current_state >= :creation %>">Création</li>
+                <li class="<%= ("active") if @dossier_prestation.current_state >= :soumis %>">Soumission</li>
+                <% if @dossier_prestation.current_state <= :valide %>
+                  <li class="<%= ("active") if @dossier_prestation.current_state >= :valide %>">Validation</li>
+                <% end %>
+                <% if @dossier_prestation.suspendu? %>
+                  <li class="<%= ("active") if @dossier_prestation.current_state >= :suspendu %>">Suspension</li>
+                <% end %>
+                <% if @dossier_prestation.cloturer? %>
+                  <li class="<%= ("active") if @dossier_prestation.current_state >= :suspendu %>">Cloturer</li>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row" style="margin-top: -60px">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-9" style="margin-bottom: 25px; margin-top: 20px;">
+              <% unless @dossier_prestation.conjoint.nil? %>
+                <%= link_to 'Prénatales', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation),
+                            class: 'btn btn-outline btn-primary btn-sm' %>
+                <%= link_to 'Postnatales', admin_dossier_prestation_allocation_postnatales_path(@dossier_prestation),
+                            class: 'btn btn-outline btn-primary btn-sm' %>
+              <% end %>
+              <% if @dossier_prestation.conjoint.nil? && @dossier_prestation.masculin? %>
+                <%= link_to_if @dossier_prestation.pret_pour_soumission?, 'Allocation Familiale', admin_dossier_prestation_allocation_familiales_path(@dossier_prestation),
+                               class: 'btn btn-outline btn-primary btn-sm' %>
+                <%= link_to_if @dossier_prestation.pret_pour_soumission?, 'Allocation post/prénatal', admin_dossier_prestation_list_dossier_conjoint_path(@dossier_prestation),
+                               class: 'btn btn-outline btn-success btn-sm' unless @dossier_prestation.conjoint_id? %>
+              <% elsif @dossier_prestation.conjoint.nil? && @dossier_prestation.feminin? %>
+                <%= link_to 'Prénatales', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation),
+                            class: 'btn btn-outline btn-primary btn-sm' %>
+                <%= link_to 'Postnatales', admin_dossier_prestation_allocation_postnatales_path(@dossier_prestation),
+                            class: 'btn btn-outline btn-primary btn-sm' %>
+                <%= link_to 'Familiales', admin_dossier_prestation_allocation_familiales_path(@dossier_prestation),
+                            class: 'btn btn-outline btn-primary btn-sm' %>
+              <% end %>
+
+            </div>
+            <div class="col-lg-3 form-group">
+              <div class="dropdown tooltip-demo" style="text-align:right">
+                <a class="nav-link  dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="true">
+                  <h4 style="vertical-align: inherit; font-size:40px;">
+                    <span class="fa fa-th" data-toggle="tooltip" data-placement="left" title data-original-title="Options prestations familiales"></span>
+                  </h4>
+                </a>
+                <ul class="category-list dropdown-menu dropdown-menu-right" style="padding:20px; background-color:rgb(250, 250, 250)">
+                  <div class="row " style="display:inlinem; width:500px">
+                    <div class="col-md-6">
+                      <li class="dd-item" data-id="1" style="display:inlinem;">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to 'Historique renouvellement documents', admin_dossier_prestation_renewal_documents_historic_path(@dossier_prestation) %>
+                        </div>
+                      </li>
+                    </div>
+                    <div class="col-md-6">
+                      <li class="dd-item" data-id="1" style="display:inlinem;">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to 'Historique du dossier', admin_dossier_prestation_dossier_prestation_historics_path(@dossier_prestation) %>
+                        </div>
+                      </li>
+                    </div>
+                  </div>
+                  <div class="row " style="display:inlinem; width:500px">
+                    <div class="col-md-6">
+                      <li class="dd-item" data-id="2" style="display:inline">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to_if @dossier_prestation.can_do_regularization?, 'Régularisations AF', admin_dossier_prestation_all_regularisation_path(@dossier_prestation) %>
+                        </div>
+                      </li>
+                    </div>
+                    <div class="col-md-6">
+                      <li class="dd-item" data-id="3">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to_if @dossier_prestation.can_maintien_prestation?, 'Maintien de prestations', admin_dossier_prestation_maintien_prestations_path(@dossier_prestation) %>
+                        </div>
+                      </li>
+                    </div>
+                  </div>
+                  <div class="row " style="display:inlinem; width:500px">
+                    <div class="col-md-6">
+                      <li class="dd-item" data-id="2" style="display:inline">
+                        <div class="dd-handle" style="box-shadow:1px 1px 1px #4073FF">
+                          <%= link_to 'Avis à tiers', admin_dossier_prestation_dossier_prestation_avis_tiers_path(@dossier_prestation) %>
+                        </div>
+                      </li>
+                    </div>
+                  </div>
+                </ul>
+              </div> <!-- dropdown -->
+            </div> <!-- end col-lg-3 -->
+          </div>
+          <div class="row">
+            <div class="col-lg-12">
+              <h5 class="text-warning" style="font-family: Georgia;">
+                N° Dossier : <%= @dossier_prestation.num_dossier %>
+                <% if @dossier_prestation.rejete? %>
+                  <br><br>
+                  <span class="text-danger"> Motif Rejet : <%= @dossier_prestation.motif_rejet %> </span>
+                <% end %>
+              </h5>
+
+              <% if @dossier_prestation.creation? %>
+                <% if @dossier_prestation.pret_pour_soumission? %>
+                  <p class="text-info">
+                    Votre dossier est prêt pour être enregistré
+                  </p>
+                <% else %>
+                  <p class="text-warning">
+                    Merci de valider les informations sur les différents onglets pour pouvoir enregistrer le dossier
+                  </p>
+                <% end %>
+              <% end %>
+              <% unless @dossier_prestation.conjoint.nil? %>
+                <% gp = "Enfants" %>
+              <% else %>
+                <% gp = "Grappe Familiale" %>
+              <% end %>
+              <div>
+                <ul class="nav nav-tabs" style="font-size:10px">
+                  <!--                                  <span class="pull-right small text-muted">1406 Elements</span>-->
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Informations générales
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.etat_civil_demandeur_valid? %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.etat_civil_demandeur_valid? %>
+                    </a></li>
+                  <li class="tab-link-top"><a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i> <%= gp %>
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.enfants_valid? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.enfants_valid? %>
+                  </a></li>
+                  <% unless @dossier_prestation.conjoint_id? %>
+                    <li class="tab-link-top">
+                      <a data-toggle="tab" href="#tab-3"><i class="fa fa-briefcase"></i>Délai de stage
+                        <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.carriere_valid? %>
+                        <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.carriere_valid? %>
+                      </a></li>
+                  <% end %>
+                  <li class="tab-link-top"><a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Documents
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_prestation.document_valid? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_prestation.document_valid? %>
+                  </a></li>
+                  <!-- <%# unless @dossier_prestation.conjoint_id? %>
+                    <li class=""><a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i> DDPN
+                    </a></li>
+                  <%# end %>-->
+                  <% if @dossier_prestation.conjoint.nil? %>
+                    <li class="tab-link-top">
+                      <a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Demande de prestation
+                      </a></li>
+                  <% end %>
+                  <li class="tab-link-top"><a data-toggle="tab" href="#tab-7"><i class="fa fa-money"></i>Paiements
+                  </a></li>
+                  <% if @dossier_prestation.conjoint.nil? %>
+                    <li class="tab-link-top">
+                      <a data-toggle="tab" href="#tab-8"><i class="fa fa-money"></i>Historique allocations migrées
+                      </a></li>
+                  <% end %>
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_prestation.etat_civil_demandeur_valid %>
+                        <%= link_to "Je valide les informations sur l'état civil", admin_dossier_prestation_valider_etat_civil_demandeur_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <% end %>
+                      <%= render 'show_etat_civil' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-2" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_prestation.enfants_valid? %>
+                        <% unless @dossier_prestation.conjoint.nil? %>
+                          <%= link_to "Je valide les informations sur les enfants", admin_dossier_prestation_valider_enfants_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <% else %>
+                          <%= link_to "Je valide les informations sur la grappe familiale", admin_dossier_prestation_valider_enfants_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <% end %>
+
+                        <hr>
+                      <% end %>
+                      <%= render 'show_enfants' %>
+                      <%# if @dossier_prestation.creation? %>
+                      <%#= link_to 'Modifier les informations sur les enfants', admin_enfants_path %>
+                      <%# end %>
+                    </div>
+                  </div>
+                  <div id="tab-3" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_prestation.carriere_valid? %>
+                        <%= link_to "Je valide les informations sur ma carrière", admin_dossier_prestation_valider_carriere_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <% end %>
+                      <%= render 'show_carrieres' %>
+                      <%# if @dossier_prestation.creation? %>
+                      <!--                      <hr>-->
+                      <%#= link_to "Voir le détail ou Faire une demande d'intégration de carrière", admin_carrieres_path %>
+                      <%# end %>
+                    </div>
+                  </div>
+                  <div id="tab-4" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_prestation.document_valid? %>
+                        <%= link_to "Je valide tous les documents", admin_dossier_prestation_valider_documents_path(@dossier_prestation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_documents' %>
+                    </div>
+                  </div>
+
+                  <!--<div id="tab-5" class="tab-pane">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%#= render 'show_ddpn' %>
+                    </div>
+                  </div>-->
+
+                  <div id="tab-6" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_prestations' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-7" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'paiements_prestation' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-8" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_historique_allocations_migrees' %>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'soumission_form' %>
+<%= render 'valider_paiement' %>
+<%= render 'beneficiaire_af_form' %>
+<%= render 'affectation_agent' %>
+<%= render 'cloture_modal' %>
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 30%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>

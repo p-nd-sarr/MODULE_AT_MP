@@ -1,0 +1,192 @@
+<div class="col-lg-12" style="text-align: right;">
+  <%= link_to('Modifier', edit_admin_allocataire_path(@allocataire), class: 'btn btn-outline btn-white fa fa-edit') if current_user.super_admin? %>
+</div><br>
+
+<div class="row" style="margin-top:30px">
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:prenom) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:nom) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:date_naissance) %>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:telephone) %>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-users"></span> Association:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.admin_association_allocataire.try(:name) %>
+      </div>
+    </d1>
+  </div>
+
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse domicile:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:adresse_rue) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Ville:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:adresse_ville) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-info"></span> Etat:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.etat_human %></dd>
+      </div>
+    </d1>
+    <% if @allocataire.suspendus? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-list"></span> Motif de suspension:</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.try(:motif_suspension) %></dd>
+        </div>
+      </d1>
+    <% end %>
+
+    <% if @allocataire.eteint?%>
+
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Date décés :</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.try(:date_deces).try(:strftime, "%d/%m/%Y") unless @allocataire.date_deces.nil? %></dd>
+        </div>
+      </d1>
+
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-calendar"></span> Date extinction :</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.try(:date_eteint).try(:strftime, "%d/%m/%Y") unless @allocataire.date_eteint.nil? %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <% if @allocataire.rejete? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-list"></span> Motif rejet:</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.try(:motif_rejet) %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-credit-card"></span> Mode de paiement:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:mode_paiement_human) %>
+        </dd>
+      </div>
+    </d1>
+    <% if @allocataire.virement? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-12" style="text-align: center; font-size: 11px; color: rgb(50, 50 50);">
+
+          <div class="notes">
+            <p><strong style="font-style: italic;" class="text-info">Nom de la banque
+              :</strong> <%= @allocataire.try(:admin_banque_agence).try(:nom) %></p>
+            <p><strong style="font-style: italic;" class="text-info">Numéro compte bancaire
+              :</strong> <%= @allocataire.compte_bancaire_numero_compte %></p>
+            <p><strong style="font-style: italic;" class="text-info">Code SWIFT
+              :</strong> <%= @allocataire.admin_banque_agence.try(:admin_banque).try(:code_swift) %></p>
+            <p><strong style="font-style: italic;" class="text-info">RIB
+              :</strong> <%= @allocataire.compte_bancaire_cle_rib %></p>
+            <hr>
+            <p><strong style="font-style: italic;" class="text-info">REPRISE - Code Banque
+              :</strong> <%= @allocataire.old_code_banque %></p>
+            <p><strong style="font-style: italic;" class="text-info">REPRISE - Compte Banque
+              :</strong> <%= @allocataire.old_compte_banque %></p>
+          </div>
+        </div>
+    <% end %>
+    </d1>
+    <% if @allocataire.mandant_postal? %>
+      <d1 class="row mb-0">
+
+        <p><strong style="font-style: italic;" class="text-info">ADRESSE DOMICILE
+          :</strong> <%= @allocataire.adresse_rue %></strong>
+        </p>
+        <p><strong style="font-style: italic;" class="text-info">TELEPHONE
+          :</strong> <%= @allocataire.telephone %></strong>
+        </p>
+        <p><strong style="font-style: italic;" class="text-info">NIN
+          :</strong> <%= @allocataire.telephone %></strong>
+        </p>
+        <p><strong style="font-style: italic;" class="text-info">DATE DEBUT CHANGEMENT
+          :</strong> <%= @allocataire.try(:date_debut_changement).try(:strftime, "%d/%m/%Y") %></strong>
+        </p>
+      </d1>
+    <% end %>
+
+    <% if @allocataire.mode_paiement=="adresse_domicile" %>
+      <d1 class="row mb-0">
+        <div class="col-sm-12" style="text-align: center; font-size: 11px; color: rgb(50, 50 50);">
+          <p><strong style="font-style: italic;" class="text-info">ADRESSE DOMICILE
+            :</strong> <%= @allocataire.adresse_domicile %></strong>
+          </p>
+          <p><strong style="font-style: italic;" class="text-info">TELEPHONE
+            :</strong> <%= @allocataire.telephone %></strong>
+          </p>
+        </div>
+      </d1>
+    <% end %>
+
+
+    <% if @allocataire.caisse_ipres? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+          <dt><span class="fa fa-home"></span> Agence de paiement:</dt>
+        </div>
+        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.admin_agence.try(:code_psrm) %>
+        </div>
+      </d1>
+    <% end %>
+  </div>
+
+</div>

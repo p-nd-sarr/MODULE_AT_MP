@@ -1,0 +1,38 @@
+<%= content_for :titre_page, "Détails admin_at_code_prime_salaire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_at_code_prime_salaires_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_at_code_prime_salaire_path(@at_code_prime_salaire), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter', new_admin_at_code_prime_salaire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Code:</strong>
+              <%= @at_code_prime_salaire.code %>
+            </p>
+
+            <p>
+              <strong>Description:</strong>
+              <%= @at_code_prime_salaire.designation %>
+            </p>
+
+            <% unless @at_code_prime_salaire.prise_en_compte.nil? %>
+              <% if @at_code_prime_salaire.prise_en_compte? %>
+                Oui
+              <% else %>
+                Non
+              <% end %>
+            <% end %>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

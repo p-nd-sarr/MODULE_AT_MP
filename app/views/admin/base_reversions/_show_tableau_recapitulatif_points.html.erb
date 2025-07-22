@@ -1,0 +1,43 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">Régime Général</th>
+    <th scope="col">Régime Cadre</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr>
+    <td>Points de cotisation</td>
+    <td><%= @allocataire.points_rg %></td>
+    <td><%= @allocataire.points_rc %></td>
+  </tr>
+  <tr>
+    <td>Points gratuits</td>
+    <td><%= format_entier(@allocataire.points_gratuits_rg || 0) %></td>
+    <td><%= format_entier(@allocataire.points_gratuits_rc || 0) %></td>
+  </tr>
+  <tr>
+    <td>Points de base</td>
+    <td><%= @allocataire.points_base_rg %></td>
+    <td><%= @allocataire.points_base_rc %></td>
+  </tr>
+  <tr>
+    <td>Points de minoration</td>
+    <td><%= @allocataire.point_minoration_rg %></td>
+    <td><%= @allocataire.point_minoration_rc %></td>
+  </tr>
+
+  <tr>
+    <td>Points de majoration</td>
+    <td><%= @allocataire.point_majoration_rg %></td>
+    <td><%= @allocataire.point_majoration_rc %></td>
+  </tr>
+  <tr>
+    <td>Points à servir</td>
+    <td><%= @allocataire.points_servis_rg %></td>
+    <td><%= @allocataire.points_servis_rc %></td>
+  </tr>
+  </tbody>
+</table>

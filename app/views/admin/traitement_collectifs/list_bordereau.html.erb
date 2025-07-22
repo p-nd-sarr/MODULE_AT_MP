@@ -1,0 +1,115 @@
+<%= content_for :titre_page, 'Liste des temps de présence collectifs' %>
+<%= content_for :titre_page_autres_details, "Employeur : #{(@employeur.fhrsoc)}" unless @employeur.fhrsoc.nil? %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_traitement_collectif_path(@employeur.fhnum), class: 'btn btn-white btn-sm' if current_user.gestionnaire_compte_allocataire? %>
+  <%= link_to 'Retour', admin_traitement_collectifs_path, class: 'btn btn-white btn-sm' if current_user.chef_agence? or current_user.comptable? %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @req, url: admin_traitement_collectif_list_bordereau_path(@employeur.fhnum) do |f| %>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :numero_bordereau_cont, 'Numéro bordereau' %>
+          <%= f.search_field :numero_bordereau_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :trimestre_cont, 'Trimestre' %>
+          <%= f.text_field :trimestre_eq, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :annee_cont, 'Année' %>
+          <%= f.search_field :annee_eq, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :bordereau_type_eq, 'Type bordereau' %>
+          <%= f.select :bordereau_type_eq, BordereauCollectif.bordereau_types.to_a.map { |bordereau_type| [BordereauCollectif.human_enum_name(:bordereau_type, bordereau_type[0]), bordereau_type[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="hr-line-dashed"></div>
+      <%= link_to "Annuler", request.path, class: "btn" %>
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+    <br>
+    <div style="margin-top: 50px">
+      <h5>Liste des temps de présence collectifs <span class="label label-warning"> <%= @bordereaux.count %></span></h5>
+    </div>
+    <br>
+    <div class="row">
+      <%= paginate @bordereaux %>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th>Numéro bordereau</th>
+          <th>Période</th>
+          <th>Année</th>
+          <th>Type</th>
+          <th>Etat</th>
+          <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @bordereaux.each do |bordereau| %>
+          <tr>
+            <td><%= bordereau.numero_bordereau %></td>
+            <td>Trimestre <%= bordereau.trimestre %></td>
+            <td><%= bordereau.annee %></td>
+            <td><%= BordereauCollectif.human_enum_name(:bordereau_type, bordereau.bordereau_type) unless bordereau.bordereau_type.nil? %> </td>
+            <td>
+              <%= bordereau.current_state %>
+              <% unless bordereau.motif_rejet.nil? %>
+                (Rejeté)
+              <% end %>
+            </td>
+
+            <td width="300px" class="dropdown">
+              <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" style="">
+                <li>
+                  <%= link_to 'Ouvrir', admin_traitement_collectif_ouvrir_bordereau_path(@employeur.fhnum, bordereau.numero_bordereau), class: 'btn btn-outline btn-primary btn-xs' if current_user.gestionnaire_compte_allocataire? or current_user.chef_agence? %>
+                </li>
+                <li>
+                  <%= link_to 'Voir le temps de présence collectif ', admin_traitement_collectif_voir_bordereau_path(@employeur.fhnum, bordereau.annee, bordereau.trimestre, format: :pdf), class: 'btn btn-white btn-sm', target: '_blank' if current_user.gestionnaire_compte_allocataire? and bordereau.normal? and bordereau.current_state < :liquidation %>
+                </li>
+                <li>
+                  <%= link_to 'Envoyer état de contrôle au mandataire', admin_traitement_collectif_envoyer_bordereau_path(@employeur.fhnum, bordereau.numero_bordereau), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' if current_user.gestionnaire_compte_allocataire? and bordereau.normal? and bordereau.current_state < :liquidation %>
+                </li>
+                <li>
+                  <%= link_to 'Créer bordereau complémentaire', admin_traitement_collectif_generer_bordereau_complementaire_path(@employeur.fhnum, bordereau.numero_bordereau), 'data-turbolinks': false, data: { confirm: 'Voulez-vous vraiment générer le bordereau ?' }, class: 'btn btn-outline btn-primary btn-xs' if current_user.gestionnaire_compte_allocataire? and bordereau.normal? and bordereau.has_last_complementary_bordereau_liquided and bordereau.current_state >= :liquidation %>
+                </li>
+                <% if current_user.comptable? %>
+                  <li>
+                    <%= link_to "Voir l'ordre de paiement collectif", admin_traitement_collectif_voir_paiement_path(@employeur.fhnum, bordereau.numero_bordereau, format: :pdf), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+                  </li>
+                  <% if bordereau.validation_chef_agence? %>
+                    <li>
+                      <%= link_to "Valider l'ordre de paiement collectif", admin_traitement_collectif_valider_paiement_path(@employeur.fhnum, bordereau.numero_bordereau), class: 'btn btn-outline btn-primary btn-xs' %>
+                    </li>
+                    <li>
+                      <% @bordereau = bordereau %>
+                      <button style="width: 100%" type="button" class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#RejetBordereauModal">Rejeter
+                        le bordereau
+                      </button>
+                    </li>
+                  <% end %>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @bordereaux %>
+    </div>
+
+  </div>
+</div>
+
+<%= render 'rejeter_bordereau_form' if current_user.comptable? and !@bordereau.nil? %>

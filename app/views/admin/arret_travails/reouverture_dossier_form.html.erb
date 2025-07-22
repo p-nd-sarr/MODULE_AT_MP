@@ -1,0 +1,104 @@
+
+<%= content_for :titre_page, "Réouverture dossier AT" %>
+<div class="wrapper wrapper-content">
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="row">
+                <h2 style="text-align: left; margin-left: 10px;"><span class="text-navy">Informations du dossier:</span> </h2>
+                  <div class="hr"></div>
+                  <div class="col-lg-6">
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                            <dt>N° Dossier: </dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                            <dd class="mb-1"><%=@demande_arret_travail.num_dossier%></dd>
+                        </div>
+                    </d1>
+                 
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date accident:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.date_accident.strftime("%d/%m/%Y")%></dd>
+                        </div>
+                    </d1>
+                         <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date cloture du dossier:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.date_cloture_dossier.strftime("%d/%m/%Y")%></dd>
+                        </div>
+                    </d1>
+                     <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Etat du dossier:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.workflow_state %></dd>
+                        </div>
+                    </d1>
+                 
+                
+                </div>
+                <div class="col-lg-6">
+  
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Numéro affiliation:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1 text-navy"><%= @demande_arret_travail.numero_affiliation %> </dd>
+                        </div>
+                    </d1>
+                   <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Créer par:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.user.email%> (<%=@demande_arret_travail.user.type_profil%>)</dd>
+                        </div>
+                    </d1>
+                       <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Cloture soumise par:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.cloture_soumise_par.email%> (<%=@demande_arret_travail.cloture_soumise_par.type_profil%>)</dd>
+                        </div>
+                    </d1>
+                    
+                
+                </div>
+            </div>
+            <%= bootstrap_form_for(@demande_arret_travail, url: admin_arret_travail_soumettre_demande_reouverture_path(@demande_arret_travail)) do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>
+                <div class="row">
+                <h2 style="text-align: left;"><span class="text-navy">A soumettre pour la  réouverture</span> </h2>
+                  <div class="hr-line-dashed"></div>
+                <div class="col-lg-12">
+                    <div class="col-lg-6">
+                    <%= f.date_field :date_reouverture_dossier, label: 'Date de réouverture du dossier:' %>
+                    </div>
+                    <div class="col-lg-6">
+                      <%= f.file_field :certificat_medical, label: 'Certificat de médical' %>
+                    </div>
+                </div>
+                <div class=" col-lg-12 form-group" >
+                    <div class="hr-line-dashed"></div>
+                        <div class="col-lg-5 col-lg-offset-7" style="text-align: right;">
+                            <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                            <%= f.button 'Soumettre', class: 'btn btn-success' %>
+                        </div>
+                    </div>
+                </div>
+            <% end %>
+
+         
+
+   
+        </div>
+    </div>
+</div>

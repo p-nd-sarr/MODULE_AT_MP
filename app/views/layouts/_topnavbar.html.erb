@@ -1,0 +1,19 @@
+<div class="row border-bottom">
+  <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0; background-color: white">
+    <div class="navbar-header">
+      <a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+    </div>
+    <ul class="nav navbar-top-links navbar-right">
+      <li>
+        <span class="m-r-sm text-muted welcome-message">
+          Bienvenue Dans Votre Espace <%= current_user.type_profil.humanize %>, <%= current_user.full_name %>.
+        </span>
+      </li>
+      <%#= render 'layouts/topnavbar_stats' %>
+      <li>
+        <%= link_to '<i class="fa fa-sign-out"></i> <span style="color: #000">Se déconnecter</span>'.html_safe, destroy_user_session_path, method: :delete %>
+      </li>
+
+    </ul>
+  </nav>
+</div>

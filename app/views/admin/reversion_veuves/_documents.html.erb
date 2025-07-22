@@ -1,0 +1,15 @@
+<%= render 'documents/liste',
+           object: @reversion_veuve,
+           documents: @reversion_veuve.documents,
+           include_add: true,
+           include_delete: true,
+           type_documents: @reversion_veuve.type_documents,
+           type_documents_obligatoires: @reversion_veuve.type_document_obligatoire,
+           back_url: admin_allocataire_reversion_veuve_path(@reversion_veuve.allocataire, @reversion_veuve)
+%>
+
+<%= render 'documents/modal_form',
+           type_documents: @reversion_veuve.type_documents,
+           document: Document.new(documentable: @reversion_veuve),
+           back_url: admin_allocataire_reversion_veuve_path(@reversion_veuve.allocataire, @reversion_veuve)
+%>

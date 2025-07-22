@@ -1,0 +1,62 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="wrapper wrapper-content">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+          <tr>
+            <th scope="col"></th>
+            <th scope="col">Montant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Salaire annuel retenu</td>
+              <td><%=format_cfa @at_rente_famille.salaire_annuel_retenu, false %></td>
+          </tr>
+
+          <tr>
+           <!-- <td>taux_retenu </td>
+            <td><%#=@at_dossier_reversion_rente.taux_retenu%> % </td> -->
+          </tr>
+          <% if @at_dossier_reversion_rente.orphelin?%>
+            <tr>
+              <td>Prix franc rente enfant </td>
+              <td><%=@at_dossier_reversion_rente.prix_franc_rente_enfant %>  </td>
+            </tr>
+          <% end %>
+
+          <% if @at_dossier_reversion_rente.veuve?%>
+            <tr>
+              <td>Prix franc rente conjoint </td>
+              <td><%=@at_dossier_reversion_rente.prix_franc_rente_conjoint %>  </td>
+            </tr>
+          <% end %>
+          <tr>
+            <td>Type de versement </td>
+            <td>Trimestriel</td>
+          </tr>
+          <tr>
+            <td>Montant rente </td>
+            <td><%=format_cfa @at_dossier_reversion_rente.montant_annuel_rente, false %> </td>
+          </tr>
+
+          <tr>
+            <td>Montant trimestriel </td>
+            <td><%=format_cfa @at_dossier_reversion_rente.montant_rente_trimestre, false %> </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+        <li>Date de décès: <%=@at_rente_famille.date_deces.strftime("%d/%m/%Y") %></li>
+        <li>Date départ rente: <%=@at_rente_famille.date_depart_rente.strftime("%d/%m/%Y") %></li>
+        <li>Date liquidation rente: <%=@at_rente_famille.date_liquidation.strftime("%d/%m/%Y") %></li>
+        <li> Nombre de jours du <%=@at_rente_famille.date_depart_rente.strftime("%d/%m/%Y") %> au <%=@at_rente_famille.date_liquidation.strftime("%d/%m/%Y")%> : <%=@at_rente_famille.nombre_jours_echus%> jours </li>
+        <li> Somme due au <%=@at_rente_famille.date_liquidation.strftime("%d/%m/%Y") %> est :  <%=format_cfa @at_dossier_reversion_rente.montant_arrerage, false%> FCFA</li>
+    
+        <h3>
+          Capital représentatif de la rente est : <%=format_cfa  @at_dossier_reversion_rente.capital, false %> FCFA
+        </h3>
+    </div>
+  </div>
+</div>

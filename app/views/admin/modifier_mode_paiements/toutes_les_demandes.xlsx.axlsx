@@ -1,0 +1,34 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Date',
+      'Numéro allocataire',
+      'Ancien numéro ipres',
+      'Numéro dossier',
+      'Nom',
+      'Prénom',
+      'Téléphone',
+      'Adresse Ville',
+      'Adresse domicile',
+      'Etat du dossier',
+      'Mode de paiement',
+      'Gestionnaire qui a ouvert',
+  ]
+  sheet.add_row titre, :b => true
+  @modifier_mode_paiements.each do |t|
+    sheet.add_row [
+                      t.created_at,
+                      t.numero_allocataire,
+                      t.allocataire.try(:ipres_ancien_matric),
+                      t.numero_dossier,
+                      t.nom,
+                      t.prenom,
+                      t.telephone,
+                      t.adresse_domicile.nil? ? t.allocataire.try(:adresse_rue)  : t.adresse_domicile,
+                      ModifierModePaiement.workflow_spec.states[t.workflow_state.to_sym].meta[:label],
+                      t.mode_paiement_human,
+                      t.ajoute_par.try(:full_name),
+                  ]
+  end
+end

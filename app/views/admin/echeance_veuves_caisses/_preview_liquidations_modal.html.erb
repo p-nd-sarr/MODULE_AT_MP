@@ -1,0 +1,43 @@
+<div class="modal inmodal" id="liquidations-preview" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-laptop modal-icon"></i>
+        <h4 class="modal-title">Visualiser Veuves</h4>
+        <small class="font-bold">Disponibles pour liquidation : <%= @epouses_liq.size %></small>
+      </div>
+      <div class="modal-body" style="height: 300px; overflow-y: scroll;">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Numéro</th>
+            <th scope="col">Prenom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Nombre enfants eligibles</th>
+            <th colspan="2"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @epouses_liq.each do |epouse| %>
+            <tr>
+              <td><%= epouse.numero_affiliation %></td>
+              <td><%= epouse.prenom %></td>
+              <td><%= epouse.nom %></td>
+              <td><%= epouse.nombre_enfants unless epouse.nombre_enfants.nil? %></td>
+              <td style="width: 75px">
+                <%= link_to "dossier de l'allocataire", admin_dossier_prestation_path(epouse.dossier_prestation_id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>

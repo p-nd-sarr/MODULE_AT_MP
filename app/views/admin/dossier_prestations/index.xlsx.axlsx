@@ -1,0 +1,23 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numéro d''affiliation',
+      'Numéro dossier',
+      'Nom',
+      'Prénom',
+      'Nationalité',
+      'Etat'
+  ]
+  sheet.add_row titre, :b => true
+  @dossier_prestations.each do |t|
+    sheet.add_row [
+                      t.num_affiliation,
+                      t.num_dossier,
+                      t.nom,
+                      t.prenom,
+                      t.nationalite_human,
+                      DossierPrestation.workflow_spec.states[t.etat.to_sym].meta[:label]
+                  ]
+  end
+end

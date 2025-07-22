@@ -1,0 +1,109 @@
+<%= bootstrap_form_for([:admin, @dossier_prestation], url: admin_dossier_prestation_update_specially_path(@dossier_prestation), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <%= f.text_field :num_affiliation, label: 'Numéro affiliation', readonly: true %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :prenom, label: 'Prénom', readonly: true %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :nom, label: 'Nom', readonly: true %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.select :sexe_salarie, DossierPrestation::SEXE.keys.collect { |sit_mat| [sit_mat, sit_mat] }, label: 'Sexe salarié' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :nin, label: 'NIN' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_ouverture, label: "Date d'ouverture des droits" %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.date_select :date_naissance, label: "Date de naissance", start_year: (Date.today - 65.year).year, end_year: Date.today.year %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :employeur_actuel, label: 'Employeur actuel' %>
+        <div class="bdge">
+          <span id="employeur_fhrsoc"></span>
+        </div>
+      </div>
+    </div>
+    <div class=" col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', (@dossier_prestation.persisted? ? [:admin, @dossier_prestation] : admin_dossier_prestations_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      /*
+            $(document).ready(function () {
+                load_infos_participant();
+
+                $('#dossier_prestation_employeur_actuel').change(function () {
+                    const fhnum = $('#dossier_prestation_employeur_actuel').val();
+                    const label_to_show = document.getElementById('employeur_fhrsoc')
+                    $.ajax({
+                        url: "/admin/dossier_prestations/employeur/" + fhnum + ".json",
+                        method: 'get',
+                        dataType: "json",
+                        success: function (data) {
+                            console.log(data.fhrsoc)
+                            if (data && data.fhrsoc !== undefined) {
+                                label_to_show.textContent = data.fhrsoc
+                                $('#submit_button').attr("disabled", false)
+                            } else {
+                                label_to_show.textContent = "Raison sociale introuvable"
+                                $('#submit_button').attr("disabled", true)
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            label_to_show.textContent = "Raison sociale introuvable"
+                            $('#submit_button').attr("disabled", true)
+                        }
+                    });
+                });
+
+                function load_infos_participant() {
+                    var numero_affiliation = $('#dossier_prestation_num_affiliation').val();
+                    $.ajax({
+                        url: "/admin/salaries/" + numero_affiliation + ".json",
+                        method: 'get',
+                        dataType: "json",
+                        success: function (data) {
+                            if (data) {
+                                console.log(data);
+                                $("#dossier_prestation_prenom").val(data.prenom);
+                                $("#dossier_prestation_nom").val(data.nom);
+                                if (data.genre === 'HOMME') {
+                                    $("#dossier_prestation_sexe_salarie").val('masculin');
+                                } else if (data.genre === 'FEMME') {
+                                    $("#dossier_prestation_sexe_salarie").val('feminin');
+                                } else {
+                                    $("#dossier_prestation_sexe_salarie").val('');
+                                }
+                            } else {
+                                $("#dossier_prestation_prenom").val('');
+                                $("#dossier_prestation_nom").val('');
+                                $("#dossier_prestation_sexe_salarie").val('');
+
+                            }
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            $("#dossier_prestation_prenom").val('');
+                            $("#dossier_prestation_nom").val('');
+                            $("#dossier_prestation_sexe_salarie").val('');
+
+                        }
+                    });
+                }
+            })
+      */
+  </script>
+<% end %>

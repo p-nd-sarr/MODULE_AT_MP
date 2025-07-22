@@ -1,0 +1,38 @@
+<div class="ibox-content" style="font-size: 13px">
+  <div class="row">
+    <div class="tab-content">
+      <div class="full-height-scroll">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th align="center">Prénom enfant</th>
+            <th align="center">Nom enfant</th>
+            <th align="center">Date de naissance</th>
+            <th align="center">Lieu de naissance</th>
+            <th scope="col">Date exp document migré</th>
+            <th align="center">Actif?</th>
+            <th colspan="3">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @enfants.each do |enfant| %>
+            <tr>
+              <td><%= enfant.prenom %></td>
+              <td><%= enfant.nom %></td>
+              <td><%= enfant.date_naissance.strftime('%d/%m/%Y') %></td>
+              <td><%= enfant.lieu_naissance %></td>
+              <td><%= enfant.migrated_document_exp_date.strftime('%d/%m/%Y') unless enfant.migrated_document_exp_date.nil? %></td>
+              <td><%= state_yes_no enfant.active? %></td>
+              <td>
+                <%= link_to 'Désactiver enfant', admin_prestation_exterieure_deactivate_caf_enfant_path(@prestation_exterieure, enfant), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-warning btn-xs' if @prestation_exterieure.current_state <= :dossier_valide and enfant.active? %>
+                <%= link_to 'Activer enfant', admin_prestation_exterieure_activate_caf_enfant_path(@prestation_exterieure, enfant), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-warning btn-xs' if @prestation_exterieure.current_state <= :dossier_valide and not enfant.active? %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

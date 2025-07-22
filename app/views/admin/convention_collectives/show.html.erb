@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_convention_collective" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_convention_collectives_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_convention_collective_path(@admin_convention_collective), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_convention_collective', new_admin_convention_collective_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_convention_collective.code %>
+                </p>
+
+                            <p>
+                  <strong>Description:</strong>
+                  <%= @admin_convention_collective.description %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

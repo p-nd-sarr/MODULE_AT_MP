@@ -1,0 +1,136 @@
+<% if @immatriculation.effectif_employe == nil %>
+  <div class="row">
+    <%= render 'employer/immatriculations/templates/new_infos_salaries' %>
+  </div>
+<% end %>
+
+<% if @immatriculation.effectif_employe != nil %>
+
+  <div class="row">
+    <div class="col-sm-5">
+      <% unless @immatriculation.id == nil or @immatriculation.salarie_valide? %>
+        <%= link_to "Je valide les informations des salariés", employer_immatriculation_association_valider_salarie_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+      <% end %>
+    </div>
+
+  </div>
+  <div class="row" style="margin-top:20px">
+
+    <div class="col-sm-10">
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Nom</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">NIN</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @salaries.each do |salarie| %>
+          <tr>
+            <td><%= salarie.nom %></td>
+            <td><%= salarie.prenom %></td>
+            <td><%= salarie.numero_piece %></td>
+            <td>
+              <% if salarie.etat != 'retrait' %>
+                <%= link_to "Retirer", employer_immatriculation_associations_path(immatriculation_id: @immatriculation.id, salarie_id: salarie.id), 'data-confirm': 'Vous retirez ce salarié ?', class: 'btn btn-outline btn-danger btn-xs' %>
+              <% end %>
+              <button class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#salarie-update-modal-<%=salarie.id %>" id="salarie_update">Modifier</button>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @salaries %>
+    </div>
+
+    <div class="col-sm-1">
+      <% unless @immatriculation.id == nil or @immatriculation.salarie_valide? %>
+      <div class="btn-group">
+              <button data-toggle="dropdown" class="btn btn-success btn-sm dropdown-toggle" aria-expanded="false">
+                <span class="fa fa-plus"></span> AJOUTER SALARIE
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                   <a data-toggle="modal" data-target="#salarie-one-modal" id="dd_hover">Renseigner le formulaire</a>   
+                </li>
+                <li>
+                   <a data-toggle="modal" data-target="#ajoutSalarie" id="dd_hover">Ajouter salariés par chargement de fichier</a>   
+                </li>
+              </ul>
+            </div> 
+        <!--<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#salarie-one-modal" id="add_salarie_id">
+          Ajouter Salarié
+        </button>-->
+      <% end %>
+    </div>
+
+    <div class="col-sm-10">
+      <%= render 'employer/immatriculations/templates/new_salarie' %>
+    </div>
+
+    <div class="col-sm-10">
+      <%= render 'employer/immatriculations/templates/update_salarie' %>
+    </div>
+
+  </div>
+
+  <div class="modal inmodal" id="ajoutSalarie" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+                                
+  <div class="modal-content animated fadeIn">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true">x</span>
+        <span class="sr-only">Close</span>
+      </button>
+      <h3 class="modal-title">Ajouter salarié par chargement de fichier</h3>
+    </div>
+    <%= form_tag import_employer_salarie_immatriculations_path, multipart: true do %>
+      <div class="modal-body" style="height:150px">
+      <div class="col-sm-12" style="text-align:left">
+        <%= link_to "Télécharger template ICI", employer_immatriculation_associations_path(@immatriculation) %>
+      </div>
+        <div class="col-sm-4 col-lg-offset-4">
+          <div class="btn-file">
+            <label>
+              <%= file_field_tag :file, hide_label:true, label: '.', class: '', id:'label_file' %>
+              <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="col-lg-12" style="text-align:center">
+          <h4 id="file_name" class="text-success">Aucun fichier choisi</h4>
+        </div>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= submit_tag "Importer fichier salarié",  class: 'btn btn-primary'  %>                                    
+      </div>
+      <% end %>
+    </div>                               
+  </div>
+</div>
+
+
+  <script type="text/javascript">
+
+      $(document).ready(function () {
+        var input = document.getElementById('label_file');
+        var infoArea = document.getElementById('file_name');
+        input.addEventListener('change', showFileName);
+
+        function showFileName(event) {
+            var input = event.srcElement;
+            var fileName = input.files[0].name;
+            infoArea.textContent = fileName;
+        }
+      });
+
+  </script>
+<% end %>

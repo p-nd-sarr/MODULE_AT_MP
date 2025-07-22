@@ -1,0 +1,64 @@
+<% if @demande_liquidations_en_attente %>
+    <%= paginate @demande_liquidations_en_attente %>
+    <div class="table-responsive" style="min-height: 300px">
+      <table class="table table-striped">
+          <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Numero affiliation</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+               <!-- <th scope="col">Date de naissance</th>
+                <th scope="col">Lieu de naissance</th>
+                <th scope="col">Adresse domicile</th>
+                <th scope="col">Mode de paiement</th>-->
+                <th scope="col">Etat</th>
+                <th scope="col">Responsable traitement allocataire</th>
+                <th scope="col">Responsable traitement salarié</th>
+                <th colspan="3"></th>
+              </tr>
+          </thead>
+          <tbody>
+          <% @demande_liquidations_en_attente.each do |demande_liquidation| %>
+            <tr>
+              <td></td>
+              <td><%= demande_liquidation.numero_affiliation %></td>
+              <td><%= demande_liquidation.prenom %></td>
+              <td><%= demande_liquidation.nom %></td>
+             <!-- <td><%= l demande_liquidation.date_naissance %></td>
+              <td><%= demande_liquidation.lieu_naissance %></td>
+              <td><%= demande_liquidation.adresse_domicile %></td>
+              <td><%= LiquidationRetraiteFrance.human_enum_name(:mode_paiement, demande_liquidation.mode_paiement) unless demande_liquidation.mode_paiement.nil? %></td> -->
+              <td><%= demande_liquidation.workflow_state %></td>
+              <td><%= demande_liquidation.affecter_allocataire.try(:full_name) %>
+              <td><%= demande_liquidation.affecter_salarie.try(:full_name) %>
+              </td>
+              <td style="width: 75px">
+                <%= (link_to 'Details', admin_liquidation_retraite_france_path(demande_liquidation), class: 'btn btn-outline btn-primary btn-xs') %>
+              </td>
+              <% if demande_liquidation.soumis? and current_user.chef_service_prest_ext? %>
+                <td style="width: 75px">
+                  <%= (link_to 'Affecter', admin_liquidation_retraite_france_path(demande_liquidation), class: 'btn btn-outline btn-primary btn-xs') %>
+                </td>
+              <% end %>
+
+              <% if demande_liquidation.soumis?  %>
+                <td style="width: 75px">
+                  <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#affecterModal" id="affecter_id" disabled>Deja
+                    Affecter
+                  </button>
+                </td>
+              <% end %>
+
+              <% if demande_liquidation.date_soumission? %>
+                <td> <%= link_to 'Récépissé', admin_liquidation_retraite_france_show_facture_path(demande_liquidation.id, format: :pdf), class: "btn btn-outline-success my-2 my-sm-0", target:'_blank'%></td>
+              <% end %>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+    </div>
+    <%= paginate @demande_liquidations_en_attente %>
+<%else%>
+      <h5>Liste en attente vide</h5>
+<% end %>

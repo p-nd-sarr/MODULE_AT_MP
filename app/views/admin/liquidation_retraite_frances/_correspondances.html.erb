@@ -1,0 +1,160 @@
+<!--<div id="page-wrapper" class="gray-bg dashbard-1">-->
+<div class="row" style="margin-top: 30px;">
+  <div class="col-lg-9">
+  </div>
+  <div class="col-sm-3" style="text-align: right;">
+    <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#correspondance">Ajouter une
+      correspondance
+    </button>
+    <div class="modal inmodal" id="correspondance" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <%= bootstrap_form_for(@cfs_correspondance, url: admin_liquidation_retraite_france_ajouter_cfs_correspondance_path(@demande_liquidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message "Please fix the errors below." %>
+          <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Ajouter une lettre de correspondance </h4>
+            </div>
+            <div class="modal-body">
+              <%= f.select :provenance, CfsCorrespondance::PROVENANCE.keys.collect { |provenance| [CfsCorrespondance.human_enum_name(:provenance, provenance), provenance] }, include_blank: true, label: 'Provenance' %>
+              <%= f.text_field :numero_correspondance, label: "N° Correspondance" %>
+              <%= f.text_field :numero_reference, label: "N° V/Réf" %>
+              <%= f.select :type_lettre, CfsCorrespondance::TYPE_LETTRE.keys.collect { |type_lettre| [CfsCorrespondance.human_enum_name(:type_lettre, type_lettre), type_lettre] }, include_blank: true, label: 'Type de la lettre' %>
+              <%= f.text_field :objet, label: "Objet" %>
+              <%= f.select :titre_destinataire, CfsCorrespondance::TITRE_DESTINATAIRE.keys.collect { |titre_destinataire| [CfsCorrespondance.human_enum_name(:titre_destinataire, titre_destinataire), titre_destinataire] }, label: 'Titre du destinataire' %>
+              <%= f.text_field :destinataire, label: "Destinataire" %>
+              <%= f.text_field :adresse_destinataire, label: "Adresse du destinataire" %>
+              <%= f.text_field :expediteur, label: "Expiditeur", required: true %>
+              <%= f.select :titre_demandeur, CfsCorrespondance::TITRE_DEMANDEUR.keys.collect { |titre_demandeur| [CfsCorrespondance.human_enum_name(:titre_demandeur, titre_demandeur), titre_demandeur] }, label: 'Titre du demandeur' %>
+              <%= f.file_field :lettre, label: "Lettre", required: false %>
+              <%= f.text_area :corps, label: "Corps", required: false %>
+              <%= f.check_box :piece_jointe, label: "Piece(s) jointe(s) incluses ?", help: 'Cochez si une ou des pieces sont jointes' %>
+              <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 10px; padding-bottom: 3px;" id="div_pj" hidden="hidden">
+                <%= f.text_area :nature_piece_jointe, label: "PJ" %>
+              </div>
+
+            </div>
+            <div class="modal-footer form-group">
+              <%= f.button 'Valider', class: 'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content ">
+  <div class="row" style="margin-left: 16%; margin-bottom: 2%">
+    <div class="col-sm-9">
+      <h2 style="text-align: center"><strong> Correspondances Entre Les Deux Institutions </strong></h2>
+
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-content">
+
+          <div class="feed-activity-list">
+
+            <% unless @cfs_correspondances.nil? %>
+              <% @cfs_correspondances.each do |correspondance| %>
+                <div class="feed-element" style="width: 100%">
+                  <div class="row">
+                    <div class="col-lg-1" style=" margin-top: 1%;">
+                      <% if correspondance.ipres? %>
+                        <img alt="image" src="/images/logo_ipres.jpg" style="height: 40px;width: 55px;">
+                      <% elsif correspondance.france? %>
+                        <img alt="image" src="/images/100-caisse_francaise.png" style="height: 60px;width: 55px;">
+                      <% end %>
+                    </div>
+                    <div class="col-lg-11" style="margin-left: -1%;">
+                      <div class="media-body" style="width: 100%; float: left">
+                        <small style="float: right;">
+                          il y a <%= time_ago_in_words_custom(correspondance.date) %>
+                        </small>
+                        <div class="row">
+                          <div class="col-lg-8">
+                            Correspondance n° <strong><%= correspondance.numero_correspondance %></strong>
+                            <br>
+                            <small class="text-muted">
+                              Référence : <%= correspondance.numero_reference %>
+                              <br>
+                              Objet
+                              : <%= CfsCorrespondance.human_enum_name(:type_lettre, correspondance.type_lettre) unless correspondance.type_lettre.nil? %>
+                            </small>
+                          </div>
+                          <div class="col-lg-4">
+                            <div class="actions" style="float: right;">
+                              <%#= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), cfs_correspondance.lettre, target: :_blank %>
+
+                              <%=link_to ' lettre', correspondance.lettre, class: "btn btn-outline btn-info btn-xs my-2 my-sm-0 fa fa-file-text", target: '_blank' if correspondance.lettre.attached? %>
+
+                              <%= link_to ' supprimer', admin_liquidation_retraite_france_destroy_cfs_correspondance_path(@demande_liquidation, correspondance.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs fa fa-trash' %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            <% end %>
+
+
+            <!--            <div class="feed-element">-->
+            <!--              <a class="float-left" href="profile.html">-->
+            <!--                <img alt="image" class="rounded-circle" src="/images/logo_ipres.jpg" style="height:35px">-->
+            <!--              </a>-->
+            <!--              <div class="media-body" style="width: 100%;">-->
+            <!--                <small class="float-right">2h ago</small>-->
+            <!--                <strong>Kim Smith</strong> posted message on <strong>Monica Smith</strong> site. <br>-->
+            <!--                <small class="text-muted">Yesterday 5:20 pm - 12.06.2014</small>-->
+            <!--                <div class="well">-->
+            <!--                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been-->
+            <!--                  the industry's standard dummy text ever since the 1500s.-->
+            <!--                  Over the years, sometimes by accident, sometimes on purpose (injected humour and the like).-->
+            <!--                </div>-->
+            <!--                <div class="float-right">-->
+            <!--                  <a href="" class="btn btn-xs btn-white"><i class="fa fa-thumbs-up"></i> Like </a>-->
+            <!--                </div>-->
+            <!--              </div>-->
+            <!--            </div>-->
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosPJ();
+
+          $("#cfs_correspondance_piece_jointe").change(function () {
+              chargerInfosPJ()
+          });
+
+          function chargerInfosPJ() {
+              elem_infos_pj = $('#div_pj')
+              if (cfs_correspondance_piece_jointe.checked === true) {
+                  elem_infos_pj.show();
+                  $('#cfs_correspondance_nature_piece_jointe').attr('disabled', false);
+              } else {
+                  elem_infos_pj.hide();
+                  $('#cfs_correspondance_nature_piece_jointe').attr('disabled', true).val(null);
+              }
+          }
+      })
+  </script>
+<% end %>

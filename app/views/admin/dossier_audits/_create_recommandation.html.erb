@@ -1,0 +1,36 @@
+<div class="modal inmodal" id="create_recommandation<%= object.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-user modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Ajouter une recommandation
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for([:admin, object], url: admin_dossier_audit_create_recommandation_path(@dossier_audit, @activity, object), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <div class="row">
+              <div class="col-sm-12">
+                <%= f.text_area :recommandation, label: "Recommandation", required: true %>
+              </div>
+              <div class="col-sm-12">
+                <%= f.collection_select :affecte_a_id, @validators, :id, :full_name_with_profile, include_blank: true, label: 'Direction concernée', required: true %>
+              </div>
+              <div class="hr-line-dashed"></div>
+              <br> <br>
+              <div class="modal-footer form-group">
+                <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

@@ -1,0 +1,81 @@
+<div class="row">
+  <div class="col-lg-5">
+
+    <h2 style="color: #1ab394">Identité</h2>
+    <p>
+      <strong>Nom:</strong>
+      <%=  @immatriculation.ninea %>
+    </p>
+
+    <p>
+      <strong>Nom :</strong>
+      <%= @immatriculation.ninea %>
+    </p>
+
+    <p>
+      <strong>Date de naissance:</strong>
+      <%= @immatriculation.raison_sociale %>
+    </p>
+
+    <p>
+      <strong>Lieu de naissance :</strong>
+      <%= @immatriculation.ninea %>
+    </p>
+    <p>
+      <strong>Nationalité :</strong>
+      <%= @immatriculation.ninet %>
+    </p>
+
+  </div>
+
+  <div class="col-lg-5">
+
+    <h2 style="color: #1ab394">Pièce d'identité</h2>
+    <p>
+      <strong>Type de pièce d'identité:</strong>
+      <%= ImmatriculationSocietePrive.human_enum_name(:type_etablissement, @immatriculation.type_etablissement) %>
+    </p>
+
+    <p>
+      <strong>Numero de pièce : </strong>
+      <%= @immatriculation.ninea %>
+    </p>
+
+    <p>
+      <strong>Date délivrance:</strong>
+      <%= @immatriculation.created_at %>
+    </p>
+
+    <p>
+      <strong>Date d'expiration  :</strong>
+      <%= @immatriculation.created_at %>
+    </p>
+
+  </div>
+
+  <div class="col-lg-5">
+
+    <h2 style="color: #1ab394">Adresse</h2>
+    <p>
+      <strong>Type de pièce d'identité:</strong>
+      <%= ImmatriculationSocietePrive.human_enum_name(:type_etablissement, @immatriculation.type_etablissement) %>
+    </p>
+
+    <p>
+      <strong>Numero de pièce : </strong>
+      <%= @immatriculation.ninea %>
+    </p>
+
+    <p>
+      <strong>Date délivrance:</strong>
+      <%= @immatriculation.created_at %>
+    </p>
+
+    <p>
+      <strong>Date d'expiration  :</strong>
+      <%= @immatriculation.created_at %>
+    </p>
+
+  </div>
+
+</div>

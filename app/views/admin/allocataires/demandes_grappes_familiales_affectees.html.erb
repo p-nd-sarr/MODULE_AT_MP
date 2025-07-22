@@ -1,0 +1,235 @@
+<%= content_for :titre_page, 'Demandes mis à jour grappe familiale' %>
+
+<%= content_for :actions_page do %>
+   <%= link_to 'Toutes les demandes', toutes_les_demandes_admin_allocataires_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+  <h3>Enfants</h3>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Type déclaration</th>
+        <th scope="col">Etat</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @update_grappe_enfants.each do |update_grappe_enfant| %>
+      
+       
+        <tr>
+          <td><%= update_grappe_enfant.id %></td>
+   
+          <%enfant=Enfant.find(update_grappe_enfant.enfant_id) rescue nil%>
+          <td><%= enfant.try(:prenom) %></td>
+          <td><%= enfant.try(:nom) %></td>
+         
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:type_demande, update_grappe_enfant.type_demande) %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:etat, update_grappe_enfant.etat) %></td>
+        
+         <td style="width: 75px">
+             <% if update_grappe_enfant.soumis? %>
+                <button type="button" class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#affecter-modal-enfant<%=update_grappe_enfant.id%>" id="affecter_allocataire_id">
+                    Affecter
+                </button>
+              <% end%>  
+              </td>
+      
+
+        
+          <td style="width: 75px">
+              <% if update_grappe_enfant.affecte? and current_user.gestionnaire_compte_allocataire? %>
+                <%= link_to 'Valider',admin_valider_update_grappe_enfant_path(update_grappe_enfant), class: 'btn btn-outline btn-success btn-xs' %>
+              <% end%>
+            </td>
+       
+
+         
+          <td style="width: 75px">
+             <% unless update_grappe_enfant.valide? || update_grappe_enfant.rejete? %>
+              <button type="button" class="btn btn-outline btn-danger btn-xs" data-toggle="modal" data-target="#rejeter-modal-enfant<%=update_grappe_enfant.id%>" id="affecter_allocataire_id">
+                 Rejeter
+              </button>
+             <% end%>
+          </td>
+         
+          <td style="width: 75px">
+             <%= link_to 'details', admin_show_update_grappe_familiale_path(update_grappe_enfant) ,class: 'btn btn-outline btn-warning btn-xs' %>
+          </td>
+      </tr>
+
+
+  <% unless @gestionnaires.nil? %>
+   <div class="modal inmodal" id="affecter-modal-enfant<%=update_grappe_enfant.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(update_grappe_enfant, url: admin_affecter_update_grappe_familiale_path(update_grappe_enfant), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= update_grappe_enfant.num_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+   </div>
+  <% end %>
+      <div class="modal inmodal" id="rejeter-modal-enfant<%=update_grappe_enfant.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(update_grappe_enfant, url: admin_rejeter_update_grappe_enfant_path(update_grappe_enfant), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Rejet de la demande : <%= update_grappe_enfant.id %> </h4>
+           
+          </div>
+          <div class="modal-body">
+              
+               <%= f.text_area :motif_rejet, label: 'Motif' %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-danger">Rejeter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+      
+      </tbody>
+    </table>
+
+    <h3>Conjoints</h3>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Type déclaration</th>
+        <th scope="col">Etat</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @update_grappe_conjoints.each do |update_grappe_conjoint| %>
+      
+        <tr>
+         <%conjoint=Conjoint.find(update_grappe_conjoint.conjoint_id)rescue nil%>
+          <td><%= update_grappe_conjoint.id %></td>
+          <td><%= conjoint.try(:prenom) %></td>
+          <td><%= conjoint.try(:nom) %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:type_demande, update_grappe_conjoint.type_demande) %></td>
+          <td><%= UpdateGrappeFamiliale.human_enum_name(:etat, update_grappe_conjoint.etat) %></td>
+           
+        
+           <td style="width: 75px">
+             <% if update_grappe_conjoint.soumis? %>
+             <button type="button" class="btn btn-outline btn-success btn-xs" data-toggle="modal" data-target="#affecter-modal-conjoint<%=update_grappe_conjoint.id%>" id="affecter_allocataire_id">
+                    Affecter
+              </button>
+              <% end%>  
+              </td>
+      
+
+        
+          <td style="width: 75px">
+              <% if update_grappe_conjoint.affecte? and current_user.gestionnaire_compte_allocataire? %>
+                <%= link_to 'Valider',admin_valider_update_grappe_conjoint_path(update_grappe_conjoint), class: 'btn btn-outline btn-primary btn-xs' %>
+              <% end%>
+            </td>
+       
+
+         
+          <td>
+             <% unless update_grappe_conjoint.valide? || update_grappe_conjoint.rejete? %>
+              <button type="button" class="btn btn-outline btn-danger btn-xs" data-toggle="modal" data-target="#rejeter-modal-conjoint<%=update_grappe_conjoint.id%>" id="affecter_allocataire_id">
+                 Rejeter
+              </button>
+             <% end%>
+          </td>
+         
+            <td>
+             <%= link_to 'details', admin_show_update_grappe_familiale_path(update_grappe_conjoint) ,class: 'btn btn-outline btn-warning btn-xs' %>
+          </td>
+           
+       
+        </tr>
+  <% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-modal-conjoint<%=update_grappe_conjoint.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(update_grappe_conjoint, url: admin_affecter_update_grappe_familiale_path(update_grappe_conjoint), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= update_grappe_conjoint.id %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+   <% end %>
+     <div class="modal inmodal" id="rejeter-modal-conjoint<%=update_grappe_conjoint.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(update_grappe_conjoint, url: admin_rejeter_update_grappe_conjoint_path(update_grappe_conjoint), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Rejet de la demande : <%= update_grappe_conjoint.id %> </h4>
+           
+          </div>
+          <div class="modal-body">
+              <%= f.text_field :motif_rejet, label: 'Motif du rejet' %> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-danger">Rejeter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+      
+      </tbody>
+    </table>
+  
+  </div>
+</div>
+

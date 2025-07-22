@@ -1,0 +1,41 @@
+<br/>
+<div class="row">
+  <% @demande_maladie_professionnelle.mp_documents.each do |document_dossier| %>
+    <div class="col-lg-4" style="margin-top: 10px;">
+      <div class="panel panel-default">
+        <div class="panel-heading" style="text-align: center;">
+          <h5><%= document_dossier.type_document %></h5>
+        </div>
+        <div class="panel-body"  style="min-height: 150px">
+          <a href=<%= url_for(document_dossier.document) %> target="_blank">
+            <div class="col-sm-6 col-sm-offset-3">
+              <div class="text-center">
+              <%if document_dossier.document.previewable?%>
+                <%= image_tag document_dossier.document.preview(resize: "500x500>"), class: "m-t-xs img-responsive", target: :_blank %>
+              <%elsif document_dossier.document.filename.extension_without_delimiter.to_s == 'pdf'%>
+                <embed src=<%=url_for(document_dossier.document)%>, width="50px", height="50px"/>
+              <%elsif document_dossier.document.filename.extension_without_delimiter.to_s.in?(['jpg', 'png', 'jpeg']) %>
+                <img src=<%=url_for(document_dossier.document)%>, width="50px", height="50px" />
+              <%end%>
+  <!--              preview-->
+              </div>
+            </div>
+          </a>
+            <div class="col-sm-12 tooltip-demo">
+              <br>
+              <h5>Commentaires :</h5>
+              <p style="max-height: 2em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" data-toggle="tooltip" data-placement="top" title data-original-title=" <%= document_dossier.description %>">
+                <%= document_dossier.description %>
+              </p>
+            </div>
+        </div>
+        <div class="panel-footer"  style="text-align: center;">
+          <%= link_to 'supprimer',"/admin/maladie_professionnelles/#{@demande_maladie_professionnelle.id}/mp_documents/#{document_dossier.id}", method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'fa fa-trash btn btn-outline btn-danger' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+<%# end %>

@@ -1,0 +1,29 @@
+<%= content_for :titre_page, "Détails admin_type_dossier_juridique" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_type_dossier_juridiques_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_type_dossier_juridique_path(@admin_type_dossier_juridique), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter admin type dossier juridique', new_admin_type_dossier_juridique_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Admin type regime:</strong>
+              <%= @admin_type_dossier_juridique.title %>
+            </p>
+
+            <p>
+              <strong>Periode:</strong>
+              <%= @admin_type_dossier_juridique.description %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

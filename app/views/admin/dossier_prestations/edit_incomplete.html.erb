@@ -1,0 +1,11 @@
+<%= content_for :titre_page, "Modification Dossier Prestation Incomplet" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', incomplete_dossiers_admin_dossier_prestations_path, class: 'btn btn-white btn-sm' unless @dossier_prestation.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'form_incomplete' %>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<div class=" body-small pace-done">
+  <div id="wrapper">
+
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-content table-responsive">
+          <!-- mettre le lien vers le dossier de liquidation -->
+          <% unless @allocataire.liquidation_retraite.nil? %>
+            <%= (link_to 'Voir demande', admin_liquidation_retraite_path(@allocataire.liquidation_retraite), class: 'btn btn-outline btn-primary btn-xs') %>
+          <% end %>
+
+          <!-- enlever ici et mettre dans l'historique allocataire -->
+          <div class="vertical-timeline-block">
+            <div class="vertical-timeline-icon yellow-bg">
+              <i class="fa fa-briefcase"></i>
+            </div>
+            <div class="vertical-timeline-content">
+              <h2>Gestion Allocataire</h2>
+              <hr>
+              <div class='row'>
+                <div class="col-lg-12">
+                  <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                    <h5><strong>ACTIVATION ALLOCATAIRE PAR DIRECTEUR DES PRESTATION:</strong><br></h5>
+                    <h5><strong>DATE
+                      D'ACTIVATION':</strong> <%= (@allocataire.date_activation_dp.strftime("%d/%m/%Y à %H:%M")) unless @allocataire.date_activation_dp.nil? %>
+                      <br></h5>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <table class="table table-hover no-margins">
+            <thead>
+            <tr>
+              <th scope="col"> Evenement</th>
+              <th scope="col"> Etat dossier</th>
+              <th scope="col"> Fait par</th>
+              <th scope="col"> Fait le</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @allocataire.historiques.includes(:user).each do |historique| %>
+              <tr>
+                <% if historique.evenement? %>
+                  <td><small><%= historique.evenement %> </small></td>
+                <% end %>
+
+                <% if historique.etat? %>
+                  <td><small><%= Historique.human_enum_name(:etat, historique.etat) %></small></td>
+                <% end %>
+
+                <% if historique.user_id? %>
+                  <td> <%= historique.user.prenom %> <%= historique.user.nom %> </td>
+                <% end %>
+                <td><i class="fa fa-clock-o"></i> <%= historique.created_at.strftime("%d/%m/%Y") %> </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+
+          <br>
+          <h4>Historique sur les changements</h4>
+          <table class="table table-hover no-margins">
+            <thead>
+            <tr>
+              <th scope="col"> Champ</th>
+              <th scope="col"> Ancienne valeur</th>
+              <th scope="col"> Nouvelle valeur</th>
+              <th scope="col"> Fait le</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @allocataire.historiques.each do |historique| %>
+              <tr>
+                <td><small><%= historique.field if historique.field? %> </small></td>
+
+                <td><small><%= historique.old_value if historique.old_value? %></small></td>
+
+                <td> <%= historique.new_value if historique.new_value? %> </td>
+
+                <td><i class="fa fa-clock-o"></i> <%= historique.created_at.strftime("%d/%m/%Y") %> </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

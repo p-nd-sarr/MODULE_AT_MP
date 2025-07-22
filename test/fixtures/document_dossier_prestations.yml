@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dossier_prenatale: one
+  type_document: 1
+  commentaire: MyText
+  date_depot: 2020-02-08
+
+two:
+  dossier_prenatale: two
+  type_document: 1
+  commentaire: MyText
+  date_depot: 2020-02-08

@@ -1,0 +1,25 @@
+<p>
+  <strong>Agence:</strong>
+  <%= @at_vente_carnet.try(:admin_agence).try(:description_prest) %>
+</p>
+<p>
+  <strong>Ancien numéro CSS:</strong>
+  <%= @employeur.try(:ancien_num_css) %>
+</p>
+<p>
+  <strong>Raison sociale:</strong>
+  <%= @employeur.try(:fhrsoc) %>
+</p>
+<p>
+  <strong>Activité prinicipale:</strong>
+  <%= @employeur.try(:activite_prinicipal) %>
+</p>
+
+<p>
+  <strong>Adresse:</strong>
+  <%= @employeur.try(:fhadr) %>
+</p>
+<p>
+  <strong>Statut:</strong>
+  <%= @employeur.try(:statut) %>
+</p>

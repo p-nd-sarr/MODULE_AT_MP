@@ -1,0 +1,103 @@
+<%= content_for :titre_page, "Enfants" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter un enfant', new_salarie_enfant_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5> Affichage de la liste des enfants </h5>
+          <div class="ibox-tools">
+            <a class="collapse-link">
+              <i class="fa fa-chevron-up"></i>
+            </a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fa fa-wrench"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-user">
+              <li><a href="#" class="dropdown-item">Config option 1</a>
+              </li>
+              <li><a href="#" class="dropdown-item">Config option 2</a>
+              </li>
+            </ul>
+            <a class="close-link">
+              <i class="fa fa-times"></i>
+            </a>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <%= search_form_for @q, url: salarie_enfants_path do |f| %>
+                <div class="input-group col-lg-12">
+                  <div class="col-lg-10">
+                    <%= f.search_field :prenom_or_nom_or_numero_affiliation_cont, class: "form-control form-control-sm", placeholder: "Entrer le numéro de l'affiliation d'un salarié ou nom ou prénom d'un enfant", style: "width:100%; position: relative; z-index: 1" %>
+                  </div>
+                  <div class="input-group-append col-lg-2" style="padding-left: 0px;">
+                    <%= f.submit "Chercher enfant", :class => "btn btn-outline btn-primary", :style => "height:34px" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-lg-12">
+              <% if @enfants.count.zero?%>
+                <h2 style="text-align:center; margin-top:50px">La liste des enfants est vide !!!</h2>
+              <% else %>
+                <%= paginate @enfants %>
+                <table class="footable table table-stripped table-hover" data-page-size="8" data-filter="#filter" style="margin-top: 20px;">
+                  <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Prénom de l'enfant</th>
+                    <th scope="col">Nom de l'enfant</th>
+                    <th scope="col">Date de naissance</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Nom complet conjoint(e):</th>
+                    <th colspan="2"></th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <% @enfants.each do |enfant| %>
+                    <tr>
+                      <td></td>
+                      <td><%= enfant.prenom %></td>
+                      <td><%= enfant.nom %></td>
+                      <td><%= l enfant.date_naissance %></td>
+                      <td><%= Enfant.human_enum_name(:etat, enfant.etat) %></td>
+                      <td><%= enfant.conjoint.full_name if enfant.conjoint_id? %></td>
+                      <td style="width: 75px">
+                        <%= link_to 'Plus de détails', salarie_enfant_path(enfant), class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+                      <% if enfant.can_update?  %>
+                        <td width="90px" class="dropdown">
+                          <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">Actions
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" style="background-color:rgb(240,240,240)">
+                            <li>
+                              <%= (link_to 'Modifier', edit_salarie_enfant_path(enfant), id:"dd_hover") %>
+                            </li>
+                            <li>
+                              <%= (link_to 'Supprimer', salarie_enfant_path(enfant), method: :delete, data: {confirm: 'En êtes vous sûr?'}, id:"dd_hover") %>
+                            </li>
+                          </ul>
+                        </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+                <%= paginate @enfants %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

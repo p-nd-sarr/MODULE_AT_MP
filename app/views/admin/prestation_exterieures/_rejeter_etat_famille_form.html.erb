@@ -1,0 +1,31 @@
+<div class="modal inmodal" id="RejetEtatFamilleModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Rejet de l'état de famille CAF
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@prestation_exterieure, url: admin_prestation_exterieure_rejeter_etat_famille_path(@prestation_exterieure.id), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <%= f.text_area :motif_rejet_etf, label: 'Motif rejet' %>
+            <div class="form-group row">
+              <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

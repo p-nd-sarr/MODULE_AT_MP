@@ -1,0 +1,38 @@
+<p>
+  <strong>Prénom:</strong>
+  <%= @dossier_prestation.prenom %>
+</p>
+
+<p>
+  <strong>Nom:</strong>
+  <%= @dossier_prestation.nom %>
+</p>
+
+<p>
+  <strong>Date de naissance:</strong>
+  <%= l(@dossier_prestation.date_naissance) unless @dossier_prestation.date_naissance.nil? %>
+</p>
+
+<p>
+  <strong>Lieu de naissance:</strong>
+  <%= @dossier_prestation.lieu_naissance %>
+</p>
+
+<p>
+  <strong>Adresse domicile:</strong>
+  <%= @dossier_prestation.adresse_domicile %>
+</p>
+
+<% unless @dossier_prestation.conjoint.nil? %>
+  <p class="text-primary">
+    <strong>Conjoint: </strong>
+      <%= @dossier_prestation.conjoint.prenom + ' ' + @dossier_prestation.conjoint.nom %>
+  </p>
+<% end %>
+
+<% unless @dossier_prestation.date_soumission.nil? %>
+  <p class="text-danger">
+    <strong>Date de soumission :</strong>
+    <%= l @dossier_prestation.date_soumission %>
+  </p>
+<% end %>

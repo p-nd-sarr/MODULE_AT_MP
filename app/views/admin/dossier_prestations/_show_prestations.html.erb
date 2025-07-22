@@ -1,0 +1,221 @@
+<% if @dossier_prestation.allocation_prenatales.empty? and @dossier_prestation.allocation_familiales.empty? and @dossier_prestation.allocation_postnatales.empty? %>
+  <div class="ibox-content">
+    <div class="text-center">
+      <h1>Pas de prestations effectuées.</h1>
+    </div>
+  </div>
+<% else %>
+  <% if @dossier_prestation.conjoint_id? %>
+    <h5>Prestations prénatales</h5>
+    <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+      <thead>
+      <tr>
+        <th scope="col">Volet</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Date Création</th>
+        <th scope="col">Date Liquidation</th>
+        <th scope="col">Montant Liquidé</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @dossier_prestation.allocation_prenatales.each do |allocation_prenatale| %>
+        <tr>
+          <td><%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %></td>
+          <td><%= AllocationPrenatale.human_enum_name(:etat, allocation_prenatale.etat) %></td>
+          <td>
+            <% unless allocation_prenatale.created_at.nil? %>
+              <%= l allocation_prenatale.created_at %>
+            <% end %>
+          </td>
+          <td>
+            <% unless allocation_prenatale.date_soumission.nil? %>
+              <%= l allocation_prenatale.date_soumission %>
+            <% end %>
+          </td>
+          <td>
+            <% unless allocation_prenatale.date_soumission.nil? %>
+              <%= allocation_prenatale.montant_paiement %></td>
+            <% end %>
+            </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% if @dossier_prestation.conjoint_id? %>
+    <h5>Prestations postnatales</h5>
+    <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+      <thead>
+      <tr>
+        <th scope="col">Volet</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Date Création</th>
+        <th scope="col">Date Liquidation</th>
+        <th scope="col">Montant Liquidé</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @dossier_prestation.allocation_postnatales.each do |allocation_postnatale| %>
+        <tr>
+          <td><%= AllocationPostnatale.human_enum_name(:volet, allocation_postnatale.volet) %></td>
+          <td><%= AllocationPostnatale.human_enum_name(:etat, allocation_postnatale.etat) %></td>
+          <td>
+            <% unless allocation_postnatale.created_at.nil? %>
+              <%= l allocation_postnatale.created_at %>
+            <% end %>
+          </td>
+          <td>
+            <% unless allocation_postnatale.date_soumission.nil? %>
+              <%= l allocation_postnatale.date_soumission %>
+            <% end %>
+          </td>
+          <td>
+            <% unless allocation_postnatale.date_soumission.nil? %>
+              <%= allocation_postnatale.montant_paiement %>
+            <% end %>
+          </td>
+
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% unless @dossier_prestation.conjoint_id? %>
+    <h3>Allocations familiales</h3>
+    <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+      <thead>
+      <tr>
+        <th scope="col">Enfant</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Trimestre</th>
+        <th scope="col">Année</th>
+        <th scope="col">Date Création</th>
+        <th scope="col">Date Liquidation</th>
+        <th scope="col">Montant Liquidé</th>
+
+      </tr>
+      </thead>
+
+      <tbody>
+
+      <% @dossier_prestation.allocation_familiales.each do |allocation_familiale| %>
+        <tr>
+          <td> <%= allocation_familiale.enfant.full_name %></td>
+          <td> <%= allocation_familiale.etat %></td>
+          <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+          <td><%= allocation_familiale.annee %></td>
+          <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+          <td>
+            <% unless allocation_familiale.date_validation.nil? %>
+              <%= l allocation_familiale.date_validation %>
+            <% end %>
+          </td>
+          <td><%= allocation_familiale.montant_paiement %></td>
+
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+<% end %>
+
+<div class="ibox-content">
+  <div class="text-center">
+    <% if @dossier_prestation.is_base_folder? and @dossier_prestation.has_sub_folder? %>
+      <% @dossier_prestation.all_sub_folder.each do |dp_sub| %>
+        <% unless dp_sub.allocation_prenatales.empty? and dp_sub.allocation_postnatales.empty? %>
+          <h4>Conjoint : <%= dp_sub.conjoint.prenom %> <%= dp_sub.conjoint.nom %> </h4>
+          <br>
+        <% end %>
+
+        <% unless dp_sub.allocation_prenatales.empty? %>
+          <h5>Prestations prénatales</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Volet</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% dp_sub.allocation_prenatales.each do |allocation_prenatale| %>
+              <tr>
+                <td><%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %></td>
+                <td><%= AllocationPrenatale.human_enum_name(:etat, allocation_prenatale.etat) %></td>
+                <td>
+                  <% unless allocation_prenatale.created_at.nil? %>
+                    <%= l allocation_prenatale.created_at %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless allocation_prenatale.date_soumission.nil? %>
+                    <%= l allocation_prenatale.date_soumission %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless allocation_prenatale.date_soumission.nil? %>
+                    <%= allocation_prenatale.montant_paiement %></td>
+                  <% end %>
+                  </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <hr>
+        <% end %>
+
+        <% unless dp_sub.allocation_postnatales.empty? %>
+          <h5>Prestations postnatales</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Volet</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% dp_sub.allocation_postnatales.each do |allocation_postnatale| %>
+              <tr>
+                <td><%= AllocationPostnatale.human_enum_name(:volet, allocation_postnatale.volet) %></td>
+                <td><%= AllocationPostnatale.human_enum_name(:etat, allocation_postnatale.etat) %></td>
+                <td>
+                  <% unless allocation_postnatale.created_at.nil? %>
+                    <%= l allocation_postnatale.created_at %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless allocation_postnatale.date_soumission.nil? %>
+                    <%= l allocation_postnatale.date_soumission %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless allocation_postnatale.date_soumission.nil? %>
+                    <%= allocation_postnatale.montant_paiement %>
+                  <% end %>
+                </td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+          <hr>
+        <% end %>
+
+        <br>
+        <hr>
+        <hr>
+      <% end %>
+    <% end %>
+  </div>
+</div>

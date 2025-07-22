@@ -1,0 +1,29 @@
+        <% if @at_rente_famille.nil?%>
+            <%= bootstrap_form_for([:admin, @at_consolidation, @at_salaire], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                <%= f.alert_message "Please fix the errors below." %>           
+                <%=f.hidden_field :at_consolidation_id, value: @at_consolidation.id unless @at_consolidation.nil?%>
+                <%#= f.select :mois, AtSalaire::MOIS.keys.collect { |item| [ArretTravail.human_enum_name(:mois, item), item] }, label: 'Salaire du mois', :disabled => true %>
+                <%= f.text_field :mois, :disabled => true%>
+                <%=f.number_field :montant %>
+                <div class="form-group row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                    <%= link_to 'Annuler', (@at_consolidation.persisted? ? [:admin, @at_consolidation] : admin_at_consolidations_path), class: 'btn btn-white' %>
+                    <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+                    </div>
+                </div>
+            <% end %>
+        <% else %>
+         <%= bootstrap_form_for([:admin, @at_rente_famille, @at_salaire], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                <%= f.alert_message "Please fix the errors below." %>           
+                <%=f.hidden_field :at_rente_famille_id, value: @at_rente_famille.id unless @at_rente_famille.nil?%>
+                <%#= f.select :mois, AtSalaire::MOIS.keys.collect { |item| [ArretTravail.human_enum_name(:mois, item), item] }, label: 'Salaire du mois', :disabled => true %>
+                <%= f.text_field :mois, :disabled => true%>
+                <%=f.number_field :montant %>
+                <div class="form-group row">
+                    <div class="col-sm-4 col-sm-offset-4">
+                    <%= link_to 'Annuler', (@at_rente_famille.persisted? ? [:admin, @at_rente_famille] : admin_at_at_rente_familles_path), class: 'btn btn-white' %>
+                    <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+                    </div>
+                </div>
+            <% end %>
+        <% end %>

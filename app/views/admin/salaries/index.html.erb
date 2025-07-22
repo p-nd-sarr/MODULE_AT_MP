@@ -1,0 +1,148 @@
+<%= content_for :titre_page, 'Liste des salariés' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', '#', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h3>Critères de recherche</h3>
+    <br>
+    <ul style="list-style-type: none; padding: 0">
+      <li class="" style="float: left; margin-right: 3px">
+        <a class="btn btn-primary" data-toggle="tab" href="#collapseExample1">
+          Critères salarié
+        </a>
+      </li>
+      <li>
+        <a class="btn btn-primary" data-toggle="tab" href="#collapseExample2">
+          Critères employeur
+        </a>
+      </li>
+    </ul>
+    <br>
+    <div class="tab-content">
+      <div id="collapseExample1" class="tab-pane">
+        <div class="card card-header">
+          <h3>Critères salarié</h3>
+        </div>
+        <hr>
+        <div class="card card-body">
+          <%= search_form_for @q, url: admin_salaries_path do |f| %>
+
+            <div class="row">
+              <div class="col-sm-3">
+                <%= f.label :matric_cont, 'Matricule' %>
+                <%= f.search_field :matric_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :ipres_ancien_matric_cont, 'Ancien matricule IPRES' %>
+                <%= f.search_field :ipres_ancien_matric_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :css_ancien_matric_cont, 'Ancien matricule CSS' %>
+                <%= f.search_field :css_ancien_matric_cont, class: 'form-control' %>
+              </div>
+            </div>
+            <br/>
+            <div class="row">
+              <div class="col-sm-3">
+                <%= f.label :prenom_cont, 'Prénom: ' %>
+                <%= f.search_field :prenom_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :nom_cont, 'Nom: ' %>
+                <%= f.search_field :nom_cont, class: 'form-control' %>
+              </div>
+
+              <div class="col-sm-3">
+                <%= f.label :numero_piece_eq, 'NIN: ' %>
+                <%= f.search_field :numero_piece_eq, class: 'form-control' %>
+              </div>
+
+            </div>
+
+            <div class="hr-line-dashed"></div>
+
+            <%= f.submit class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+        <br>
+      </div>
+      <div id="collapseExample2" class="tab-pane">
+        <div class="card card-header">
+          <h3>Critères employeur</h3>
+        </div>
+        <hr>
+        <div class="card card-body">
+          <%= search_form_for @q, url: admin_salaries_path do |f| %>
+
+            <div class="row">
+              <div class="col-sm-3">
+                <%= f.label :psrm_employeur_fhnum_cont, 'Numéro employeur' %>
+                <%= f.search_field :psrm_employeur_fhnum_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :psrm_employeur_fhrsoc_cont, 'Raison sociale' %>
+                <%= f.search_field :psrm_employeur_fhrsoc_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :psrm_employeur_ancien_num_ipres_cont, 'Ancien numéro IPRES' %>
+                <%= f.search_field :psrm_employeur_ancien_num_ipres_cont, class: 'form-control' %>
+              </div>
+              <div class="col-sm-3">
+                <%= f.label :psrm_employeur_ancien_num_css_cont, 'Ancien numéro CSS' %>
+                <%= f.search_field :psrm_employeur_ancien_num_css_cont, class: 'form-control' %>
+              </div>
+            </div>
+
+            <div class="hr-line-dashed"></div>
+
+            <%= f.submit class: 'btn btn-primary' %>
+          <% end %>
+        </div>
+        <br>
+      </div>
+    </div>
+
+    <br>
+
+    <%= paginate @salaries %>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Matricule</th>
+          <th scope="col">Ancien Matricule IPRES</th>
+          <th scope="col">Ancien Matricule CSS</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Nom</th>
+          <th scope="col">Employeur</th>
+          <th scope="col">Régime</th>
+          <th scope="col">From EDI?</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <% @salaries.each do |salarie| %>
+          <tr>
+            <td><%= salarie.matric %></td>
+            <td><%= salarie.ipres_ancien_matric %></td>
+            <td><%= salarie.css_ancien_matric %></td>
+            <td><%= salarie.prenom %></td>
+            <td><%= salarie.nom %></td>
+            <!-- <td><%#= salarie.dernier_employeur %></td>-->
+            <td><%= salarie.psrm_employeur.try(:fhrsoc) %></td>
+            <td><%= salarie.regime %></td>
+            <td><%= state_yes_no salarie.edi_id? %></td>
+            <td style="width: 75px">
+              <%= link_to 'détails', admin_salarie_path(salarie.matric), class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <%= paginate @salaries %>
+  </div>
+</div>

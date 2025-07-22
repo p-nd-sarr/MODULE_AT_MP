@@ -1,0 +1,85 @@
+<div class="row">
+  <div class="col-lg-12" style="text-align: right;">
+    <% if @dossier_audit.creation? and current_user == @dossier_audit.ajoute_par %>
+      <%= link_to 'Modifier', edit_admin_dossier_audit_path(@dossier_audit), class: 'btn btn-outline btn-white fa fa-edit' %>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa  fa-id-card"></span> Numéro dossier:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.num_dossier unless @dossier_audit.num_dossier.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date début:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.date_debut unless @dossier_audit.date_debut.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-info"></span> Description:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.description %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-info"></span> Motif:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.motif %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-object-group"></span> Objectifs:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.objectifs %></dd>
+      </div>
+    </d1>
+
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-area-chart"></span> Étendu du contrôle:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.etendu_controle %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-cog"></span> Techniques de contrôle:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.techniques_controle %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-cog"></span> Programme de travail:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_audit.programme_travail %></dd>
+      </div>
+    </d1>
+
+  </div>
+
+</div>

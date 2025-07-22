@@ -1,0 +1,13 @@
+<%= content_for :titre_page, "Liste demandes régularisation de pension" %>
+<%= content_for :actions_page do %>
+<% unless @allocataire.nil?%>
+  <%= link_to 'Nouvelle demande', new_admin_allocataire_regularisation_pension_path, class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire? %>
+<% end%>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+   <%= render 'admin/regularisation_pensions/search' %>
+    <%= render "liste" %>
+  </div>
+</div>

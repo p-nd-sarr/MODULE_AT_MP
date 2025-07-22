@@ -1,0 +1,109 @@
+<%= content_for :titre_page, "Détails declaration divorce ou décés conjoint" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_declaration_divorce_ou_deces_conjoints_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_declaration_divorce_ou_deces_conjoint_path(@declaration_divorce_ou_deces_conjoint), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter une declaration', new_admin_declaration_divorce_ou_deces_conjoint_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+         <div class="row">
+            <div class="col-lg-6">
+              <d1 class="row mb-0">
+                <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                  <dt>Numéro affiliation: </dt>
+                </div>
+                <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                  <dd class="mb-1"><%= @declaration_divorce_ou_deces_conjoint.numero_affiliation %></dd>
+                </div>
+              </d1>
+              <% unless @declaration_divorce_ou_deces_conjoint.conjoint.nil? %>
+              <d1 class="row mb-0">
+                <div class="col-sm-6" style="text-align: right;">
+                  <dt>Prénom & nom du salarié:</dt>
+                </div>
+                <div class="col-sm-6" style="text-align: left;">
+                  <dd class="mb-1 text-navy"><%= @declaration_divorce_ou_deces_conjoint.conjoint.prenom_salarie %> <%= @declaration_divorce_ou_deces_conjoint.nom_salarie %></dd>
+                </div>
+              </d1>
+
+              <d1 class="row mb-0">
+                <div class="col-sm-6" style="text-align: right;">
+                  <dt>Prénom & nom du conjoint:</dt>
+                </div>
+                <div class="col-sm-6" style="text-align: left;">
+                  <dd class="mb-1 text-navy"><%= @declaration_divorce_ou_deces_conjoint.conjoint.prenom %> <%= @declaration_divorce_ou_deces_conjoint.conjoint.nom%></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6" style="text-align: right;">
+                  <dt>Date de naissance:</dt>
+                </div>
+                <div class="col-sm-6" style="text-align: left;">
+                  <dd class="mb-1"><%= @declaration_divorce_ou_deces_conjoint.conjoint.date_naissance.strftime("%d/%m/%Y") %></dd>
+                </div>
+              </d1>
+              <d1 class="row mb-0">
+                <div class="col-sm-6" style="text-align: right;">
+                  <dt>Date de mariage:</dt>
+                </div>
+                <div class="col-sm-6" style="text-align: left;">
+                  <dd class="mb-1"><%= @declaration_divorce_ou_deces_conjoint.conjoint.date_mariage.strftime("%d/%m/%Y") %></dd>
+                </div>
+              </d1>
+              <% end %>
+              <%if @declaration_divorce_ou_deces_conjoint.divorcer? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Date de divorce:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= @declaration_divorce_ou_deces_conjoint.date_declaration.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+              <%elsif @declaration_divorce_ou_deces_conjoint.deceder?%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Date de décés:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= @declaration_divorce_ou_deces_conjoint.date_declaration.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+              <%end %>
+            </div>
+            <%if @declaration_divorce_ou_deces_conjoint.divorcer? %>
+              <div class="col-sm-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Certificat de divorce:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @declaration_divorce_ou_deces_conjoint.piece_jointe, target: :_blank %></dd>
+<!--                    <dd class="mb-1"><%#= link_to image_tag(@declaration_divorce_ou_deces_conjoint.piece_jointe.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @declaration_divorce_ou_deces_conjoint.piece_jointe, target: :_blank %></dd>-->
+                  </div>
+                </d1>
+              </div>
+            <%elsif @declaration_divorce_ou_deces_conjoint.deceder? %>
+              <div class="col-sm-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Certificat de décés:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @declaration_divorce_ou_deces_conjoint.piece_jointe, target: :_blank %></dd>
+<!--                    <dd class="mb-1"><%#= link_to image_tag(@declaration_divorce_ou_deces_conjoint.piece_jointe.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @declaration_divorce_ou_deces_conjoint.piece_jointe, target: :_blank %></dd>-->
+                  </div>
+                </d1>
+              </div>
+            <%end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

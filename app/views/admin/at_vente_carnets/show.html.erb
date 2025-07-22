@@ -1,0 +1,61 @@
+<%= content_for :titre_page, "Détails vente de carnet" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_at_vente_carnets_path, 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Editer', edit_admin_at_vente_carnet_path(@at_vente_carnet), 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Employeur
+              <%= link_to @at_vente_carnet.num_employeur, admin_employeur_path(@at_vente_carnet.psrm_employeur.id), target: '_blank' %></h5> &nbsp;
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/at_vente_carnets/info_employeur' %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations
+              Carnet </h5>
+          </div>
+          <div class="ibox-content">
+            <p>
+              <strong>Numéro reçu :</strong>
+              <%= @at_vente_carnet.num_recu unless @at_vente_carnet.num_recu.nil? %>
+            </p>
+            <p>
+              <strong>Plage de numéros :</strong>
+              <%= @at_vente_carnet.numero_carnet unless @at_vente_carnet.numero_carnet.nil? %>
+            </p>
+            <p>
+              <strong>Date de délivrance :</strong>
+              <%= l @at_vente_carnet.date_delivrance unless @at_vente_carnet.date_delivrance.nil? %>
+            </p>
+            <p>
+              <strong> Nombre de carnet:</strong>
+              <%= @at_vente_carnet.num_carnets unless @at_vente_carnet.num_carnets.nil? %>
+            </p>
+            <p>
+              <strong>Ajouté par :</strong>
+              <%= @at_vente_carnet.ajoute_par.full_name unless @at_vente_carnet.ajoute_par.nil? %>
+            </p>
+            <p>
+              <strong>Ajouté le :</strong>
+              <%= l @at_vente_carnet.created_at unless @at_vente_carnet.created_at.nil? %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

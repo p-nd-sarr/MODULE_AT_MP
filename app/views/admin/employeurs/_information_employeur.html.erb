@@ -1,0 +1,29 @@
+<p>
+  <strong>Ancien numéro CSS:</strong>
+  <%= @employeur.try(:ancien_num_css) %>
+</p>
+
+<p>
+  <strong>Ancien numéro Ipres:</strong>
+  <%= @employeur.try(:ancien_num_ipres) %>
+</p>
+
+<p>
+  <strong>Raison Sociale:</strong>
+  <%= @employeur.try(:fhrsoc) %>
+</p>
+
+<p>
+  <strong>Téléphone:</strong>
+  <%= @employeur.try(:fhtel) %>
+</p>
+
+<p>
+  <strong>Activité principale: </strong>
+  <%= @employeur.try(:activite_prinicipal) %>
+</p>
+
+<p>
+  <strong>Adresse:</strong>
+  <%= @employeur.try(:fhadr) %>
+</p>

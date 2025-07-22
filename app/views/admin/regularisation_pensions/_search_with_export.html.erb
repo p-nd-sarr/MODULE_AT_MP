@@ -1,0 +1,65 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+      <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prénom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :motif_regularisation_pension_eq, 'Motif de régularisation' %>
+      <%= f.select :motif_regularisation_pension_eq, RegularisationPension.motif_regularisation_pensions.to_a.map { |w| [RegularisationPension.human_enum_name(:motif_regularisation_pensions, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :agence_creation_id_eq, 'Agence de création' %>
+      <%= f.collection_select :agence_creation_id_eq, Admin::Agence.ipres.order(:description_prest), :id, :description_prest,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :workflow_state_eq, 'Etat' %>
+      <%= f.select :workflow_state_eq, RegularisationPension.workflow_spec.states.keys.map { |k| [RegularisationPension.workflow_spec.states[k].meta[:label], k] },
+          { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="hr-line-dashed"></div>
+    <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+    <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+    <div class="hr-line-dashed"></div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= toutes_les_demandes_admin_regularisation_pensions_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= toutes_les_demandes_admin_regularisation_pensions_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

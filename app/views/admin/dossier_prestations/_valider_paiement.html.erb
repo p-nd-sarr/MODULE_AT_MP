@@ -1,0 +1,147 @@
+<div class="modal inmodal" id="PaiementModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+        <% if @dossier_prestation.allocation_prenatales.valide.non_paye.empty? and @dossier_prestation.allocation_postnatales.valide.non_paye.empty? and @dossier_prestation.allocation_familiales.valide.non_paye.empty? %>
+          <i class="fa fa-close modal-icon btn-danger"></i>
+          <h4 class="modal-title">
+            Pas de paiement à valider
+          </h4>
+
+        <% else %>
+          <i class="fa fa-check modal-icon btn-primary"></i>
+          <h4 class="modal-title">
+            Valider Odre de Paiement
+          </h4>
+        <% end %>
+
+      </div>
+      <div class="modal-body">
+        <% unless @dossier_prestation.allocation_prenatales.valide.non_paye.empty? %>
+          <h5>Prestations prénatales</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Volet</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @dossier_prestation.allocation_prenatales.valide.non_paye.each do |allocation_prenatale| %>
+              <tr>
+                <td><%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %></td>
+                <td><%= AllocationPrenatale.human_enum_name(:etat, allocation_prenatale.etat) %></td>
+                <td>
+                  <% unless allocation_prenatale.created_at.nil? %>
+                    <%= l allocation_prenatale.created_at %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless allocation_prenatale.date_soumission.nil? %>
+                    <%= l allocation_prenatale.date_soumission %>
+                  <% end %>
+                </td>
+                <td><%= allocation_prenatale.montant_paiement %></td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+        <% unless @dossier_prestation.allocation_postnatales.valide.non_paye.empty? %>
+          <h5>Prestations postnatales</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Volet</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @dossier_prestation.allocation_postnatales.valide.non_paye.each do |allocation_postnatale| %>
+              <tr>
+                <td><%= AllocationPostnatale.human_enum_name(:volet, allocation_postnatale.volet) %></td>
+                <td><%= AllocationPostnatale.human_enum_name(:etat, allocation_postnatale.etat) %></td>
+                <td>
+                  <% unless allocation_postnatale.created_at.nil? %>
+                    <%= l allocation_postnatale.created_at %>
+                  <% end %>
+                </td>
+                <td>
+                  <% unless allocation_postnatale.date_soumission.nil? %>
+                    <%= l allocation_postnatale.date_soumission %>
+                  <% end %>
+                </td>
+                <td><%= allocation_postnatale.montant_paiement %></td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+        <% unless @dossier_prestation.allocation_familiales.valide.non_paye.empty? %>
+          <h5>Allocations familiales</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @dossier_prestation.allocation_familiales.valide.non_paye.each do |allocation_familiale| %>
+              <tr>
+                <td> <%= allocation_familiale.enfant.full_name %></td>
+                <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre)%></td>
+                <td><%= allocation_familiale.annee %></td>
+                <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                <td>
+                  <% unless allocation_familiale.date_validation.nil? %>
+                    <%= l allocation_familiale.date_validation %>
+                  <%end %>
+                </td>
+                <td><%= allocation_familiale.montant_paiement %></td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= link_to 'Valider odre de paiement', admin_dossier_prestation_valider_paiement_path(@dossier_prestation), 'data-turbolinks': false, class: 'btn btn-primary', id: 'valider_paiement' %>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="application/javascript">
+    $(document).ready(function () {
+        <% if  @dossier_prestation.allocation_prenatales.valide.non_paye.empty? and  @dossier_prestation.allocation_postnatales.valide.non_paye.empty? and  @dossier_prestation.allocation_familiales.valide.non_paye.empty? %>
+        $("#valider_paiement").hide();
+        <% else %>
+        $("#valider_paiement").show();
+        <%end %>
+    });
+</script>

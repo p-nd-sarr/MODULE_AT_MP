@@ -1,0 +1,23 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numéro allocataire',
+      'Nom',
+      'Prénom',
+      'Type',
+      'Date de demande',
+      'État'
+  ]
+  sheet.add_row titre, :b => true
+  @revision_pensions.each do |t|
+    sheet.add_row [
+                      t.allocataire.numero_allocataire,
+                      t.allocataire.nom,
+                      t.allocataire.prenom,
+                      t.type_motif,
+                      t.created_at,
+                      RevisionPension.workflow_spec.states[t.workflow_state.to_sym].meta[:label]
+                  ]
+  end
+end

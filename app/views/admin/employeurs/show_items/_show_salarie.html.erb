@@ -1,0 +1,40 @@
+<% if @immatriculation.effectif_employe != nil %>
+  <div class="row">
+
+    <div class="col-sm-10">
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Nom</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">NIN</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @salaries.each do |salarie| %>
+          <tr>
+            <td><%= salarie.nom %></td>
+            <td><%= salarie.prenom %></td>
+            <td><%= salarie.numero_piece %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @salaries %>
+    </div>
+
+
+  </div>
+
+
+  <script type="text/javascript">
+
+      $(document).ready(function () {
+
+
+      });
+
+  </script>
+<% end %>

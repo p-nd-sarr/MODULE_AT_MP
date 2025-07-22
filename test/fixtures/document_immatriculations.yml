@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  commentaire: MyText
+  type_document: 1
+  immatriculation: one
+
+two:
+  commentaire: MyText
+  type_document: 1
+  immatriculation: two

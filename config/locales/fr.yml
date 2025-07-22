@@ -1,0 +1,1818 @@
+fr:
+  mode_paiements: &mode_paiements
+    mandant_postal: Mandat postal
+    virement: Virement
+    wari: Wari
+    caisse_ipres: Caisse IPRES
+    post_finance: Poste Finance
+    mise_a_disposition_bancaire: Mise à disposition bancaire - CMS
+    paiement_departemental: Paiement départemental
+    carte_prepaye: Carte prépayée
+    paiement_a_domicile: Paiement à domicile
+    cheque: Chèque
+    caisse_css: Espèces
+    autres: Autre
+    orange_money: Orange Money
+    paiement_hors_convention: Paiement hors convention
+    wave: WAVE
+  zones: &zones
+    senegal: Sénégal
+    afrique: Afrique
+    europe: Europe
+  regimes: &regimes
+    general: Général
+    cadre: Cadre
+    employe_de_maison: Employé de maison
+  activerecord:
+    errors:
+      messages:
+        record_invalid: 'La validation a échoué : %{errors}'
+        restrict_dependent_destroy:
+          has_one: Vous ne pouvez pas supprimer l'enregistrement car un(e) %{record}
+            dépendant(e) existe
+          has_many: Vous ne pouvez pas supprimer l'enregistrement parce que les %{record}
+            dépendants existent
+    attributes:
+      admin/agence:
+        type_agences:
+          ipres: IPRES
+          css: CSS
+      declaration_salaire_manquante:
+        regimes:
+          <<: *regimes
+      declaration_chargement:
+        regimes:
+          <<: *regimes
+        statuts:
+          creation: Création
+          fichier_invalide: Fichier invalide
+          fichier_valide: Fichier valide
+          valide: Validé
+          rejete: Rejeté
+      caisse/paiement:
+        mode_paiements:
+          <<: *mode_paiements
+        etats:
+          attente_paiement: En attente paiement
+          paye: Payé
+          decede: Décédé
+          suspendu: Suspendu
+        sources:
+          prestation: Prestation
+          cnav: CNAV
+          retour_impaye_poste: Retour impayé Poste
+          autre: Autre
+      at_frais_engage:
+        type_frais:
+          medecin: Médecin
+          hopitaux: Hopitaux
+          pharmacien: Pharmacien
+          autre_fournisseurs: Autres fournisseurs
+          divers: Divers
+          soins_medicaux: Soins Médicaux
+          hospitalisation: Hospitalisation
+          frais_phamaceutiques: Frais pharmaceutiques
+          frais_de_transport: Frais de transports
+          prothese: Prothèse (En cas de IP)
+          frais_funeraire: Frais Funaires (En cas de décès)
+          autres: Autres
+        etats:
+          creation: création
+          liquide: liquide
+          valide: valide
+          validation_medecin: validation_medecin
+          validation_comptable: validation_comptable
+          rejete: rejete
+          rembourser_tiers: rembourser tiers
+      at_decompte:
+        etats:
+          creation: création
+          liquide: liquide
+          soumission_medecin: soumission medecin
+          validation_medecin: validation medecin
+          valide: valide
+          validation_comptable: validation comptable
+          rejete: rejete
+      at_dossier_reversion_rente:
+        etats:
+          creation: création
+          liquide: soumis
+          valide: valide
+          rejete: rejete
+      at_avi:
+        avis:
+          favorable: Favorable
+          defavorable: Défavorable
+          complement_information: Compléments d’informations
+      at_rechute:
+        avis:
+          favorable: Favorable
+          defavorable: Défavorable
+      arret_travail:
+        incapacite_permanentes:
+          aucun: Aucun
+          partielle: Partielle
+          totale: Totale
+        consequence_accident_travails:
+          arret_travail: Arrêt travail
+          deces: Décés
+          sans_arret_travail: Sans arrêt travail
+        etats:
+          instruction: instruction
+          accepte: accepté
+          rejete: rejeté
+          gueris: guéri
+          rechute: rechute
+          decede: décédé
+        nature_accidents:
+          nouveau_accident: Nouvel Accident
+          probleme_electrique: Problème électrique
+          fuite_de_gaz: Fuite de gaz
+          rupture_materiel: Rupture matérielle
+          glissade: Glissade
+          chute: Chute
+          effort_physique: Effort physique
+          Collision: Collision
+          ecrasement: Ecrasesement
+          contact_avec_substance_dangereuse: Contact avec une substance dangereuse
+          agression: Agression
+          heurt: Heurt
+          noyade: Noyade
+          autres: Autres
+        mois:
+          JANVIER: JANVIER
+          FEVRIER: FEVRIER
+          MARS: MARS
+          AVRIL: AVRIL
+          MAI: MAI
+          JUIN: JUIN
+          JUILLET: JUILLET
+          AOUT: AOUT
+          SEPTEMBRE: SEPTEMBRE
+          OCTOBRE: OCTOBRE
+          NOVEMBRE: NOVEMBRE
+          DECEMBRE: DECEMBRE
+        nature_lesions:
+          non_precise: Non précisé
+          fracture: Fracture
+          brulure: Brulûre
+          gelure: Gelure
+          amputation: Amputation
+          plaie: Plaie
+          inflamation: Inflamation
+          contusion: Contusion
+          entorse: Entorse
+          luxation: Luxation
+          asphyxie: Asphyxie
+          commotion: Commotion
+          corps_etranger: Corps étranger
+          fibrillation_coeur: Fibrilation coeur
+          hernies: Hernies
+          lumbago: Lumbago
+          paralyse: Paralyse
+          noyade: Noyade
+          ecrasement_partie_corps: Ecrasement partie du corps
+          poly_traumatisme: Poly traumatisme
+          cecite: Cecité
+          perte_partille_vision: Perte pastille vision
+          lombalgies_residuelles: Lombalgies résiduelles
+          traumatismes: Traumatismes
+          dermatose_professionnelle: Dermatose professionnelle
+          raideur: Raideur
+          douleurs: Douleurs
+          electrocution: Electrocution
+          congestions: Congetions
+          hemoragie: Hémoragie
+          crush_syndrome: Crush syndrome
+          tetanos: Tétanos
+          surdite: Surdite
+          hepatite_virale: Hépatite virale
+        siege_lesions:
+          non_precise: Non précisé
+          tete: Tête
+          yeux: Yeux
+          membres_superieurs: Membre supérieurs
+          membres_inferieurs: Membre inférieurs
+          main: Main
+          tronc: Tronc
+          pieds: Pieds
+          localisations_multiples: Localisation multiples
+          sieges_internes: Sieges internes
+          systeme_nerveux: Système nerveux
+          bras_droit: Bras droit
+          bras_gauche: Bras gauche
+          maxillaire: Maxillaire
+          visceres: Visceres
+          oreille: Oreille
+          jambe_gauche: Jambe gauche
+          jambe_droite: Jambe droite
+          main_gauche: Main gauche
+          main_droite: Main droite
+          pied_gauche: Pied gauche
+          pied_droit: Pied droit
+        qualification_professionnelles:
+          cadre: Cadre
+          technicien: Technicien
+          agent_de_maitrise: Agent de maitrise
+          employes: Employé
+          apprentis: Apprentis
+          manoeuvres: Manoeuvres
+          ouvriers_specialises: Ouvriers spécialisés
+          ouvrier_qualifie: Ouvrier qualifie
+          divers: Divers
+        type_de_contrat_travails:
+          permanent: Permanent
+          journalier: Journalier
+          saisonier: Saisonier
+          autres_cdd: Autre CDD
+        agent_materiels:
+          accident_de_plein_pied: Accident de plein pied
+          chute_dun_niveau: Chute d'un niveau
+          objets_en_cours_de_manutention_manuelle: Objets en cours de manutention manuelle
+          objets_ou_masse_en_mouvement: Objet ou masse en mouvement
+          particules_ou_petits_elements_de_matieres: Particule ou petis elements de matieres
+          appareils_de_levage_amarrage_prehension: Appareils de levage amarrage préhension
+          vehicule: Véhicule
+          machine_productrice_transformation_energie: Machine productrice transformation energie
+          organe_transmission: Organe transmission
+          machine_transmission: Machine transmission
+          machine_a_broyer_concasser_pulveriser_diviser: Machine à broyer concasser pulveriser diviser
+          machine_a_malaxer_melanger: Machine à malaxer mélanger          
+          machine_a_cribler_tamiser_separer: Machine à cribler tamiser séparer
+          presses_mecaniques_pilons: Presse mecanniques pilons
+          machine_a_presser_mouler_injecter: Machine a presser mouler injecter
+          machine_cylind_laminer_etirer_planer_imprimer_melanger: Machine cylind. laminer,etirer,planer,impri.,melanger
+          machine_a_couper_trancher_derouler_defibrer: Machine a couper,trancher,derouler,defibrer(non scie)
+          scies: Scies
+          machine_a_tourner_percer_aleser_fraiser_raboter: Mach.a tourner,percer,aleser,fraiser,raboter(metaux)
+          machine_a_percer_tourner_tourpiller_raboter: Mach.a percer,tourner,tourpiller,raboter(bols ...)
+          machine_a_meuler_poncer_polir: Machines a meuler,poncer,polir
+          materiel_et_machines_a_souder: Materiel et machines a souder
+          machine_a_riveter_coudre_agrafer_mettre_oeillets: Machines a riveter,coudre,agrafer,mettre oeillets
+          mach_a_remplir_condition_empaquer_emballer_clouer: Mach.a remplir,condition.,empaquer,emballer,clouer
+          machine_a_effilocher_ouvrer_battre_carder: Machines a effilocher,ouvrer,battre,carder
+          mach_a_filature_de_tissage_de_cablerie_et_d_appret: Mach.a filature,de tissage,de cablerie et d'appret
+          materiel_engins_de_terrassement_et_travaux_annexes: Materiel engins de terrassement et travaux annexes
+          machine_diverses: Machines diverses(n'etant des categories preced.)
+          outils_mecaniques_tenus_ou_guides_a_la_main: Outils mecaniques tenus ou guides a la main
+          outils_a_main: Outils a main
+          appareil_a_pression: Appareils a pression
+          appareil_usten_util_prod_caustique_corro_toxi: Appareils usten. util. prod.caustique,corro.,toxi.
+          appareillage_et_installation_frigorifique: Appariellage et installation frigorifiques
+          vapeur_gaz_et_poussiere_deletere: Vapeurs,gaz et poussiere deleteres
+          matiere_explosive: Matieres explosives
+          electricite: Electricite
+          mat_divers: Divers
+        lieu_accidents:
+          lieu_travail: Lieu de travail
+          deplacement_pendant_hr_travail: Déplacement pendant les heures de travail pour le compte de l’employeur*
+          entre_domicile_et_bureau: Trajet entre domicile et lieu de travail vice- versa
+          deplacement_pendant_hr_pause: Déplacement pendant les heures de pause
+          en_mer: En mer
+          voyage_et_mission: Voyage et mission
+          non_precise: Non précisé
+        type_declarations:
+          accident_travail: Accident de travail
+          accident_trajet: Accident de trajet
+        type_de_pieces:
+          cni: Carte Nationnale d'identité
+          carte_cedeao: Carte CEDEAO
+          carte_consulaire: Carte Consulaire
+          passeport: Passeport
+          extrait_de_naissance: Extrait de naissance
+        designations:
+          anciennete: Ancienneté
+          heures_supplementaires: Heure supplementaires
+          sursalaire: Sursalaire
+          prime_de_rendement: Prime de rendement
+          travaux_penibles: Travaux pénibles
+          prime_de_productivite: Prime de productivité
+          indemnite_de_cherte_de_vie: Indemnité de cherte de vie
+          journees_chomees_et_payees: Journée chomées et payées
+          arrondi_du_mois: Arrondi du mois
+          divers_imposables: Divers imposables
+          prime_de_quart: Prime de quart
+          prime_de_collecte: Prime de collecte
+          prime_electricite: Prime électricité
+          prime_de_risque: Prime de risque
+          prime_de_sujetion: Prime de sujetion
+          prime_de_peche: Prime de pêche
+          prime_technique: Prime technique
+          prime_de_brevet: Prime de brevet
+          prime_de_thiof: Prime de thiof
+          prime_de_plastification: Prime de plastification
+          prime_de_permanence: Prime de permanence
+          indemnite_de_remplacement: Indemnité de remplacement
+          prime_de_nourriture: Prime de nourriture
+          prime_de_logement: Prime de logement
+          prime_de_caisse: Prime de caisse
+          indemnite_forfait_nuit: Indemnité forfait nuit
+          primse_de_presence: Prime de présence
+          primse_attente: Prime attente
+          prime_de_fonction: Prime de fonction
+          augmentation_forfait: Augmentation forfait
+          anciennete_sur_heure: Ancienneté sur heure
+          prime_de_feu_continu: Prime de feu continu
+          ajustement_solde: Ajustement solde
+          prime_de_conduite: Prime de conduite
+          prime_de_responsabilite: Prime de responsabilité
+          prime_assiduite: Prime d'assuidité
+          prime_de_fabrique: Prime de fabrique
+          augmentation_attente: Augmentation attente
+          prime_de_froid: Prime de froid
+          prime_de_calibrage: Prime de calibrage
+          prime_de_chaleur: Prime de chaleur
+          compensation_demi_heure_pause: Compensation demi heure pause
+          lourd: Lourd
+          appoint_nouveau_appoint: Appoint nouveau appoint
+          prime_de_reparation: Prime de réparation
+          prime_de_maintenance: Prime de maintenance
+          prime_de_chantier: Prime de chantier
+          prime_offshore: Prime offshore
+          prime_eloignement: Prime éloignement
+          prime_de_bord: Prime de bord
+          indemnite_conges_paye: Indemnité congés payés
+          complement_special_de_solde_assim: Complément spécial de solde assim.
+          indemnite_de_residence: Indemnité de résidence
+          indemnite_astreinte: Indemnité astreinte
+          licenciement_rupture_contrat: Licenciement rupture de contrat
+          indemnite_mise_a_la_retraite: Indemnité mise à la retraite
+          prime_altitude: Prime altitude
+          prime_de_deminage: Prime déminage
+          prime_de_proprete: Prime propreté
+          prime_de_vacances: Prime de vacances
+          travaux_dangereux_insalubres: Travaux dangereux insalubres
+          prime_de_grise: Prime de grise
+          prime_de_tonnage: Prime de tonnage
+          gratifications: Gratifications
+          prime_de_mecannique_divers: Prime de mecannique divers
+          prime_de_calibre: Prime de calibre
+          prime_de_calibrage_crevette: Prime de calibrage crevette
+          prime_de_congelation: Prime de congelation
+          peche_mecanique_crevee: Peche mécanique creuvée
+          prime_de_service: Prime de service
+          prime_de_debarquement: Prime de débarquement
+          prime_interressement: Prime interessement
+          prime_de_drap: Prime de drap
+          prime_de_panier: Prime de panier
+          prime_de_transport: Prime de transport
+          indemnite_de_deplacement: Indemnité de déplacement
+          frais_professionnels: Frais professionnels
+          prime_de_salissure: Prime de salissure
+          rappels: Rappels
+          prime_outillage: Prime outillage
+          prime_de_nettoyage_tenue: Prime de netoyage tenue
+          ancien_appoint: Ancien appoint
+          acompte_salaire_valoir_augmen: Acompte salaire valoir augmentation
+          prime_insalubrite: Prime insalubrite
+          prime_de_savon: Prime de savon
+          indemnites_maladies: Indemnites maladies
+          augmentation_a_valoir_du_mois: Augmentation a valoir du mois
+          prime_de_lait: Prime de lait
+          prime_entretien: Prime entretien
+          prime_pneumaticien: Prime pneumaticien
+          intemperies: Intemperies
+          licenciemement: Licenciement
+          depaysemet_ou_separation: Depaysemet ou separation
+          indemnites_de_dommages_et_interets: Indemnites de dommages et interets
+          prime_special_non_imposable: Prime spécial non imposable
+          indemnite_kilometrique: Indemnites kilometrique
+          prime_de_motivation: Prime de motivation
+        sexes:
+          homme: Homme
+          femme: Femme
+        nationalite_salaries:
+          senegalais: Sénégalaise
+          etranger: Etrangère
+      user:
+        type_profils:
+          super_admin: Super Administrateur
+          admin: Administrateur
+          gestionnaire_compte_employeur: Gestionnaire de compte employeur
+          gestionnaire_compte_salarie: Gestionnaire de compte salarié
+          gestionnaire_compte_allocataire: Gestionnaire de compte allocataire
+          controleur_css: Controleur CSS
+          salarie: Salarié
+          allocataire: Allocataire
+          employeur: Employeur
+          chef_service_allocation: Chef de Service Allocation
+          chef_service_cotisation: Chef de Service Cotisation
+          chef_agence: Chef d agence
+          comptable: Comptable
+          chef_section_instruction: Chef de Section Instruction
+          chef_section_liquidation: Chef de Section Liquidation
+          directeur_prestation: Directeur Prestation
+          agent_accueil: Agent d'accueil
+          chef_subdivision_atmp: Chef de subdivision ATMP
+          redacteur: Redacteur
+          dajc: DAJC
+          dprp: DPRP
+          chef_division_at: Chef de division AT
+          directeur_at: Directeur AT
+          medecin_conseil: Médecin Conseil
+          chef_groupe_caf: Chef de groupe CAF
+          chef_subdivision_caf: Chef de  subdivision CAF
+          chef_service_prest_ext: Chef de Service Prestation Extérieure
+          agent_accueil_direction_at: Agent direction AT
+          technicien_at: Technicien AT
+          technicien_direction_at: Technicien Direction AT
+          chef_service_contentieux: Chef de Service Contentieux
+          directeur_general: Directeur General
+          consultation: Consultation
+          inspection: Inspection
+          auditeur_css: Auditeur CSS
+          agent_dfc: Agent DFC
+          chef_service_dfc: Chef Service DFC
+          caissier_ipres: Caissier IPRES
+          directeur_juridique: Directeur juridique
+          chef_service_direction_juridique: Chef de Service Direction Juridique
+          agent_direction_juridique: Agent Direction Juridique
+          auditeur: Auditeur
+          chef_service_audit: Chef de service audit
+          chef_service_controle_interne: Chef de service controle interne
+          directeur_audit: Directeur d'audit
+        sexes:
+          homme: Homme
+          femme: Femme
+      document:
+        type_documents:
+          cni: Carte nationale d'identité numérisée et légalisée du demandeur
+          extrait_naissance: Extrait de naissance de moins de 3 mois
+          certificat_mariage: Certificat de mariage
+          certificat_divorce: Certificat de divorce
+          cni_epouse: Carte Nationale d'Identité numérisée et légalisée de l'épouse
+          extrait_naissance_epouse: Extrait de naissance de moins de 3 mois des épouses
+          passeport: Passeport légalisé
+          carte_consulaire: Carte consulaire
+          rib: Relevé d'Identité Bancaire
+          certif_empl_sal: Certificat d'emploi et de salaire
+          attestation_travail: Attestation de travail
+          certificat_deces: Certificat de décès
+          procuration_legalisee: Procuration légalisée
+          certificat_travail: Certificat de travail
+          certificat_emploi_salaire: Certificat d'emploi et de salaire
+          certificat_non_divorce: Certificat de non divorce
+          certificat_non_remariage: Certificat de non remariage
+          extrait_naissance_defunt: Extrait de naissance du défunt
+          copie_cni_legalise: Copie de la carte d'identité nationale légalisée
+          declaration_sur_honneur: Déclaration sur l'honneur
+          copie_cni: Copie de la carte d'identité nationale
+          acte_etat_civil_jug_supp_veuve: Acte d'état civil - jugement supplétif (des) veuves (s)
+          jug_here_cert_non_opp_non_app: Un Jugement d'hérédité et Certificat de non opposition et de non appel
+          carte_identite_tuteur: Carte d'identité nationale du tuteur
+          certificat_tutelle: Certificat de tutelle
+          autorisation_sortir_pays: Autorisation de sortir du pays
+          certificat_medical: Certificat médical
+          certificat_scolarite: Certificat de scolarité
+          demande_conges: Formulaire de demande de congé maternité
+          attestation_susp_act: Attestation de mise en congé
+          certificat_medicale_gross: Certificat médical de grossesse
+          last_bul_salaire: Dernier bulletin de salaire
+          attestation_cess_paie: Attestation de cessation de paiement
+          attestation_salaire: Attestation de salaire
+          attestation_maintien_salaire: Attestation de maintien de salaire
+          certif_conges_maternite: Certification de congés de maternité
+          type_piece_attributaire: Piéce d'identité de l'attributaire
+          type_piece_demandeur: Piéce d'identité Salarié
+          cni_attributaire: Carte nationale d'identité numérisée et légalisée de l'attributaire
+          passeport_attributaire: Passeport attributaire
+          carte_consulaire_attributaire: Carte consulaire attributaire
+          attestation_non_engagement: Attestation non engagement
+          certificat_guerion: Certificat de guérison
+          certificat_medical_consolidation: Certificat médical de consolidation précisant le taux d’invalidité
+          rapport_evaluation_medecin: Le rapport d’évaluation du médecin conseil ou du médecin expert
+          pv_enquete: PV d’enquête signé par l’inspecteur du travail
+          bulletin_salaire_precedent_accident: 12 bulletins de salaire précèdent l’accident
+          bulletin_salaire_precedent_rechute: bulletins de salaire précèdent la rechute
+          bulletin_de_salaire_journalier: Bulletin de salaire journalier
+          relation_ecrite_temoin: Relation ecrite temoin
+          bulletin_de_salaire: Bulletion de salaire
+          ordre_de_mission: Ordre de mission
+          contrat_travail: Contrat de travail
+          pv_police_gendarmerie: PV de la police ou de gendarmerie
+          rapport_sortie_sapeurs_pompiers: Rapport sortie sapeurs pompiers
+          pv_huissiers: PV huissier
+          certificat_genre_de_mort: Certificat genre de mort
+          certificat_guerison: Certificat de guérison
+          certificat_vie_individuelle: Certificat de vie individuel
+          demande_reversion_orphelin: Une demande de reversion orpheline remplie, signée et légalisée
+          demande_reversion_veuve: Une demande de rerversion veuve remplie, signée et légalisée
+          extraits_naissance_enfant: Extraits des actes de  naissance des enfants âgés de moins de 21 ans
+          certificat_infirmite: Certificat d'infirmité
+          certificat_apprentissage: Certificat d'apprentissage
+          formulaire_convention_france_senegal_CFS: Formulaire de liaison de la Convention Franco-Sénégalaise (CFS)
+          certificat_de_domile: Certificat de domicile
+          certificat_de_residence: Certificat de résidence
+          certificat_medical_genre_de_mort: Certificat medical de constatations de blessures/Certificat genre de mort
+          cni_extrait: Copie de la carte d'identité nationale/Extrait de naissance
+          formulaire_declaration_at: Formulaire de déclaration d'accident du travail
+          relation_ecrite_premiere_avisee: Relation écrite de la première avisée
+          questionnaire_trajet: Questionnaire de trajet
+          acte_naissance_enf_moins_21: Actes de naissance des enfants âgés de moins de 21 ans
+          certificat_vie_collective_enf_moins_21: Certificat de vie collectif des enfants de moins de 21 ans
+          formulaire_demande_pension: Formulaire de demande de liquidation
+          attestation_cess_travail: Attestation de cessation de travail
+          protocole_accord_branche: Protocole d'accord de la branche
+          certificat_vie_collectif: Certificat de vie collectif
+          certificat_charge_entretien: Certificat de charge et d’entretien
+          attestation_administrative: Attestation administrative
+          decision_engagement: Décision d’engagement
+          decision_radiation: Décision de radiation
+          cni_extrait_enfant: Copie CNI ou extrait de naissance des enfants
+          cni_extrait_ascendant: Copie CNI ou extrait de naissance des ascendants
+          accord_sur_ipp: Accord sur le taux de ipp avec la victime
+          releve_navigation: Relevé de navigation
+          tableau_indicatif_marin: Tableau indicatif pour les marins
+          formulaire_demande: Formulaire de demande
+          carte_identite_defunt: Copie CNI du défunt
+          justificatif_reversion: Justificatifs de carrières du défunt
+          actes_deces_coepouse: Actes de décès coépouses
+          certificat_travail_prolongation: Certificat médical de prolongation
+          certificat_travail_rechute: Certificat médical de rechute
+          contre_expertise: Contre expertise
+          certificat_jugement_heredite: Certificat de jugement d'hérédité
+          dmt: D.M.T
+          formulaire_demande_pf: Formulaire de la demande PF
+
+          cni_defunt: Acte d'état civil du défunt
+          acte_etat_civil: Acte d’état civil de la requérante
+          copie_carte_consulaire_ou_cni: Copie CNI légalisée de la requérante ou  Copie Carte Consulaire
+          certificat_travail_sn: Certificats de travail au Sénégal
+          certificat_travail_pays_etranger: Certificats de travail France
+          releve_compte: Relevé de compte
+          certificat_deces_coepouse: Certificats de décès des coépouses
+          certificat_divorce_coepouse: Certificats de divorce des coépouses
+
+          lettre_de_mission: Lettre de mission
+
+          autres: Autres
+      reversion_veuve:
+        type_ayant_droits:
+          veuve: veuve
+          orphelin: orphelin
+          pere: pere
+          mere: mere
+        mode_paiements:
+          <<: *mode_paiements
+      revision_pension:
+        type_motifs:
+          justification_carriere: Justification de carrière
+          integration_carriere: Intégration de carrière
+          justification_integration: Justification de carrière et Intégration de carrière
+      pret_allocataire:
+        type_prets:
+          avance_tabaski: Avance Tabaski
+          avance_pension: Avance Pension
+          autre: Autre Prêt
+        etats:
+          creation: Création
+          valider: Validé
+          rejeter: Rejeté
+          traite: Traité
+      pension_alimentaire:
+        etats:
+          creation: Création
+          validation_chef_service: Valider Par Chef de Service
+          validation_directeur: Valider Par le Directeur
+          rejeter: Rejeter
+      avis_tier:
+        type_operations:
+          avance_tabaski: Avance pour Tabaski
+          avance_korite: Avance pour Korité
+          revision_base_veuve: Revision pour Base Veuve
+          revision_pension_impaye: Revision pour Pension Impaye
+          pret_bancaire: Prêt Bancaire
+          autre: Autre
+        etats:
+          creation: Création
+          validation: Valider
+          validation_directeur: Valider Par le Directeur
+          rejeter: Rejeter
+      allocataire_pf:
+        regime_matrimoniales:
+          monogame: monogame
+          polygame: polygame
+        sexes:
+          homme: homme
+          femme: femme
+        mode_paiements:
+          <<: *mode_paiements
+      allocataire:
+        type_de_pieces:
+          cni: Carte Nationnale d'identité
+          carte_cedeao: Carte CEDEAO
+          carte_consulaire: Carte Consulaire
+          passeport: Passeport
+          extrait_de_naissance: Extrait de naissance
+        sexes:
+          homme: Homme
+          femme: Femme
+        categories:
+          retraite: Retraite
+          veuve: Veuf/Veuve
+          orphelin: Orphelin
+          pension_alimentaire: Pension alimentaire
+          coordination: Coordination
+          vtr: Vieux travailleur retraité
+          allocation_solidarite: Allocation de solidarite
+          fonds_social: Fonds social
+          remboursement_cotisation: Remboursement cotisation
+          veuve_administration: Veuve administration
+          rente_administration: Rente administration
+          test_interne: Test interne
+          rente_viagere: Rente viagère
+          asj: Association de solidarité Journalier
+        etats:
+          inactif: Inactif
+          actif: Actif
+          soumis: Soumis
+          affecter: Affecté
+          suspendus: Suspendu
+          lever_suspension: Suspension Levée
+          rejete: Rejeté
+          eteint: Éteint
+          repris: Repris
+          valider: En attente Activation
+        mode_paiements:
+          <<: *mode_paiements
+      historique:
+        etats:
+          valide: valide
+          soumis: soumis
+          suspendus: suspendus
+          affecte: affecte
+          rejete: rejete
+          regularise: regularise
+      suspension_allocataire:
+        etats:
+          creation: création
+          soumis: soumis
+          affecte: affecté
+          valide: validé
+          rejete: rejeté
+      ordre_paiement:
+        statuts:
+          en_cours: en cours
+          impaye: impayé
+          marque_impaye: marqué impayé
+          paye: payé
+          regularise: régularisé
+          en_regularisation: en regularisation
+          en_attente_validation: en attente validation
+        type_beneficiaries:
+          conjoint: Conjoint
+          attributaire: Attributaire tierce
+          caf_conjoint: Caf conjoint
+      echeance_paiement:
+        periodes:
+          mensuelle: Mensuel,
+          bimestrielle: Bimestrielle,
+          trimestrielle: Trimestrielle,
+          immediate: Immediate
+
+      prestation_exterieure:
+        sexe_salaries:
+          masculin: Masculin
+          feminin: Féminin
+          inconnu: Inconnu
+          sans_objet: Sans objet
+        type_pieces:
+          cni: Carte nationale d'identité
+          carte_consulaire: Carte consulaire
+          passeport: Passeport
+          not_defined2: Inconnu
+        etats:
+          creation: création
+          valide: valide
+        states:
+          initialisation: création dossier
+          soumission_etat_chef_grp: soumission état de famille
+          dossier_valide: validation dossier
+          dossier_rejete: rejet dossier
+          dossier_suspendu: suspension dossier
+        etat_familles:
+          initialisation: création
+          soumission: soumis
+          validation: validé
+          rejet: rejeté
+        droit_liquidations:
+          initialisation_dt_lq: initialisation droit de liquidation,
+          soumission_dt_liq: soumission droits de liquidation,
+          validation_chef_grp: validation du chef de groupe CAF,
+          rejet_chef_grp: rejet du chef de groupe CAF,
+          validation_chef_sub: validation du chef de subdivision CAF,
+          rejet_chef_sub: rejet du chef de subdivision CAF,
+          validation_comptable: validation du comptable
+        situation_matrimoniale_salaries:
+          marie: marié(e)
+          divorce: divorcé(e)
+          celibataire: célibataire
+          veuf: veuf(ve)
+          not_defined1: Inconnu
+        type_retraites:
+          retraite_normale: normale
+          retraite_anticipee_valide: anticipée pour un valide
+          retraite_anticipee_invalide: anticipée pour un invalide
+          accords_branche: Pénibilité
+      caf_enfant:
+        sexes:
+          masculin: Masculin
+          feminin: Féminin
+          inconnu: Inconnu
+          sans_objet: Sans objet
+        lien_parentes:
+          mariage: Légitime
+          adulterin: Légitimé
+          naturel: Naturel
+          adoption: Adoptif
+          not_defined1: Inconnu
+        type_pieces:
+          cni: Carte nationale d'identité
+          extrait_naisance: Extrait de naissance
+          not_defined2: Inconnu
+      caf_conjoint:
+        etat_couples:
+          marie: Marié(e)
+          divorce: Divorcé(e)
+          decede: Décédé(e)
+          not_defined1: Inconnu
+          non_marie: Non marié(e)
+        sexes:
+          masculin: Masculin
+          feminin: Féminin
+          inconnu: Inconnu
+          sans_objet: Sans objet
+        type_pieces:
+          cni: Carte nationale d'identité
+          carte_consulaire: Carte consulaire
+          passeport: Passeport
+          not_defined2: Inconnu
+      deces_enfant:
+        piece_jointes:
+          certificat_deces: Certificat de décés
+      document_prestation_exterieure:
+        type_documents:
+          piece: pièce d'identité
+          attestation_travail: Attestation de travail
+      cfs_reversion_veuve:
+        mode_paiements:
+          <<: *mode_paiements
+        motif_virments:
+          quitter: Attestation de non engagement ou de cloture du compte
+          changer: RIB et Attestation de non engagement ou de cloture du compte
+          aller_vers: RIB
+        sens_conventions:
+          resident_sn: Résident Au Sénégal
+          resident_fr: Résident En France
+        sexe_salaries:
+          masculin: Masculin
+          feminin: Féminin
+        situation_familiales:
+          celibataire: Célibataire
+          marie: Marié(e)
+          veuf: Veuf(ve)
+          divorce: Divorcé(e)
+          remarie: Remarié(e)
+          separe_de_corps: Séparé(e) de corps
+          separe_de_fait: Séparé(e) de fait
+        natures:
+          retraite: Pension rente ou retraite de vieillesse
+          reversion: Pension ou retraite de Réversion
+        etats:
+          creation: création
+          soumis: soumis
+          traitement_en_cours: traitement en cours
+          valide: validé
+          rejete: rejeté
+        type_retraites:
+          retraite_normale: normale
+          retraite_anticipee_valide: anticipée pour un valide
+          retraite_anticipee_invalide: anticipée pour un invalide
+          accords_branche: Pénibilité
+      liquidation_retraite:
+        sexes:
+          homme: homme
+          femme: femme
+        mode_paiements:
+          <<: *mode_paiements
+        zones:
+          <<: *zones
+        motif_virments:
+          quitter: Attestation de non engagement ou de cloture du compte
+          changer: RIB et Attestation de non engagement ou de cloture du compte
+          aller_vers: RIB
+        type_retraites:
+          retraite_normale: normale
+          retraite_anticipee_valide: anticipée pour un valide
+          retraite_anticipee_invalide: anticipée pour un invalide
+          accords_branche: Pénibilité
+          accords_branche_55: Accord de branche 55
+          accords_branche_56: Accord de branche 56
+          accords_branche_57: Accord de branche 57
+          accords_branche_58: Accord de branche 58
+          accords_branche_59: Accord de branche 59
+          regime_employes_maison: Régime Employés de Maison
+        etats:
+          creation: création
+          soumis: soumis
+          traitement_en_cours: traitement en cours
+          valide: validé
+          rejete: rejeté
+        motif_not_completeds:
+          en_attente_numerisation: Documents en attentes de numérisation
+          ouvert_en_cip: Ouvert en CIP
+          en_attente_documents_obligatoires: Documents obligatoires incomplets
+          declarations_manquantes: Déclarations manquantes
+
+      liquidation_retraite_france:
+        sexes:
+          homme: Homme
+          femme: Femme
+        mode_paiements:
+          <<: *mode_paiements
+        zones:
+          <<: *zones
+        motif_virments:
+          quitter: Attestation de non engagement ou de cloture du compte
+          changer: RIB et Attestation de non engagement ou de cloture du compte
+          aller_vers: RIB
+        sens_conventions:
+          resident_sn: Résident Au Sénégal
+          resident_fr: Résident En France
+        precision_carrieres:
+          carriere_sn: Carriere au Senegal
+          carriere_fr: Carriere en France
+          carriere_sn_et_fr: Carriere au Senegal et en France
+        type_retraites:
+          retraite_normale: normale
+          retraite_anticipee_valide: anticipée pour un valide
+          retraite_anticipee_invalide: anticipée pour un invalide
+          accords_branche: Pénibilité
+          accords_branche_55: Accord de branche 55
+          accords_branche_56: Accord de branche 56
+          accords_branche_57: Accord de branche 57
+          accords_branche_58: Accord de branche 58
+          accords_branche_59: Accord de branche 59
+          regime_employes_maison: Régime Employés de Maison
+          pre_liquidation: Pré-liquidation
+        etats:
+          creation: création
+          soumis: soumis
+          traitement_en_cours: traitement en cours
+          valide: validé
+          rejete: rejeté
+        nature_avantage_conjoints:
+          veillesse: Viellesse
+          invalidite: Invalidité
+          accident_de_travail: Accident de travail
+        motif_not_completeds:
+          en_attente_numerisation: Documents en attentes de numérisation
+          ouvert_en_cip: Ouvert en CIP
+          en_attente_documents_obligatoires: Documents obligatoires incomplets
+          declarations_manquantes: Déclarations manquantes
+        situation_familiales:
+          celibataire: Célibataire
+          marie: Marié(e)
+          veuf: Veuf(ve)
+          divorce: Divorcé(e)
+          remarie: Remarié(e)
+          separe_de_corps: Séparé(e) de corps
+          separe_de_fait: Séparé(e) de fait
+        natures:
+          retraite: Pension rente ou retraite de vieillesse
+          reversion: Pension ou retraite de Réversion
+        regime_matrimoniales:
+          monogame: Monogamie
+          polygame: Polygamie
+          aucun: Aucun
+      cfs_enfant:
+        filiations:
+          direct: Directe
+          indirect: Indirect
+      cfs_conjoint:
+        sexes:
+          homme: Homme
+          femme: Femme
+        etats:
+          creation: En attente de validation
+          valide: Validé
+          rejete: Rejeté
+          deces: Décédé
+          divorce: Divorcé
+          soumis: Soumis
+        type_pieces:
+          cni: Carte nationale d'identité
+          carte_consulaire: Carte consulaire
+          passeport: Passeport
+          extrait_naissance: Extrait d'acte de naissance
+          autre: Autre
+        etat_conjoints:
+          union: Marié
+          divorcer: Divorcé
+          deceder: Décédé
+        regime_matrimoniales:
+          monogame: Monogamie
+          polygame: Polygamie
+      cfs_correspondance:
+        type_lettres:
+          rejet: Rejet
+          retour_cause_fnr: Retour - Demandeur affilié au FNR
+          retour_cause_pas_affilie: Retour - Demandeur non affilié à l'IPRES
+          relance: Relance
+          pieces_complementaires: Piéces Complémentaires
+          validation_carriere: Validation de Carrière
+          notification_anomalie: Notification d'anomalies sur pièces d'état civil
+        provenances:
+          ipres: IPRES
+          france: Caisse Française
+          demandeur: Demandeur
+        titre_destinataires:
+          monsieur_destinataire: Monsieur
+          madame_destinataire: Madame
+        titre_demandeurs:
+          monsieur_demandeur: Monsieur
+          madame_demandeur: Madame
+
+      grossesse:
+        etats:
+          valide: Valide
+          avortement: Avortement
+          fausse_couche: Fausse couc he
+      document_liquidation_retraite:
+        type_documents:
+          cni: Copie de la Carte nationale d'identité numérisée et légalisée du demandeur
+          extrait_naissance: Extrait de naissance de moins de 3 mois
+          certificat_mariage: Certificat de mariage
+          certificat_medical: Certificat Médical
+          cni_epouse: Carte Nationale d'Identité numérisée et légalisée de l'épouse
+          extrait_naissance_epouse: Extrait de naissance de moins de 3 mois de l'épouse
+          passeport: Passeport légalisé
+          carte_consulaire: Carte consulaire
+          rib: Relevé d'Identité Bancaire
+          certif_empl_sal: Certificat d'emploi et de salaire
+          attestation_travail: Attestation de travail
+          procuration_depot_dossier: Procuration pour un dépôt de dossier
+          protocole_accord_branche: Protocole d'accord de la branche
+      dossier_reversion_salary:
+        mode_paiements:
+          <<: *mode_paiements
+      admin/gesadm:
+        sexes:
+          homme: homme
+          femme: femme
+        nations:
+          senegalais: Sénégalaise
+          etranger: Étrangère
+      demande_pf_cloture:
+        motifs:
+          licenciement: Licenciement
+          demission: Démission
+          fonctionnaire: Fonctionnaire
+          autres: Autres
+      dossier_prestation:
+        sexe_salaries:
+          masculin: homme
+          feminin: femme
+        etats:
+          creation: création
+          enregistrer: enregistré
+          soumis: soumis
+          traitement_en_cours: traitement en cours
+          valide: validé
+          rejete: rejeté
+          suspendu: suspendu
+          cloturer: cloturé
+        nationalites:
+          senegalais: Sénégalaise
+          etranger: Étrangère
+      dossier_prestation_avis_tier:
+        type_avis:
+          trop_percu: Trop perçu
+          moins_percu: Moins perçu
+        nature_avis:
+          af: Allocations familiales
+          post: Allocations postnatales
+          pre: Allocations prénatales
+        volet_posts:
+          volet4: Volet 4
+          volet5: Volet 5
+          volet6: Volet 6
+          volet7: Volet 7
+          volet8: Volet 8
+        volet_pres:
+          volet1: Volet 1
+          volet2: Volet 2
+          volet3: Volet 3
+        trimestres:
+          trimestre1: Trimestre 1
+          trimestre2: Trimestre 2
+          trimestre3: Trimestre 3
+          trimestre4: Trimestre 4
+        etats:
+          creation: création
+          soumis: soumis
+          valide: validé
+        statuses:
+          paye: Payé
+          non_paye: Non payé
+      css_transfert_employeur:
+        workflow_states:
+          creation: Création
+          informations_valide: Informations valides
+          soumission: Soumission
+          validation: Validation
+      css_transfert_allocataire:
+        workflow_states:
+          creation: Création
+          informations_valide: Informations valides
+          soumission: Soumission
+          validation: Validation
+      attributaire_tierce:
+        workflow_states:
+          creation: création
+          soumis: soumis
+          valide: validé
+          cloture: cloturé
+          rejete: Rejeté
+      beneficiary_associations_to_dp:
+        type_beneficiaries:
+          conjoint: Conjoint
+          attributaire: Attributaire tierce
+      avocats_huissier:
+        type_intervenants:
+          huissier: Huissier
+          avocat: Avocat
+      dossier_juridique_acte:
+        type_acts:
+          audience: Audience
+          seance: Séance
+      maintien_prestation:
+        type_maintiens:
+          chomage: Chômage involontaire
+          deces: Décès
+        etats:
+          actif: Actif
+          inactif: Inactif
+      dossier_cnav:
+        mois:
+          janvier: Janvier
+          fevrier: Février
+          mars: Mars
+          avril: Avril
+          mai: Mai
+          juin: Juin
+          juillet: Juillet
+          aout: Aout
+          septembre: Septembre
+          octobre: Octobre
+          novembre: Novembre
+          decembre: Décembre
+        etats:
+          creation: Création
+          soumis: Liquidé
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+          valide_liquidation: Liquidation Validée
+          rejete_liquidation: Liquidation Rejetée
+          valide_inspection: Inspection Validée
+          rejete_inspection: Inspection Rejetée
+        usages:
+          a_payer: A payer par l'IPRES
+          a_envoyer: A envoyer aux autres caisses
+        trimestres:
+          premier: 1er
+          deuxieme: 2e
+          troisieme: 3e
+          quatrieme: 4e
+        type_conventions:
+          cnav: CNAV
+          caf_nord_conv: CAF - Nord Convention
+          caf_coordination_benin: CAF - Coordination Bénin
+          caf_coordination_togo: CAF - Coordination Togo
+          caf_coordination_burkina: CAF - Coordination Burkina Faso
+          caf_coordination_mali: CAF - Coordination Mali
+          caf_coordination_civ: CAF - Coordination Côte d'Ivoire
+          caf_coordination_gabon: CAF - Coordination Gabon
+          caf_coordination_conakry: CAF - Coordination Guinée Conakry
+          hors_conv_togo: Hors Convention Togo
+          hors_conv_benin: Hors Convention Bénin
+          hors_conv_civ: Hors Convention Cote d'Ivoire
+          hors_conv_burkina: Hors Convention Burkina
+          hors_conv_mali: Hors Convention Mali
+          hors_conv_gabon_retraite: Hors Convention Gabon - Retraite
+          hors_conv_gabon_rentes: Hors Convention Gabon - Rentes
+          hors_conv_conakry: Hors Convention Guinée Conakry
+          conv_cipres_togo: Convention CIPRES Togo
+          conv_cipres_mali: Convention CIPRES Mali
+          conv_cipres_burkina: Convention CIPRES Burkina Faso
+          conv_cipres_niger: Convention CIPRES Niger
+          conv_cipres_benin: Convention CIPRES Bénin
+          cse: Convention Sénégalo-Espagnole
+          enim: ENIM
+      allocataire_cnav:
+        etats:
+          creation: Création
+          soumis: Liquidé
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+          valide_liquidation: Liquidation Validée
+          rejete_liquidation: Liquidation Rejetée
+          valide_inspection: Inspection Validée
+          rejete_inspection: Inspection Rejetée
+        mode_paiements:
+          <<: *mode_paiements
+      dossier_maternite:
+        type_pieces:
+          cni_tp: Carte nationale d'identité
+          cc: Carte consulaire
+          passport: Passeport
+        mode_paiements:
+          <<: *mode_paiements
+        etats:
+          creation: Création
+          soumis: Soumis
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+          suspendu: Suspendu
+          cloture: Cloturé
+        nombre_part_impots:
+          un: '1'
+          un_cinq: '1,5'
+          deux: '2'
+          deux_cinq: '2,5'
+          trois: '3'
+          trois_cinq: '3,5'
+          quatre: '4'
+          quatre_cinq: '4,5'
+          cinq: '5'
+        part_trimfs:
+          un_trimf: '1'
+          deux_trimf: '2'
+      dossier_maternite_avis_tier:
+        type_avis:
+          trop_percu: Trop perçu
+          moins_percu: Moins perçu
+        etats:
+          creation: création
+          soumis: soumis
+          valide: validé
+        statuses:
+          paye: Payé
+          non_paye: Non payé
+        type_motifs:
+          salaire_reference_errone: Erreur sur le salaire de référence
+          nombre_jours_errone: Erreur sur le nombre de jours à indemniser
+      remboursement_cotisation:
+        etats:
+          en_attente: en_attente
+          soumis: soumis
+          valide: validé
+          rejete: rejeté
+      document_dossier_prestation:
+        type_documents:
+          cni: Copie de la Carte nationale d'identité numérisée et légalisée du demandeur
+          extrait_naissance: Extrait de naissance de moins de 3 mois
+          certificat_mariage: Certificat de mariage
+          certificat_divorce: Certificat de divorce
+          cni_epouse: Copie de la Carte nationale d'identité numérisée et légalisée de l'épouse
+          extrait_naissance_epouse: Extrait de naissance de moins de 3 mois de l'épouse
+          carte_consulaire: Carte consulaire
+          passeport: Passeport
+      carriere_dossier_prestation:
+        trimestres:
+          trimestre1: Trimestre 1
+          trimestre2: Trimestre 2
+          trimestre3: Trimestre 3
+          trimestre4: Trimestre 4
+      carriere_dossier_maternite:
+        trimestres:
+          trimestre1: Trimestre 1
+          trimestre2: Trimestre 2
+          trimestre3: Trimestre 3
+          trimestre4: Trimestre 4
+      document_allocat_familiale:
+        type_documents:
+          certificat_medicale: Certificat médicale
+          certificat_scolarite: Certificat de scolarité
+      document_dossier_maternite:
+        type_documents:
+          cni: Carte d'identité nationale
+          demande_conges: Formulaire de demande de congé maternité
+          attestation_travail: Attestation de travail
+          attestation_susp_act: Attestation de suspension d’activité
+          certificat_medicale_gross: Certificat médical de grossesse
+          last_bul_salaire: Dernier bulletin de salaire
+      allocation_postnatale:
+        volets:
+          volet4: Déclaration d’accouchement
+          volet5: Volet 5
+          volet6: Volet 6
+          volet7: Volet 7
+          volet8: Volet 8
+        etats:
+          creation: Création
+          soumis: Liquidé
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+      allocation_prenatale:
+        volets:
+          volet1: Volet 1
+          volet2: Volet 2
+          volet3: Volet 3
+        etats:
+          creation: Création
+          soumis: Liquidé
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+      allocation_familiale:
+        trimestres:
+          trimestre1: Trimestre 1
+          trimestre2: Trimestre 2
+          trimestre3: Trimestre 3
+          trimestre4: Trimestre 4
+        etats:
+          creation: Création
+          soumis: Soumis
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+          suspendu: Suspendu
+          echu: Echu
+        motif_rejets:
+          motif1: motif 1
+          motif2: motif 2
+          motif3: motif 3
+      indemnite_conges_maternite:
+        tranche_paiements:
+          avant_acouchement: Tranche 1
+          apres_acouchement: Tranche 2
+          apres_reprise: Tranche 3
+          tranche_prolongation: Tranche 4
+        lieu_accouchements:
+          senegal: Sénégal
+          hors_senegal: Hors Du Sénégal
+        etats:
+          creation: Création
+          soumis: Liquidé
+          traitement_en_cours: Traitement en cours
+          valide: Validé
+          rejete: Rejeté
+      demande_remboursement_cotisation:
+        motif_remboursements:
+          surplus_cotisations_encaissees: Surplus de cotisations encaissées
+          quitter_definitivement_pays: Etranger qui veut quitter définitivement le pays
+          cotisation_au_dela_60_ans: Cotisation au-delà de 60 ans
+          cotisation_au_dela_55_ans: Cotisation au-delà de 55 ans
+        mode_paiements:
+          <<: *mode_paiements
+        motif_virments:
+          quitter: Attestation de non engagement ou de cloture du compte
+          changer: RIB et Attestation de non engagement ou de cloture du compte
+          aller_vers: RIB
+      representant_legal:
+        type_of_identities:
+          cdao: Carte d'identité CEDEAO
+          conc: Carte Consulaire
+          nin: Carte d'identité nationale
+          pass: Passeport
+          autre: Autres pièces
+      missing_declaration:
+        etats:
+          creation: Création
+          soumis: Liquidé
+          manquante: Manquante
+          valide: Validé
+          rejete: Rejeté
+      missing_ligne_declaration:
+        motif_sorties:
+          aucun: Aucun
+          deces: Décés
+          licenciement_demission: Licenciement, Fin de contrat, Démission
+          retraite: Retraite
+          mutation: Mutation
+        sexes:
+          homme: Homme
+          femme: Femme
+      immatriculation:
+        type_immatriculations:
+          volontaire: volontaire
+          forcee: forcée
+        type_etablissements:
+          hdqt: siége
+          brnc: agence/succursale
+          cnst: chantier
+        type_pieces:
+          cdao: Carte d'identité CEDEAO
+          conc: Carte Consulaire
+          nin: Carte d'identité nationale
+          pass: Passeport
+          autre: Autres pièces
+        type_employeurs:
+          ASSO: Association
+          COOP: Cooperative
+          DOM: Domestique
+          GIE: GIE
+          INDV: Entreprise Individuelle
+          LIB: Profession Libérale
+          MAIN: Maintien d'affiliation
+          NGO: ONG
+          PROJ: PROJET
+          PUB_PARA: Structure publique et parapublique
+          PVT: Société privée
+          REP_DIP: Représentation diplomatique
+          TIND: Travailleur Indépendant
+          statut_juridiques:
+          CONC: GIE
+          DEVP: Projet de développement
+          DIPR: Représentant diplomatique / Organisation International
+          ENTE: SA
+          LIBP: Profession Libérale
+          LOCE: SARL
+          PHYP: SUARL
+          PUB: Société en commandite
+          PUBP: Etablissement publique et parapublique
+          PVT2: Association / Coopérative
+        etats:
+          creation: création
+          soumis: soumis
+          valide: validée
+        statuts:
+          adm: 1,
+          acfie: 2,
+          acfis: 3,
+          avfie: 4,
+          aviecacss: 5,
+          avfiecaipres: 6,
+          iesv: 7
+      document_immatriculation:
+        type_documents:
+          declaration_etablissement: Déclaration d'établissement visé par l'inspection du travail
+          avis_immatriculation: Avis d'immatriculation
+          registre_commerce: Registre de commerce
+          formulaire_adhesion: Formulaire adhésion
+          demande_ecrite: Demande écrite
+          copie_cin_employeur: Copie de la pièce d'identité de l'employeur
+          contrats_travail: Contrats de travail des employés visés par l'inspection du travail
+          copie_piece_employe: Copie pièce d'identité des employés
+      salarie_immatriculation:
+        type_pieces:
+          cdao: Carte d'identité CEDEAO
+          conc: Carte Consulaire
+          nin: Carte d'identité nationale
+          pass: Passeport
+          autre: Autres pièces
+        nature_contrats:
+          cdi: Contrat à Durée Indéterminé
+          cdd: Contrat à Durée Déterminé
+          jou: Journalier
+          sta: Stage
+          spe: Contrat Spécial
+        etat_civils:
+          cel: Célibataire
+          div: Divorcé
+          mar: Marié
+          veu: Veuve/Veuf
+        sexes:
+          homme: Homme
+          femme: Femme
+        temps_travails:
+          tps_plein: Temps Plein
+          tps_partiel: Temps Partiel
+      facture:
+        statuts:
+          ouverte: Ouverte
+          fermee: Fermée
+      paiement:
+        mode_paiements:
+          <<: *mode_paiements
+      paiement_allocataire:
+        mode_paiements:
+          <<: *mode_paiements
+        periodes:
+          mensuelle: Mensuel
+          bimestrielle: Bimestrielle
+          trimestrielle: Trimestrielle
+          immediate: Immediate
+        etats:
+          en_attente_paiement: En attende de paiement
+          paye: Payé
+          rejete: Rejeté
+          retourne: Retourné
+          en_attente_validation_instruction: En attente de validation
+      moratoire:
+        statuts:
+          soumise: Soumise
+          validee: Validée
+          annulee: Annulée
+      fusion/reglement:
+        CODE_TYPE_REGLEMENTs:
+          versement: Versement
+          avance: Avance
+          solde: Solde
+      enfant:
+        etats:
+          creation: En attente de validation
+          valide: Validé
+          rejete: Rejeté
+          deces: Décédé
+          soumis: soumis
+        origine_enfants:
+          mariage: Légitime
+          adulterin: Légitimé
+          naturel: Naturel
+          adoption: Adoptif
+        type_pieces:
+          cni: Carte nationale d'identité
+          extrait_naissance: Extrait d'acte de naissance
+          autre: Autre
+          #bulletin_naissance: Bulletin de naissance
+        sexes:
+          masculin: masculin
+          feminin: feminin
+          inconnu: inconnu
+      conjoint:
+        rang_conjoints:
+          premiere: Première
+          deuxieme: Deuxième
+          troisieme: Troisième
+          quatrieme: Quatrième
+        etat_civils:
+          marie: Marié
+          celibataire: Célibataire
+        sexes:
+          homme: HOMME
+          femme: FEMME
+        etats:
+          creation: En attente de validation
+          valide: Validé
+          rejete: Rejeté
+          deces: Décédé
+          divorce: Divorcé
+          soumis: soumis
+        type_pieces:
+          cni: Carte nationale d'identité
+          carte_consulaire: Carte consulaire
+          passeport: Passeport
+          extrait_naissance: Extrait d'acte de naissance
+          autre: Autre
+        etat_conjoints:
+          union: Marié
+          divorcer: Divorcé
+          deceder: Décédé
+        regime_matrimoniales:
+          monogame: monogamie
+          polygame: polygamie
+      ascendants_salarie:
+        type_piece_peres:
+          cni_p: Carte nationale d'identité
+          extrait_naissance_p: Extrait de naissance
+        type_piece_meres:
+          cni_m: Carte nationale d'identité
+          extrait_naissance_m: Extrait de naissance
+      declaration_divorce_ou_deces_conjoint:
+        type_pieces:
+          certificat_divorce: Certificat de divorce
+          certificat_deces: Certificat de décés
+        status_with_conjoints:
+          divorcer: Divorcé
+          deceder: Décédé
+      regularisation_pension:
+        motif_regularisation_pensions:
+          annulation_de_suspension: Annulation de suspension de pension
+          annulation_de_suspension_avec_rappel: Annulation de suspension de pension avec rappel
+          reordonnancement_de_pension: Ré-ordonnancement de pension
+          regularisation_pour_les_majorants: Régularisation pour les majorations
+          autre_motif: Autre motif de régularisation
+          pension_heredite: Pension hérédité
+        etats:
+          creation: création
+          soumis: soumis
+          affecte: affecté
+          valide: validé
+          regularise: regularisé
+          rejete: rejeté
+          annuler: annulé
+      regulation_pension:
+        motif_regulation_pensions:
+          annulation_de_suspension: Suite à une annulation de suspension de pension
+          reordonnancement_de_pension: Suite à un ré-ordonnancement de pension
+          regulation_pour_les_majorants: Suite à une régularisation pour les majorations
+        etats:
+          creation: création
+          soumis: soumis
+          affecte: affecte
+          valide: validé
+          rejete: rejeté
+          annuler: annulé
+      update_grappe_familiale:
+        etats:
+          soumis: soumis
+          affecte: affecte
+          valide: Validé
+          rejete: Rejeté
+        type_demandes:
+          deces: Décédé
+          divorce: Divorcé
+      modifier_adresse:
+        etats:
+          soumis: soumis
+          affecte: affecte
+          valide: Validé
+          rejete: Rejeté
+          deces: Décédé
+          divorce: Divorcé
+      modifier_mode_paiement:
+        etats:
+          soumis: soumis
+          affecte: affecte
+          valide: Validé
+          rejete: Rejeté
+          deces: Décédé
+          divorce: Divorcé
+        mode_paiements:
+          <<: *mode_paiements
+        motif_virements:
+          mise_en_place_virement: Mise en place d’un virement
+          changement_de_banque: Changement de banque
+          changement_de_compte: Changement de numéro de compte dans la même agence
+      base_reversion_salary:
+        etats:
+          creation: création
+          soumis: soumis
+          valide: validé
+          rejete: rejeté
+        sexes:
+          homme: Homme
+          femme: Femme
+        motif_not_completeds:
+          en_attente_numerisation: Documents en attentes de numérisation
+          ouvert_en_cip: Ouvert en CIP
+          en_attente_documents_obligatoires: Documents obligatoires incomplets
+          declarations_manquantes: Déclarations manquantes
+      admin/bareme:
+        periodes:
+          mensuelle: mensuelle
+          annuelle: annuelle
+      declaration:
+        statuts:
+          creation: En cours de création
+          soumis: Soumise
+      rentier:
+        etats:
+          inactif: Inactif
+          actif: Actif
+          suspendus: Suspendu
+          rejete: Rejete
+          en_attente_activation: En attente activation
+          eteint: Eteint
+        sexes:
+          homme: Homme
+          femme: Femme
+      admin/montant_mensualite_volet:
+        num_volets:
+          volet1: Volet 1
+          volet2: Volet 2
+          volet3: Volet 3
+          volet4: Volet 4
+          volet5: Volet 5
+          volet6: Volet 6
+          volet7: Volet 7
+          volet8: Volet 8
+      compta_transaction:
+        mode_paiements:
+          <<: *mode_paiements
+        statuts:
+          en_attente_validation: En attente de validation
+          en_cours: En cours
+          paye: Payé
+          marque_impaye: Marqué impayé
+          impaye: Impayé
+          regularise: Régularisé
+      bordereau_collectif:
+        bordereau_types:
+          normal: Normal
+          complementaire: Complémentaire
+  date:
+    abbr_day_names:
+      - dim
+      - lun
+      - mar
+      - mer
+      - jeu
+      - ven
+      - sam
+    abbr_month_names:
+      -
+      - jan.
+      - fév.
+      - mar.
+      - avr.
+      - mai
+      - juin
+      - juil.
+      - août
+      - sept.
+      - oct.
+      - nov.
+      - déc.
+    day_names:
+      - dimanche
+      - lundi
+      - mardi
+      - mercredi
+      - jeudi
+      - vendredi
+      - samedi
+    formats:
+      default: "%d/%m/%Y"
+      long: "%d/%m/%Y"
+      periode: "%m/%Y"
+      short: "%e %b"
+      date_month_year_concise: '%d-%m-%y'
+    month_names:
+      -
+      - janvier
+      - février
+      - mars
+      - avril
+      - mai
+      - juin
+      - juillet
+      - août
+      - septembre
+      - octobre
+      - novembre
+      - décembre
+    order:
+      - :day
+      - :month
+      - :year
+  datetime:
+    distance_in_words:
+      about_x_hours:
+        one: environ une heure
+        other: environ %{count} heures
+      about_x_months:
+        one: environ un mois
+        other: environ %{count} mois
+      about_x_years:
+        one: environ un an
+        other: environ %{count} ans
+      almost_x_years:
+        one: presqu'un an
+        other: presque %{count} ans
+      half_a_minute: une demi-minute
+      less_than_x_seconds:
+        zero: moins d'une seconde
+        one: moins d'une seconde
+        other: moins de %{count} secondes
+      less_than_x_minutes:
+        zero: moins d'une minute
+        one: moins d'une minute
+        other: moins de %{count} minutes
+      over_x_years:
+        one: plus d'un an
+        other: plus de %{count} ans
+      x_seconds:
+        one: 1 seconde
+        other: "%{count} secondes"
+      x_minutes:
+        one: 1 minute
+        other: "%{count} minutes"
+      x_days:
+        one: 1 jour
+        other: "%{count} jours"
+      x_months:
+        one: 1 mois
+        other: "%{count} mois"
+      x_years:
+        one: 1 an
+        other: "%{count} ans"
+    prompts:
+      second: Seconde
+      minute: Minute
+      hour: Heure
+      day: Jour
+      month: Mois
+      year: Année
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: doit être accepté(e)
+      blank: doit être rempli(e)
+      confirmation: ne concorde pas avec %{attribute}
+      empty: doit être rempli(e)
+      equal_to: doit être égal à %{count}
+      even: doit être pair
+      exclusion: n'est pas disponible
+      greater_than: doit être supérieur à %{count}
+      greater_than_or_equal_to: doit être supérieur ou égal à %{count}
+      inclusion: n'est pas inclus(e) dans la liste
+      invalid: n'est pas valide
+      less_than: doit être inférieur à %{count}
+      less_than_or_equal_to: doit être inférieur ou égal à %{count}
+      model_invalid: 'Validation échouée : %{errors}'
+      not_a_number: n'est pas un nombre
+      not_an_integer: doit être un nombre entier
+      odd: doit être impair
+      other_than: doit être différent de %{count}
+      present: doit être vide
+      required: doit exister
+      taken: n'est pas disponible
+      too_long:
+        one: est trop long (pas plus d'un caractère)
+        other: est trop long (pas plus de %{count} caractères)
+      too_short:
+        one: est trop court (au moins un caractère)
+        other: est trop court (au moins %{count} caractères)
+      wrong_length:
+        one: ne fait pas la bonne longueur (doit comporter un seul caractère)
+        other: ne fait pas la bonne longueur (doit comporter %{count} caractères)
+    template:
+      body: 'Veuillez vérifier les champs suivants : '
+      header:
+        one: 'Impossible d''enregistrer ce(tte) %{model} : 1 erreur'
+        other: 'Impossible d''enregistrer ce(tte) %{model} : %{count} erreurs'
+  helpers:
+    select:
+      prompt: Veuillez sélectionner
+    submit:
+      create: Créer un(e) %{model}
+      submit: Enregistrer ce(tte) %{model}
+      update: Modifier ce(tte) %{model}
+  number:
+    currency:
+      format:
+        delimiter: " "
+        format: "%n %u"
+        precision: 2
+        separator: ","
+        significant: false
+        strip_insignificant_zeros: false
+        unit: "€"
+    format:
+      delimiter: " "
+      precision: 3
+      separator: ","
+      significant: false
+      strip_insignificant_zeros: false
+    human:
+      decimal_units:
+        format: "%n %u"
+        units:
+          billion: milliard
+          million: million
+          quadrillion: million de milliards
+          thousand: millier
+          trillion: billion
+          unit: ''
+      format:
+        delimiter: ''
+        precision: 3
+        significant: true
+        strip_insignificant_zeros: true
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one: octet
+            other: octets
+          eb: Eo
+          gb: Go
+          kb: ko
+          mb: Mo
+          pb: Po
+          tb: To
+    percentage:
+      format:
+        delimiter: ''
+        format: "%n%"
+    precision:
+      format:
+        delimiter: ''
+  support:
+    array:
+      last_word_connector: " et "
+      two_words_connector: " et "
+      words_connector: ", "
+  time:
+    am: am
+    formats:
+      default: "%d %B %Y %Hh %Mmin %Ss"
+      long: "%A %d %B %Y %Hh%M"
+      short: "%d %b %Hh%M"
+      long_without_time: "%A %d %B %Y"
+      custom: "%d %b %Y à %Hh%M"
+    pm: pm
+  module_arret_travail:
+    admin_menu:
+      arret_travail_label: 'Accidents de Travail'
+      toute_les_demandes: 'Toutes les demandes'
+      ajouter_dossier: 'Ajouter un dossier'
+    
+  

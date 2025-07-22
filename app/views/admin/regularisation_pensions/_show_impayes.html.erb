@@ -1,0 +1,50 @@
+<% if (@regularisation_pension.regularisation_impayes.en_attente.size > 0) and
+  @regularisation_pension.ajoute_par == current_user %>
+  <%= link_to "Valider toutes les lignes impayés", admin_regularisation_pension_valider_all_impayes_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+<% end %>
+<br>
+<br/>
+
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+  <tr>
+    <th scope="col">N° ordre <i class="fas fa-first-order-alt"></i></th>
+    <th scope="col">Exercice</th>
+    <th scope="col">Période</th>
+    <th scope="col">Numéro période</th>
+    <th scope="col">Opérations</th>
+    <th scope="col">Dossier type</th>
+    <th scope="col">Montant</th>
+    <th scope="col">Status</th>
+    <th colspan="2"></th>
+  </tr>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @regularisation_pension.regularisation_impayes.each do |regul| %>
+    <tr>
+      <td><%= regul.numero_ordre %></td>
+      <td><%= regul.annee %></td>
+      <td><%= regul.periode %></td>
+      <td><%= regul.numero_periode %></td>
+      <td><%= regul.code_operations %></td>
+      <td><%= regul.dossier_type %></td>
+      <td align="right"><%= format_cfa regul.montant, false %></td>
+      <td><%= regul.etat %></td>
+
+      <% if regul.en_attente? and @regularisation_pension.ajoute_par == current_user %>
+        <td style="width: 75px">
+          <%= (link_to 'Valider', admin_regularisation_pension_valider_ligne_impaye_path(@regularisation_pension, regularisation_impaye_id: regul.id), class: 'btn btn-outline btn-success btn-xs') %>
+        </td>
+      <% end %>
+      <% if regul.en_attente? and @regularisation_pension.ajoute_par == current_user %>
+        <td style="width: 75px">
+          <%= (link_to 'Rejeter', admin_regularisation_pension_annuler_ligne_impaye_path(@regularisation_pension, regularisation_impaye_id: regul.id), class: 'btn btn-outline btn-danger btn-xs') %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,18 @@
+class CreateCarrieres < ActiveRecord::Migration[5.2]
+  def change
+    create_table :carrieres do |t|
+      t.string :numero_affiliation, :limit => 15
+      t.date :date_entree
+      t.date :date_sortie
+      t.integer :type_regime
+      t.float :salaire
+      t.string :ref_employeur, :limit => 15
+      t.string :motif_rejet
+      t.integer :etat
+      t.datetime :date_traitement
+      t.integer :traite_par_id
+
+      t.timestamps
+    end
+  end
+end

@@ -1,0 +1,47 @@
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>PERIODE D'ACTIVITE</h5>
+          <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>TOTAL POINTS</h5>
+          <h1 class="no-margins">
+            <%= format_cfa @total_points, false %> /
+            <%#= format_cfa @carrieres.map(&:calcul_points).sum, false %>
+          </h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>LINEAIRE ?</h5>
+          <h1 class="no-margins"><%#= state_yes_no Psrm::Carriere.lineaire?(current_participant.matric) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+      <% if @carrieres.nil?%>
+        <%= render 'carrieres/liste',
+                   carrieres: @carrieres,
+                   show_employeur: true,
+                   show_employe: false %> %>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>

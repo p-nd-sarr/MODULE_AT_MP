@@ -1,0 +1,1 @@
+json.partial! "admin_jour_ouvrable_annuels/admin_jour_ouvrable_annuel", admin_jour_ouvrable_annuel: @admin_jour_ouvrable_annuel

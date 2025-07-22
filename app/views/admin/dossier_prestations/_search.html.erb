@@ -1,0 +1,135 @@
+<h3>Critères de recherche</h3>
+<br>
+
+<ul style="list-style-type: none; padding: 0">
+  <li class="" style="float: left; margin-right: 3px">
+    <a class="btn btn-primary" data-toggle="tab" href="#collapseExample1">
+      Critères générales
+    </a>
+  </li>
+  <li>
+    <a class="btn btn-primary" data-toggle="tab" href="#collapseExample2">
+      Critères conjoint
+    </a>
+  </li>
+</ul>
+<br>
+<div class="tab-content">
+  <div id="collapseExample1" class="tab-pane">
+    <div class="card card-header">
+      <h3>Critères générales</h3>
+    </div>
+    <hr>
+    <div class="card card-body">
+      <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+        <div class="row">
+          <div class="col-sm-3">
+            <%= f.label :num_affiliation_cont, 'Numéro Affiliation' %>
+            <%= f.search_field :num_affiliation_cont, class: 'form-control' %>
+          </div>
+
+          <div class="col-sm-3">
+            <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+            <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+          </div>
+
+          <div class="col-sm-3">
+            <%= f.label :prenom_cont, 'Prénom' %>
+            <%= f.search_field :prenom_cont, class: 'form-control' %>
+          </div>
+
+          <div class="col-sm-3">
+            <%= f.label :nom_cont, 'Nom' %>
+            <%= f.search_field :nom_cont, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <%= f.label :agence_id_eq, 'Agence de gestion' %>
+            <%= f.collection_select :agence_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest,
+                                    { :include_blank => true }, class: 'form-control' %>
+          </div>
+          <div class="col-sm-3">
+            <%= f.label :nationalite_eq, 'Nationalité' %>
+            <%= f.select :nationalite_eq,
+                         DossierPrestation.nationalites.to_a.map { |nationalite| [DossierPrestation.human_enum_name(:nationalite, nationalite[0]), nationalite[1]] },
+                         { :include_blank => true }, class: 'form-control' %>
+          </div>
+          <div class="col-sm-3">
+            <%= f.label :etat_eq, 'Etat' %>
+            <%= f.select :etat_eq, DossierPrestation.workflow_spec.states.keys.map { |k| [DossierPrestation.workflow_spec.states[k].meta[:label], k] },
+                         { :include_blank => true }, class: 'form-control' %>
+          </div>
+          <div class="col-sm-3">
+            <%= f.label :participant_css_ancien_matric_cont, 'Ancien numéro CSS' %>
+            <%= f.search_field :participant_css_ancien_matric_cont, class: 'form-control' %>
+          </div>
+          <div class="col-sm-3">
+            <%= f.label :nin_cont, 'NIN' %>
+            <%= f.search_field :nin_cont, class: 'form-control' %>
+          </div>
+          <div class="col-sm-3">
+            <%= f.label :employeur_actuel_cont, 'Numéro employeur' %>
+            <%= f.search_field :employeur_actuel_cont, class: 'form-control' %>
+          </div>
+          <% if is_active_controller('admin/dossier_prestations') and is_active_action('index') %>
+            <div class="col-sm-3">
+              <%= f.label :est_repris_eq, 'Est repris?' %>
+              <%= f.select :est_repris_eq, [['Non', 0], ['Oui', 1]],
+                           { :include_blank => true }, class: 'form-control' %>
+            </div>
+          <% end %>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+        <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+      <% end %>
+    </div>
+    <br>
+  </div>
+  <div id="collapseExample2" class="tab-pane">
+    <div class="card card-header">
+      <h3>Critères conjoint</h3>
+    </div>
+    <hr>
+    <div class="card card-body">
+      <%= form_tag(admin_dossier_prestations_path, method: :get) do %>
+        <div class="row">
+          <div class="col-sm-3">
+            <%= label_tag 'NIN CONJOINT' %> <br>
+            <%= text_field_tag :nin_conjoint, nil, class: 'form-control' %>
+          </div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="row">
+          <div class="col-sm-4">
+            <%= submit_tag 'Rechercher', id: 'submit_button', name: nil, class: 'btn btn-primary' %>
+            <%= submit_tag 'Exporter', id: 'action_export', class: 'btn' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_prestations_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_dossier_prestations_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

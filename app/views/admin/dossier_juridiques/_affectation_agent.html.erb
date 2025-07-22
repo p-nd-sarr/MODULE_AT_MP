@@ -1,0 +1,42 @@
+<div class="modal inmodal" id="affectation_agent" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-arrow-right modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Affectation dossier
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th align="center">Prenom</th>
+              <th align="center">Nom</th>
+              <th colspan="3">Options</th>
+            </tr>
+            </thead>
+            <% @agents.each do |agent| %>
+              <tr>
+                <td> <%= agent.prenom %> </td>
+                <td> <%= agent.nom %> </td>
+                <td width="200px">
+                  <% if @dossier_juridique.is_set_manager(agent.id) %>
+                    <span> Est titulaire  <%= link_to 'Retirer', admin_annuler_affectation_dossier_path(@dossier_juridique, agent.id), data: { confirm: 'En êtes vous sûr?', turbolinks: false }, class: 'btn btn-outline btn-danger btn-xs' if @dossier_juridique.current_state <= :affectation and (current_user.directeur_juridique? or current_user.chef_service_direction_juridique?) %></span>
+                  <% else %>
+                    <%= link_to 'Affecter au dossier', admin_affecter_dossier_path(@dossier_juridique, agent.id), data: { confirm: 'En êtes vous sûr?', turbolinks: false }, class: 'btn btn-outline btn-danger btn-xs' if @dossier_juridique.current_state <= :affectation and (current_user.directeur_juridique? or current_user.chef_service_direction_juridique?) %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

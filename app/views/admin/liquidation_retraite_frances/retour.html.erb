@@ -1,0 +1,22 @@
+<%= content_for :titre_page, "Motif du retour de la demande de liquidation retraite" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox-content">
+        <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_france_retourner_process_path(@demande_liquidation), layout: :horizontal) do |f| %>
+          <%= f.text_area :motif, label: 'Motif' %>
+
+          <div class="hr-line-dashed"></div>
+
+          <div class="form-group row">
+            <div class="col-sm-4 col-sm-offset-2">
+              <%= link_to 'Annuler', admin_liquidation_retraite_frances_path, class: 'btn btn-white' %>
+              <%= f.button 'Retourner Dossier', class: 'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

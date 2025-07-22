@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  admin_type_regime: one
+  periode: 1
+  valeur_point: 1.5
+  taux: 1.5
+  plafond_salaire: 1.5
+  date_debut_validite: 2020-01-09
+  date_fin_validite: 2020-01-09
+
+two:
+  admin_type_regime: two
+  periode: 1
+  valeur_point: 1.5
+  taux: 1.5
+  plafond_salaire: 1.5
+  date_debut_validite: 2020-01-09
+  date_fin_validite: 2020-01-09

@@ -1,0 +1,322 @@
+<%= content_for :titre_page, "Details régularisation de pension [#{@regularisation_pension.workflow_state}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <%= link_to 'Liste demandes', admin_allocataire_regularisation_pensions_path(@regularisation_pension.allocataire), class: 'btn btn-white btn-sm' %>
+  <% if @regularisation_pension.current_state > :soumis_directeur %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_regularisation_pension_lettre_notification_path(@regularisation_pension, format: :pdf), class: 'btn btn-outline btn-warning btn-xs' %>
+  <% end %>
+
+  <% unless @regularisation_pension.motif.nil? %> 
+    <p> <strong>Motif dossier retourné :  </strong> <span class="text-warning"><%= (" #{@regularisation_pension.motif} ") unless @regularisation_pension.motif.nil? %> </span> </p>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+
+  <!-- Création et soumission de la demande -->
+  <% if @regularisation_pension.creation? %>
+    <% if @regularisation_pension.pret_pour_soumission? and @regularisation_pension.ajoute_par == current_user %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre</button>
+    <% end %>
+    <%= (link_to 'Supprimer',admin_regularisation_pension_path(@regularisation_pension), method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'}, class: 'btn btn-danger btn-sm fa fa-trash') %>
+  <% end %>
+
+  <!-- Demande instruite -->
+  <% if @regularisation_pension.soumis? %>
+    <%= (link_to 'Instruire Dossier', admin_regularisation_pension_instruire_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_instruction? %>
+    <%#= (link_to 'Retourner Dossier', admin_demande_remboursement_cotisation_retour_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-danger btn-sm') if current_user.chef_section_instruction? %>
+    <% if current_user.chef_section_instruction? %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+    <% end%>
+  <% end %>
+
+  <% if @regularisation_pension.chef_agence_peut_valider(current_user) %>
+    <%= (link_to 'Validation chef agence', admin_regularisation_pension_valider_chef_agence_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm')  %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <% if @regularisation_pension.soumis_chef_service?  and  current_user.chef_service_allocation? %>
+    <%= (link_to 'Validation chef service', admin_regularisation_pension_valider_chef_service_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm')  %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+    <% if @regularisation_pension.soumis_chef_section_liquidation?  and  current_user.chef_section_liquidation? %>
+    <%= (link_to 'Validation chef section liquidation', admin_regularisation_pension_valider_chef_section_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm')  %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+
+  <!-- Le Dp effectue le bon à payer   -->
+  <% if @regularisation_pension.soumis_directeur? and current_user.directeur_prestation? %>
+    <%= (link_to 'Validation directeur_prestation', admin_regularisation_pension_valider_directeur_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm')  %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+  <% if @regularisation_pension.soumis_inspection? and current_user.inspection? %>
+     <%= (link_to 'Validation inspection', admin_regularisation_pension_valider_inspection_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm')  %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif"style="float: right; margin-left: 3px;">RETOURNER DOSSIER</button>
+  <% end %>
+ 
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="progressbar-wrapper">
+    <ul class="progressbar">
+      <li class="<%= ("active") if @regularisation_pension.current_state >= :creation %>">Création</li>
+      <% if !@regularisation_pension.creer_au_siege?%>
+        <li class="<%= ("active") if @regularisation_pension.current_state >= :soumis_chef_agence %>">Validation chef agence</li>
+      <% end %>
+         <li class="<%= ("active") if @regularisation_pension.current_state >= :soumis_chef_section_liquidation %>">Validation  chef  section </li>
+      <li class="<%= ("active") if @regularisation_pension.current_state >= :soumis_chef_service %>">Validation  chef  service </li>
+      <li class="<%= ("active") if @regularisation_pension.current_state >= :soumis_directeur %>">Validation  directeur </li>
+      <% if current_user.inspection?%>
+        <li class="<%= ("active") if @regularisation_pension.current_state >= :validation_inspection %>">Validation
+          inspection
+        </li>
+      <% end %>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <h4>
+            N°
+            affiliation: <%= link_to @regularisation_pension.numero_allocataire, admin_allocataire_path(@regularisation_pension.allocataire.id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+          </h4>
+          <% unless @regularisation_pension.numero_dossier.nil? %>
+            <h4>
+              N° dossier: <%= @regularisation_pension.numero_dossier %>
+            </h4>
+          <% end %>
+          <div class="wrapper wrapper-content">
+            <div>
+              <ul class="nav nav-tabs">
+                <!-- <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="tab-link-top"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @regularisation_pension.etat_civil_demandeur_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @regularisation_pension.etat_civil_demandeur_valide? %>
+                </a></li>
+                <% if @regularisation_pension.pension_heredite? %>
+                  <li class="tab-link-top"><a data-toggle="tab" href="#tab-2"><i class="fa fa-user"></i>Bénéficiaire
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @regularisation_pension.beneficiaire_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @regularisation_pension.beneficiaire_valide? %>
+                  </a></li>
+                <% end %>
+                <li class="tab-link-top"><a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @regularisation_pension.documents_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @regularisation_pension.documents_valide? %>
+                </a></li>
+
+                <% if @regularisation_pension.reordonnancement_de_pension? or @regularisation_pension.pension_heredite? %>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Liste des imapyés
+                      <%= '<span class="label label-warning">impayés à valider</span>'.html_safe if !@regularisation_pension.impayes_valides and @regularisation_pension.creation? %>
+                    </a></li>
+                <% end %>
+
+                <% if @regularisation_pension.annulation_de_suspension_avec_rappel? %>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Liste mois rappel
+                      <%#= '<span class="label label-warning">impayés à valider</span>'.html_safe if !@regularisation_pension.impayes_valides and @regularisation_pension.creation? %>
+                    </a></li>
+                <% end %>
+
+                <li class="tab-link-top"><a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Recap
+                  <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.documents_valide? %>
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-7"><i class="fa fa-folder"></i>Historiques
+                </a></li>
+              </ul>
+            </div>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane tab-pane-section">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@regularisation_pension.etat_civil_demandeur_valide? and current_user.can_allocataire? and @regularisation_pension.ajoute_par == current_user %>
+                    <%= link_to "Je valide les informations sur l'état civil", admin_regularisation_pension_valider_etat_civil_demandeur_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_etat_civil' %>
+                </div>
+              </div>
+
+              <% if @regularisation_pension.pension_heredite? %>
+                <div id="tab-2" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% if !@regularisation_pension.beneficiaire_valide? and current_user.can_allocataire? and @regularisation_pension.ajoute_par == current_user %>
+                      <%= link_to "Je valide les informations du bénéficiaire", admin_regularisation_pension_valider_beneficiaire_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_beneficiary' %>
+                  </div>
+                </div>
+              <% end %>
+
+              <div id="tab-3" class="tab-pane tab-pane-section">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@regularisation_pension.documents_valide? and current_user.can_allocataire? %>
+                    <%= link_to "Je valide tous les documents", admin_regularisation_pension_valider_documents_path(@regularisation_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_documents' %>
+                  <br>
+                </div>
+              </div>
+              <% if @regularisation_pension.reordonnancement_de_pension? or @regularisation_pension.pension_heredite? %>
+                <div id="tab-4" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'show_impayes' %>
+                    <br>
+                  </div>
+                </div>
+              <% end %>
+
+              <% if @regularisation_pension.annulation_de_suspension_avec_rappel? %>
+                <div id="tab-5" class="tab-pane tab-pane-section">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'show_mois_rappel' %>
+                    <br>
+                  </div>
+                </div>
+              <% end %>
+
+
+              <div id="tab-6" class="tab-pane tab-pane-section">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_tableau_recapitulatif' %>
+                  <br>
+                </div>
+              </div>
+
+
+              <div id="tab-7" class="tab-pane tab-pane-section">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_historiques' %>
+                  <br>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'soumission_form' %>
+<%= render 'retourner_form' %>
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@regularisation_pension, url: admin_regularisation_pension_affecter_allocataire_path(@regularisation_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @regularisation_pension.numero_allocataire %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+            </div>
+            <div class="modal-body">
+              <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+              <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+ <style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 60%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+ </style>

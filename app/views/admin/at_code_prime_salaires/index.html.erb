@@ -1,0 +1,44 @@
+<%= content_for :titre_page, 'Composants Salaire' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_at_code_prime_salaire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Code</th>
+        <th scope="col">Designation</th>
+        <th scope="col">Prise en compte</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @at_code_prime_salaires.each do |at_code_prime_salaire| %>
+        <tr>
+          <td><%= at_code_prime_salaire.code %></td>
+          <td><%= at_code_prime_salaire.designation %></td>
+          <td>
+            <% unless at_code_prime_salaire.prise_en_compte.nil? %>
+              <% if at_code_prime_salaire.prise_en_compte? %>
+                Oui
+              <% else %>
+                Non
+              <% end %>
+            <% end %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_at_code_prime_salaire_path(at_code_prime_salaire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', [:admin, at_code_prime_salaire], method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

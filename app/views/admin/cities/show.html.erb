@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_city" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_cities_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_city_path(@admin_city), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter admin_city', new_admin_city_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Description:</strong>
+              <%= @admin_city.description %>
+            </p>
+
+
+            <p>
+              <strong>Pays CAF:</strong>
+              <% @pays.each do |pays| %>
+                <% if pays.id == @admin_city.admin_country_id %>
+                  <%= pays.description %>
+                <% end %>
+              <% end %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

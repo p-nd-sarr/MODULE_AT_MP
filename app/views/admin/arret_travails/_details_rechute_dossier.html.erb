@@ -1,0 +1,245 @@
+   <% if @demande_arret_travail.current_state >= :rechute_en_creation %> 
+    <div class="row">
+    
+        <div class="col-lg-4 float-lg-right" style="margin-top: 30px; float: right">
+
+             <%if @demande_arret_travail.rechute_en_creation? && (current_user.technicien_at? || current_user.technicien_direction_at?) %>
+                <%= link_to "Soumettre ",  admin_arret_travail_soumettre_rechute_path(@demande_arret_travail), class: 'btn btn-primary btn-sm' %>
+            <% end%>
+
+            <%if @demande_arret_travail.rechute_soumise? && (current_user.chef_agence? || current_user.chef_division_at?) %>
+                <%= link_to "Soumettre au medecin conseil ",  admin_arret_travail_soumission_rechute_mc_path(@demande_arret_travail), class: 'btn btn-primary btn-sm' %>
+            <% end%>
+
+            <%if @demande_arret_travail.soumission_rechute_mc? && (current_user.medecin_conseil?) %>
+                <%= link_to "Validation MC",  admin_arret_travail_rechute_validee_medecin_path(@demande_arret_travail), class: 'btn btn-success btn-sm' %>
+            <% end%>
+
+            <%if @demande_arret_travail.validation_rechute_mc? && (current_user.chef_agence? || current_user.chef_division_at?) %>
+                <%= link_to "Validation rechute ",  admin_arret_travail_rechute_validee_path(@demande_arret_travail), class: 'btn btn-primary btn-sm' %>
+            <% end%>
+
+            <%if @demande_arret_travail.rechute_validee? && (current_user.technicien_at? || current_user.technicien_direction_at?) %>
+                <%= link_to "réouvrir le dossier",  admin_arret_travail_reouvrire_dossier_at_path(@demande_arret_travail), class: 'btn btn-success btn-sm' %>
+            <% end%>
+        </div>
+    
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="wrapper wrapper-content animated fadeIn">
+            <div class="progressbar-wrapper1">
+                <ul class="progressbar1">
+                    <li class="<%= ("active") if @demande_arret_travail.current_state >= :rechute_en_creation %>">Rechute en création</li>
+                    <li class="<%= ("active") if @demande_arret_travail.current_state  >= :rechute_soumise %>">Chef Service/Agence </li>
+                    <li class="<%= ("active") if @demande_arret_travail.current_state  >= :soumission_rechute_mc %>">Validation MC</li>
+                      <li class="<%= ("active") if @demande_arret_travail.current_state  >= :validation_rechute_mc %>">Validation Chef Service/Agence </li>
+                    
+                    <li class="<%= ("active") if @demande_arret_travail.current_state >= :dossier_reouvert %>">Dossier réouvert </li>
+                </ul>
+            </div><!--End ProgressBar"-->
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12" style="margin-top: 30px">
+            <div class="panel-body">
+               <div class="row form-group mb-5">
+                <h2 style="text-align: left;"><span class="text-navy">Informations du dossier:</span> </h2>
+                  <div class="hr-line-dashed"></div>
+                  <div class="col-lg-6">
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                            <dt>N° Dossier: </dt>
+                        </div>
+                        <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                            <dd class="mb-1"><%=@demande_arret_travail.num_dossier%></dd>
+                        </div>
+                    </d1>
+                 
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date cloture:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1">
+                                <%= !@demande_arret_travail.date_cloture_dossier.nil? ? 
+                                    @demande_arret_travail.date_cloture_dossier.strftime("%d/%m/%Y"):
+                                    "pas défini"
+                                %>
+                            </dd>
+                        </div>
+                    </d1>
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Ouvert par:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1"><%= @demande_arret_travail.user.email%> (<%=@demande_arret_travail.user.type_profil%>)</dd>
+                        </div>
+                    </d1>
+                     <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Etat du dossier:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1">
+                                 <span class="label label-warning"> <strong> <%=@demande_arret_travail.workflow_state%></strong></span>
+                            </dd>
+                        </div>
+                     </d1>
+                  
+                 
+                
+                </div>
+                <div class="col-lg-6">
+  
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Numéro affiliation:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <dd class="mb-1 text-navy"><%= @demande_arret_travail.numero_affiliation %> </dd>
+                        </div>
+                    </d1>
+
+                    <d1 class="row mb-0">
+                        <div class="col-sm-6" style="text-align: right;">
+                            <dt>Date réouverture:</dt>
+                        </div>
+                        <div class="col-sm-6" style="text-align: left;">
+                            <%= !@demande_arret_travail.date_reouverture_dossier.nil? ? 
+                                @demande_arret_travail.date_reouverture_dossier.strftime("%d/%m/%Y"):
+                                "pas défini"
+                            %>
+                            
+                        </div>
+                    </d1>
+
+                   <d1 class="row mb-0">
+                    <div class="col-sm-6" style="text-align: right;">
+                        <dt>Cloturé par:</dt>
+                    </div>
+                    <div class="col-sm-6" style="text-align: left;">
+                        <dd class="mb-1"><%= @demande_arret_travail.user.email%> (<%=@demande_arret_travail.user.type_profil%>)</dd>
+                    </div>
+                    </d1>
+               
+                    
+                
+                </div>
+            </div>
+            </div>
+        </div> <!-- End col -->
+    </div> <!-- End row -->
+    <div class="row">
+        <div class="col-lg-12" style="margin-top: 30px">
+            <div class="panel-body">
+               <div class="row form-group mb-5">
+                <h2 style="text-align: left;"><span class="text-navy">Documents pour la réouverture du dossier:</span> </h2>
+                  <div class="hr-line-dashed"></div>
+                  <div class="col-lg-6">
+                    <dt>Certificat de médical:</dt>
+                    <d1 class="row mb-0">
+                        <div class="col-lg-6" style="text-align: right; margin-top: 0px;">
+                            <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @demande_arret_travail.certificat_medical, target: :_blank if @demande_arret_travail.certificat_medical.attached? %>
+                            <%#= link_to image_tag(@demande_arret_travail.certificat_medical.preview(resize: "300x300>"), class: "m-t-xs img-responsive"), @demande_arret_travail.certificat_medical, target: :_blank if @demande_arret_travail.certificat_medical.attached? %>
+                        </div>
+                   </d1>
+               
+                    
+                
+                  </div>
+            </div>
+            </div>
+        </div> <!-- End col -->
+    </div> <!-- End row -->
+<% end %>
+
+
+<style>
+
+  .progressbar-wrapper1 {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 11%;
+  }
+
+  .progressbar1 li {
+    list-style-type: none;
+    width: 15%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar1 li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar1 li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar1 li:first-child:after {
+    content: none;
+  }
+
+  .progressbar1 li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar1 li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar1 li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar1 li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar1 li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar1 {
+    counter-reset: step;
+  }
+
+  .progressbar1 li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+  .progressbar1 li.rejet.active:before {
+    background-color: red;
+  }
+</style>
+             

@@ -1,0 +1,67 @@
+<% if @regularisation_pension.reordonnancement_de_pension? or @regularisation_pension.pension_heredite? %>
+  <table class="table table-bordered  table-hover">
+    <thead>
+    <tr>
+      <th scope="col">N° ordre <i class="fas fa-first-order-alt"></i></th>
+      <th scope="col">Montant</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @regularisation_pension.regularisation_impayes.valide.each do |regul| %>
+      <tr>
+        <td><%= regul.numero_ordre %></td>
+        <td align="right"><strong><%= format_cfa regul.montant, false %></strong></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% if @regularisation_pension.annulation_de_suspension_avec_rappel? %>
+  <% cache @regularisation_pension do %>
+    <table class="table table-bordered  table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Périodes rappel <i class="fas fa-first-order-alt"></i></th>
+        <th scope="col">Montant rappel</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @regularisation_pension.liste_periode_rappel.each do |periode| %>
+        <tr>
+          <td align="left"><strong><%= periode['periode'] %> </strong></td>
+          <td align="left"><strong><%= periode['montant_rappel'] %> </strong></td>
+        </tr>
+      <% end %>
+      <tr style="background-color: #f8ac59; color: white">
+        <td align="left"><strong>Montant à régulariser </strong></td>
+        <td align="left"><strong><%= @regularisation_pension.calcul_montant_total_rappel %> </strong></td>
+      </tr>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>
+
+<% if @regularisation_pension.autre_motif? %>
+  <% cache @regularisation_pension do %>
+    <table class="table table-bordered  table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Description <i class="fas fa-first-order-alt"></i></th>
+        <th scope="col">Montant</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr>
+        <td>Montant à régulariser</td>
+        <td align="right">
+          <strong><%= format_cfa @regularisation_pension.montant_total_regularise, false %> FCFA</strong>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>

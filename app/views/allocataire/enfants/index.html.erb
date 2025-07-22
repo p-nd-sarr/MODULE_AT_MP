@@ -1,0 +1,100 @@
+<%= content_for :titre_page, "Enfants" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour à accueil', allocataire_root_path, class: ' btn btn-white btn-sm fa fa-arrow-left' %>
+  <%= link_to ' Ajouter un enfant', new_allocataire_enfant_path, class: ' btn btn-success btn-sm fa fa-plus' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-title">
+      <h3>Liste des enfants </h3>
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+      <% if @enfants.count.zero? %>
+        <div class="col-lg-12" style="margin:30px">
+          <h1> La liste des enfants est vide !!! <h1>
+        </div>
+      <% else %>
+        <% @enfants.each do |enfant| %>
+          <div class="col-lg-3">
+            <div class="contact-box center-version">
+
+              <%= link_to [:allocataire, enfant] do %>
+                <h3 class="m-b-xs"><strong><%= enfant.full_name %></strong></h3>
+                <br>
+                <p>
+                  Né le <%= l enfant.date_naissance %> 
+                </p>
+                <br>
+                <p>
+                 <span class='label label-info'><%= Enfant.human_enum_name(:etat, enfant.etat) %></span> <br>
+                </p>
+              <% end %>
+              <div class="contact-box-footer">
+                <div class="m-t-xs btn-group">
+                  <% if enfant.can_be_edited? %>
+                    <%= link_to 'modifier', edit_allocataire_enfant_path(enfant), class: 'btn btn-outline btn-primary btn-xs' %>
+                  <% end %>
+                  <% if enfant.can_be_edited? %>
+                    <%= link_to 'supprimer', [:allocataire, enfant], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                  <% end %>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        <% end %>
+       <% end %>
+      </div> <!-- end row -->
+
+
+      <!--<div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Prénom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Date de naissance</th>
+            <th scope="col">Prénom de la mère</th>
+            <th scope="col">Nom de la mère</th>
+            <th scope="col">Prénom du père</th>
+            <th scope="col">Nom du père</th>
+            <th scope="col">Etat</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <%# @enfants.each do |enfant| %>
+            <tr>
+              <td><%#= enfant.prenom %></td>
+              <td><%#= enfant.nom %></td>
+              <td><%#= l enfant.date_naissance %></td>
+              <td><%#= enfant.prenom_mere %></td>
+              <td><%#= enfant.nom_mere %></td>
+              <td><%#= enfant.prenom_pere %></td>
+              <td><%#= enfant.nom_pere %></td>
+              <td><%#= Enfant.human_enum_name(:etat, enfant.etat) %></td>
+              <td style="width: 75px">
+                <%#= link_to 'détails', [:salarie, enfant], class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+              <td style="width: 75px">
+                <%# if enfant.can_be_edited? %>
+                  <%#= link_to 'modifier', edit_salarie_enfant_path(enfant), class: 'btn btn-outline btn-primary btn-xs' %>
+                <%# end %>
+              </td>
+              <td style="width: 75px">
+                <%# if enfant.can_be_edited? %>
+                  <%#= link_to 'supprimer', [:salarie, enfant], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                <%# end %>
+              </td>
+            </tr>
+          <%# end %>
+          </tbody>
+        </table>
+      </div>-->
+</div>
+</div>
+</div>

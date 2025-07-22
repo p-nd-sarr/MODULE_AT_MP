@@ -1,0 +1,31 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Type',
+      'Numéro allocataire',
+      'Prénom allocataire',
+      'Nom allocataire',
+      'Prénom',
+      'Nom',
+      'Date naissance',
+      'Lieu naissance',
+      'Date d ajout',
+      'Etat',
+  ]
+  sheet.add_row titre, :b => true
+  @reversion_veuves.each do |t|
+    sheet.add_row [
+                      t.type_ayant_droit_human,
+                      t.numero_allocataire,
+                      t.allocataire.try(:prenom),
+                      t.allocataire.try(:nom),
+                      t.prenom,
+                      t.nom,
+                      t.date_naissance,
+                      t.lieu_naissance,
+                      t.created_at,
+                      ReversionVeuve.workflow_spec.states[t.workflow_state.to_sym].meta[:label]
+                  ]
+  end
+end

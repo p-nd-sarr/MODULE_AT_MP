@@ -1,0 +1,27 @@
+<%= content_for :titre_page, "Motif du rejet" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= bootstrap_form_for(@allocation_familiale, url: admin_allocation_familiale_rejeter_create_path(@allocation_familiale), layout: :horizontal) do |f| %>
+      <div class="col-sm-6">
+        <%= f.select :motif_rejet,
+                     AllocationFamiliale::MOTIF_REJET.keys.collect { |motif_rejet| [AllocationFamiliale.human_enum_name(:motif_rejet, motif_rejet), motif_rejet] }, include_blank: true,
+                     label: "Motif du rejet" , required: true %>
+      </div>
+      <%= f.text_area :commentaire_rejet, label: 'Commentaire' %>
+
+      <div class="hr-line-dashed"></div>
+
+      <div class="form-group row">
+        <div class="col-sm-4 col-sm-offset-2">
+          <%= link_to 'Annuler', admin_allocation_familiales_path, class: 'btn btn-white' %>
+          <%= f.button 'Rejeter', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+</div>
+</div>

@@ -1,0 +1,34 @@
+<%= paginate @at_rechutes %>
+
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Numéro dossier</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Date décès</th>
+    <th scope="col">Etat</th>
+    <th colspan="3">Actions </th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @at_rechutes.each do |at_rechute| %>
+      <tr>
+        <td><%=at_rechute.id%></td>
+        <td><%=at_rechute.arret_travail.num_dossier%></td>
+        <td><%=at_rechute.arret_travail.prenom_salarie%></td>
+        <td><%=at_rechute.arret_travail.nom_salarie%></td>
+        <td><%=at_rechute.date_rechute%></td>
+        <td><%=at_rechute.workflow_state%> 
+      
+        </td>
+        <td style="width: 75px">
+         <%= link_to 'détails', [:admin, at_rechute.arret_travail, at_rechute], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= paginate @at_rechutes %>

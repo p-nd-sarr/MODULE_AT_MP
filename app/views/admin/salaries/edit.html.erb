@@ -1,0 +1,12 @@
+<%= content_for :titre_page, "Edition Salarié" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_salarie_path(@salarie.matric), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'form' %>
+  </div>
+</div>
+

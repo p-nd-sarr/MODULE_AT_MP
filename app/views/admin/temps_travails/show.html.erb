@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_temps_travail" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_temps_travails_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_temps_travail_path(@admin_temps_travail), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_temps_travail', new_admin_temps_travail_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_temps_travail.code %>
+                </p>
+
+                            <p>
+                  <strong>Description:</strong>
+                  <%= @admin_temps_travail.description %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

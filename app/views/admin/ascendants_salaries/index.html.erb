@@ -1,0 +1,47 @@
+<%= content_for :titre_page, 'Ascendants Salaries' %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Ajouter', new_admin_ascendants_salary_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Numéro affiliation</th>
+      <th scope="col">Prénom père</th>
+      <th scope="col">Nom père</th>
+      <th scope="col">Prénom mère</th>
+      <th scope="col">Nom mère</th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+      <th scope="col"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @ascendants_salaries.each do |ascendants_salary| %>
+    <tr>
+      <td></td>
+      <td><%= ascendants_salary.numero_affiliation %></td>
+      <td><%= ascendants_salary.prenom_pere %></td>
+      <td><%= ascendants_salary.nom_pere %></td>
+      <td><%= ascendants_salary.prenom_mere %></td>
+      <td><%= ascendants_salary.nom_mere %></td>
+      <td style="width: 75px">
+        <%= link_to 'détails', admin_ascendants_salary_path(ascendants_salary), class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'modifier', edit_admin_ascendants_salary_path(ascendants_salary), class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'supprimer', admin_ascendants_salary_path(ascendants_salary), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+      </td>
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

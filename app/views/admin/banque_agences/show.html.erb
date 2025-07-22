@@ -1,0 +1,40 @@
+<%= content_for :titre_page, "Détails Agence bancaire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_banque_agences_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_banque_agence_path(@admin_banque_agence), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter une agence', new_admin_banque_agence_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Banque:</strong>
+              <%= link_to @admin_banque_agence.admin_banque.nom, @admin_banque_agence.admin_banque %>
+            </p>
+
+            <p>
+              <strong>Nom:</strong>
+              <%= @admin_banque_agence.nom %>
+            </p>
+
+            <p>
+              <strong>Code:</strong>
+              <%= @admin_banque_agence.code %>
+            </p>
+
+            <p>
+              <strong>Bank branch:</strong>
+              <%= @admin_banque_agence.bank_branch_id %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

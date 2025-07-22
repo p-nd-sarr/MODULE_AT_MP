@@ -1,0 +1,93 @@
+<div class="row" style="margin-top:30px">
+  <div class="col-lg-6">
+  
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:prenom) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:nom) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:date_naissance).strftime("%d/%m/%Y") %>
+      </div>
+    </d1>
+      <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> NIN:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.at_consolidation.arret_travail.try(:nin_salarie)%>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:telephone) %>
+      </div>
+    </d1>
+
+    
+  </div>
+
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Numero rente:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:numero_rentier) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Numero sinistre:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:numero_sinistre) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date accident:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.at_consolidation.arret_travail.try(:date_accident).strftime("%d/%m/%Y")  %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-market"></span> Taux IPP:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.try(:taux_ipp_retenu)  %> %</dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-info"></span> Etat:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @rentier.etat_human %></dd>
+      </div>
+    </d1>
+  </div>
+
+</div>

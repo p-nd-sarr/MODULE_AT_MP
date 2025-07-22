@@ -1,0 +1,266 @@
+<%= content_for :titre_page, "Prestation exterieure / Détails conjoint" %>
+
+<%= content_for :titre_page_autres_details do %>
+  statut dossier: <%= @prestation_exterieure.get_status? ? 'Complet' : 'Incomplet' %>
+  <br>
+
+  Salarié : <%= @prestation_exterieure.prenom unless @prestation_exterieure.nil? %> <%= @prestation_exterieure.nom unless @prestation_exterieure.nil? %>
+  <br>
+  Etat du dossier : <%= "#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}" %>
+  <br>
+  Crée le : <%= l(@prestation_exterieure.created_at) %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_prestation_exterieure_grappe_familliale_path(@prestation_exterieure), class: 'btn btn-white btn-xs' %>
+  <% unless @conjoint.has_indemnities? %>
+    <br><br>
+    <%= link_to 'Ajouter', admin_prestation_exterieure_add_conjoint_path(@prestation_exterieure), class: 'btn btn-primary btn-xs' %>
+    <%= link_to 'Modifier', admin_prestation_exterieure_edit_conjoint_path(@prestation_exterieure, @conjoint), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'supprimer', admin_prestation_exterieure_delete_caf_conjoint_path(@prestation_exterieure.id, @conjoint.id), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-title text-success">
+          <h5> Informations sur le salarié </h5>
+        </div>
+        <div class="ibox-content">
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Numéro pièce:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1"><%= @prestation_exterieure.nin_salarie %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Prénom du salarié:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1 text-navy"><%= @prestation_exterieure.prenom %> </dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Nom du salarié:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1 text-navy"><%= @prestation_exterieure.nom %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Date de naissance:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1"><%= @prestation_exterieure.date_naissance unless @prestation_exterieure.date_naissance.nil? %></dd>
+            </div>
+          </d1>
+          <d1 class="row mb-0">
+            <div class="col-sm-6">
+              <dt>Option matrimoniale:</dt>
+            </div>
+            <div class="col-sm-6">
+              <dd class="mb-1"><%= PrestationExterieure.human_enum_name(:situation_matrimoniale_salarie, @prestation_exterieure.situation_matrimoniale_salarie) unless @prestation_exterieure.situation_matrimoniale_salarie.nil? %></dd>
+            </div>
+          </d1>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="ibox">
+        <div class="ibox-title text-success">
+          <h5> Informations sur le (la) conjoint(e)</h5>
+          <div class="ibox-tools">
+            <%#= (link_to ' Modifier', edit_admin_conjoint_path(@conjoint), class: 'btn btn-success btn-outline btn-xs fa fa-edit') %>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <div class="row">
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Prénom & nom du conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1 text-navy"><%= @conjoint.prenom %> <%= @conjoint.nom %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Nom jeune fille:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1 text-navy"><%= @conjoint.nom_jeune_fille %> </dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Date de naissance:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @conjoint.date_naissance.strftime("%d/%m/%Y") unless @conjoint.date_naissance.nil? %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Lieu de naissance:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1 text-navy"><%= @conjoint.lieu_naissance %> </dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Date de célébration du mariage:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @conjoint.date_mariage.strftime("%d/%m/%Y") unless @conjoint.date_mariage.nil? %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Est bénéficiaire ?:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= state_yes_no @conjoint.is_beneficiary? %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Est repris ?:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= state_yes_no @conjoint.est_repris? %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Situation avec le conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= CafConjoint.human_enum_name(:etat_couple, @conjoint.etat_couple) unless @conjoint.etat_couple.nil? %></dd>
+                  </div>
+                </d1>
+                <% unless @conjoint.date_divorce.nil? %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6">
+                      <dt>Date de divorce:</dt>
+                    </div>
+                    <div class="col-sm-6 text-warning">
+                      <dd class="mb-1"><%= @conjoint.date_divorce %></dd>
+                    </div>
+                  </d1>
+                <% end %>
+                <% unless @conjoint.date_separation.nil? %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6">
+                      <dt>Date de séparation:</dt>
+                    </div>
+                    <div class="col-sm-6 text-danger">
+                      <dd class="mb-1"><%= @conjoint.date_separation %></dd>
+                    </div>
+                  </d1>
+                <% end %>
+
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Type de pièce:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= Conjoint.human_enum_name(:type_piece, @conjoint.type_piece) unless @conjoint.type_piece.nil? %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Numéro de la pièce:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @conjoint.nin_conjoint %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Date de création conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @conjoint.created_at.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6">
+                    <dt>Créé par:</dt>
+                  </div>
+                  <div class="col-sm-6">
+                    <dd class="mb-1"><%= @conjoint.ajoute_par.full_name unless @conjoint.ajoute_par.nil? %> </dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-12">
+                <hr>
+
+                <h3>Liste des documents fournis:</h3>
+                <% if @conjoint.piece_identite.attached? %>
+                  <div class="col-sm-6">
+                    <d1 class="row mb-0">
+                      <div class="col-sm-6">
+                        <dt>Pièce d'identification:</dt>
+                      </div>
+                      <div class="col-sm-6">
+                        <dd class="mb-1"><%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.piece_identite, target: :_blank if @conjoint.piece_identite.attached? %></dd>
+                      </div>
+                    </d1>
+                  </div>
+                <% end %>
+                <% if @conjoint.certificat_mariage.attached? %>
+                  <div class="col-sm-6">
+                    <d1 class="row mb-0">
+                      <div class="col-sm-6">
+                        <dt>Certificat de mariage:</dt>
+                      </div>
+                      <div class="col-sm-6">
+                        <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.certificat_mariage, target: :_blank if @conjoint.certificat_mariage.attached? %></dd>
+                      </div>
+                    </d1>
+                  </div>
+                <% end %>
+                <% if @conjoint.certificat_deces.attached? %>
+                  <div class="col-sm-6">
+                    <d1 class="row mb-0">
+                      <div class="col-sm-6">
+                        <dt>Certificat de décès:</dt>
+                      </div>
+                      <div class="col-sm-6">
+                        <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.certificat_deces, target: :_blank %></dd>
+                      </div>
+                    </d1>
+                  </div>
+                <% end %>
+                <% if @conjoint.certificat_divorce.attached? %>
+                  <div class="col-sm-6">
+                    <d1 class="row mb-0">
+                      <div class="col-sm-6">
+                        <dt>Certificat de divorce:</dt>
+                      </div>
+                      <div class="col-sm-6">
+                        <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.certificat_divorce, target: :_blank %></dd>
+                      </div>
+                    </d1>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

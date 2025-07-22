@@ -1,0 +1,30 @@
+
+
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+    <tr>
+      <th scope="col">N° Dossier</th>
+      <th scope="col">Matricule</th>
+      <th scope="col">Prénom</th>
+      <th scope="col">Nom</th>
+      <th scope="col">Etat</th>
+      <th colspan="2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @modifier_adresses.each do |adresse| %>
+      <tr>
+        <td><%= adresse.numero_dossier %></td>
+        <td><%= adresse.numero_allocataire %></td>
+        <td><%= adresse.prenom %></td>
+        <td><%= adresse.nom %></td>
+        <td><%= adresse.workflow_state %></td>
+        <td>
+          <%= link_to 'détails', [:admin, adresse.allocataire, adresse], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+        
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

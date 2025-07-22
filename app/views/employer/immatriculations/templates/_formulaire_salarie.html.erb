@@ -1,0 +1,167 @@
+<%= bootstrap_form_for([:employer, @salarie_immatriculation], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-12") do |f| %>
+
+  <div class="col-sm-5" style="padding-left: 2%" >
+    <h4>Ajouter un Salarié</h4>
+    <div class="row" id="add_salarie1" >
+
+      <div class="col-sm-12" style="padding-left: 2%">
+
+        <div class="ibox">
+          <div class="ibox-title" style="background: #1ab394; color: #fff">
+            <h5>Informations Salarié</h5>
+            <div class="ibox-tools">
+              <a class="collapse-link">
+                <i class="fa fa-chevron-up"style="color: #fff"></i>
+              </a>
+            </div>
+          </div>
+          <div class="ibox-content" style="">
+            <%= f.text_field :nom, label: 'Nom', required: true %>
+            <%= f.text_field :prenom, label: 'Prenom', required: true %>
+
+
+            <%= f.select :sexe,
+                         SalarieImmatriculation::SEXE.keys.collect { |sexe| [SalarieImmatriculation.human_enum_name(:sexe, sexe), sexe] }, label: 'Sexe', required: true  %>
+            <%= f.select :etat_civil,
+                         SalarieImmatriculation::ETAT_CIVIL.keys.collect { |etat_civil| [SalarieImmatriculation.human_enum_name(:etat_civil, etat_civil), etat_civil] }, label: 'Etat Civil', required: true  %>
+            <%= f.collection_select :pays_naissance,@pays,:id,:description, include_blank: true, label: 'Pays de Naissance', tag: 'Pays de Naissance', required: true  %>
+            <%= f.text_field :ville_naissance, label: 'Ville de naissance', required: true  %>
+            <%= f.date_select :date_naissance, label: "Date naissance",
+                              start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+            <%= f.text_field :numero_registre_naiss, label: 'Numero de registre de naissance' %>
+            <%= f.text_field :nom_pere, label: 'Nom du père' %>
+            <%= f.text_field :prenom_pere, label: 'Prénom du père' %>
+            <%= f.text_field :nom_mere, label: 'Nom mère' %>
+            <%= f.text_field :prenom_mere, label: 'Prénom de la Mère' %>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12" style="padding-left: 2%" >
+
+        <div class="ibox">
+          <div class="ibox-title" style="background: #1ab394; color: #fff">
+            <div class="accordion-heading" class="ibox-title" >
+              <h5>Pièce d'identité</h5>
+              <div class="ibox-tools">
+                <a class="accordion-toggle collapse-link"
+                   data-toggle="collapse"
+                   data-parent="#accordion2"
+                   href="#collapseOne" style="background: #1ab394; color: #fff">
+                  <i class="fa fa-chevron-down" style="color: #fff"></i>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+
+
+          <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+            <%= f.collection_select :nationalite, @pays ,:id,:description, label: 'Nationalite', tag: 'Nationalite', required: true  %>
+            <%= f.select :type_piece,
+                         SalarieImmatriculation::TYPE_PIECE.keys.collect { |type_piece| [SalarieImmatriculation.human_enum_name(:type_piece, type_piece), type_piece] }, label: 'Type de pièce' %>
+            <%= f.text_field :numero_piece, label: 'Numero de pièce', required: true  %>
+            <%= f.text_field :nin, label: 'NIN', required: true  %>
+            <%= f.text_field :nin_cedeao, label: 'NIN CEDEAO' %>
+            <%= f.date_select :date_delivrance, label: "Date délivrance",
+                              start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+            <%= f.date_select :date_expiration, label: "Date d expiration",
+                              start_year: (Date.today - 100.year).year, end_year: Time.now.year + 18 , required: true %>
+            <%= f.collection_select :pays_delivrance,Admin::Country.all.order(:description),:id,:description, label: 'Nationalite', tag: 'Nationalite', required: true  %>
+            <%= f.text_field :employer_precedent, label: 'Employeur Précédent' %>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-sm-12" style="padding-left: 2%">
+
+        <div class="ibox">
+          <div class="ibox-title" style="background: #1ab394; color: #fff">
+            <div class="accordion-heading" class="ibox-title" >
+              <h5>Lieu de Résidence</h5>
+              <div class="ibox-tools">
+                <a class="accordion-toggle collapse-link"
+                   data-toggle="collapse"
+                   data-parent="#accordion2"
+                   href="#collapseOne" style="background: #1ab394; color: #fff">
+                  <i class="fa fa-chevron-down" style="color: #fff"></i>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+
+
+          <div id="collapseOne" class="accordion-body collapse ibox-content">
+            <%= f.collection_select :pays,@pays,:id,:description, include_blank: true, label: 'Pays', tag: 'Pays', required: true  %>
+
+            <%= f.collection_select :region, @regions,:id,:designation, include_blank: true, label: 'Region', tag: 'region', required: true  %>
+            <%= f.collection_select :departement, @departements,:id,:designation, include_blank: true, label: 'Departement', required: true  %>
+            <%= f.collection_select :arondissement, @villes,:id,:designation, include_blank: true, label: 'Arrondissement', required: true  %>
+            <%= f.collection_select :commune,  @communes,:id,:designation, include_blank: true, label: 'Commune', required: true  %>
+            <%= f.collection_select :quartier, @quartiers,:id,:designation, include_blank: true, label: 'Quartier', required: true  %>
+            <%= f.text_field :adresse, label: 'Adresse', required: true  %>
+            <%= f.text_field :boite_postal, label: 'Boite postal' %>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="col-sm-12" style="padding-left: 2%">
+
+        <div class="ibox">
+          <div class="ibox-title" style="background: #1ab394; color: #fff">
+            <div class="accordion-heading" class="ibox-title" >
+              <h5>Informations contractuelles</h5>
+              <div class="ibox-tools">
+                <a class="accordion-toggle collapse-link"
+                   data-toggle="collapse"
+                   data-parent="#accordion2"
+                   href="#collapseOne" style="background: #1ab394; color: #fff">
+                  <i class="fa fa-chevron-down" style="color: #fff"></i>
+                </a>
+
+              </div>
+
+            </div>
+          </div>
+
+
+          <div id="collapseOne" class="accordion-body collapse ibox-content">
+            <%= f.text_field :type_mouvement, label: 'Type de Mouvement', required: true  %>
+            <%= f.select :nature_contrat,
+                         SalarieImmatriculation::NATURE_CONTRAT.keys.collect { |nature_contrat| [SalarieImmatriculation.human_enum_name(:nature_contrat, nature_contrat), nature_contrat] }, label: 'Nature Contrat' %>
+
+            <%= f.date_select :date_debut_contrat, label: "Date Début Contrat",
+                              start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+            <%= f.date_select :date_fin_contrat, label: "Date  Fin Contrat",
+                              start_year: (Date.today - 100.year).year, end_year: Time.now.year + 18 %>
+            <%= f.collection_select :profession, @professions,:id,:description, include_blank: true, label: 'Profession', required: true %>
+            <%= f.text_field :emploi, label: 'Emploi' %>
+            <%= f.select :temps_travail,
+                         SalarieImmatriculation::TEMPS_TRAVAIL.keys.collect { |temps_travail| [SalarieImmatriculation .human_enum_name(:temps_travail, temps_travail), temps_travail] }, label: 'Temps de travail   ', require: true %>
+
+            <%= f.check_box :est_cadre, label: 'Employé Cadre?' %>
+            <%= f.collection_select :convention_applicable, @conventions,:id,:description, include_blank: true, label: 'Convention Applicable', required: true  %>
+            <%= f.text_field :salaire_contractuel, label: 'Salaire Contractuel', required: true  %>
+            <%= f.text_field :categorie, label: 'Catégorie', require: true %>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <div class="form-group row">
+        <div class="col-sm-4 col-sm-offset-2">
+          <%= f.button 'Enregistrer', class: 'btn btn-primary block full-width m-b' %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+<% end %>

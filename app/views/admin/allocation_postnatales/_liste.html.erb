@@ -1,0 +1,66 @@
+<%= paginate @allocation_postnatales %>
+<table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+  <thead>
+  <tr>
+    <th scope="col">N° Dossier</th>
+    <th scope="col">Allocataire</th>
+    <th scope="col">Enfant</th>
+    <th scope="col">Date Naissance</th>
+    <th scope="col">Volet</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Date Création</th>
+    <th scope="col">Date Liquidation</th>
+    <th scope="col">Montant Liquidé</th>
+    <th scope="col">Date Paiement</th>
+    <th colspan="4"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% unless @allocation_postnatales.nil? %>
+    <% @allocation_postnatales.each do |allocation_postnatale| %>
+      <tr>
+        <td><%= allocation_postnatale.dossier_prestation.num_dossier%></td>
+        <td><%= allocation_postnatale.dossier_prestation.full_name%></td>
+        <% unless allocation_postnatale.dossier_prestation.conjoint.nil? %>
+          <td><%= allocation_postnatale.dossier_prestation.conjoint.full_name%></td>
+        <%end %>
+        <td>
+          <% unless allocation_postnatale.enfant.nil? %>
+            <%= allocation_postnatale.enfant.full_name %>
+          <% end %>
+        </td>
+        <td><%= l allocation_postnatale.date_accouchement %></td>
+        <td><%= AllocationPostnatale.human_enum_name(:volet, allocation_postnatale.volet)%></td>
+        <td><%= AllocationPostnatale.human_enum_name(:etat, allocation_postnatale.etat)%></td>
+        <td><%= allocation_postnatale.created_at.strftime('%d-%m-%Y') %></td>
+        <td>
+          <% unless allocation_postnatale.date_validation.nil? %>
+            <%= l allocation_postnatale.date_validation %>
+          <%end %>
+        </td>
+        <td><%= allocation_postnatale.montant_paiement %></td>
+        <td>
+          <% unless allocation_postnatale.date_paiement.nil? %>
+            <%= l allocation_postnatale.date_paiement %>
+          <%end %>
+        </td>
+
+        <td style="width: 75px">
+          <%= link_to 'détails',  [:admin, allocation_postnatale.dossier_prestation, allocation_postnatale], class: 'btn btn-outline btn-primary btn-xs' %>
+          <%#= link_to 'détails', admin_allocation_postnatale_path(allocation_postnatale), class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+        <%if allocation_postnatale.soumis? %>
+          <td style="width: 75px">
+              <%= (link_to 'valider', admin_allocation_postnatale_valider_path(allocation_postnatale), class: 'btn btn-outline btn-primary btn-xs') unless allocation_postnatale.valide?%>
+          </td>
+          <td style="width: 75px">
+              <%= (link_to 'rejeter', admin_allocation_postnatale_rejeter_path(allocation_postnatale), class: 'btn btn-outline btn-danger btn-xs') unless allocation_postnatale.rejete? %>
+          </td>
+        <%end %>
+      </tr>
+    <%end %>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @allocation_postnatales %>

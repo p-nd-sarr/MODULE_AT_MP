@@ -1,0 +1,41 @@
+<%= content_for :titre_page, "Détails compte [#{User.human_enum_name(:type_profil, @user.type_profil)}:N° #{@user.numero_salarie}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_users_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_user_path(@user), class: 'btn btn-white btn-sm' %>
+  <% unless current_user == @user %>
+    <% if @user.actif? %>
+      <%= link_to 'désactiver', admin_user_desactiver_path(@user), class: 'btn btn-danger btn-sm' %>
+    <% else %>
+      <%= link_to 'activer', admin_user_activer_path(@user), class: 'btn btn-primary btn-sm' %>
+    <% end %>
+  <% end %>
+<% end %>
+<div class="ibox" style="margin-top: 20px;">
+  <div class="ibox-content">
+    <% if @user.salarie? %>
+      <%= render 'show_salarie' %>
+    <% elsif @user.employeur? %>
+      <%= render 'show_employeur' %>
+    <% else %>
+      <%= render 'show_common_infos' %>
+    <% end %>
+ <%#    <div class="row">
+      <div class="col-lg-12">
+        <d1 class="row mb-0">
+          <div class="col-sm-2" style="text-align: right;">
+            <dt>Progression:</dt>
+          </div>
+          <div class="col-sm-10" style="text-align: left;">
+            <dd>
+              <div class="progress m-b-1">
+                <div style="width: 60%" class="progress-bar progress-bar-striped progress-bar-animated"></div>
+              </div>
+              <small style="padding-top: 0px;">Profile complet à 60%</small>
+            </dd>
+          </div>
+        </d1>
+      </div>
+    </div> %>
+  </div>
+</div>

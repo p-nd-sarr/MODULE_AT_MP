@@ -1,0 +1,37 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Reversion</th>
+    <th scope="col">Documents</th>
+
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @reversion_veuve_salarie.conjoints.valide.each do |epouse| %>
+    <tr>
+      <td><%= epouse.nom %></td>
+      <td><%= epouse.prenom %></td>
+      <td><%= l epouse.date_naissance %></td>
+     <% unless @reversion_veuve_salarie.conjoints_id.nil? %>
+        <td>
+
+          <% @reversion_veuve_salarie.conjoints_id.each do |conjoint| %>
+              <% if epouse.id == conjoint.to_i%>
+                <p><span class="label label-success">Demandeur</span></p>
+              <% end %>
+          <% end %>
+        </td>
+      <% end %>
+      <td style="width: 75px">
+        <%= link_to 'lien vers les documents', admin_conjoint_path(epouse), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+    </tr>
+
+    
+  <% end %>
+  </tbody>
+</table>

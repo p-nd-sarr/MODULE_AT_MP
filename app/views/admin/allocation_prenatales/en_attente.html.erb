@@ -1,0 +1,18 @@
+<%= content_for :titre_page, "Allocations Prénatales en attente de validation" %>
+
+<%= content_for :actions_page do %>
+  <% if is_active_action?('en_attente') %>
+    <%= link_to 'Afficher tout', index_all_admin_allocation_prenatales_path, class: 'btn btn-white btn-sm' %>
+  <% else %>
+    <%= link_to 'En attente de validation', en_attente_admin_allocation_prenatales_path, class: 'btn btn-white btn-sm' %>
+  <% end %>
+<% end %>
+<%#= content_for :actions_page do %>
+  <%#= link_to 'Ajouter une demande', new_admin_allocation_prenatale_path, class: 'btn btn-primary btn-sm' %>
+<%# end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'liste' %>
+  </div>
+</div>

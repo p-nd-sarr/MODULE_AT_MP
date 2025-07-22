@@ -1,0 +1,27 @@
+<%%= content_for :titre_page, "Détails <%= singular_table_name %>" %>
+
+<%%= content_for :actions_page do %>
+    <%%= link_to 'Retour', <%= index_helper %>_path, class: 'btn btn-white btn-sm' %>
+    <%%= link_to 'Modifier', edit_<%= singular_table_name %>_path(@<%= singular_table_name %>), class: 'btn btn-white btn-sm' %>
+    <%%= link_to 'Ajouter <%= singular_table_name %>', new_<%= singular_table_name %>_path, class: 'btn btn-primary btn-sm' %>
+<%% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <% attributes.reject(&:password_digest?).each do |attribute| -%>
+                <p>
+                  <strong><%= attribute.human_name %>:</strong>
+                  <%%= @<%= singular_table_name %>.<%= attribute.name %> %>
+                </p>
+
+            <% end -%>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

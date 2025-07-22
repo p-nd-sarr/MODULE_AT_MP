@@ -1,0 +1,72 @@
+<%= content_for :titre_page do %>
+  Déclarations manquantes <br>
+  <span style="font-size: 60%; font-family: Georgia;">
+    déclarations chargées : <%= DeclarationChargement.valide.count %> (<%= (DeclarationChargement.valide.count * 100.0 / DeclarationSalaireManquante.manquante.count).ceil(2) %> %) <br>
+    déclarations manquantes : <%= DeclarationSalaireManquante.manquante.count %> <br>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Employeurs', admin_employeurs_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Chargements EDI', chargements_edi_admin_employeurs_path, class: 'btn btn-primary btn-sm' %>
+  <%= link_to 'Ajouter', declarations_manquantes_new_admin_employeurs_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <% if @declarations.count.zero? %>
+      <h2 style="text-align:center">
+        <hr>
+        La liste est vide !!!
+      </h2>
+    <% else %>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Numéro adhérent</th>
+          <th scope="col">Raison sociale</th>
+          <th scope="col">Regime</th>
+          <th scope="col">Adresse</th>
+          <th scope="col">Exercice</th>
+          <th scope="col">Téléphone</th>
+          <th scope="col">Effectif</th>
+          <th scope="col">Code agence</th>
+          <th scope="col">Statut</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @declarations.each do |declaration| %>
+          <tr>
+            <td><%= declaration.numero %></td>
+            <td><%= declaration.raison_sociale %></td>
+            <td><%= declaration.regime_human %></td>
+            <td><%= declaration.adresse %></td>
+            <td><%= declaration.exercice %></td>
+            <td><%= declaration.telephone %></td>
+            <td><%= declaration.effectif %></td>
+            <td><%= declaration.code_agence %></td>
+            <td><%= declaration.statut.humanize %></td>
+            <td>
+              <% if declaration.employeur %>
+                <% if declaration.manquante? %>
+                  <% if current_user.gestionnaire_compte_salarie? %>
+                    <%= link_to 'Faire la déclaration', admin_employeur_declaration_manquante_charger_path(declaration.employeur, declaration), class: 'btn btn-outline btn-primary btn-xs' %>
+                  <% end %>
+                <% elsif declaration.declaration_chargements.order('created_at').last %>
+                  <%= link_to 'Voir le chargement', admin_employeur_declaration_manquante_charger_show_path(declaration.employeur, declaration, declaration.declaration_chargements.order('created_at').last), class: 'btn btn-outline btn-default btn-xs' %>
+                <% end %>
+              <% else %>
+                employeur introuvable
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @declarations %>
+
+    <% end %>
+  </div>
+</div>

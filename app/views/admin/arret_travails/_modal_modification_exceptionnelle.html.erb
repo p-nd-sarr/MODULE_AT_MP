@@ -1,0 +1,257 @@
+<!-- Modal Modification Exceptionnelle -->
+<div class="modal inmodal" id="modificationExceptionnelleModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">Modification Exceptionnelle</h4>
+        </div>
+        <div class="modal-body">
+          <%= bootstrap_form_for([:admin, @demande_arret_travail], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+          <%= hidden_field_tag :custom_page, 'information_exceptionnelle' %>
+  
+          <div class="row">            
+            <div class="col-md-12">
+              <h6 class="modal-title">Informations générales</h6>
+              <br>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :numero_affiliation %>
+              <%= f.text_field :prenom_salarie %>
+              <%= f.text_field :nom_salarie %>
+              <%= f.date_select :date_de_naissance_salarie %>
+              <%= f.text_field :qualification_professionnelle_salarie %>
+              <%= f.select :type_de_piece, ArretTravail::TYPE_DE_PIECE.keys.collect { |type_de_piece| [ArretTravail.human_enum_name(:type_de_piece, type_de_piece), type_de_piece] }, label: 'Type de piéce', include_blank: 'Sélectionner', required: true %>
+              <%= f.text_field :nin_salarie %>
+              <%= f.text_field :carnet_accident_travail %>
+              <%= f.text_field :adresse_domiciliaire_salarie %><%= f.select :situation_matrimoniale_salarie,
+              ArretTravail::SITUATION_MATRIMONIALE.keys.collect { |sit_mat| [sit_mat, sit_mat] }, label: 'Situation Matrimoniale', required: true, include_blank: 'Sélectionner' %>
+              <%= f.text_field :nationalite_salarie %>
+              <%= f.text_field :telephone_salarie %>
+              <%= f.date_select :date_embauche_salarie %>
+              <%= f.text_field :anciennete_salarie %>
+              <%= f.check_box :est_journalier, label: 'Est journalier', id:'est_journalier_Modal', option: @demande_arret_travail.est_journalier %>
+              <%= f.number_field :nombre_heure_paye, label: 'Nombre d''heures payés'  %>
+              <%= f.check_box :is_subrogation, label: 'Subrogation', id:'subrogation_Modal', option: @demande_arret_travail.is_subrogation %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :numero_employeur %>
+              <%= f.text_field :raison_sociale_employeur %>
+              <%= f.text_field :adresse_employeur %>
+              <%= f.text_field :boite_postale_employeur %>
+              <%= f.email_field :email_employeur %>
+              <%= f.text_field :telephone_employeur %>
+              <%= f.text_field :fax_employeur %>
+              <%= f.text_field :activite_principale_entreprise %>
+            </div>          
+            <div class="col-sm-6">
+              <%= f.text_field :type_de_contrat_travail_salarie %>
+              <%= f.check_box :infirmite_anterieure_accident, label: 'Infirmité antérieure accident' %>
+              <%= f.text_field :taux_infirmite_anterieure_accident %>
+              <%= f.text_field :numero_rente_infirmite_anterieure_accident %>
+            </div>
+            <div class="col-sm-12 col-md-12">    
+              <div class="col-sm-6 col-md-6">      
+                <%= f.text_field :nature_du_travail_au_moment_accident, label:"Nature du travail effectué au moment de l'accident" %>
+              </div>
+              <div class="col-sm-6 col-md-6">
+                <%= f.text_field :taux_infirmite_anterieure_accident, label:"Taux IPP antérieur" %>
+              </div>
+              <div class="col-md-12"><hr></div>
+              
+              <div class="col-md-12">
+                <h6 class="modal-title">Détails accident</h6>                
+              <br>
+              </div>
+              <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+                <%= f.datetime_select :date_accident, label: "Date de l'accident",
+                                     start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year %>
+              </div>
+              <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+                <%= f.select :lieu_accident, ArretTravail::LIEU_ACCIDENT.keys.collect { |item| [ArretTravail.human_enum_name(:lieu_accident, item), item] }, label: 'Lieu accident' %> 
+              </div>
+              <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+                <%= f.select :nombre_hr_entre_accident_et_prise_travail, (0..10).to_a, label:"Nombre d'heures entre la prise du travail et l'accident du travail" %>
+              </div>
+              <div id="debut_at" class="col-sm-6 col-md-6" style="margin-top: 20px;">
+                <%= f.datetime_select :debut_arret_travail, label: "Debut arrêt travail",
+                                      start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year %>
+              </div>
+              <div class="col-sm-6 col-md-6 " style="margin-top: 20px;">
+                <%= f.select :consequence_accident_travail, ArretTravail::CONSEQUENCE_ACCIDENT_TRAVAIL.keys.collect { |item| [ArretTravail.human_enum_name(:consequence_accident_travail, item), item] }, label: 'Consequence accident de travail' %> 
+              </div>
+              <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+                <%= f.select :agent_materiel, ArretTravail::AGENT_MATERIEL.keys.collect { |item| [ArretTravail.human_enum_name(:agent_materiel, item), item] }, label: 'Agent Matériel' %> 
+              </div>
+  
+              <div class="col-sm-6 col-md-6" style="margin-top: 20px; height: 110px;">
+                <%= f.text_area :cause_circonstances_acccident, label: "Cause et circonstances de l'accident", style: "height:5em"%>
+              </div>
+              <div class="col-sm-12 col-md-12">
+                <hr>
+                <div class="col-sm-4 col-md-4 box2">
+                  <%= f.check_box :avec_constat, label:"Constat effectué par une autorité (OUI/NON)", id:"avec_constat_Modal", option: @demande_arret_travail.avec_constat %>
+                </div>
+                <div class="col-sm-8 col-md-8">
+                  <div id="detail_constat" style="display: none;">
+                    <%= f.text_field :detail_constat, label: 'Détails constat' %>
+                  </div>
+                  <div id="sans_detail_constat" style="display: block;">
+                    <%= f.text_field :raison_absence_constat, label: 'Raison non constat' %>
+                  </div>
+                </div>
+              </div>
+              <!-- Avec témoin -->
+              <div class="col-sm-12 col-md-12">
+                <hr>
+                <div class="col-sm-4 col-md-4 box2">
+                  <%= f.check_box :avec_temoin, label:"Avec témoin", id:"avec_temoin_Modal", option: @demande_arret_travail.avec_temoin %>
+                </div>
+                <div id="detail_temoin" style="display: none;">
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :nom_temoin, label:"Nom témoin" %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :adresse_temoin, label:"Adresse témoin" %>
+                  </div>
+                </div>
+              </div>
+              <!-- Accident causé par tiers -->
+              <div class="col-sm-12 col-md-12">
+                <hr>
+                <div class="col-sm-4 col-md-4 box2">
+                  <%= f.check_box :accident_cause_par_tiers, label:"Accident causé par un tiers", id:"avec_tiers_Modal", option: @demande_arret_travail.accident_cause_par_tiers %>
+                </div>
+                <div id="detail_tiers" style="display: none;">
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :prenom_civilement_responsable, label: "Prénom civilement responsable" %>
+                  </div>
+                  <div class="col-sm-4 col-md-4">
+                    <%= f.text_field :nom_tiers, label: 'Nom' %>
+                  </div>
+                  <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">    
+                    <%= f.text_field :adresse_tiers, label:"Adresse tiers" %>
+                  </div>
+                  <!-- Responsable -->
+                  <div class="col-sm-4 col-md-4" style="margin-top: 20px;">
+                    <%= f.text_field :raison_sociale_assureur %>
+                  </div>
+                  <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">
+                    <%= f.text_field :adresse_assureur, label: "Adresse assureur" %>
+                  </div>
+                  <div class="col-sm-4 col-md-4 " style="margin-top: 20px;">
+                    <%= f.text_field :numero_police_assurance, label: "Numéro de la police d'assurance" %>
+                  </div>
+                </div>
+              </div>
+            </div>     
+          </div>
+          <br>
+          <hr>
+          <div class="row">
+          </div>
+            
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+            <%= f.submit "Enregistrer les modifications", class: "btn btn-primary" %>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<%content_for :javascript do %>
+<script type="text/javascript">
+  $(document).ready(function() { // Ensures the DOM is fully loaded
+
+    function setCheckBoxVal(checkboxSelector) {
+      var checkbox = $(checkboxSelector);
+      // Ensure the checkbox is found and has the 'option' attribute
+      if (checkbox.length) {
+        var optionValue = checkbox.attr('option');
+        if (optionValue === 'true') {
+          checkbox.prop("checked", true);
+        } else {
+          checkbox.prop("checked", false);
+        }
+      } else {
+        console.warn("Checkbox not found for selector:", checkboxSelector);
+      }
+    }
+
+    $('#modificationExceptionnelleModal').on('show.bs.modal', function (e) {
+      // Call setCheckBoxVal for each checkbox when the modal is shown
+      // Use the correct IDs from your HTML (with capital 'M' in Modal)
+      // and ensure they are properly scoped if necessary, though IDs should be unique.
+      setCheckBoxVal('#modificationExceptionnelleModal #est_journalier_Modal');
+      setCheckBoxVal('#modificationExceptionnelleModal #subrogation_Modal');
+      setCheckBoxVal('#modificationExceptionnelleModal #avec_constat_Modal');
+      setCheckBoxVal('#modificationExceptionnelleModal #avec_temoin_Modal');
+      setCheckBoxVal('#modificationExceptionnelleModal #avec_tiers_Modal');
+
+      // Initialisation de l'affichage des détails du constat
+      if($('#modificationExceptionnelleModal #avec_constat_Modal').is(':checked')) {
+        $('#modificationExceptionnelleModal #detail_constat').show();
+        $('#modificationExceptionnelleModal #sans_detail_constat').hide();
+      } else {
+        $('#modificationExceptionnelleModal #detail_constat').hide();
+        $('#modificationExceptionnelleModal #sans_detail_constat').show();
+      }
+
+      // Initialisation de l'affichage des détails du témoin
+      if($('#modificationExceptionnelleModal #avec_temoin_Modal').is(':checked')) {
+        $('#modificationExceptionnelleModal #detail_temoin').show();
+      } else {
+        $('#modificationExceptionnelleModal #detail_temoin').hide();
+      }
+
+      // Initialisation de l'affichage des détails du tiers
+      if($('#modificationExceptionnelleModal #avec_tiers_Modal').is(':checked')) {
+        $('#modificationExceptionnelleModal #detail_tiers').show();
+      } else {
+        $('#modificationExceptionnelleModal #detail_tiers').hide();
+      }
+    });
+
+    // Gestion de l'affichage des détails du constat (event binding, done once)
+    $('#modificationExceptionnelleModal #avec_constat_Modal').change(function() {
+      if($(this).is(':checked')) {
+        $('#modificationExceptionnelleModal #detail_constat').show();
+        $('#modificationExceptionnelleModal #sans_detail_constat').hide();
+      } else {
+        $('#modificationExceptionnelleModal #detail_constat').hide();
+        $('#modificationExceptionnelleModal #sans_detail_constat').show();
+      }
+    });
+
+    // Gestion de l'affichage des détails du témoin (event binding, done once)
+    $('#modificationExceptionnelleModal #avec_temoin_Modal').change(function() {
+      if($(this).is(':checked')) {
+        $('#modificationExceptionnelleModal #detail_temoin').show();
+      } else {
+        $('#modificationExceptionnelleModal #detail_temoin').hide();
+      }
+    });
+
+    // Gestion de l'affichage des détails du tiers (event binding, done once)
+    $('#modificationExceptionnelleModal #avec_tiers_Modal').change(function() {
+      if($(this).is(':checked')) {
+        $('#modificationExceptionnelleModal #detail_tiers').show();
+      } else {
+        $('#modificationExceptionnelleModal #detail_tiers').hide();
+      }
+    });
+    // The following if block was removed as its logic is now covered by the 'show.bs.modal' event
+    /*
+    if($('#modificationExceptionnelleModal #detail_temoin').is(':visible')) {
+      $('#modificationExceptionnelleModal #avec_temoin_Modal').prop('checked', true);
+    }
+    */
+  });
+</script>
+<% end %>

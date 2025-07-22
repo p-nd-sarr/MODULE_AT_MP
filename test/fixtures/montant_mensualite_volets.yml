@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  num_volet: 1
+  montant: 1
+  allocation_prenatale: one
+  date_changement: 2020-02-03
+
+two:
+  num_volet: 1
+  montant: 1
+  allocation_prenatale: two
+  date_changement: 2020-02-03

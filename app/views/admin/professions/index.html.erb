@@ -1,0 +1,34 @@
+<%= content_for :titre_page, 'Admin Professions' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_profession_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th width="100px">Code</th>
+        <th scope="col">Description</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_professions.each do |admin_profession| %>
+        <tr>
+          <td><%= link_to admin_profession.code, admin_profession %></td>
+          <td><%= admin_profession.description %></td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_profession_path(admin_profession), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_profession, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

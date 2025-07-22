@@ -1,0 +1,1 @@
+json.array! @declaration_divorce_ou_deces_conjoints, partial: "declaration_divorce_ou_deces_conjoints/declaration_divorce_ou_deces_conjoint", as: :declaration_divorce_ou_deces_conjoint

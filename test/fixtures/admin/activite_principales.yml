@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  secteur_activite: one
+  description: MyString
+
+two:
+  secteur_activite: two
+  description: MyString

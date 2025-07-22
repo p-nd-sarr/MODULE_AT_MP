@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-lg-12" style="margin-top: 30px">
+
+        <% unless  @demande_arret_travail.detail_accident_valid?%>
+            <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+                <%= link_to "Validation des informations sur l'accident", "/admin/arret_travails/#{@demande_arret_travail.id}/at_valid_custom_page/information_accident", 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+            <% end %>
+       <% end %>
+        <div class="panel-body">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default" style="padding: 10px">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#infoAccident">
+                                <span class="fa fa-user"></span> Informations sur l'accident
+                            </a>
+                        </h5>
+                    </div>
+                    <div class="panel-collapse collapse" id="infoAccident" style="padding-top: 20px">
+                        <%= render 'information_accident' %>
+                    </div>
+                </div> <!-- End panel default infoConsolidation-->
+                <div class="panel panel-default" style="padding: 10px">   
+                    <div class="panel-heading">
+                            <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#lesion">
+                                <span class="fa fa-user"></span> Lésions
+                            </a>
+                            </h5>
+                    </div>
+                    <div class="panel-collapse collapse" id="lesion" style="padding-top: 20px">
+   
+                        <%= render 'information_lesion' %>
+                    </div>
+                </div> <!-- End panel default Lésions --> 
+
+                <div class="panel panel-default" style="padding: 10px">   
+                    <div class="panel-heading">
+                            <h5 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#carnet">
+                                <span class="fa fa-user"></span> Saisi des carnets
+                            </a>
+                            </h5>
+                    </div>
+                    <div class="panel-collapse collapse" id="carnet" style="padding-top: 20px">
+   
+                        <%= render 'gestion_carnets_at' %>
+                    </div>
+                </div> <!-- End panel default gestion carnets -->   
+                
+            </div>
+        </div>
+    </div> <!-- End col -->
+</div> <!-- End row -->
+
+
+

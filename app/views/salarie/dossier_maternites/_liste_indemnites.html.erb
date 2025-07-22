@@ -1,0 +1,41 @@
+ <% unless (@dossier_maternite.indemnite_conges_maternites.nil? or @dossier_maternite.indemnite_conges_maternites.empty?)%>
+  <h5>Indemnités Congés Maternité </h5>
+   <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+     <thead>
+     <tr>
+       <th scope="col">Tranche</th>
+       <th scope="col">Date dépot</th>
+       <th scope="col">Etat</th>
+       <th scope="col">Montant liquidé</th>
+       <th scope="col">Date liquidation </th>
+       <th scope="col">Date de mise en paiement</th>
+       <th colspan="3"></th>
+     </tr>
+     </thead>
+
+     <tbody>
+       <% @dossier_maternite.indemnite_conges_maternites.each do |indemnite_conges_maternite| %>
+         <tr>
+           <td><%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, indemnite_conges_maternite.tranche_paiement)%></td>
+           <td>
+             <% unless indemnite_conges_maternite.date_soumission.nil? %>
+               <%= l indemnite_conges_maternite.date_soumission %>
+             <%end %>
+           </td>
+           <td><%= IndemniteCongesMaternite.human_enum_name(:etat, indemnite_conges_maternite.etat) %></td>
+           <td><%= indemnite_conges_maternite.montant_paiement %></td>
+           <td>
+             <% unless indemnite_conges_maternite.date_validation.nil? %>
+               <%= l indemnite_conges_maternite.date_validation %>
+             <%end %>
+           </td>
+           <td>
+             <% unless indemnite_conges_maternite.date_paiement.nil? %>
+               <%= l indemnite_conges_maternite.date_paiement %>
+             <%end %>
+           </td>
+         </tr>
+       <%end %>
+     </tbody>
+   </table>
+<% end %>

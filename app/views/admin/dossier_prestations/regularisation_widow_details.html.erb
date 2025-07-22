@@ -1,0 +1,70 @@
+<%= content_for :titre_page, "Dossier De Prestation / Détails régularisation veuve" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}" %> <br>
+  <% unless @dossier_prestation.get_date_deces.nil? %>
+    <strong class="text-info">Date décès :</strong>
+    <%= "#{l @dossier_prestation.get_date_deces}" %>
+  <% end %> <br>
+  <span style="font-style: italic">Est repris?</span> : <%= state_yes_no @dossier_prestation.est_repris %>
+  <% unless @dossier_prestation.date_suspension.nil? %>
+    <br>
+    <strong class="text-info">Date suspension :</strong>
+    <%= "#{l @dossier_prestation.date_suspension}" %>
+  <% end %> <br>
+  Détails échéance veuve : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+  Montant global payé dans échéance : <%= format_cfa @paid_echeance_amount unless @paid_echeance_amount.nil? %> <br>
+  Montant régularisé : <%= format_cfa @allocations_amount %> <br>
+  Montant payable : <%= format_cfa @payable_amount %> <br>
+<% end %>
+
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Initier processus de régularisation', admin_dossier_prestation_initiate_widow_regularization_path(@dossier_prestation, @echeance.trimestre, @echeance.annee), class: 'btn btn-primary btn-xs', 'data-turbolinks': false, data: { confirm: 'En êtes vous sûr?' } if @dossier_prestation.can_initiate_widow_regularization? %>
+  <%= link_to ' Retour', admin_dossier_prestation_regularisation_widow_path(@dossier_prestation), class: 'btn btn-white btn-xs' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <% unless @dossier_prestation.can_initiate_widow_regularization? %>
+            <% unless @nbr_month_left > 0 %>
+              <h3>Le nombre limite d'enfants à payer est déjà atteint !</h3>
+              <br>
+              <hr>
+            <% end %>
+            <table class="table table-bordered table-condensed table-hover">
+              <thead>
+              <tr>
+                <th scope="col">Prénom enfant</th>
+                <th scope="col">Nom enfant</th>
+                <th scope="col">Date de naissance</th>
+                <th scope="col">Document valide ?</th>
+                <th scope="col">Options</th>
+              </tr>
+              </thead>
+              <tbody>
+              <% @enfants.each do |enfant| %>
+                <tr>
+                  <td><%= enfant.prenom %></td>
+                  <td><%= enfant.nom %></td>
+                  <td><%= l enfant.date_naissance %></td>
+                  <td><%= state_yes_no (not enfant.document_expired_at_term?(@echeance.annee, @echeance.trimestre)) %></td>
+                  <td>
+                    <%= link_to 'Renouveler pièce', admin_enfant_path(enfant), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' if @nbr_month_left > 0 and enfant.document_expired_at_term?(@echeance.annee, @echeance.trimestre) and not enfant.has_allocation_for_period(@echeance.trimestre.to_i, @echeance.annee.to_i) %>
+                    <%= link_to 'Générer allocation familiale', admin_dossier_prestation_regularisation_widow_pay_child_path(@dossier_prestation, enfant.id, @nbr_month_left, @echeance.trimestre, @echeance.annee), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-primary btn-xs', 'data-turbolinks': false if @nbr_month_left > 0 and not enfant.document_expired_at_term?(@echeance.annee, @echeance.trimestre) and not enfant.has_allocation_for_period(@echeance.trimestre.to_i, @echeance.annee.to_i) %>
+                    <%= link_to 'Voir allocation', admin_dossier_prestation_allocation_familiales_path(@dossier_prestation), class: 'btn btn-outline btn-primary btn-xs', 'data-turbolinks': false, target: '_blank' if enfant.has_allocation_for_period(@echeance.trimestre.to_i, @echeance.annee.to_i) %>
+                  </td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

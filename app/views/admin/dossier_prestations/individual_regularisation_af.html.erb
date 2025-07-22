@@ -1,0 +1,52 @@
+<%= content_for :titre_page, "Dossier De Prestation / Régularisation Individuelle AF" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}" %> <br>
+  <span style="font-style: italic">Est repris?</span> : <%= state_yes_no @dossier_prestation.est_repris %>
+  <% unless @dossier_prestation.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @dossier_prestation.date_soumission}" %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_prestation_all_regularisation_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <hr>
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col" style="width: 10px">#</th>
+              <th scope="col">Date création</th>
+              <th scope="col">Année</th>
+              <th scope="col">Trimestre</th>
+              <th colspan="1"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @time_of_presence.each do |tp| %>
+              <tr>
+                <td><%= tp.id %></td>
+                <td><%= tp.created_at.strftime('%d-%m-%Y') %></td>
+                <td><%= tp.annee %></td>
+                <td><%= CarriereDossierPrestation.human_enum_name(:trimestre, tp.trimestre) %></td>
+                <td style="width: 75px">
+                  <%= link_to 'détails', admin_dossier_prestation_individual_regularisation_af_details_path(@dossier_prestation, tp.trimestre, tp.annee), 'data-turbolinks': false, class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

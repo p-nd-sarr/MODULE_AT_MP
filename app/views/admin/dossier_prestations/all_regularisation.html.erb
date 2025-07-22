@@ -1,0 +1,67 @@
+<%= content_for :titre_page, 'Régularisations dossier AF' %>
+
+<%= content_for :titre_page_autres_details do %>
+  Etat du dossier : <%= "#{DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat)}" %> <br>
+  <% unless @dossier_prestation.get_date_deces.nil? %>
+    <strong class="text-info">Date décès :</strong>
+    <%= "#{l @dossier_prestation.get_date_deces}" %>
+  <% end %> <br>
+  <span style="font-style: italic">Est repris?</span> : <%= state_yes_no @dossier_prestation.est_repris %>
+  <% unless @dossier_prestation.date_soumission.nil? %>
+    <br>
+    <strong class="text-info">Date soumission :</strong>
+    <%= "#{l @dossier_prestation.date_soumission}" %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-4" style="margin-top: 20px;">
+              <div class="ibox-content text-center option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+                <h3 class="text-success">Régularisation individuelle AF</h3>
+                <div class="m-b-sm thumbnail">
+                  <img src="/images/1.Liquidation Retratite.png" style="height:150px">
+                </div>
+                <div class="text-center">
+                  <%= link_to ' Accueil', admin_dossier_prestation_individual_regularisation_af_path(@dossier_prestation), class: "btn btn-xs btn-success fa fa-home" %>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4" style="margin-top: 20px;">
+              <div class="ibox-content text-center option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+                <h3 class="text-success">Régularisation échéance AF</h3>
+                <div class="m-b-sm thumbnail">
+                  <img src="/images/1.Liquidation Retratite.png" style="height:150px">
+                </div>
+                <div class="text-center">
+                  <%= link_to ' Accueil', admin_dossier_prestation_regularisation_after_term_path(@dossier_prestation), class: "btn btn-xs btn-success fa fa-home" %>
+                </div>
+              </div>
+            </div>
+            <% if @dossier_prestation.is_dead_salary? %>
+              <div class="col-lg-4" style="margin-top: 20px;">
+                <div class="ibox-content text-center option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+                  <h3 class="text-success">Régularisation Veuves</h3>
+                  <div class="m-b-sm thumbnail">
+                    <img src="/images/2.Reversion pension.png" style="height:150px">
+                  </div>
+                  <div class="text-center">
+                    <%= link_to ' Accueil', admin_dossier_prestation_regularisation_widow_path(@dossier_prestation), class: "btn btn-xs btn-success fa fa-home" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+<div class="modal inmodal" id="honoraires_form<%= object.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-money modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Ajouter un coût
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for([:admin, object], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <select class="form-control type_intervenant">
+                  <option <%= object.is_selected(1) %> value="1">Juge</option>
+                  <option <%= object.is_selected(2) %> value="2">Avocat</option>
+                  <option <%= object.is_selected(3) %> value="3">Huissier</option>
+                </select>
+              </div>
+
+              <div class="col-sm-6 section_juge" id="section_juge">
+                <%= f.text_field :nom_complet_juge, label: "Nom complet du juge" %>
+              </div>
+
+              <div class="col-sm-6 avocats_select" id="avocats_select">
+                <%= f.collection_select :avocats_huissier_id, AvocatsHuissier.avocats.where(dossier_juridique_id: @dossier_juridique.id), :id, :full_name, include_blank: true, class: 'form-control', label: 'Avocat' %>
+              </div>
+
+              <div class="col-sm-6 huissiers_select" id="huissiers_select">
+                <%= f.collection_select :avocats_huissier_id, AvocatsHuissier.huissiers.where(dossier_juridique_id: @dossier_juridique.id), :id, :full_name, include_blank: true, class: 'form-control', label: 'Huissier' %>
+              </div>
+            </div>
+            <br>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <%= f.date_field :date_eff, label: "Date", required: true %>
+              </div>
+
+              <div class="col-sm-6">
+                <%= f.number_field :montant, label: "Montant", required: true %>
+              </div>
+            </div>
+            <br>
+
+            <div class="row">
+              <div class="col-sm-6">
+                <%= f.file_field :document_justificatif, label: "Document justificatif" %>
+              </div>
+            </div>
+
+            <%= f.hidden_field :dossier_juridique_id, value: @dossier_juridique.id %>
+
+            <div class="hr-line-dashed"></div>
+            <br>
+
+            <div class="modal-footer form-group">
+              <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+              <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          var list_types = document.getElementsByClassName('type_intervenant');
+          var list_juges = document.getElementsByClassName('section_juge');
+          var list_avocats = document.getElementsByClassName('avocats_select');
+          var list_huissiers = document.getElementsByClassName('huissiers_select');
+
+
+          for (let i = 0; i < list_types.length; i++) {
+              show_section(i)
+              list_types[i].addEventListener('change', function (event) {
+                  show_section(i)
+              });
+          }
+
+          function show_section(i) {
+              if (list_types[i].value === '1') {
+                  list_juges[i].style.display = 'block'
+                  list_avocats[i].style.display = 'none'
+                  list_huissiers[i].style.display = 'none'
+                  list_juges[i].querySelectorAll('input').forEach((even) => {
+                      even.removeAttribute('disabled')
+                  })
+                  list_avocats[i].querySelectorAll('select').forEach((even) => {
+                      even.setAttribute('disabled', true)
+                  })
+                  list_huissiers[i].querySelectorAll('select').forEach((even) => {
+                      even.setAttribute('disabled', true)
+                  })
+              } else if (list_types[i].value === '2') {
+                  list_juges[i].style.display = 'none'
+                  list_avocats[i].style.display = 'block'
+                  list_huissiers[i].style.display = 'none'
+                  list_juges[i].querySelectorAll('input').forEach((even) => {
+                      even.setAttribute('disabled', true)
+                  })
+                  list_avocats[i].querySelectorAll('select').forEach((even) => {
+                      even.removeAttribute('disabled')
+                  })
+                  list_huissiers[i].querySelectorAll('select').forEach((even) => {
+                      even.setAttribute('disabled', true)
+                  })
+              } else if (list_types[i].value === '3') {
+                  list_juges[i].style.display = 'none'
+                  list_avocats[i].style.display = 'none'
+                  list_huissiers[i].style.display = 'block'
+                  list_juges[i].querySelectorAll('input').forEach((even) => {
+                      even.setAttribute('disabled', true)
+                  })
+                  list_avocats[i].querySelectorAll('select').forEach((even) => {
+                      even.setAttribute('disabled', true)
+                  })
+                  list_huissiers[i].querySelectorAll('select').forEach((even) => {
+                      even.removeAttribute('disabled')
+                  })
+              }
+          }
+      });
+  </script>
+<% end %>

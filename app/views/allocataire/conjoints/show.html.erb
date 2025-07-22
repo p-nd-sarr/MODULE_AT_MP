@@ -1,0 +1,285 @@
+<%= content_for :titre_page, "Détails conjoint" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', allocataire_enfants_url, class: 'btn btn-white btn-sm' %>
+  <%#= link_to 'Modifier', edit_allocataire_conjoint_path(@conjoint), class: 'btn btn-white btn-sm' %>
+  <%#= link_to 'Ajouter un conjoint', new_allocataire_conjoint_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <div class="row">
+            <div class="col-lg-12">
+              <%unless DossierPrestation.find_by_conjoint_id(@conjoint.id)%>
+                <%= (link_to ' Modifier', edit_admin_conjoint_path(@conjoint), class:'btn btn-white fa fa-edit', style:'float:right')  %>
+              <%end%>
+            </div>
+
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Numéro affiliation: </dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.numero_affiliation %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>NIN salarié: </dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= Psrm::Participant.where(matric: @conjoint.numero_affiliation).pluck(:numero_piece).first %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Prénom & nom du salarié:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1 text-navy"><%= @conjoint.prenom_salarie %> <%= @conjoint.nom_salarie %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Prénom & nom du conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1 text-navy"><%= @conjoint.prenom %> <%= @conjoint.nom%></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Date de naissance:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.date_naissance.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Date de mariage:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.date_mariage.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Régime matrimonial:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= Conjoint.human_enum_name(:regime_matrimoniale, @conjoint.regime_matrimoniale) unless @conjoint.regime_matrimoniale.nil? %></dd>
+                  </div>
+                </d1>
+                
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Est un salarié ?:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= state_yes_no @conjoint.est_salarie? %></dd>
+                  </div>
+                </d1>
+                <% if @conjoint.numero_salarie != nil %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Numéro salarié:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.numero_salarie %></dd>
+                  </div>
+                </d1>
+                <%end%>
+                <% if @conjoint.matric_conjoint.length > 0 %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Numéro affiliation conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.matric_conjoint %></dd>
+                  </div>
+                </d1>
+                <%end%>
+  <!--                <d1 class="row mb-0">-->
+  <!--                  <div class="col-sm-6" style="text-align: right;">-->
+  <!--                    <dt>Etat conjoint:</dt>-->
+  <!--                  </div>-->
+  <!--                  <div class="col-sm-6" style="text-align: left;">-->
+  <!--                    <dd class="mb-1"><%#= Conjoint.human_enum_name(:etat_civil, @conjoint.etat_civil) unless @conjoint.etat_civil.nil? %></dd>-->
+  <!--                  </div>-->
+  <!--                </d1>-->
+                <% unless @conjoint.rang_conjoint.nil? %>
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6" style="text-align: right;">
+                      <dt>Rang conjoint:</dt>
+                    </div>
+                    <div class="col-sm-6" style="text-align: left;">
+                      <dd class="mb-1"><%= Conjoint.human_enum_name(:rang_conjoint, @conjoint.rang_conjoint) unless @conjoint.rang_conjoint.nil? %></dd>
+                    </div>
+                  </d1>
+                  <%end %>
+              </div>
+              <div class="col-lg-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Situation avec le conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= Conjoint.human_enum_name(:etat_conjoint, @conjoint.etat_conjoint) unless @conjoint.etat_conjoint.nil? %></dd>
+                  </div>
+                </d1>
+                <% unless @conjoint.date_divorce.nil?%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Date de divorce:</dt>
+                  </div>
+                  <div class="col-sm-6 text-warning" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.date_divorce %></dd>
+                  </div>
+                </d1>
+                <% end %>
+                <% unless @conjoint.date_deces.nil?%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Date de décès:</dt>
+                  </div>
+                  <div class="col-sm-6 text-danger" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.date_deces %></dd>
+                  </div>
+                </d1>
+                <% end %>
+
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Type de pièce:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= Conjoint.human_enum_name(:type_piece, @conjoint.type_piece) unless @conjoint.type_piece.nil? %></dd>
+                  </div>
+                </d1>
+                <% unless @conjoint.numero_piece.nil? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Numéro de la pièce:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.numero_piece %></dd>
+                  </div>
+                </d1>
+                <% end %>
+                <% unless @conjoint.date_transcription.nil? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Date de transcription:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.date_transcription.strftime("%d/%m/%Y")%></dd>
+                  </div>
+                </d1>
+                <%end%>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Date de délivrance de la pièce:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"> <%= @conjoint.date_delivrance_piece.strftime("%d/%m/%Y") unless @conjoint.date_delivrance_piece.nil?%></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Date d'expiration de la pièce:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.date_expiration_piece.strftime("%d/%m/%Y") unless @conjoint.date_expiration_piece.nil?%></dd>
+                  </div>
+                </d1>
+                <% if @conjoint.nin_generer? %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Numero d'identification générer:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.nin_generer %></dd>
+                  </div>
+                </d1>
+                <% end %>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Date de création conjoint:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.created_at.strftime("%d/%m/%Y") %></dd>
+                  </div>
+                </d1>
+                <d1 class="row mb-0">
+                  <div class="col-sm-6 text-sm-right" style="text-align: right;">
+                    <dt>Conjoint créé par:</dt>
+                  </div>
+                  <div class="col-sm-6 text-sm-left" style="text-align: left;">
+                    <dd class="mb-1"><%= @conjoint.ajoute_par.prenom %> <%= @conjoint.ajoute_par.nom %></dd>
+                  </div>
+                </d1>
+              </div>
+              <div class="col-lg-12">
+                <hr>
+                
+                <h3>Liste des documents fournis:</h3>
+                <div class="col-sm-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Pièce d'identification:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"><%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.extrait_naissance, target: :_blank %></dd>
+                  </div>
+                </d1>
+                </div>
+                <div class="col-sm-6">
+                <d1 class="row mb-0">
+                  <div class="col-sm-6" style="text-align: right;">
+                    <dt>Certificat de mariage:</dt>
+                  </div>
+                  <div class="col-sm-6" style="text-align: left;">
+                    <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.certificat_mariage, target: :_blank %></dd>
+                  </div>
+                </d1>
+                </div>
+                <% if @conjoint.certificat_deces.attached? %>
+                  <div class="col-sm-6">
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6" style="text-align: right;">
+                      <dt>Certificat de décès:</dt>
+                    </div>
+                    <div class="col-sm-6" style="text-align: left;">
+                      <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.certificat_deces, target: :_blank %></dd>
+                    </div>
+                  </d1>
+                  </div>
+                <% end %>
+                <% if @conjoint.certificat_divorce.attached? %>
+                  <div class="col-sm-6">
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6" style="text-align: right;">
+                      <dt>Certificat de divorce:</dt>
+                    </div>
+                    <div class="col-sm-6" style="text-align: left;">
+                      <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @conjoint.certificat_divorce, target: :_blank %></dd>
+                    </div>
+                  </d1>
+                  </div>
+                <% end %>
+              </div>
+           </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

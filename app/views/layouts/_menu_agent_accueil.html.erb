@@ -1,0 +1,59 @@
+<li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Salariés</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/salaries') %>">
+    <li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+      <%= link_to 'Liste', admin_salaries_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Employeurs</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/employeurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+      <%= link_to 'Liste des employeurs', admin_employeurs_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%=I18n.t('module_arret_travail.admin_menu.arret_travail_label')%></span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') and is_active_action('index')%>">
+      <%= link_to 'Tous les dossiers', admin_arret_travails_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') and is_active_action('new')%>">
+      <%= link_to I18n.t('module_arret_travail.admin_menu.ajouter_dossier'), new_admin_arret_travail_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente création', en_creation_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
+      <%= link_to "Origine GED AT", admin_arret_travail_geds_path(est_mp: false) %>
+    </li> 
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
+    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') and is_active_action('index')%>">
+      <%= link_to 'Accueil', admin_maladie_professionnelles_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') and is_active_action('new')%>">
+      <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
+      <%= link_to "Origine GED AT", admin_arret_travail_geds_path(est_mp: false) %>
+    </li> 
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/conjoints') or
+    is_active_controller('admin/enfants') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Grappe familiale</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/conjoints') %>">
+    <li class="<%= 'active' if is_active_controller('admin/conjoints') %>"><%= link_to 'Conjoints', admin_conjoints_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/enfants') %>">
+    <li class="<%= 'active' if is_active_controller('admin/enfants') %>"><%= link_to 'Enfants', admin_enfants_path %></li>
+  </ul>
+</li>

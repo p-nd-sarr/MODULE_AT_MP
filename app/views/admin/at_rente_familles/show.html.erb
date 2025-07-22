@@ -1,0 +1,371 @@
+<% content_for :titre_page  do %>
+<p>Dossier Rente Famille <%= "[#{@at_rente_famille.workflow_state}]" %> </p>
+<% end %>
+<%= content_for :titre_page_autres_details do %>
+  Numéro Affiliation:  <%= " #{@arret_travail.numero_affiliation}" %> <br>
+  Numéro Sinistre:  <%= " #{@arret_travail.num_dossier}" %> <br>
+  Prénom et Nom: <%= @arret_travail.try(:prenom_salarie) %> <%= @arret_travail.try(:nom_salarie) %><br><br>
+   <%= link_to "Dossier AT",  admin_arret_travail_path(@arret_travail), class: 'btn btn-success btn-sm' %>
+   <%= link_to 'Retour', admin_at_rente_familles_path, class: 'btn btn-white btn-sm' %>
+
+  <p class="text-danger">
+    <span><%= (" Motif retour Dossier :  #{@at_rente_famille.motif} ") unless @at_rente_famille.motif.nil? %> </span>
+  </p>
+<% end %>
+<%= content_for :actions_page do %>
+    <p>Dossier Rente Famille <%= " #{@arret_travail.numero_affiliation} - [#{@at_rente_famille.workflow_state}]" %> </p>
+  <%if  @at_rente_famille.arret_travail.meme_agence?(current_user) and @at_rente_famille.creation?  %>
+    <%= link_to 'Editer', edit_admin_at_rente_famille_path(@at_rente_famille), class:"btn btn-outline btn-white fa fa-edit"%>
+    <%= (link_to 'Supprimer',admin_at_rente_famille_path(@at_rente_famille), method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'}, class: 'btn btn-danger btn-sm') %>
+  <% end %>
+   
+    <%#= link_to 'Modifier', edit_admin_at_rente_famille_path(@admin_at_rente_famille), class: 'btn btn-white btn-sm' %>
+  <% if @at_rente_famille.pret_pour_soumission(current_user) %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionSalaireModal" id="soumettre_id">Soumettre</button>
+     <%= render 'soumission_form' %>
+  <%end%>
+ 
+
+  <!--<% if @at_rente_famille.can_affecte_tech(current_user)%>
+    <% if @at_rente_famille.affectation_technicien.nil? %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+        Affecter
+      </button>
+    <% else %>
+       <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+        Reaffecter
+      </button>
+    <% end %>
+    <%= render 'modal_affectation_tech' %>
+  <% end %> -->
+
+  <% if @at_rente_famille.soumis_chef_agence? and current_user.chef_agence?%>
+    <%= link_to 'Validation', admin_at_rente_famille_validation_chef_agence_path(@at_rente_famille), class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">Retourner dossier</button>
+    <%= render 'modal_retour' %>
+  <% end %>
+
+  <% if @at_rente_famille.soumis_chef_service? and current_user.chef_division_at?%>
+      <%= link_to 'Validation', admin_at_rente_famille_validation_chef_service_path(@at_rente_famille), class: 'btn btn-primary btn-sm' %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">Retourner dossier</button>
+      <%= render 'modal_retour' %>
+  <% end %>
+
+  <% if @at_rente_famille.soumis_directeur_at? and current_user.directeur_at?%>
+      <%= link_to 'Validation', admin_at_rente_famille_validation_directeur_at_path(@at_rente_famille), class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">Retourner dossier</button>
+      <%= render 'modal_retour' %>
+  <% end %>
+  <% if @at_rente_famille.soumis_audit? and current_user.auditeur_css?%>
+      <%= link_to 'Validation audit', admin_at_rente_famille_validation_audit_path(@at_rente_famille), class: 'btn btn-primary btn-sm' %>
+     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">Retourner dossier</button>
+      <%= render 'modal_retour' %>
+  <% end %>
+
+  <% if @at_rente_famille.soumis_dg? and current_user.directeur_general? %>
+      <%= link_to 'Validation', admin_at_rente_famille_validation_directeur_general_path(@at_rente_famille), class: 'btn btn-primary btn-sm' %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#motif">Retourner dossier</button>
+      <%= render 'modal_retour' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="progressbar-wrapper">
+    <ul class="progressbar">
+      <li class="<%= ("active") if @at_rente_famille.current_state >= :creation %>">Création</li>
+      <% if @at_rente_famille.arret_travail.creer_en_agence?  %>
+        <li class="<%= ("active") if @at_rente_famille.current_state  >= :soumis_chef_agence %>">Chef agence</li>
+      <% end %>
+      <li class="<%= ("active") if @at_rente_famille.current_state  >= :soumis_chef_service %>">Chef service</li>
+      <li class="<%= ("active") if @at_rente_famille.current_state >= :soumis_directeur_at %>">DAT</li>
+            <li class="<%= ("active") if @at_rente_famille.current_state >= :soumis_audit %>">Audit CSS</li>
+      <li class="<%= ("active") if @at_rente_famille.current_state >= :soumis_dg %>">Directeur Général</li>
+
+      <% if @at_rente_famille.dossier_valide?%>
+        <li class="<%= ("active") if @at_rente_famille.current_state >= :dossier_valide %>">Dossier valide</li>
+      <% end %>
+      <% if @at_rente_famille.dossier_rejete?%>
+        <li class="<%= ("active") if @at_rente_famille.current_state >= :dossier_rejete %>">Dossier rejete</li>
+       <% end %>
+    </ul>
+  </div><!--End ProgressBar"-->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+               <div class="tabs-container">
+            <ul class="nav nav-tabs" id='mes_navbars' style="font-size: 11px;">
+            
+              <li class="nav-item active">
+                <a class="nav-link" data-toggle="tab" href="#tab-1">Info. Générales
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe  unless @at_rente_famille.information_defunt?  %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.information_defunt? %>   
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-2">Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.documents_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.documents_valide? %>     
+                </a>
+              </li>
+
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-3"><i class="fa fa-users"></i>Grappe familiale
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.epouses_valide? and @at_rente_famille.enfants_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.epouses_valide? and @at_rente_famille.enfants_valide? %>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-4">Les 12 derniers salaires
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.information_salaire? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.information_salaire? %>     
+                </a>
+              </li>
+              
+              
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#tab-5">Rentes
+                    <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.tableau_rente_valide? %>
+                    <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.tableau_rente_valide? %> 
+                  </a>
+                </li>
+           
+
+              <%# if @at_consolidation.current_state >= :affectation_technicien %>
+                <li class="nav-item">
+                  <a data-toggle="tab" href="#tab-6">Historiques
+                    <%#= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.detail_accident_valid? %>
+                    <%#= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.detail_accident_valid? %>     
+                  </a>
+                </li>
+               <%# end %>
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@at_rente_famille.information_defunt?   %>
+                    <%= link_to "Validation des informations du défunt", admin_arret_travail_at_rente_famille_valider_information_defunt_path(@arret_travail, @at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_informations' %>
+                </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                 
+                  <% if !@at_rente_famille.documents_valide?   %>
+                    <%= link_to "Validation des documents", admin_arret_travail_at_rente_famille_valider_documents_path(@arret_travail,@at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                     <%= render 'show_documents' %>
+                </div>
+              </div>
+
+              <div id="tab-3" class="tab-pane">
+                <div class="row">
+                  <div class="col-lg-12" style="margin-top: 30px">
+                    <div class="panel-body">
+                      <div class="panel-group" id="accordion">
+                        <div class="panel panel-default" style="padding: 10px">
+                          <div class="panel-heading">
+                            <h5 class="panel-title">
+                              <a data-toggle="collapse" data-parent="#accordion" href="#conjoint1">
+                                <span class="fa fa-users"></span> Conjoints
+                                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.epouses_valide? %>
+                                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.epouses_valide? %>
+                              </a>
+                            </h5>
+                          </div>
+                          <div class="panel-collapse collapse" id="conjoint1" style="padding-top: 20px">
+                            <div class="full-height-scroll">
+                              <br>
+                              <% if !@at_rente_famille.epouses_valide? %>
+                                <%= link_to "Je valide les informations sur les epouses", admin_at_rente_famille_valider_epouses_path(@at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                              <% end %>
+                              <hr>
+                              <%= render 'show_epouses' %>
+                            </div>
+                          </div>
+                        </div> <!-- End panel default epouse -->
+
+                        <div class="panel panel-default" style="padding: 10px">
+                          <div class="panel-heading">
+                            <h5 class="panel-title">
+                              <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                                <span class="fa fa-users"></span> Enfants
+                                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.enfants_valide? %>
+                                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.enfants_valide? %>
+                              </a>
+                            </h5>
+                          </div>
+                          <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                            <div class="full-height-scroll">
+                              <br>
+                              <% if !@at_rente_famille.enfants_valide?  %>
+                                <%= link_to "Je valide les informations sur les enfants", admin_at_rente_famille_valider_enfants_path(@at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                              <% end %>
+                              <hr>
+                              <%= render 'show_enfants' %>
+                            </div>
+                          </div>
+                        </div> <!-- End panel default enfant -->
+
+                        <div class="panel panel-default" style="padding: 10px">
+                          <div class="panel-heading">
+                            <h5 class="panel-title">
+                              <a data-toggle="collapse" data-parent="#accordion" href="#ascendant">
+                                <span class="fa fa-users"></span> Ascendants
+                                <%= '<span class="label label-warning">à valider</span>'.html_safe unless @at_rente_famille.enfants_valide? %>
+                                <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @at_rente_famille.enfants_valide? %>
+                              </a>
+                            </h5>
+                          </div>
+                          <div class="panel-collapse collapse" id="ascendant" style="padding-top: 20px">
+                            <div class="full-height-scroll">
+                              <br>
+                              <% if !@at_rente_famille.enfants_valide?  %>
+                                <%= link_to "Je valide les informations sur les enfants", admin_at_rente_famille_valider_enfants_path(@at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                              <% end %>
+                              <hr>
+                              <%= render 'show_ascendants' %>
+                            </div>
+                          </div>
+                        </div> <!-- End panel default enfant -->
+                      </div>
+                    </div>
+                  </div> <!-- End col -->
+                </div> <!-- End row -->
+              </div> <!-- End tab-3 -->
+
+              <div id="tab-4" class="tab-pane">
+                <div class="full-height-scroll">
+                <br>
+                <% if !@at_rente_famille.information_salaire?   %>
+                  <%= link_to "Validation des 12 derniers salaires", admin_at_rente_famille_valider_information_salaire_path(@at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                  <hr>
+                <% end %>
+                
+                <%= render 'information_12_derniers_salaires' %>
+                </div>
+              </div>
+
+              <div id="tab-5" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <% if !@at_rente_famille.tableau_rente_valide?   %>
+                    <%= link_to "Validation informations du tableau", admin_arret_travail_at_rente_famille_valider_onglet_tableau_rente_path(@arret_travail,@at_rente_famille), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_tableau_recapitulatif_rente' %>
+                </div>
+              </div>
+
+               <div id="tab-6" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                   <%= render 'show_historique' %>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 2%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 10%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 70%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+  .progressbar li.rejet.active:before {
+    background-color: red;
+  }
+</style>

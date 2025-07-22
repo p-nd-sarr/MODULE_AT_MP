@@ -1,0 +1,274 @@
+<% if @representant != nil && @immatriculation.representant_valide? %>
+
+  <%= render 'employer/immatriculations/templates/infos_representant' %>
+
+  <% if @immatriculation != nil && @immatriculation.soumis? %>
+    <button class="btn btn-primary" id="show_representant"> Modifier les informations du représentant</button>
+  <% end %>
+<% end %>
+
+      <% unless @immatriculation.id == nil  or @immatriculation.representant_valide  %>
+        <%= link_to "Je valide les informations sur le représentant legal", employer_immatriculation_structure_publique_valider_representant_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+      <% end %>
+    <div class="row" id="update_representant" >
+    <%= bootstrap_form_for([:employer, @representant] , layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+        <div class="col-sm-8" style="padding-left: 20%">
+
+          <div class="ibox">
+            <div class="ibox-title" style="background: #1ab394; color: #fff">
+              <h5>Etat Civil</h5>
+              <div class="ibox-tools">
+                <a class="collapse-link">
+                  <i class="fa fa-chevron-up"style="color: #fff"></i>
+                </a>
+              </div>
+            </div>
+            <div class="ibox-content" style="">
+        <%= f.text_field :last_name , label: 'Nom', required: true  %>
+        <%= f.text_field :first_name, label: 'Prenom', required: true %>
+        <%= f.date_select :birthdate, label: "Date de naissance",
+                          start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+              <%= f.collection_select :place_of_birth, @pays ,:id,:description, include_blank: true, label: 'Lieu de Naissance', tag: 'Naissance', required: true  %>
+        <%= f.collection_select :nationality, @pays ,:id,:description, include_blank: true, label: 'Nationalite', tag: 'Nationalite', required: true  %>
+      </div>
+      </div>
+      </div>
+
+
+        <div class="col-sm-8" style="padding-left: 20%">
+
+          <div class="ibox">
+            <div class="ibox-title" style="background: #1ab394; color: #fff">
+              <div class="accordion-heading" class="ibox-title" >
+                <h5>Pièce d'identité</h5>
+                <div class="ibox-tools">
+                  <a class="accordion-toggle collapse-link"
+                     data-toggle="collapse"
+                     data-parent="#accordion2"
+                     href="#collapseOne" style="background: #1ab394; color: #fff">
+                    <i class="fa fa-chevron-down" style="color: #fff"></i>
+                  </a>
+
+                </div>
+
+              </div>
+            </div>
+
+
+            <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+            <%= f.select :type_of_identity,
+                         RepresentantLegal::TYPE_PIECE.keys.collect { |type_of_identity| [RepresentantLegal.human_enum_name(:type_of_identity, type_of_identity), type_of_identity] }, label: 'Type de piece' %>
+
+            <%= f.text_field :identity_number, label: 'Numéro de piece', required: true  %>
+
+            <%= f.date_select :issued_date, label: "Date de délivrance",
+                              start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+
+            <%= f.date_select :expiry_date, label: "Date d expiration",
+                              start_year: Date.today.year, end_year: Time.now.year + 18 , required: true %>
+
+          </div>
+          </div>
+          </div>
+
+        <div class="col-sm-8" style="padding-left: 20%">
+
+          <div class="ibox">
+            <div class="ibox-title" style="background: #1ab394; color: #fff">
+              <div class="accordion-heading" class="ibox-title" >
+                <h5>Adresse Personnelle du représentant</h5>
+                <div class="ibox-tools">
+                  <a class="accordion-toggle collapse-link"
+                     data-toggle="collapse"
+                     data-parent="#accordion2"
+                     href="#collapseOne" style="background: #1ab394; color: #fff">
+                    <i class="fa fa-chevron-down" style="color: #fff"></i>
+                  </a>
+
+                </div>
+
+              </div>
+            </div>
+
+            <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+        <%= f.collection_select :region, @regions,:id,:designation, include_blank: true, label: 'Region', tag: 'region', required: true  %>
+
+        <%= f.collection_select :departement, @departements,:id,:designation, label: 'Departement' , required: true %>
+
+        <%= f.collection_select :ville, @villes,:id,:designation, label: 'Arrondissement', required: true  %>
+
+        <%= f.collection_select :commune, @communes,:id,:designation, label: 'Commune', required: true  %>
+
+        <%= f.collection_select :quartier, @quartiers,:id,:designation, label: 'Quartier', required: true  %>
+
+        <%= f.text_field :address, label: 'Adresse', required: true  %>
+
+        <%= f.text_field :mobile_number, label: 'Telephone', placeholder: '00221' %>
+
+        <%= f.text_field :email, label: 'Email' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <div class="form-group row" style="padding-left: 20%">
+        <div class="col-sm-4 col-sm-offset-2">
+          <%= f.button 'Enregistrer', class: 'btn btn-primary block full-width m-b' %>
+        </div>
+      </div>
+
+    <% end %>
+
+  </div>
+
+<% if @immatriculation != nil && @immatriculation.representant_valide? %>
+  <script type="text/javascript">
+
+      $(document).ready(function(){
+
+          console.log('test representant');
+
+          $('#update_representant').hide();
+
+          $("#show_representant").click(function () {
+              $('#update_representant').show();
+              return false;
+          });
+
+          });
+  </script>
+<% end %>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $('#representant_legal_region').change(function(){
+
+            console.log('change region');
+            var e = document.getElementById("representant_legal_region");
+
+            //var strOption = e.options[e.selectedIndex].text;
+            var regionRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_structure_publiques/1/load_adresse?region="+regionRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_departement')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#representant_legal_departement').change(function(){
+
+
+            console.log('change departement');
+
+            var e = document.getElementById("representant_legal_departement");
+            var departementRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_structure_publiques/1/load_adresse?departement="+departementRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_ville')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#representant_legal_ville').change(function(){
+
+            console.log('change ville');
+
+
+            var e = document.getElementById("representant_legal_ville");
+            var villeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_structure_publiques/1/load_adresse?ville="+villeRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_commune')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#representant_legal_commune').change(function(){
+
+            console.log('change commune');
+
+            var e = document.getElementById("representant_legal_commune");
+            var communeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_structure_publiques/1/load_adresse?commune="+communeRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#representant_legal_quartier')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+
+
+
+    });
+
+</script>

@@ -1,0 +1,135 @@
+<%= bootstrap_form_for([:admin, @allocataire, @reversion_veuve], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%#= f.alert_message "Please fix the errors below." %>
+  <%= f.select :type_ayant_droit,
+               ReversionVeuve::TYPE_AYANT_DROIT.keys.collect { |type_ayant_droit| [ReversionVeuve.human_enum_name(:type_ayant_droit, type_ayant_droit), type_ayant_droit] },
+               label: 'Type ayant droit' %>
+  <div id="conjoint">
+    <%= f.collection_select :conjoint_id, @allocataire.conjoints.valide, :id, :full_name,
+                            include_blank: true, label: 'Conjoint' %>
+
+    <%= f.phone_field :telephone, label: 'Téléphone', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+    <%= f.text_field :email, label: 'Email' %>
+  </div>
+  <div id="infos_orphelin">
+    <%= f.collection_select :enfant_id, @allocataire.enfants.valide.mineurs, :id, :full_name,
+                            include_blank: true, label: 'Orphelin' %>
+    <%= f.text_field :nom_tuteur, label: 'Nom du tuteur' %>
+    <%= f.text_field :prenom_tuteur, label: 'Prénom du tuteur' %>
+    <%= f.phone_field :telephone, label: 'Téléphone Tuteur', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+    <%= f.text_field :email, label: 'Email Tuteur' %>
+  </div>
+  <%= f.text_field :adresse, label: 'Adresse' %>
+
+  <%= f.text_field :adresse_reception_allocation, label: "Adresse de réception de l'allocation" %>
+  <%= f.select :mode_paiement,
+               MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [ReversionVeuve.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+               include_blank: true, label: 'Mode de paiement' %>
+  <div class="col-lg-12" id="mode_paiement_virement" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px; margin-bottom: 20px;">
+    <div class="col-lg-6">
+      <%= f.collection_select :admin_banque_agence_id,
+                              Admin::BanqueAgence.all, :id, :nom_complet,
+                              label: 'Banque',
+                              include_blank: true %>
+    </div>
+    <div class="col-lg-6">
+      <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte', maxlength: 12, minlength: 12 %>
+      <%#= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+    </div>
+  </div>
+
+   <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px; margin-bottom: 20px;" id="mode_paiement_caisse">
+        <%= f.collection_select :agence_paiement_id,
+                                Admin::Agence.ipres, :id, :description_prest,
+                                label: 'Agence de paiement',
+                                include_blank: true %>
+        
+    </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', (@reversion_veuve.persisted? ? [:admin, @allocataire, @reversion_veuve] : admin_allocataire_base_reversions_path(@allocataire)), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosCompteBancaire();
+          chargerInfosVeuve();
+          paiementCaisse()
+
+          $("#reversion_veuve_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+              paiementCaisse()
+          });
+
+          function chargerInfosCompteBancaire() {
+              let mode_paiement = $('#reversion_veuve_mode_paiement').val();
+              console.log(mode_paiement);
+              let elem_mode_paiement = $('#mode_paiement_caisse')
+              if (mode_paiement === 'caisse_ipres') {
+                  elem_mode_paiement.show();
+              } else {
+                  elem_mode_paiement.hide();
+              }
+          }
+
+           function paiementCaisse() {
+              let mode_paiement = $('#reversion_veuve_mode_paiement').val();
+              let elem_mode_paiement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  elem_mode_paiement.show();
+              } else {
+                  elem_mode_paiement.hide();
+              }
+          }
+
+
+
+          $("#reversion_veuve_type_ayant_droit").change(function () {
+              chargerInfosVeuve()
+          });
+
+          function chargerInfosVeuve() {
+              let type_ayant_droit = $('#reversion_veuve_type_ayant_droit').val();
+              let elem_conjoint = $('#conjoint')
+              let elem_infos_orphelin = $('#infos_orphelin')
+              if (type_ayant_droit === 'veuve') {
+                  elem_conjoint.show();
+                  elem_infos_orphelin.hide();
+                  $('#reversion_veuve_nom_tuteur').val('')
+                  $('#reversion_veuve_prenom_tuteur').val('')
+              } else {
+                  elem_conjoint.hide();
+                  elem_infos_orphelin.show();
+              }
+          }
+
+          $('#reversion_veuve_numero_affiliation').change(function () {
+              var numero_affiliation = $('#reversion_veuve_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#reversion_veuve_prenom").val(data.prenom);
+                          $("#reversion_veuve_nom").val(data.nom);
+                      } else {
+                          $("#reversion_veuve_prenom").val('');
+                          $("#reversion_veuve_nom").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#reversion_veuve_prenom").val('');
+                      $("#reversion_veuve_nom").val('');
+                  }
+              });
+          })
+      })
+  </script>
+<% end %>

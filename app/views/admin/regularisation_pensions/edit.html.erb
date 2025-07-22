@@ -1,0 +1,29 @@
+<%= content_for :titre_page do %>
+  Modification d'une regularisation de pension
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <!--<h5>Allocataire <%#= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>-->
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/reversion_veuves/infos_allocataire' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Formulaire d'ajout</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

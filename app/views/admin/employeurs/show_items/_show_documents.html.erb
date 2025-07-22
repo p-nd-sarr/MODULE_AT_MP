@@ -1,0 +1,29 @@
+<div class="row">
+  <div class="col-lg-8">
+    <% current_user.document_immatriculations.each do |document_immatriculation| %>
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Type document</th>
+          <% if @immatriculation != nil && !@immatriculation.documents_valide %>
+          <th scope="col">Actions</th>
+            <%end  %>
+        </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= DocumentImmatriculation.human_enum_name(:type_document, document_immatriculation.type_document) %></td>
+            <% if @immatriculation != nil && !@immatriculation.documents_valide %>
+            <td>
+              <%= link_to "supprimer", employer_document_immatriculation_path(document_immatriculation.id), data: { method: :delete }, class: 'btn btn-outline btn-danger btn-xs' %>
+              <a href="<%= url_for(document_immatriculation.document) %>" target="_blank"> <button class="btn btn-outline btn-primary btn-xs"> Prévisualiser</button></a>
+            </td>
+              <% end %>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+
+</div>

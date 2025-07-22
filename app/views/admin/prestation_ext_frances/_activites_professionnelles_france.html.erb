@@ -1,0 +1,143 @@
+<div class="row">
+       <button type="button" class="btn btn-outline btn-success" data-toggle="modal" data-target="#new_employeur_ext"><span class="fa fa-plus"></span> Nouvel employeur
+       </button>
+</div>
+
+
+<div class="modal inmodal" id="new_employeur_ext" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@employeur_ext, url: admin_prestation_ext_france_ajouter_employeur_ext_path(@prestation_ext_france), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter un employeur </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :prenom_employeur, label: 'Prénom Employeur', class: 'form-control' %>
+          <%= f.text_field :nom_employeur, label: 'Nom Employeur', class: 'form-control' %>
+          <%= f.text_field :email,  class: 'form-control' %>
+          <%= f.text_field :adresse,  class: 'form-control' %>
+          <%= f.text_field :telephone,  class: 'form-control' %>
+          <%= f.text_field :raison_sociale,  class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="row" style="margin-top: 30px;" >
+    <div class="col-lg-9">
+        <h3>Activités professionnelles en France</h3>
+    </div>
+    <div class="col-sm-3" style="text-align: right;">
+        <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#activite">Ajouter une activité</button>
+      <div class="modal inmodal" id="activite" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+          <%= bootstrap_form_for(@carrieres_exterieures, url: admin_prestation_ext_france_ajouter_carrires_prest_exterieure_path(@prestation_ext_france), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message "Please fix the errors below." %>
+          <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">
+                <span aria-hidden="true">x</span>
+                <span class="sr-only">Close</span>
+              </button>
+              <h4 class="modal-title">Ajouter une activité professionnelles</h4>
+            </div>
+            <div class="modal-body">
+                  <%=f.hidden_field :prestation_ext_france_id, value: @prestation_ext_france.id%>
+                  <%= f.date_select :date_debut, label: "Du",
+                            start_year: (Date.today - 60.year).year, end_year: (Date.today).year %>
+                  <%=f.date_select :date_fin, label: "Au",
+                            start_year: (Date.today - 60.year).year, end_year: (Date.today).year %>
+                  <%=f.number_field :salaire, label: "Salaire"%> 
+                  
+                  <%= f.collection_select :employeur_exterieur_id,
+                                  EmployeurExterieur.all, :id, :raison_sociale,
+                                  label: 'Employeur',
+                                  include_blank: true %>
+            </div>  
+            <div class="modal-footer form-group">
+               <%#= link_to 'Annuler', (@carrieres_exterieures.persisted? ? [:admin, @carrieres_exterieures] : admin_arret_travails_path), class: 'btn btn-white'%>
+               <%= f.button 'Valider', class: 'btn btn-primary' %>
+            </div>
+          </div>
+          <% end %>
+        </div>
+      </div>     
+    </div>
+
+  
+    <div class="row" style="margin-left: 20%;">
+      <div class="col-sm-8">
+        <h2 style="text-align: center"><strong> EN FRANCE </strong></h2>
+        <hr>
+      </div>
+    </div>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+        <tr>
+        
+          <th scope="col">Employeur</th>
+          <th scope="col">Période</th>
+          <th scope="col">Salaire</th>
+          <th scope="col">Etat</th>
+           <th colspan="3">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @prestation_ext_france.carrieres_exterieures.each do |carriere| %>
+          <tr>
+        
+            <td><%= carriere.employeur_exterieur.raison_sociale %></td>
+            <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+            <td><%=carriere.salaire%></td>
+            <td align="right"><%= carriere.etat %></td>
+            
+            <td style="width: 75px">
+             <%= link_to 'supprimer', admin_carrieres_exterieure_path(carriere) , method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+            </td>
+              <% if @prestation_ext_france.affecter_salarie == current_user %>
+                <td style="width: 75px">
+                  <%= (link_to 'valider', admin_prestation_ext_france_valider_ligne_carriere_ext_path(@prestation_ext_france, carrieres_exterieure_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or carriere.rejete? %>
+                </td>
+                <td style="width: 75px">
+                  <%= (link_to 'rejeté', admin_prestation_ext_france_rejeter_ligne_carriere_ext_path(@prestation_ext_france, carrieres_exterieure_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or carriere.rejete? %>
+                </td>
+              <% end %>
+             
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+      <div class="row" style="margin-left: 20%;">
+      <div class="col-sm-8">
+        <hr>
+        <div class="panel panel-info">
+          <div class="panel-body">
+            <div class="table-responsive" style="margin-top: 5px">
+              <h5>
+                <strong>Date à laquelle le demandeur a cessé toute activité salariée :</strong> &nbsp;
+                <%#= l @prestation_ext_france.participant.date_fin_derniere_embauche %>
+                <%= l @prestation_ext_france.date_cess_act_fr %>
+              </h5>
+              <br>
+              <h5>
+                <strong>Nombre d'années de salariat :</strong> &nbsp;
+                <%= @prestation_ext_france.participant.nombre_annee_cotisation unless @prestation_ext_france.participant.nil? %>
+
+              </h5>
+            </div>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+
+</div>

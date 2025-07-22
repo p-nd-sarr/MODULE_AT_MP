@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="ibox-content">
+      <%= bootstrap_form_for([:admin, @dossier_prestation, @grossesse], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <%= f.alert_message "Please fix the errors below." %>
+        <%= f.date_select :date_grossesse, label: "Date de début de grossesse",
+                          end_month: Date.today.month,
+                          end_day: Date.today.day,
+                          start_year: (Date.today - 3.year).year, end_year: Date.today.year %>
+
+        <div class="hr-line-dashed"></div>
+
+        <div class="form-group row">
+          <div class="col-sm-8 col-sm-offset-4">
+            <%= link_to 'Annuler', admin_dossier_prestation_allocation_prenatales_path(@dossier_prestation), class: 'btn btn-white' %>
+            <%= f.button 'Valider', class: 'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

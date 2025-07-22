@@ -1,0 +1,53 @@
+<div class="ibox" style="margin-top:20px;">
+  <div class="ibox-title" style="background-color:rgb(240, 240, 240)">
+    <div class="ibox-tools">
+      <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#avocat_huissier_form<%= @avocats_huissier.id %>">
+        <span class="fa fa-plus"></span> Ajouter Avocat / Huissier
+      </button>
+    </div>
+  </div>
+
+  <div class="ibox-content">
+    <br>
+    <%= paginate @avocats_huissiers %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Type intervenant</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Adresse</th>
+        <th scope="col">Téléphone</th>
+        <th scope="col">email</th>
+        <th scope="col">Nin</th>
+        <th scope="col">Options documents</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @avocats_huissiers.each do |avocats_huissier| %>
+        <tr>
+          <td><%= AvocatsHuissier.human_enum_name(:type_intervenant, avocats_huissier.type_intervenant) unless avocats_huissier.type_intervenant.nil? %></td>
+          <td><%= avocats_huissier.nom %></td>
+          <td><%= avocats_huissier.prenom %></td>
+          <td><%= avocats_huissier.adresse %></td>
+          <td><%= avocats_huissier.tel %></td>
+          <td><%= avocats_huissier.email %></td>
+          <td><%= avocats_huissier.nin %></td>
+          <td>
+            <%= link_to 'Supprimer', admin_avocats_huissier_path(avocats_huissier), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn-danger btn-xs' %>
+            <button type="button" class="btn btn-xs btn-outline" data-toggle="modal" data-target="#avocat_huissier_form<%= avocats_huissier.id %>">
+              <span class="fa fa-edit"></span> Modifier
+            </button>
+          </td>
+          <%= render 'admin/dossier_juridiques/avocat_huissier_modal_form', :object => avocats_huissier %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @avocats_huissiers %>
+  </div>
+</div>
+
+
+<%= render 'admin/dossier_juridiques/avocat_huissier_modal_form', :object => @avocats_huissier %>

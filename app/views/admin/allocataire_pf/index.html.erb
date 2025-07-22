@@ -1,0 +1,69 @@
+<%= content_for :titre_page, 'Liste des allocataires prestation familiale' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter un allocataire PF', new_admin_allocataire_pf_path(), class: 'fa fa-plus btn btn-w-m btn-success btn-outline' %>
+<% end %>
+
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', '#', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%#= search_form_for @q, url: admin_salaries_path do |f| %>
+
+    <!--      <div class="row">-->
+    <!--        <div class="col-sm-3">-->
+    <%#= f.label :MATRIC_cont, 'Matricule' %>
+    <%#= f.search_field :MATRIC_cont, class: 'form-control' %>
+    <!--        </div>-->
+    <!--        <div class="col-sm-3">-->
+    <%#= f.label :PRENOM_cont, 'Prénom' %>
+    <%#= f.search_field :PRENOM_cont, class: 'form-control' %>
+    <!--        </div>-->
+    <!--        <div class="col-sm-3">-->
+    <%#= f.label :NOM_cont, 'Nom' %>
+    <%#= f.search_field :NOM_cont, class: 'form-control' %>
+    <!--        </div>-->
+    <!--        <div class="col-sm-3">-->
+    <%#= f.label :MATSOL_cont, 'Matricule de solde' %>
+    <%#= f.search_field :MATSOL_cont, class: 'form-control' %>
+    <!--        </div>-->
+    <!--      </div>-->
+
+    <!--      <div class="hr-line-dashed"></div>-->
+
+    <%#= f.submit class: 'btn btn-primary' %>
+    <%# end %>
+
+    <br>
+    <% @allocataire_pfs=AllocatairePf.page(params[:page]).per(100)%>
+      <%= paginate @allocataire_pfs %>
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Matricule</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Nom</th>
+          <th scope="col">Détails</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @allocataire_pfs.each do |allocataire_pf| %>
+          <tr>
+            <td><%= allocataire_pf.numero_allocataire %></td>
+            <td><%= allocataire_pf.prenom %></td>
+            <td><%= allocataire_pf.nom %></td>
+            <td style="width: 75px">
+              <%= link_to 'Détails', admin_allocataire_pf_path(allocataire_pf.numero_allocataire), class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @allocataire_pfs %>
+  </div>
+</div>

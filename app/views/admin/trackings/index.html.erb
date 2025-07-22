@@ -1,0 +1,41 @@
+<%= content_for :titre_page, 'Trackings' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_tracking_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= paginate @trackings %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Date</th>
+        <th scope="col">User</th>
+        <th scope="col">Type requete</th>
+        <th scope="col">Path</th>
+<!--        <th scope="col">Path source</th>-->
+        <th scope="col">Ip</th>
+        <th scope="col">Controller</th>
+        <th scope="col">Action</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @trackings.each do |tracking| %>
+        <tr>
+          <td><%= l tracking.created_at, format: :custom %></td>
+          <td><%= tracking.user.full_name %> [<%= User.human_enum_name(:type_profil, tracking.user.type_profil) %>]</td>
+          <td><%= tracking.type_requete %></td>
+          <td><%= tracking.path %></td>
+<!--          <td><%#= tracking.path_source %></td>-->
+          <td><%= tracking.ip %></td>
+          <td><%= tracking.controller %></td>
+          <td><%= tracking.action %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @trackings %>
+  </div>
+</div>

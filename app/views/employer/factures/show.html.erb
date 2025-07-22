@@ -1,0 +1,21 @@
+<%= content_for :titre_page do %>
+  <h2>Détail de la facture :   <span> <%= @facture.reference_facture %></span></h2>
+
+<% end %>
+
+<%= content_for :actions_page do %>
+
+  <a href="<%= @facture.url %>" target="_blank" class="btn btn-primary"><i class="fa fa-print"></i> Imprimer facture </a>
+<% end %>
+
+<br/>
+
+<div class="row" style="text-align: center">
+
+</div>
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+
+  </div>
+</div>

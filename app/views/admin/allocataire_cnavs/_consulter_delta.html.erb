@@ -1,0 +1,109 @@
+<div class="modal inmodal" id="DeltaModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+        </button>
+
+        <i class="fa fa-warning modal-icon btn-warning"></i>
+        <h4 class="modal-title">
+          Delta
+        </h4>
+      </div>
+
+      <div class="modal-body">
+        <% unless @dossier_cnav.allocataire_cnavs.nouveau.empty? %>
+          <h5>Nouveautés : <%= @dossier_cnav.allocataire_cnavs.nouveau.count %> allocataires</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Numero</th>
+              <th scope="col">Allocataire</th>
+              <th scope="col">Region</th>
+              <th scope="col">Montant (F. CFA)</th>
+              <th scope="col">Caisse bk</th>
+              <!--              <th scope="col">Etat</th>-->
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @dossier_cnav.allocataire_cnavs.nouveau.each do |allocataire_cnav| %>
+              <tr>
+                <td>
+                  <i class="fa fa-circle text-warning"></i>
+                  <%= allocataire_cnav.numero %>
+                </td>
+                <td><%= allocataire_cnav.full_name %></td>
+                <td><%= allocataire_cnav.admin_region.designation unless allocataire_cnav.admin_region.nil? %></td>
+                <td align="right"><%= format_entier allocataire_cnav.montant %></td>
+                <td>
+                  <%= allocataire_cnav.admin_banque.code_swift unless allocataire_cnav.admin_banque.nil? %>
+                </td>
+                <!--                <td><%#= AllocataireCnav.human_enum_name(:etat, allocataire_cnav.etat) %></td>-->
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <h5>Nouveautés </h5>
+          <div>
+            <h2> Liste vide </h2>
+          </div>
+        <% end %>
+
+        <hr class="dotted">
+        <%
+          last_dossier = DossierCnav.order('created_at desc').second
+          list_alloc = last_dossier.allocataire_cnavs.supprime unless last_dossier.nil? %>
+        <% if !(list_alloc.nil? or list_alloc.empty?) %>
+          <h5>Supprimés : <%= list_alloc.count %> allocataires</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Numero</th>
+              <th scope="col">Allocataire</th>
+              <th scope="col">Region</th>
+              <th scope="col">Montant (F. CFA)</th>
+              <th scope="col">Caisse bk</th>
+              <!--              <th scope="col">Etat</th>-->
+<!--              <th colspan="2"></th>-->
+            </tr>
+            </thead>
+
+            <tbody>
+            <% list_alloc.each do |allocataire_cnav| %>
+              <tr>
+                <td>
+                  <i class="fa fa-circle text-danger"></i>
+                  <%= allocataire_cnav.numero %>
+                </td>
+                <td><%= allocataire_cnav.full_name %></td>
+                <td><%= allocataire_cnav.admin_region.try :designation %></td>
+                <td align="right"><%= format_entier allocataire_cnav.montant %></td>
+                <td>
+                  <%= allocataire_cnav.admin_banque.code_swift unless allocataire_cnav.admin_banque.nil? %>
+                </td>
+                <!--                <td><%#= AllocataireCnav.human_enum_name(:etat, allocataire_cnav.etat) %></td>-->
+
+              </tr>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <h5>Supprimés </h5>
+          <div>
+            <h2> Liste vide </h2>
+          </div>
+        <% end %>
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,467 @@
+<%= bootstrap_form_for([:admin, @dossier_maternite], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Une erreur est survenue lors de l'enregistrement" %>
+
+  <div class="row">
+    <div class="col-lg-12">
+
+      <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+        <div class="content clearfix">
+          <h3 class="text-navy" style="font-weight:bold">Informations Salarié</h3>
+          <hr>
+          <div class="row">
+            <div class="form-group" style="align-content: center">
+              <div class="col-lg-4">
+                <%= f.text_field :num_affiliation, label: 'N° affiliation' %>
+                <div id="alert_message1" class="alert-danger" style="text-align:center; padding-top:-50px;">
+                  <small>Ce numéro d'affiliation appartient à un homme.</small>
+                </div>
+              </div>
+              <%= f.hidden_field :sexe_salarie %>
+              <div class="col-lg-4">
+                <%= f.text_field :prenom, label: "Prénom", readonly: true %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :nom, label: "Nom", readonly: true %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.select :type_piece,
+                             DossierMaternite::TYPE_PIECE.keys.collect { |type_piece| [DossierMaternite.human_enum_name(:type_piece, type_piece), type_piece] },
+                             label: "Type de pièce", required: true %>
+              </div>
+
+              <div class="col-lg-4">
+                <%= f.text_field :nin, label: 'N° Identification' %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.date_field :date_naissance, label: "Date de naissance",
+                                 start_year: (Date.today - 50.year).year, end_year: (Date.today - 18.year).year %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :lieu_naissance, label: "Lieu de naissance" %>
+              </div>
+
+              <div class="col-lg-4">
+                <%= f.email_field :email, label: 'Email' %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.phone_field :telephone, label: 'Téléphone' %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :adresse_domicile %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+        <div class="content clearfix">
+          <h3 class="text-navy" style="font-weight:bold">Informations Complémentaires</h3>
+          <hr>
+          <div class="row">
+            <div class="form-group" style="align-content: center">
+              <div class="col-lg-4">
+                <%= f.date_select :debut_grossesse, label: "Date début grossesse (approximative)",
+                                  start_year: (Date.today - 2.year).year, end_year: (Date.today).year %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.date_select :debut_conges, label: "Date départ congés",
+                                  start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+              </div>
+              <div class="col-lg-4" id="subrogation_non">
+                <%= f.date_select :date_suspension_salaire, label: "Date Suspension Salaire",
+                                  start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+              </div>
+              <!--      <div class="col-lg-4">-->
+              <%#= f.date_select :date_accouchement_prev, label: "Date prévisionnelle accouchement", include_blank: true, start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+              <!--      </div>-->
+              <!--      <div class="col-lg-4">-->
+              <%#= f.date_select :date_fin_cong_prev, label: "Date fin congés prévue", start_year: (Date.today - 2.year).year, end_year: (Date.today + 1.year).year %>
+              <!--      </div>-->
+              <!--      <div class="col-lg-4">-->
+              <%#= f.number_field :montant_salaire, label: "Montant dernier salaire" %>
+              <!--      </div>-->
+              <div class="col-lg-4 box2">
+                <%= f.check_box :subrogation, label: "Subrogation" %>
+              </div>
+              <div class="col-lg-4 box2">
+                <%= f.check_box :attributaire, label: "Désigner mandataire" %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.select :mode_paiement,
+                             MODE_PAIEMENT_CAISSE_CSS.keys.collect { |mode_paiement| [DossierMaternite.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                             include_blank: true, label: 'Mode de paiement' %>
+              </div>
+              <div class="col-lg-4 box2">
+                <%= f.check_box :est_ir_trimf_applique, label: "Doit appliquer IR et TRIMF ?" %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.select :nombre_part_impot,
+                             DossierMaternite::NOMBRE_PART_IMPOT.keys.collect { |nombre_part_impot| [DossierMaternite.human_enum_name(:nombre_part_impot, nombre_part_impot), nombre_part_impot] },
+                             label: "Part Impot", required: true %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.select :part_trimf,
+                             DossierMaternite::PART_TRIMF.keys.collect { |part_trimf| [DossierMaternite.human_enum_name(:part_trimf, part_trimf), part_trimf] },
+                             label: "Part Trimf", required: true %>
+              </div>
+              <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 2px; padding: 22px;" id="mode_paiement_virement">
+                <div class="col-lg-6">
+                  <%= f.collection_select :admin_banque_agence_id,
+                                          Admin::BanqueAgence.all, :id, :nom_complet,
+                                          label: 'Banque',
+                                          include_blank: true %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte', maxlength: 12, minlength: 12 %>
+                  <%= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+        <div class="content clearfix">
+          <h3 class="text-navy" style="font-weight:bold">Informations Employeur</h3>
+          <hr>
+          <div class="row">
+            <div class="form-group" style="align-content: center">
+              <div class="col-lg-4">
+                <%= f.date_field :date_embauche, label: "Date d'embauche",
+                                 start_year: (Date.today - 65.year).year, end_year: Date.today.year %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :num_immatriculation, label: "N° Immatriculation Employeur" %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :raison_sociale, label: "Raison sociale Employeur", readonly: true %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.phone_field :tel_employeur, label: 'Téléphone Employeur' %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.email_field :email_employeur, label: 'Email Employeur' %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :adresse_employeur, label: 'Adresse Employeur' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-12" style="margin-top: 20px; padding-bottom: 2px;" id="attributaire_oui">
+        <div class="content clearfix">
+          <h3 class="text-navy" style="font-weight:bold">Informations mandataire</h3>
+          <hr>
+          <div class="row">
+            <div class="form-group" style="align-content: center">
+              <div class="col-lg-4">
+                <%= f.text_field :prenom_attributaire, label: "Prénom" %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :nom_attributaire, label: "Nom" %>
+              </div>
+              <div class="col-lg-4">
+                <%= f.text_field :nin_attributaire, label: 'N° Identification' %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+    </div>
+
+    <div class="col-lg-12 form-group">
+      <div class="row">
+        <div class="col-lg-12" style="margin-top: 30px">
+          <div class="panel-body">
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                      <span class="fa fa-folder"></span> Documents obligatoires
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Piéce d'identité Salarié", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Piéce d'identité Salarié")) %>
+                    Piéce d'identité Salarié <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Formulaire de demande de congé maternité", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Formulaire de demande de congé maternité")) %>
+                    Formulaire de demande de congé maternité <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Certificat / Attestation de travail", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Certificat / Attestation de travail")) %>
+                    Attestation de travail <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Certificat médical de grossesse", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Certificat médical de grossesse")) %>
+                    Certificat médical de grossesse <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Attestation de mise en congé", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Attestation de mise en congé")) %>
+                    Attestation de mise en congé <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Dernier bulletin de salaire", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Dernier bulletin de salaire")) %>
+                    Dernier bulletin de salaire <br>
+                  </div>
+                </div>
+              </div> <!-- End panel default conjoint -->
+
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                      <span class="fa fa-folder"></span> Autres documents
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <%= check_box_tag "documents_deposes_obligatoires[]", "Certificat de travail", (not @dossier_maternite.documents_deposes_obligatoires.nil? and @dossier_maternite.documents_deposes_obligatoires.include?("Certificat de travail")) %>
+                        Certificat de travail <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Relevé d'Identité Bancaire", (not @dossier_maternite.documents_deposes_facultatifs.nil? and @dossier_maternite.documents_deposes_facultatifs.include?("Relevé d'Identité Bancaire")) %>
+                        Relevé d'Identité Bancaire <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Attestation de cessation de paiement", (not @dossier_maternite.documents_deposes_facultatifs.nil? and @dossier_maternite.documents_deposes_facultatifs.include?("Attestation de cessation de paiement")) %>
+                        Attestation de cessation de paiement <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Attestation de salaire", (not @dossier_maternite.documents_deposes_facultatifs.nil? and @dossier_maternite.documents_deposes_facultatifs.include?("Attestation de salaire")) %>
+                        Attestation de salaire <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Attestation de maintien de salaire", (not @dossier_maternite.documents_deposes_facultatifs.nil? and @dossier_maternite.documents_deposes_facultatifs.include?("Attestation de maintien de salaire")) %>
+                        Attestation de maintien de salaire <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Piéce d'identité de l'attributaire", (not @dossier_maternite.documents_deposes_facultatifs.nil? and @dossier_maternite.documents_deposes_facultatifs.include?("Piéce d'identité de l'attributaire")) %>
+                        Piéce d'identité de l'attributaire <br>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- End panel default enfant -->
+            </div>
+          </div>
+        </div> <!-- End col -->
+      </div> <!-- End row -->
+    </div>
+
+    <div class="form-group col-lg-12">
+      <hr>
+      <div class="col-lg-4 col-lg-offset-8" style="text-align:right">
+        <%= link_to 'Annuler', (@dossier_maternite.persisted? ? [:admin, @dossier_maternite] : admin_dossier_maternites_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosCompteBancaire();
+          chargerInfosAttributaire();
+          chargerInfosSubrogation();
+          chargerInfosParticipant();
+          chargerInfosEmployeur()
+
+          $("#dossier_maternite_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+          });
+
+          $("#dossier_maternite_attributaire").change(function () {
+              chargerInfosAttributaire()
+          });
+
+          $("#dossier_maternite_subrogation").change(function () {
+              chargerInfosSubrogation()
+          });
+
+          function chargerInfosSubrogation() {
+              elem_infos_subrogation = $('#subrogation_non')
+              if (dossier_maternite_subrogation.checked == true) {
+                  //elem_infos_subrogation.hide();
+                  $('#dossier_maternite_date_suspension_salaire_3i').prop("disabled", true).val('');
+                  $('#dossier_maternite_date_suspension_salaire_2i').prop("disabled", true).val('');
+                  $('#dossier_maternite_date_suspension_salaire_1i').prop("disabled", true).val('');
+                  $('#dossier_maternite_attributaire').attr("disabled", true)
+                  $('#prenom_attributaire').attr("readonly", true)
+              } else {
+                  //elem_infos_subrogation.show();
+
+                  $('#dossier_maternite_date_suspension_salaire_3i').prop("disabled", false);
+                  $('#dossier_maternite_date_suspension_salaire_2i').prop("disabled", false);
+                  $('#dossier_maternite_date_suspension_salaire_1i').prop("disabled", false);
+                  $('#dossier_maternite_attributaire').attr("disabled", false)
+              }
+          }
+
+          function chargerInfosAttributaire() {
+              elem_infos_inapte = $('#attributaire_oui')
+              if (dossier_maternite_attributaire.checked == true) {
+                  elem_infos_inapte.show();
+                  $('#dossier_maternite_subrogation').attr("disabled", true)
+              } else {
+                  elem_infos_inapte.hide();
+                  $('#dossier_maternite_subrogation').attr("disabled", false)
+              }
+          }
+
+          function chargerInfosCompteBancaire() {
+              let mode_paiement = $('#dossier_maternite_mode_paiement').val();
+              let elem_mode_paiement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  elem_mode_paiement.show();
+              } else {
+                  elem_mode_paiement.hide();
+              }
+          }
+
+          $('#dossier_maternite_num_affiliation').change(function () {
+              chargerInfosParticipant();
+          })
+
+          function chargerInfosParticipant() {
+              $('#alert_message1').hide();
+              $('#dossier_maternite_num_affiliation').change(function () {
+                  var numero_affiliation = $('#dossier_maternite_num_affiliation').val();
+                  $.ajax({
+                      url: "/admin/salaries/" + numero_affiliation + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data) {
+                              console.log(data)
+                              $("#dossier_maternite_prenom").val(data.prenom);
+                              $("#dossier_maternite_nom").val(data.nom);
+                              $("#dossier_maternite_num_immatriculation").val(data.id_employeur)
+                              if (Object.keys(data).length > 0) {
+                                  if (data.date_naissance !== null) {
+                                      $("#dossier_maternite_date_naissance").val(data.date_naissance);
+                                  }
+                                  if (data.date_debut_contrat !== null) {
+                                      $("#dossier_maternite_date_embauche").val(data.date_debut_contrat);
+                                  }
+                              }
+                              if (data.numero_piece !== null) {
+                                  $("#dossier_maternite_nin").val(data.numero_piece);
+                              }
+
+                              if (data.genre === 'HOMME') {
+                                  $('#alert_message1').show();
+                                  $('#submit_button').attr("disabled", true)
+                                  $('#dossier_maternite_sexe_salarie').attr("disabled", true)
+                                  $("#dossier_maternite_nin").attr("readonly", true)
+                                  $('#dossier_maternite_date_naissance').prop("disabled", true).val('');
+                                  $("#dossier_maternite_lieu_naissance").attr("readonly", true)
+                                  $("#dossier_maternite_adresse_domicile").attr("readonly", true)
+                                  $("#dossier_maternite_telephone").attr("readonly", true)
+                                  $("#dossier_maternite_email").attr("readonly", true)
+                                  $("#dossier_maternite_attributaire").attr("disabled", true)
+                                  $("#dossier_maternite_subrogation").attr("disabled", true)
+
+                                  $('#dossier_maternite_debut_grossesse_3i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_debut_grossesse_2i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_debut_grossesse_1i').prop("disabled", true).val('');
+
+                                  $('#dossier_maternite_date_suspension_salaire_3i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_date_suspension_salaire_2i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_date_suspension_salaire_1i').prop("disabled", true).val('');
+
+                                  $('#dossier_maternite_debut_conges_3i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_debut_conges_2i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_debut_conges_1i').prop("disabled", true).val('');
+
+                                  $('#dossier_maternite_date_embauche_3i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_date_embauche_2i').prop("disabled", true).val('');
+                                  $('#dossier_maternite_date_embauche_1i').prop("disabled", true).val('');
+                                  $("#dossier_maternite_mode_paiement").attr("disabled", true)
+                                  $("#dossier_maternite_num_immatriculation").attr("readonly", true)
+                                  $("#dossier_maternite_raison_sociale").attr("readonly", true)
+                                  $("#dossier_maternite_tel_employeur").attr("readonly", true)
+                                  $("#dossier_maternite_email_employeur").attr("readonly", true)
+                                  $("#dossier_maternite_adresse_employeur").attr("readonly", true)
+                                  $("#dossier_maternite_prenom_attributaire").attr("readonly", true)
+                                  $("#dossier_maternite_nom_attributaire").attr("readonly", true)
+                                  $("#dossier_maternite_nin_attributaire").attr("readonly", true)
+                              } else {
+                                  $('#alert_message1').hide();
+                                  $('#submit_button').attr("disabled", false)
+                                  $("#dossier_maternite_sexe_salarie").val('feminin');
+
+                                  $("#dossier_maternite_nin").attr("readonly", false)
+                                  $('#dossier_maternite_date_naissance').prop("disabled", false);
+                                  // $('#dossier_maternite_date_naissance_2i').prop("disabled", false);
+                                  // $('#dossier_maternite_date_naissance_1i').prop("disabled", false);
+                                  $("#dossier_maternite_lieu_naissance").attr("readonly", false)
+                                  $("#dossier_maternite_adresse_domicile").attr("readonly", false)
+                                  $("#dossier_maternite_telephone").attr("readonly", false)
+                                  $("#dossier_maternite_email").attr("readonly", false)
+                                  $("#dossier_maternite_attributaire").attr("disabled", false)
+                                  $("#dossier_maternite_subrogation").attr("disabled", false)
+
+                                  $('#dossier_maternite_debut_grossesse_3i').prop("disabled", false);
+                                  $('#dossier_maternite_debut_grossesse_2i').prop("disabled", false);
+                                  $('#dossier_maternite_debut_grossesse_1i').prop("disabled", false);
+
+                                  $('#dossier_maternite_date_suspension_salaire_3i').prop("disabled", false);
+                                  $('#dossier_maternite_date_suspension_salaire_2i').prop("disabled", false);
+                                  $('#dossier_maternite_date_suspension_salaire_1i').prop("disabled", false);
+
+                                  $('#dossier_maternite_debut_conges_3i').prop("disabled", false);
+                                  $('#dossier_maternite_debut_conges_2i').prop("disabled", false);
+                                  $('#dossier_maternite_debut_conges_1i').prop("disabled", false);
+
+                                  $('#dossier_maternite_date_embauche_3i').prop("disabled", false);
+                                  $('#dossier_maternite_date_embauche_2i').prop("disabled", false);
+                                  $('#dossier_maternite_date_embauche_1i').prop("disabled", false);
+                                  $("#dossier_maternite_mode_paiement").attr("disabled", false)
+                                  $("#dossier_maternite_num_immatriculation").attr("readonly", false)
+                                  $("#dossier_maternite_raison_sociale").attr("readonly", false)
+                                  $("#dossier_maternite_tel_employeur").attr("readonly", false)
+                                  $("#dossier_maternite_email_employeur").attr("readonly", false)
+                                  $("#dossier_maternite_adresse_employeur").attr("readonly", false)
+                                  $("#dossier_maternite_prenom_attributaire").attr("readonly", false)
+                                  $("#dossier_maternite_nom_attributaire").attr("readonly", false)
+                                  $("#dossier_maternite_nin_attributaire").attr("readonly", false)
+                              }
+                          } else {
+                              $("#dossier_maternite_prenom").val('');
+                              $("#dossier_maternite_nom").val('');
+                              $("#dossier_maternite_nin").val('');
+                              $("#dossier_maternite_date_naissance").val('');
+                              $("#dossier_maternite_date_embauche").val('');
+                              $("#dossier_maternite_num_immatriculation").val('')
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          $("#dossier_maternite_prenom").val('');
+                          $("#dossier_maternite_nom").val('');
+                          $("#dossier_maternite_nin").val('');
+                          $("#dossier_maternite_date_naissance").val('');
+                          $("#dossier_maternite_date_embauche").val('');
+                          $("#dossier_maternite_num_immatriculation").val('')
+                      }
+                  });
+              })
+          }
+
+
+          function chargerInfosEmployeur() {
+              $('#dossier_maternite_num_immatriculation').change(function () {
+                  var numero_employeur = $('#dossier_maternite_num_immatriculation').val();
+                  $.ajax({
+                      url: "/admin/employeurs/single_employeur/" + numero_employeur + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          console.log(data)
+                          if (data) {
+                              $("#dossier_maternite_raison_sociale").val(data.fhrsoc);
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          console.log('Error when loading data')
+                      }
+                  });
+              })
+          }
+
+      })
+  </script>
+<% end %>

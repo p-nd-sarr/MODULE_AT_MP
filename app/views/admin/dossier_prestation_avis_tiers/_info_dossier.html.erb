@@ -1,0 +1,29 @@
+<p>
+  <strong>Prénom:</strong>
+  <%= @dossier_prestation.try(:prenom) %>
+</p>
+<p>
+  <strong>Nom:</strong>
+  <%= @dossier_prestation.try(:nom) %>
+</p>
+<p>
+  <strong>Date de naissance:</strong>
+  <%= @dossier_prestation.try(:date_naissance) %>
+</p>
+
+<p>
+  <strong>Sexe:</strong>
+  <%= @dossier_prestation.try(:sexe_salarie) %>
+</p>
+<p>
+  <strong>Adresse domicile:</strong>
+  <%= @dossier_prestation.try(:adresse_domicile) %>
+</p>
+<p>
+  <strong>Téléphone:</strong>
+  <%= @dossier_prestation.try(:telephone) %>
+</p>
+<p>
+  <strong>Etat:</strong>
+  <%= DossierPrestation.human_enum_name(:etat, @dossier_prestation.etat) %>
+</p>

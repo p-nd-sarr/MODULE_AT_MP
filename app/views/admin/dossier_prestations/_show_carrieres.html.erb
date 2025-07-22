@@ -1,0 +1,588 @@
+<style type="text/css">
+  .no-text {
+    font-size: 0px;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+
+
+<!--Ajout de des d'embauche ,  delai de stage-->
+
+
+<div class="col-lg-12">
+  <div class="col-lg-5">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date d'embauche :</dt>
+      </div>
+
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <% unless @dossier_prestation.participant.nil? %>
+          <%= l(@dossier_prestation.participant.date_premiere_embauche) unless @dossier_prestation.participant.date_premiere_embauche.nil? %>
+        <% end %>
+      </div>
+
+
+    </d1>
+  </div>
+
+  <div class="col-lg-5">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Durée de travail :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <% unless @dossier_prestation.participant.nil? %>
+          <%= @dossier_prestation.participant.duree_derniere_carriere %> jours
+        <% end %>
+      </div>
+
+    </d1>
+  </div>
+
+  <div class="col-lg-5">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Délai de stage :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <%= @dossier_prestation.delai_de_stage unless @dossier_prestation.delai_de_stage.nil? %>
+      </div>
+
+    </d1>
+  </div>
+  <br>
+
+</div>
+
+
+
+
+
+<!--Fin ajout des dates -->
+
+
+<div class="ibox" style="margin-top:20px;">
+  <div class="ibox-title" style="background-color:rgb(240, 240, 240)">
+    <div class="ibox-tools">
+      <% unless @dossier_prestation.suspendu? || !@dossier_prestation.has_acceptable_age || not(current_user.gestionnaire_compte_allocataire?) %>
+        <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#tdp">
+          <span class="fa fa-plus"></span> Renseigner un temps de présence
+        </button>
+      <% end %>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <% unless @temps_de_presences.count.zero? %>
+      <div class="project-list">
+        <table class="table table-hover">
+          <tbody>
+          <% @temps_de_presences.each do |tdp| %>
+            <tr>
+              <td class="project-status" style="width:200px">
+              <span class="label label-primary">
+               <strong>
+                  <%= CarriereDossierPrestation.human_enum_name(:trimestre, tdp.trimestre) %>
+                </strong>
+              </span>
+              </td>
+              <td class="project-title" style="width:350px;">
+                <h4>Durée de travail:
+                  <% temps = 0 %>
+                  <% unless @dossier_prestation.carriere_dossier_prestations.nil? %>
+                    <% temps = tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois %>
+                  <% end %>
+                  <% if tdp.infos_jour? %>
+                    <%= temps %> jours
+                  <% else %>
+                    <%= temps %> heures
+                  <% end %>
+                  <br>
+                </h4>
+                <small><strong>Année:</strong> <%= tdp.annee %></small><br>
+                <small><strong>Numéro employeur premier
+                  mois:</strong> <%= tdp.num_employeur unless tdp.num_employeur.nil? %></small><br>
+                <small><strong>Raison sociale:</strong> <%= tdp.raison_sociale unless tdp.raison_sociale.nil? %></small><br>
+                <% unless tdp.motif_mois1.blank? %>
+                  <small><strong>Motif premier mois :</strong> <%= tdp.motif_mois1 %></small><br>
+                <% end %>
+                <small><strong>Numéro employeur deuxième
+                  mois:</strong> <%= tdp.num_employeur_mois_2 unless tdp.num_employeur_mois_2.nil? %></small><br>
+                <small><strong>Raison
+                  sociale:</strong> <%= tdp.raison_sociale_employeur_mois_2 unless tdp.raison_sociale_employeur_mois_2.nil? %>
+                </small><br>
+                <% unless tdp.motif_mois2.blank? %>
+                  <small><strong>Motif deuxième mois :</strong> <%= tdp.motif_mois2 %></small><br>
+                <% end %>
+                <small><strong>Numéro employeur troisième
+                  mois:</strong> <%= tdp.num_employeur_mois_3 unless tdp.num_employeur_mois_3.nil? %></small><br>
+                <small><strong>Raison
+                  sociale:</strong> <%= tdp.raison_sociale_employeur_mois_3 unless tdp.raison_sociale_employeur_mois_3.nil? %>
+                </small><br>
+                <% unless tdp.motif_mois3.blank? %>
+                  <small><strong>Motif troisième mois :</strong> <%= tdp.motif_mois3 %></small><br>
+                <% end %>
+
+                <h5 style="font-style:italic" class="text-success">
+
+                  <% if tdp.document.attached? %>
+                    <strong> Déposé le </strong> <%= l(tdp.date_document) unless tdp.date_document.nil? %>
+                  <% end %>
+                  <% unless tdp.bordereau_collectif.nil? %>
+                    <strong> Déposé le
+                      le </strong> <%= l(tdp.bordereau_collectif.date_document) unless tdp.bordereau_collectif.date_document.nil? %>
+                    <br> <br>
+                    <p class="badge">Traitement collectif </p>
+
+                  <% end %>
+                </h5>
+              </td>
+              <td class="project-completion" style="width:350px;">
+                <% if tdp.infos_jour? %>
+                  <small><strong>Premier mois:</strong> <%= tdp.premier_mois %> jours</small>
+                <% else %>
+                  <small><strong>Premier mois:</strong> <%= tdp.premier_mois %> heures</small>
+                <% end %>
+                <div class="progress progress-mini">
+                  <div style="width: <%= (tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois).zero? ? 0 : tdp.premier_mois*100/(tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois)%>%;" class="progress-bar"></div>
+                </div>
+                <br>
+                <% if tdp.infos_jour? %>
+                  <small><strong>Deuxième mois:</strong> <%= tdp.deuxiem_mois %> jours</small>
+                <% else %>
+                  <small><strong>Deuxième mois:</strong> <%= tdp.deuxiem_mois %> heures</small>
+                <% end %>
+                <div class="progress progress-mini">
+                  <div style="width: <%= (tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois).zero? ? 0 : tdp.deuxiem_mois*100/(tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois)%>%;" class="progress-bar"></div>
+                </div>
+                <br>
+                <% if tdp.infos_jour? %>
+                  <small><strong>Troisième mois:</strong> <%= tdp.troisiem_mois %> jours</small>
+                <% else %>
+                  <small><strong>Troisième mois:</strong> <%= tdp.troisiem_mois %> heures</small>
+                <% end %>
+                <div class="progress progress-mini">
+                  <div style="width: <%= (tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois).zero? ? 0 : tdp.troisiem_mois*100/(tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois)%>%;" class="progress-bar"></div>
+                </div>
+              </td>
+              <td>
+                <div class="m-b-sm thumbnail">
+                  <% if tdp.document.attached? %>
+                    <a href="<%= url_for(tdp.document) %>" target="_blank">
+                      <%= image_tag tdp.document.preview(resize: "100x100>"), class: "m-t-xs img-responsive" %>
+                    </a>
+                  <% end %>
+                  <% unless tdp.bordereau_collectif.nil? %>
+                    <% if tdp.bordereau_collectif.document.attached? %>
+                      <a href="<%= url_for(tdp.bordereau_collectif.document) %>" target="_blank">
+                        <%= image_tag tdp.bordereau_collectif.document.preview(resize: "100x100>"), class: "m-t-xs img-responsive" %>
+                      </a>
+                    <% end %>
+                  <% end %>
+
+                </div>
+              </td>
+              <% unless tdp.echeance_caisse.nil? %>
+                <td>
+                  <%= link_to 'Voir dans écheance', admin_echeance_caisse_path(tdp.echeance_caisse), class: 'btn btn-primary btn-xs', target: '_blank' if current_user.gestionnaire_compte_allocataire? or current_user.chef_agence? or current_user.comptable? %>
+                </td>
+              <% else %>
+                <td>
+                  <div class="m-b-sm thumbnail">
+                    <%= link_to 'supprimer', admin_dossier_prestation_delete_carriere_path(@dossier_prestation, tdp), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn-danger btn-xs' unless @dossier_prestation.has_paid_allocations_f?(tdp.annee, tdp.trimestre) %>
+                  </div>
+                </td>
+                <td>
+                  <div class="m-b-sm thumbnail">
+                    <%= link_to 'éditer', admin_dossier_prestation_edit_carriere_path(@dossier_prestation, tdp) unless @dossier_prestation.has_paid_allocations_f?(tdp.annee, tdp.trimestre) %>
+                  </div>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <h2> Temps de présence non renseigné !!! </h2>
+    <% end %>
+  </div>
+</div>
+
+
+<!--
+
+
+  <div class="row" style="margin-top:20px;">
+    <div class="col-lg-6 col-lg-offset-3">
+      <div class="panel panel-default">
+        <%# @temps_de_presences.each do |tdp| %>
+        <div class="panel-heading">
+          <h2>
+            Durée de travail
+            <span class="label label-info">
+              <% #temps=0 %>
+<% unless @dossier_prestation.carriere_dossier_prestations.nil? %>
+
+  <%#temps = tdp.premier_mois + tdp.deuxiem_mois + tdp.troisiem_mois %>
+  <%#end %>
+  <%#= temps %> jours
+            </span>
+          </h2>
+
+        </div>
+
+          <div class="panel-body">
+            <h3><strong> <%#= CarriereDossierPrestation.human_enum_name(:trimestre, tdp.trimestre) %></strong> </h3>
+            <br>
+            <div class="feed-activity-list">
+
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Numéro employeur: </strong><%#= tdp.num_employeur unless tdp.raison_sociale.nil? %>
+                </div>
+              </div>
+
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Raison sociale: </strong> <%#= (tdp.raison_sociale) unless tdp.raison_sociale.nil? %>
+                </div>
+              </div>
+
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Premier mois:</strong> <%#= tdp.premier_mois %> jours
+                </div>
+              </div>
+
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Deuxième mois:</strong> <%#= tdp.deuxiem_mois %> jours
+                </div>
+              </div>
+
+              <div class="feed-element">
+                <div class="media-body ">
+                  <strong>Troisième mois:</strong> <%#= tdp.troisiem_mois %> jours
+                </div>
+              </div>
+
+              <div class="feed-element">
+                <div class="media-body">
+                  <div style="text-align:center;">
+                    <a href="<%#= url_for(tdp.document) %>" target="_blank">
+                      <%#= image_tag tdp.document.preview(resize: "200x200>"), class: "m-t-xs img-responsive" %>
+                    </a>
+                  </div>
+                </div>
+
+                <%#if tdp.annee?  %>
+                  <div class="feed-element">
+                    <div class="media-body ">
+                      <strong>Année:</strong> <%#= tdp.annee %>
+                    </div>
+                  </div>
+                <%#end%>
+              <br>
+              </div>
+              <h5 style="font-style:italic">
+                <strong> Document Fait le </strong> <%#= l(tdp.date_document) unless tdp.date_document.nil? %>
+              </h5>
+            </div>
+            </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+-->
+
+
+
+<%#if @dossier_prestation.carriere_dossier_prestation.nil? %>
+<!--<div class="row" style="margin-top:20px">-->
+<!--  <div class="col-lg-12" style="text-align:center;">-->
+<!--    <button type="button" class="btn btn-outline btn-success" data-toggle="modal" data-target="#tdp">Renseigner le temps de présence</button>-->
+<!--  </div>-->
+<!--</div>-->
+<%#end %>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ajouter_document_tdp").click(function () {
+            $('#ajouter_document_tdp').hide();
+            $('#new_carriere_dossier_prestation').show();
+            return false;
+        });
+    })
+</script>
+<!-- modal tdp -->
+<div class="modal inmodal" id="tdp" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">x</span>
+          <span class="sr-only">Close</span>
+        </button>
+        <h4 class="modal-title">Renseigner le temps de présence</h4>
+      </div>
+
+
+      <%# if @dossier_prestation.creation? %>
+      <%= bootstrap_form_for(@carriere_dossier_prestation, url: admin_dossier_prestation_create_document_tdp_path(@dossier_prestation), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-body">
+          <div class="row">
+            <%= f.alert_message '' %>
+            <div class="col-sm-6"></div>
+            <div class="col-sm-6">
+              <%= f.select :trimestre, CarriereDossierPrestation::TRIMESTRE.keys.collect { |trimestre|
+                [CarriereDossierPrestation.human_enum_name(:trimestre, trimestre), trimestre] },
+                           label: 'Trimestre' %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :num_employeur, label: "Numéro Employeur premier mois", value: @dossier_prestation.try(:employeur_actuel) %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :raison_sociale, value: @ref_employeur.last.try(:raison_sociale), readonly: true %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.number_field :premier_mois, min: 0, id: 'premier_mois' %>
+            </div>
+            <div class="col-sm-12" style="display: none" id="justifier_mois1">
+              <div class="col-sm-6">
+                <%= f.check_box :est_justifier, value: "1", checked: true, unchecked: false, label: ' est justifier?', style: "margin-top:30px;" %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.select :motif_mois1, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement'], prompt: "Choisir motif", label: "Motif d'absence" %>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :num_employeur_mois_2, label: "Numéro Employeur deuxième mois", value: @dossier_prestation.try(:employeur_actuel) %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :raison_sociale_employeur_mois_2, value: @ref_employeur.last.try(:raison_sociale), readonly: true %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.number_field :deuxiem_mois, min: 0, label: 'Deuxième mois', id: 'deuxiem_mois' %>
+            </div>
+            <div class="col-sm-12" style="display: none" id="justifier_mois2">
+              <div class="col-sm-6">
+                <%= f.check_box :est_justifier_mois2, value: "1", checked: true, unchecked: false, label: ' est justifier?', style: "margin-top:30px;" %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.select :motif_mois2, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement'], prompt: "Choisir motif", label: "Motif d'absence" %>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :num_employeur_mois_3, label: "Numéro Employeur troisième mois", value: @dossier_prestation.try(:employeur_actuel) %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.text_field :raison_sociale_employeur_mois_3, value: @ref_employeur.last.try(:raison_sociale), readonly: true %>
+            </div>
+            <div class="col-sm-6">
+              <%= f.number_field :troisiem_mois, min: 0, label: 'Troisième mois', id: 'troisiem_mois' %>
+            </div>
+            <div class="col-sm-12" style="display: none" id="justifier_mois3">
+              <div class="col-sm-6">
+                <%= f.check_box :est_justifier_mois3, value: "1", checked: true, unchecked: false, label: ' est justifier?', style: "margin-top:30px;" %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.select :motif_mois3, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement'], prompt: "Choisir motif", label: "Motif d'absence" %>
+              </div>
+            </div>
+            <div class="col-sm-6" style="height:75px;">
+              <%#= f.check_box :infos_jour, value: "1", checked: true, label: ' Présence saisie en jours', style: "margin-top:30px;" %>
+              <%= f.select :infos_jour, [['Jour', true], ['Heure', false]], label: "Présence saisie en jours ?" %>
+            </div>
+
+            <div class="col-sm-6">
+              <h4 style="font-weight: bold;">Document *</h4>
+              <div class="btn-file">
+                <label class="no-text">
+                  <%= f.file_field :document, hide_label: true, label: '.',
+                                   required: true, id: 'label-ext' %>
+                  <div class="btn btn-success" style="margin-top:-20px; margin-left: 1px;">
+                    <span class="fa fa-upload"></span> Choisir un fichier
+                  </div>
+                </label>
+                <small id="doc-name"></small>
+
+              </div>
+
+            </div> <!--modal body-->
+
+            <!--            <div class="modal-footer form-group">-->
+            <!--              <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>-->
+            <%#= f.button 'Enregistrer', class: 'btn btn-primary' %>
+            <!--            </div>-->
+
+            <div class="col-sm-6" style="padding-top:9px">
+              <h4>Année de présence</h4>
+              <%= date_select('annee', 'presence', discard_day: true, discard_month: true, required: true, label: 'Année de présence',
+                              start_year: (Date.today - 5.year).year, end_year: Date.today.year) %>
+            </div>
+
+            <div class="col-sm-12" style="padding-top:19px">
+              <%= f.date_select :date_document, label: "Déposé le ",
+                                start_year: (Date.today - 1.year).year, end_year: (Date.today + 1.year).year %>
+            </div>
+          </div>
+        </div> <!--modal body-->
+        <div class="modal-footer form-group">
+          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+          <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+      <%#end %>
+    </div> <!--modal content -->
+  </div> <!--modal dialog-->
+</div>  <!--modal-->
+<!-- Fin modal tdp -->
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#est_justifier').hide()
+          var input = document.getElementById('label-ext');
+          var infoArea = document.getElementById('doc-name');
+          input.addEventListener('change', showFileName);
+          load_rc1();
+          load_rc2();
+          load_rc3();
+
+          function showFileName(event) {
+              var input = event.srcElement;
+              var fileName = input.files[0].name;
+              infoArea.textContent = fileName;
+          }
+
+          $('#premier_mois, #carriere_dossier_prestation_infos_jour').change(function () {
+
+              if ($('#carriere_dossier_prestation_infos_jour').val() === "true") {
+                  if ($('#premier_mois').val() < 18) {
+                      $('#justifier_mois1').show()
+                  } else {
+                      $('#justifier_mois1').hide()
+                  }
+              } else if ($('#carriere_dossier_prestation_infos_jour').val() === "false") {
+                  if ($('#premier_mois').val() < 120) {
+                      $('#justifier_mois1').show()
+                  } else {
+                      $('#justifier_mois1').hide()
+                  }
+              }
+          })
+
+          $('#deuxiem_mois, #carriere_dossier_prestation_infos_jour').change(function () {
+
+              if ($('#carriere_dossier_prestation_infos_jour').val() === "true") {
+                  if ($('#deuxiem_mois').val() < 18) {
+                      $('#justifier_mois2').show()
+                  } else {
+                      $('#justifier_mois2').hide()
+                  }
+              } else if ($('#carriere_dossier_prestation_infos_jour').val() === "false") {
+                  if ($('#deuxiem_mois').val() < 120) {
+                      $('#justifier_mois2').show()
+                  } else {
+                      $('#justifier_mois2').hide()
+                  }
+              }
+          })
+
+          $('#troisiem_mois, #carriere_dossier_prestation_infos_jour').change(function () {
+
+              if ($('#carriere_dossier_prestation_infos_jour').val() === "true") {
+                  if ($('#troisiem_mois').val() < 18) {
+                      $('#justifier_mois3').show()
+                  } else {
+                      $('#justifier_mois3').hide()
+                  }
+              } else if ($('#carriere_dossier_prestation_infos_jour').val() === "false") {
+                  if ($('#troisiem_mois').val() < 120) {
+                      $('#justifier_mois3').show()
+                  } else {
+                      $('#justifier_mois3').hide()
+                  }
+              }
+          })
+
+          $('#carriere_dossier_prestation_num_employeur').change(function () {
+              load_rc1();
+          });
+
+          $('#carriere_dossier_prestation_num_employeur_mois_2').change(function () {
+              load_rc2();
+          });
+
+          $('#carriere_dossier_prestation_num_employeur_mois_3').change(function () {
+              load_rc3()
+          });
+
+          function load_rc1() {
+              const fhnum1 = $('#carriere_dossier_prestation_num_employeur').val();
+
+              $.ajax({
+                  url: "/admin/dossier_prestations/employeur/" + fhnum1 + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#carriere_dossier_prestation_raison_sociale").val(data.fhrsoc);
+                      } else {
+                          $("#carriere_dossier_prestation_raison_sociale").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#carriere_dossier_prestation_raison_sociale").val('');
+                  }
+              });
+          }
+
+          function load_rc2() {
+              const fhnum2 = $('#carriere_dossier_prestation_num_employeur_mois_2').val();
+
+              $.ajax({
+                  url: "/admin/dossier_prestations/employeur/" + fhnum2 + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#carriere_dossier_prestation_raison_sociale_employeur_mois_2").val(data.fhrsoc);
+                      } else {
+                          $("#carriere_dossier_prestation_raison_sociale_employeur_mois_2").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#carriere_dossier_prestation_raison_sociale_employeur_mois_2").val('');
+                  }
+              });
+          }
+
+          function load_rc3() {
+              const fhnum3 = $('#carriere_dossier_prestation_num_employeur_mois_3').val();
+
+              $.ajax({
+                  url: "/admin/dossier_prestations/employeur/" + fhnum3 + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#carriere_dossier_prestation_raison_sociale_employeur_mois_3").val(data.fhrsoc);
+                      } else {
+                          $("#carriere_dossier_prestation_raison_sociale_employeur_mois_3").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#carriere_dossier_prestation_raison_sociale_employeur_mois_3").val('');
+                  }
+              });
+          }
+
+      });
+
+  </script>
+<% end %>

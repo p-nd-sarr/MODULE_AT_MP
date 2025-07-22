@@ -1,0 +1,11 @@
+<%= content_for :titre_page, "Dossiers de prestation que j'ai ajoutés" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter un dossier', new_admin_dossier_prestation_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'liste_dossiers' %>
+  </div>
+</div>

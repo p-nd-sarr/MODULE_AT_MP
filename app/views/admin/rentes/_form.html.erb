@@ -1,0 +1,14 @@
+<%= bootstrap_form_for(@admin_rente, layout: :horizontal) do |f| %>
+
+  <%= f.number_field :age %>
+  <%= f.number_field :prix %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_rentes_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

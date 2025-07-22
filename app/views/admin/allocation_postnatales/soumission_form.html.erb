@@ -1,0 +1,38 @@
+<%= content_for :titre_page, 'Conditions Soumission Demande' %>
+
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Soumission de la demande  d'allocation postnatale</h5>
+        </div>
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@allocation_postnatale,
+                                 url: admin_dossier_prestation_allocation_postnatale_soumettre_path(@dossier_prestation, @allocation_postnatale),
+                                 layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Une erreur est survenue lors de la soumission." %>
+            <p>
+              En soumettant le demande j'accepte les conditions suivantes :
+            </p>
+
+            <%#= f.check_box :condition_1, label: " Condition 1 :  " %>
+            <%= f.check_box :condition_1, label: " Condition 1 :
+              #{AllocationPostnatale.human_enum_name(:volet, @allocation_postnatale.volet)}, date accouchement :
+              #{l @allocation_postnatale.date_accouchement} " %>
+            <%#= f.check_box :condition_3, label: " Condition 3 : " %>
+
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row" style="text-align:right;">
+              <div class="col-sm-4 col-sm-offset-8">
+                <%= link_to 'Annuler', admin_dossier_prestation_allocation_postnatales_path(@dossier_prestation), class: 'btn btn-white' %>
+                <%= f.button 'Soumettre', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

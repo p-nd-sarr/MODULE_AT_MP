@@ -1,0 +1,109 @@
+<% unless @dossier_reversion_salaries.nil?%>
+    <div class="ibox">
+      <div class="row ">
+       <div class="col-sm-8 mb-4">
+        <h3>Demandeurs de reversion veufs(ves)</h3>
+       </div>   
+      </div>
+      <div class="ibox-content">
+     
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Type</th>
+               <th scope="col">Peut etre eligible</th>
+              <th scope="col">Etat</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @reversion_veuve_salarie.dossier_reversion_salaries.veuve.each do |dossier_reversion_salarie| %>
+              <tr>
+                <td><%= dossier_reversion_salarie.prenom %></td>
+                <td><%= dossier_reversion_salarie.nom %></td>
+                
+                <% unless dossier_reversion_salarie.conjoint_id.nil?%>
+                   <td><%= l dossier_reversion_salarie.conjoint.date_naissance %></td>
+                <% end%>
+                 <% unless dossier_reversion_salarie.enfant_id.nil?%>
+                   <td><%= l dossier_reversion_salarie.enfant.date_naissance %></td>
+                <% end%>
+
+                  <td><%= dossier_reversion_salarie.type_ayant_droit %></td>
+                  <td><%= state_yes_no dossier_reversion_salarie.peut_etre_eligible? %></td>
+                  <td><%= dossier_reversion_salarie.etat %> </td>
+            
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin,dossier_reversion_salarie], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+                <% if @reversion_veuve_salarie.creation? and current_user.can_allocataire? and @reversion_veuve_salarie.ajoute_par == current_user %>
+                  <td style="width: 75px">
+                    <%= link_to 'supprimer',  [:admin,dossier_reversion_salarie], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                  </td>
+                <% end %>
+
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+       
+      </div>
+    </div>
+
+      <div class="ibox">
+      <div class="row ">
+       <div class="col-sm-8 mb-4">
+        <h3>Demandeurs de reversion orphelins</h3>
+       </div>   
+      </div>
+      <div class="ibox-content">
+     
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Type</th>
+               <th scope="col">Peut etre eligible</th>
+              <th scope="col">Etat</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @reversion_veuve_salarie.dossier_reversion_salaries.orphelin.each do |dossier_reversion_salarie| %>
+              <tr>
+                <td><%= dossier_reversion_salarie.prenom %></td>
+                <td><%= dossier_reversion_salarie.nom %></td>
+                
+                <% unless dossier_reversion_salarie.conjoint_id.nil?%>
+                   <td><%= l dossier_reversion_salarie.conjoint.date_naissance %></td>
+                <% end%>
+                 <% unless dossier_reversion_salarie.enfant_id.nil?%>
+                   <td><%= l dossier_reversion_salarie.enfant.date_naissance %></td>
+                <% end%>
+
+                  <td><%= dossier_reversion_salarie.type_ayant_droit %></td>
+                  <td><%= state_yes_no dossier_reversion_salarie.peut_etre_eligible? %></td>
+                  <td><%= dossier_reversion_salarie.etat %> </td>
+            
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin,dossier_reversion_salarie], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+                <% if @reversion_veuve_salarie.creation? and current_user.can_allocataire? and @reversion_veuve_salarie.ajoute_par == current_user %>
+                  <td style="width: 75px">
+                    <%= link_to 'supprimer',  [:admin,dossier_reversion_salarie], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                  </td>
+                <% end %>
+
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+       
+      </div>
+    </div>
+  <% end %>

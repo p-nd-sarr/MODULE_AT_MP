@@ -1,0 +1,44 @@
+<%= content_for :titre_page, 'Composants Salaire' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_composant_salaire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Code</th>
+        <th scope="col">Designation</th>
+        <th scope="col">Prise en compte</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_composant_salaires.each do |composant_salaire| %>
+        <tr>
+          <td><%= composant_salaire.code %></td>
+          <td><%= composant_salaire.designation %></td>
+          <td>
+            <% unless composant_salaire.prise_en_compte.nil? %>
+              <% if composant_salaire.prise_en_compte? %>
+                Oui
+              <% else %>
+                Non
+              <% end %>
+            <% end %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_composant_salaire_path(composant_salaire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', [composant_salaire], method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

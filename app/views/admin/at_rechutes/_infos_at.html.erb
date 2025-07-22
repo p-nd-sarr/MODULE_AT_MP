@@ -1,0 +1,40 @@
+<p>
+  <strong>Prénom:</strong>
+  <%= @arret_travail.try(:prenom_salarie) %>
+</p>
+
+<p>
+  <strong>Nom:</strong>
+  <%= @arret_travail.try(:nom_salarie) %>
+</p>
+
+<p>
+  <strong>Date de naissance:</strong>
+ <%= @arret_travail.try(:date_de_naissance_salarie).strftime("%d-%m-%Y") unless @arret_travail.date_de_naissance_salarie.nil? %>
+</p>
+
+<p>
+  <strong>Date accident:</strong>
+  <%= @arret_travail.try(:date_accident).strftime("%d-%m-%Y") %>
+</p>
+<% if @arret_travail.gueris?%>
+<p>
+  <strong>Date guerisation:</strong>
+  <%= @arret_travail.at_guerison.try(:date_validation).strftime("%d-%m-%Y") %>
+</p>
+<% end %>
+
+<p>
+  <strong>Téléphone:</strong>
+  <%= @arret_travail.try(:telephone) %>
+</p>
+
+<p>
+  <strong>Etat dossier AT:</strong>
+  <%= @arret_travail.try(:etat) %>
+</p>
+
+<p>
+  <strong>N° SINISTRE:</strong>
+  <%= @arret_travail.try(:num_dossier) %>
+</p>

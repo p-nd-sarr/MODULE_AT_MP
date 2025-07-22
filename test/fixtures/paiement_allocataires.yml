@@ -1,0 +1,65 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  numero_allocataire: MyString
+  annee: 1
+  numero_periode: MyString
+  regime: MyString
+  categorie: MyString
+  code_pays: MyString
+  code_region: MyString
+  nombre_enfants: 1
+  points_gratuits: 1.5
+  points_cotisations: 1.5
+  points_minores: 1.5
+  enfant_points_majores: 1.5
+  points_complementaires: 1.5
+  points_servis: 1.5
+  points_base: 1.5
+  type_paiement: 1
+  montant_brut: 1.5
+  montant_net: 1.5
+  montant_igr: 1.5
+  montant_mf: 1.5
+  montant_ipres: 1.5
+  avis_tiers: MyString
+  code: MyString
+  ipm: 1.5
+  tutelle: MyString
+  valeur_point: 1.5
+  observations: MyString
+  mode_paiement: MyString
+  date_rejet: 2020-03-23
+  etat: 1
+
+two:
+  numero_allocataire: MyString
+  annee: 1
+  numero_periode: MyString
+  regime: MyString
+  categorie: MyString
+  code_pays: MyString
+  code_region: MyString
+  nombre_enfants: 1
+  points_gratuits: 1.5
+  points_cotisations: 1.5
+  points_minores: 1.5
+  enfant_points_majores: 1.5
+  points_complementaires: 1.5
+  points_servis: 1.5
+  points_base: 1.5
+  type_paiement: 1
+  montant_brut: 1.5
+  montant_net: 1.5
+  montant_igr: 1.5
+  montant_mf: 1.5
+  montant_ipres: 1.5
+  avis_tiers: MyString
+  code: MyString
+  ipm: 1.5
+  tutelle: MyString
+  valeur_point: 1.5
+  observations: MyString
+  mode_paiement: MyString
+  date_rejet: 2020-03-23
+  etat: 1

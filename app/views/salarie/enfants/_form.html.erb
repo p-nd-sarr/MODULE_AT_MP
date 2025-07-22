@@ -1,0 +1,290 @@
+<style type="text/css">
+  select option[disabled]{
+    display:none
+  }
+</style>
+
+<%= bootstrap_form_for([:salarie, @enfant], label_col: "col-sm-6", control_col: "col-sm-6") do |f| %>
+  <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+
+  <div class="content clearfix">
+      <h2 class="text-navy" style="font-weight:bold">Informations sur les parents</h2>
+      <hr>
+      <div class="row">
+        <div class="form-group">
+          <div class="col-sm-6" style="height: 60px;">
+            <%= f.text_field :numero_affiliation, value: @salarie.numero_salarie, label: 'Numéro affiliation salarié', readonly: true %>
+            <div id="num_aff_error" style="display: none; font-size: 12px; color: red ; -webkit-text-stroke-width: medium;">Le numéro d'affiliation doit être numérique</div>
+          </div>
+          <div class="col-sm-6" style="height: 60px;">
+            <%#= f.select :conjoint_id, [], include_blank: true, label: 'Conjoint' if is_active_controller('admin/enfants') and is_active_action('new') %>
+            <%= f.collection_select :conjoint_id, @salarie.conjoints.all, :id, :full_name, label: 'Conjoint' %>
+          </div>
+          <div class="col-sm-6" style="height: 60px; margin-top: 20px;" >
+            <%= f.text_field :prenom_salarie,value: @salarie.prenom, label: 'Prénom salarié', readonly: true %>
+          </div>
+          <div class="col-sm-6" style="height: 60px; margin-top: 20px;" >
+            <%= f.text_field :nom_salarie, value: @salarie.nom, label: 'Nom salarié', readonly: true%>
+          </div>
+        </div>
+      </div>
+  <br>
+  </div>
+  <br>
+  <div class="content clearfix" id="list_enfant_salarie">
+      <h3 class="text-success">Liste des enfants du salarié</h3>
+      <hr>
+      <div class="row">
+        <div class="col-sm-12 table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Date de naissance</th>
+                <th scope="col">Origine enfant</th>
+              </tr>
+            </thead>
+            <tbody id="t_body_enfant">
+            </tbody>
+          </table>
+        </div>
+      </div>
+  </div>
+  <div class="content clearfix">
+      <h2 class="text-navy" style="font-weight:bold">Informations de l'enfant à ajouter</h2>
+      <hr>
+      <div class="row">
+          <div class="form-group">
+              <div class="col-sm-6" style="height: 60px;">
+                 <%= f.text_field :prenom, label: 'Prénom' %>
+              </div>
+              <div class="col-sm-6" style="height: 60px;">
+                <%= f.text_field :nom, label: 'Nom' %>
+              </div>
+              <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                <%= f.select :origine_enfant,
+                   Enfant::ORIGINE_ENFANT.keys.collect { |origine_enfant| [Enfant.human_enum_name(:origine_enfant, origine_enfant), origine_enfant] },
+                   label: "Origine de l'enfant", include_blank: true %>
+              </div>
+            <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+              <%= f.date_field :date_naissance, label: "Date de naissance",
+                                start_year: (Date.today - 50.year).year, end_year: Date.today.year, end_month: Date.today.month%>
+            </div>
+            <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+              <%= f.text_field :lieu_naissance, label: "Lieu de naissance"%>
+            </div>
+              <div id="mere_naturel">
+                <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                  <%= f.text_field :nom_mere_naturel, label: 'Nom du parent naturel' %>
+                </div>
+                <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                  <%= f.text_field :prenom_mere_naturel, label: 'Prénom du parent naturel' %>
+                </div>
+              </div>
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+              <%= f.select :sexe,
+                           Enfant::SEXE.keys.collect { |sexe| [Enfant.human_enum_name(:sexe, sexe), sexe] },
+                           label: "Sexe de l'enfant" %>
+              </div>
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                <%= f.select :type_piece,
+                   Enfant::TYPE_PIECE.keys.collect { |type_piece| [Enfant.human_enum_name(:type_piece, type_piece), type_piece] },
+                   label: "Type de pièce" %>
+              </div>
+
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;" id="num_piece">
+                <%= f.text_field :numero_piece, label: 'Numéro piéce', :onkeyup => 'verifNin()', :onkeydown => "if(event.keyCode==32) return false;" %>
+                 <div id="alert_lenght_nin" class="alert-danger" style="width: 175px; border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">Le NIN doit etre compris entre 13 et 14 chiffres</div>
+              </div>
+
+              <div class="col-sm-6" style="height: 60px; margin-top: 30px;">
+                <%= f.date_field :date_delivrance_piece, label: "Date de délivrance de la pièce",
+                                  start_year: (Date.today - 10.year).year, end_year: Date.today.year, html_options: { onchange: 'check_date_naissance(this.id);' } %>
+              </div>
+            
+              <div id="infos_enfant">
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                <%#= f.text_field :'code_etat_civil', label: 'Code d’état civil ou code locatilié' %>
+                <%= f.collection_select :code_etat_civil, Admin::LocaliteGrappe.all.order('localite'), :code_localite, :localite, label: 'Centre d’état civil ou locatilié', prompt: "Choisir un centre d'état civil" %>
+              </div>
+
+              <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                <%= f.text_field :numero_registre, label: 'Numéro de registre', :onkeyup => 'verifNumRegistre()' %>
+                <div id="alert_numero_registre" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">Le
+                  numéro de régistre doit etre numérique
+                </div>
+             </div>
+
+            <div class="col-lg-6" style="height: 60px;  margin-top: 30px;">
+              <%= f.date_field :date_transcription, label: 'Date de transcription'%>
+            </div>
+           </div>
+            <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+                  <h4 style="font-weight: bold;">Pièce d’identification *</h4>
+                  <div class="btn-file">
+                    <label>
+                      <%= f.file_field :extrait_naissance, hide_label:true, label: '.',
+                       required: (not @enfant.persisted?),
+                       help: (@enfant.persisted?), id:'label-ext'  %>
+                      <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+                      </div>
+                    </label>
+                  </div>
+                  <small id="certeficat-name"></small>
+             </div>
+      </div>
+      <div class="form-group col-sm-12" style="margin-top: 50px;">
+        <hr>
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3" style="text-align: right;">
+          <%= link_to 'Annuler', salarie_enfants_path, class: 'btn btn-white' %>
+          <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      var conjoint;
+      var salarie;
+      $(document).ready(function () {
+          load_conjoints();
+
+         // $('#alert_nom_enfant').hide();
+          $('#mere_naturel').hide();
+          //$('#alert_age_enfant').hide();
+          $('#alert_numero_registre').hide();
+          $('#alert_lenght_nin').hide();
+          $('#list_enfant_salarie').hide();
+          $('#list_conjoint_salarie').hide();
+          $('#num_piece').hide();
+        //  $( "#enfant_nom" ).attr('readOnly', 'true' );
+
+          $('#enfant_type_piece').change(
+              function () {
+                  if ($("#enfant_type_piece").val() != 'extrait_naissance') {
+                      $('#infos_enfant').hide();
+                      $('#num_piece').show();
+                  } else {
+                      $('#infos_enfant').show();
+                      $('#num_piece').hide();
+                  }
+              }
+          )
+
+    
+
+          $('#enfant_origine_enfant').change(
+              function () {
+                  if ($("#enfant_origine_enfant").val() != 'adoption') {
+                      $( "#enfant_nom").attr('readOnly', 'true' );
+                  } else {
+                      $( "#enfant_nom").prop('readOnly', 'false' );
+                  }
+              }
+          )
+
+      
+
+          $('#enfant_origine_enfant').change(function(){
+
+              if ($("#enfant_origine_enfant").val() == 'naturel' && $("#enfant_conjoint_id").val().length <= 0 /* && salarie[0].genre === 'HOMME'*/) {
+                  $('#mere_naturel').show();
+              } else {
+                  $('#mere_naturel').hide();
+              }
+          });
+
+      });
+
+      var input = document.getElementById('label-ext');
+      var infoArea = document.getElementById('certeficat-name');
+      input.addEventListener('change', showFileName);
+
+      function showFileName(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea.textContent = fileName;
+      }
+
+      function verifNumRegistre() {
+          if (isNaN($("#enfant_numero_registre").val())) {
+              $('#alert_numero_registre').show();
+              $('#submit_button').attr("disabled", true)
+          } else {
+              $('#alert_numero_registre').hide();
+              $('#submit_button').attr("disabled", false)
+          }
+      }
+
+   
+
+      function disabledGenres() {
+        var x=document.getElementById('enfant_origine_enfant');
+        var marie=false;
+         if(salarie.genre === 'FEMME'){
+            for(var i=0; i<conjoint.length; i++){
+              if(conjoint[i].etat_conjoint =='union'){
+                marie=true;
+                break;
+              }
+            }
+            if(marie==false){
+              for(var i=0; i < x.options.length; i++){
+                if(x.options[i].value != "naturel" && x.options[i].value != "adoption"){
+                  x.options[i].disabled = true;
+              }
+            }                                 
+          }
+        }
+        else{
+            for(var i=0; i < x.options.length; i++){
+               x.options[i].disabled = false;
+            }
+        }
+        
+      }
+
+      function load_conjoints() {
+          var numero_affiliation = $('#enfant_numero_affiliation').val();
+          $.ajax({
+              //url: "/admin/conjoints/valides.json?numero_affiliation=" + numero_affiliation,
+              url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      conjoint = data
+                      html = '<option value=""></option>';
+
+                      $.each(data, function (key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+
+                      $("#enfant_conjoint_id").html(html);
+                      disabledGenres();
+                  } else {
+                      //$("#enfant_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  //$("#enfant_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      }
+      $('#enfant_conjoint_id').change(
+          function () {
+              const str = $('#enfant_conjoint_id').text().split(" ").splice(-1)
+              if (conjoint[0].genre === 'FEMME'){
+                 // $( "#enfant_nom" ).attr('readOnly', 'true' );
+                  $("#enfant_nom").val(str[0]);
+              }
+          }
+      )
+  </script>
+<% end %>

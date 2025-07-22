@@ -1,0 +1,77 @@
+<div class="modal inmodal" id="PaiementModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+        <% if @dossier_cnav.allocataire_cnavs.valide.non_paye.empty?  %>
+          <i class="fa fa-close modal-icon btn-danger"></i>
+          <h4 class="modal-title">
+            Pas de paiement à valider
+          </h4>
+
+        <% else %>
+          <i class="fa fa-check modal-icon btn-primary"></i>
+          <h4 class="modal-title">
+            Valider Odre de Paiement
+          </h4>
+        <% end %>
+      </div>
+
+      <div class="modal-body">
+        <% unless @dossier_cnav.allocataire_cnavs.valide.non_paye.empty? %>
+          <h5>Allocataires CNAV</h5>
+          <table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+            <thead>
+            <tr>
+              <th scope="col">Allocataire</th>
+<!--              <th scope="col">Etat</th>-->
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Mode Paiement</th>
+              <th scope="col">Montant Liquidé</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @dossier_cnav.allocataire_cnavs.valide.non_paye.each do |allocataire_cnav| %>
+              <tr>
+                <td><%= allocataire_cnav.full_name %></td>
+<!--                <td><%#= AllocataireCnav.human_enum_name(:etat, allocataire_cnav.etat) %></td>-->
+                <td>
+                <td>
+                  <% unless allocataire_cnav.date_soumission.nil? %>
+                    <%= l allocataire_cnav.date_soumission %>
+                  <% end %>
+                </td>
+                  <%# unless allocataire_cnav.created_at.nil? %>
+                    <%#= l allocataire_cnav.created_at %>
+                  <%# end %>
+                  <%= AllocataireCnav.human_enum_name(:mode_paiement, allocataire_cnav.mode_paiement) %>
+                </td>
+                <td><%= format_cfa allocataire_cnav.montant %></td>
+
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        <% end %>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= link_to 'Valider ordre de paiement', admin_dossier_cnav_valider_paiement_path(@dossier_cnav), class: 'btn btn-primary', id: 'valider_paiement' %>
+        <%#= link_to 'Valider odre de paiement', admin_dossier_cnav_allocataire_cnav_valider_paiement_compt_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-primary', id: 'valider_paiement' %>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="application/javascript">
+    $(document).ready(function () {
+        <% if  @dossier_cnav.allocataire_cnavs.valide.non_paye.empty?  %>
+        $("#valider_paiement").hide();
+        <% else %>
+        $("#valider_paiement").show();
+        <%end %>
+    });
+</script>

@@ -1,0 +1,56 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">Régime Général</th>
+    <th scope="col">Régime Cadre</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr>
+    <td>Points de cotisation</td>
+    <td class="text-right"><%= format_entier @allocataire.points_rg %></td>
+    <td class="text-right"><%= format_entier @allocataire.points_rc %></td>
+  </tr>
+  <tr>
+    <td>Points gratuits</td>
+    <td class="text-right"><%= format_entier(@allocataire.points_gratuits_rg || 0) %></td>
+    <td class="text-right"><%= format_entier(@allocataire.points_gratuits_rc || 0) %></td>
+  </tr>
+  <tr>
+    <td>Points de base</td>
+    <td class="text-right"><%= format_entier @allocataire.points_base_rg %></td>
+    <td class="text-right"><%= format_entier @allocataire.points_base_rc %></td>
+  </tr>
+  <tr>
+    <td>Points de minoration</td>
+    <td class="text-right"><%= format_entier @allocataire.point_minoration_rg %></td>
+    <td class="text-right"><%= format_entier @allocataire.point_minoration_rc %></td>
+  </tr>
+
+  <tr>
+    <td>Points de majoration</td>
+    <td class="text-right"><%= format_entier @allocataire.point_majoration_rg %></td>
+    <td class="text-right"><%= format_entier @allocataire.point_majoration_rc %></td>
+  </tr>
+  <tr>
+    <td>Points à servir</td>
+    <td class="text-right"><%= format_entier @allocataire.points_servis_rg %></td>
+    <td class="text-right"><%= format_entier @allocataire.points_servis_rc %></td>
+  </tr>
+  </tbody>
+</table>
+
+<h3>Montant : <%= format_cfa @allocataire.montant_net %> <%= ' / mois' unless @allocataire.versement_unique %></h3>
+<hr>
+<% unless @allocataire.date_jouissance.nil? %>
+  <h5>Date de jouissance :</h5>
+  <p><%= l(@allocataire.date_jouissance) %></p>
+<% end %>
+<h5>Dates sorties des enfants :</h5>
+<ul>
+  <li>Enfant 1 : <%= l(@allocataire.date_sortie_enfant1) unless @allocataire.date_sortie_enfant1.nil? %></li>
+  <li>Enfant 2 : <%= l(@allocataire.date_sortie_enfant2) unless @allocataire.date_sortie_enfant2.nil? %></li>
+  <li>Enfant 3 : <%= l(@allocataire.date_sortie_enfant3) unless @allocataire.date_sortie_enfant3.nil? %></li>
+</ul>

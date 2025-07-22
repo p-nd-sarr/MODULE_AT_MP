@@ -1,0 +1,55 @@
+<%= content_for :titre_page, "Détails barême" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_baremes_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_bareme_path(@admin_bareme), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_bareme', new_admin_bareme_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Admin type regime:</strong>
+                  <%= @admin_bareme.admin_type_regime %>
+                </p>
+
+                            <p>
+                  <strong>Periode:</strong>
+                  <%= @admin_bareme.periode %>
+                </p>
+
+                            <p>
+                  <strong>Valeur point:</strong>
+                  <%= @admin_bareme.valeur_point %>
+                </p>
+
+                            <p>
+                  <strong>Taux:</strong>
+                  <%= @admin_bareme.taux %>
+                </p>
+
+                            <p>
+                  <strong>Plafond salaire:</strong>
+                  <%= @admin_bareme.plafond_salaire %>
+                </p>
+
+                            <p>
+                  <strong>Date debut validite:</strong>
+                  <%= @admin_bareme.date_debut_validite %>
+                </p>
+
+                            <p>
+                  <strong>Date fin validite:</strong>
+                  <%= @admin_bareme.date_fin_validite %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

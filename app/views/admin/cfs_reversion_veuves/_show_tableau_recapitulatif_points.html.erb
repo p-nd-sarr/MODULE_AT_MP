@@ -1,0 +1,147 @@
+<% if @cfs_reversion_veuve.current_state >= :cotisation_valide %>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Régime Général</th>
+      <th scope="col">Régime Cadre</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% if @cfs_reversion_veuve.allocataire.nil? %>
+      <tr>
+        <td>Points de cotisation</td>
+        <td><%= @cfs_reversion_veuve.calcul_points_regime_general %></td>
+        <td><%= @cfs_reversion_veuve.calcul_points_regime_cadre %></td>
+      </tr>
+      <tr>
+        <td>Points gratuits</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Points de base</td>
+        <td><%= @cfs_reversion_veuve.calcul_points_base_regime_general %></td>
+        <td><%= @cfs_reversion_veuve.calcul_points_base_regime_cadre %></td>
+      </tr>
+      <tr>
+        <td>Points de minoration</td>
+        <td><%= @cfs_reversion_veuve.calcul_points_minoration_regime_general %></td>
+        <td><%= @cfs_reversion_veuve.calcul_points_minoration_regime_cadre %></td>
+      </tr>
+
+      <tr>
+        <td>Points de majoration</td>
+        <td><%= @cfs_reversion_veuve.calcul_points_majoration_regime_general %></td>
+        <td><%= @cfs_reversion_veuve.calcul_points_majoration_regime_cadre %></td>
+      </tr>
+      <tr>
+        <td>Points à servir</td>
+        <td><%= @cfs_reversion_veuve.calcul_points_servis_regime_general %></td>
+        <td><%= @cfs_reversion_veuve.calcul_points_servis_regime_cadre %></td>
+      </tr>
+    <% else %>
+      <tr>
+        <td>Points de cotisation</td>
+        <td><%= @cfs_reversion_veuve.allocataire.points_rg %></td>
+        <td><%= @cfs_reversion_veuve.allocataire.points_rc %></td>
+      </tr>
+      <tr>
+        <td>Points gratuits</td>
+        <td>0</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Points de base</td>
+        <td><%= @cfs_reversion_veuve.allocataire.points_base_rg %></td>
+        <td><%= @cfs_reversion_veuve.allocataire.points_base_rc %></td>
+      </tr>
+      <tr>
+        <td>Points de minoration</td>
+        <td><%= @cfs_reversion_veuve.allocataire.point_minoration_rg %></td>
+        <td><%= @cfs_reversion_veuve.allocataire.point_minoration_rc %></td>
+      </tr>
+
+      <tr>
+        <td>Points de majoration</td>
+        <td><%= @cfs_reversion_veuve.allocataire.point_majoration_rg %></td>
+        <td><%= @cfs_reversion_veuve.allocataire.point_majoration_rc %></td>
+      </tr>
+      <tr>
+        <td>Points à servir</td>
+        <td><%= @cfs_reversion_veuve.allocataire.points_servis_rg %></td>
+        <td><%= @cfs_reversion_veuve.allocataire.points_servis_rc %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <h3>
+    Durée d'affiliation :
+    <%#= format_cfa @cfs_reversion_veuve.calcul_allocation %>
+    <% if !@cfs_reversion_veuve.participant.nil? %>
+      <%= @cfs_reversion_veuve.participant.nb_mois_travail  %> mois
+    <% end %>
+  </h3>
+
+  <h3>
+    <% if @cfs_reversion_veuve.allocataire.nil? %>
+      <% if @cfs_reversion_veuve.versement_mensuel? %>
+        Pension mensuelle :
+      <% else %>
+        Versement unique :
+      <% end %>
+      <%= format_cfa @cfs_reversion_veuve.calcul_allocation %>
+    <% else %>
+      <% if @cfs_reversion_veuve.allocataire.versement_unique? %>
+        Versement unique :
+      <% else %>
+        Pension mensuelle :
+      <% end %>
+      <%= format_cfa @cfs_reversion_veuve.allocataire.montant_net %>
+    <% end %>
+  </h3>
+  <% montant_subvention = @cfs_reversion_veuve.allocataire.try(:montant_subvention) || @cfs_reversion_veuve.calcul_subvention %>
+
+  <% unless montant_subvention.zero? %>
+    <h3>
+      Montant subvention:
+      <%= format_cfa montant_subvention %>
+    </h3>
+  <% end %>
+
+  <h3>
+    Date d'entrée en jouissance
+    : <%= @cfs_reversion_veuve.allocataire.try(:date_jouissance) || @cfs_reversion_veuve.calcul_date_jouissance.try(:strftime, "%d/%m/%Y") %>
+  </h3>
+  <br>
+  <h5 class="text-info">
+    Taux de majoration :
+    <%= @cfs_reversion_veuve.allocataire.try(:pourcentage_majoration) || @cfs_reversion_veuve.taux_majoration %>%
+  </h5>
+
+  <h5 class="text-info">
+    Taux de minoration Régime Cadre :
+    <%= @cfs_reversion_veuve.allocataire.try(:pourcentage_minoration_rc) || @cfs_reversion_veuve.taux_minoration_rc %> %
+    <br>
+    Taux de minoration Régime Général :
+    <%= @cfs_reversion_veuve.allocataire.try(:pourcentage_minoration_rg) || @cfs_reversion_veuve.taux_minoration_rg %> %
+  </h5>
+
+  <div>
+    <%#= @cfs_reversion_veuve.carriere.taux_majoration %>
+    <% if @cfs_reversion_veuve.creation? or @cfs_reversion_veuve.soumis? %>
+      <strong>
+        <em>sous réserve de validation définitive de la demande</em>
+      </strong>
+    <% elsif @cfs_reversion_veuve.dossier_valide? %>
+      <strong>
+        <em>sous réserve de révision du dossier</em>
+      </strong>
+    <% end %>
+  </div>
+<% else %>
+  <h4> Les carrières ne sont pas encore validées.</h4>
+<% end %>

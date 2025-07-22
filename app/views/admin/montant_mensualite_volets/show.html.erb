@@ -1,0 +1,36 @@
+<%= content_for :titre_page, "Détails montant_mensualite_volet" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_montant_mensualite_volets_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_montant_mensualite_volet_path(@montant_mensualite_volet), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter montant_mensualite_volet', new_admin_montant_mensualite_volet_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Num volet:</strong>
+                  <%= @montant_mensualite_volet.num_volet %>
+                </p>
+
+                            <p>
+                  <strong>Montant:</strong>
+                  <%= @montant_mensualite_volet.montant %>
+                </p>
+
+
+                            <p>
+                  <strong>Date changement:</strong>
+                  <%= @montant_mensualite_volet.date_changement %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

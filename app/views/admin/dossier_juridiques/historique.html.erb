@@ -1,0 +1,177 @@
+<%= content_for :titre_page, "Historique Dossier Juridique [#{@dossier_juridique.current_state}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_juridique_path(@dossier_juridique), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row animated fadeInRight">
+    <div class="col-lg-12">
+      <div class="ibox ">
+        <div class="ibox-content" id="ibox-content">
+          <div id="vertical-timeline" class="vertical-container dark-timeline">
+
+            <div class="vertical-timeline-block">
+              <div class="vertical-timeline-icon red-bg">
+                <i class="fa fa-folder"></i>
+              </div>
+              <div class="vertical-timeline-content">
+                <h2>Historique du dossier</h2>
+                <hr>
+                <div class='row'>
+                  <div class="col-lg-12">
+                    <div class="col-lg-4">
+                      <h5><strong class="text-navy">CRÉÉ
+                        PAR:</strong><br> <%= @dossier_juridique.ajoute_par.full_name %></h5>
+                      <h5><strong class="text-navy">DATE
+                        DE CRÉATION:</strong><br> <%= @dossier_juridique.created_at.strftime("%d/%m/%Y") %></h5>
+                    </div>
+                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                      <h5><strong class="<%= 'text-navy' unless @dossier_juridique.ajoute_par.nil? %>">SOUMIS À LA
+                        DIRECTION
+                        JURIDIQUE
+                        PAR:</strong><br> <%= @dossier_juridique.soumis_par.full_name unless @dossier_juridique.soumis_par.nil? %>
+                      </h5>
+                      <h5><strong class="<%= 'text-navy' unless @dossier_juridique.date_soumission.nil? %>">DATE DE
+                        SOUMISSION:</strong><br> <%= (@dossier_juridique.date_soumission.strftime("%d/%m/%Y")) unless @dossier_juridique.date_soumission.nil? %>
+                      </h5>
+                    </div>
+                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                      <h5><strong class="<%= 'text-navy' unless @dossier_juridique.cloture_par.nil? %>">CLÔTURÉ
+                        PAR:</strong><br> <%= (@dossier_juridique.cloture_par.full_name) unless @dossier_juridique.cloture_par.nil? %>
+                      </h5>
+                      <h5><strong class="<%= 'text-navy' unless @dossier_juridique.date_cloture.nil? %>">DATE
+                        CLÔTURE:</strong><br> <%= (@dossier_juridique.date_cloture.strftime("%d/%m/%Y")) unless @dossier_juridique.date_cloture.nil? %>
+                      </h5>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="vertical-timeline-block">
+              <div class="vertical-timeline-icon blue-bg">
+                <i class="fa fa-folder"></i>
+              </div>
+              <div class="vertical-timeline-content">
+                <h2>Affectation et Traitement du dossier</h2>
+                <hr>
+                <div class='row'>
+                  <div class="col-lg-12">
+                    <% @dossier_juridique.affectation_dossier_juridiques.each do |affectation| %>
+                      <div class="col-lg-6" style="border-left:1px solid rgb(210, 210, 210)">
+                        <h5><strong class="text-navy">AFFECTÉ
+                          PAR:</strong><br> <%= affectation.affecte_par.full_name %>
+                          (<%= affectation.affecte_par.type_profil.humanize %>)</h5>
+                        <h5><strong class="text-navy">AFFECTÉ
+                          À:</strong><br> <%= affectation.affecte_a.full_name %>
+                          (<%= affectation.affecte_a.type_profil.humanize %>)</h5>
+                        <h5><strong class="text-navy">DATE
+                          D'AFFECTATION:</strong><br> <%= affectation.date_affectation.strftime("%d/%m/%Y") %></h5>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="vertical-timeline-block">
+              <div class="vertical-timeline-icon blue-bg">
+                <i class="fa fa-file-text"></i>
+              </div>
+              <div class="vertical-timeline-content">
+                <h2>Historique des fichiers</h2>
+                <hr>
+                <div class='row'>
+                  <%= paginate @results %>
+                  <table class="table table-bordered table-condensed table-hover">
+                    <tr>
+                      <td>Date de création</td>
+                      <td>Type</td>
+                      <td>Fichier</td>
+                      <td>Ajouté par</td>
+                    </tr>
+                    <% @results.each do |result| %>
+                      <% if result.instance_of?(DossierJuridiqueHonoraire) %>
+                        <tr>
+                          <td><%= l(result.created_at) %></td>
+                          <td>
+                            <li>
+                              Document justificatif coût
+                            </li>
+                          </td>
+                          <td>
+                            <ul style="list-style-type: none">
+                              <li>
+                                <% if result.document_justificatif.attached? %>
+                                  <a href="<%= url_for(result.document_justificatif) %>" target="_blank">
+                                    <%= image_tag result.document_justificatif.preview(resize: "100x20>"), class: "m-t-xs img-responsive order border-primary" %>
+                                  </a>
+                                <% end %>
+                              </li>
+                            </ul>
+                          </td>
+                          <td><%= result.ajoute_par.full_name unless result.ajoute_par.nil? %>
+                            (<%= result.ajoute_par.type_profil.humanize unless result.ajoute_par.nil? %>)
+                          </td>
+                        </tr>
+                      <% end %>
+                      <% if result.instance_of?(DossierJuridiqueActe) %>
+                        <tr>
+                          <td><%= l(result.created_at) %></td>
+                          <td>
+                            <% if result.pv_audience.attached? %>
+                              <li>
+                                PV d'audience
+                              </li>
+                            <% end %>
+                            <% if result.pv_assignation.attached? %>
+                              <li>
+                                PV d'assignation
+                              </li>
+                            <% end %>
+                            <% if result.pv_decision.attached? %>
+                              <li>
+                                PV de décision
+                              </li>
+                            <% end %>
+                          </td>
+                          <td>
+                            <ul style="list-style-type: none">
+                              <% if result.pv_audience.attached? %>
+                                <li>
+                                  <a href="<%= url_for(result.pv_audience) %>" target="_blank">
+                                    <%= image_tag result.pv_audience.preview(resize: "100x20>"), class: "m-t-xs img-responsive order border-primary" %>
+                                  </a></li>
+                              <% end %>
+                              <% if result.pv_assignation.attached? %>
+                                <li>
+                                  <a href="<%= url_for(result.pv_assignation) %>" target="_blank">
+                                    <%= image_tag result.pv_assignation.preview(resize: "100x20>"), class: "m-t-xs img-responsive order border-primary" %>
+                                  </a>
+                                </li>
+                              <% end %>
+                              <% if result.pv_decision.attached? %>
+                                <li>
+                                  <a href="<%= url_for(result.pv_decision) %>" target="_blank">
+                                    <%= image_tag result.pv_decision.preview(resize: "100x20>"), class: "m-t-xs img-responsive order border-primary" %>
+                                  </a>
+                                </li>
+                              <% end %>
+                            </ul>
+                          </td>
+                          <td><%= result.ajoute_par.full_name unless result.ajoute_par.nil? %>
+                            (<%= result.ajoute_par.type_profil.humanize unless result.ajoute_par.nil? %>)
+                          </td>
+                        </tr>
+                      <% end %>
+                    <% end %>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

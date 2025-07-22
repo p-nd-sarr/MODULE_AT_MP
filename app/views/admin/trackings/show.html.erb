@@ -1,0 +1,60 @@
+<%= content_for :titre_page, "Détails tracking" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', trackings_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_tracking_path(@tracking), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter tracking', new_tracking_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>User:</strong>
+                  <%= @tracking.user %>
+                </p>
+
+                            <p>
+                  <strong>Type requete:</strong>
+                  <%= @tracking.type_requete %>
+                </p>
+
+                            <p>
+                  <strong>Path:</strong>
+                  <%= @tracking.path %>
+                </p>
+
+                            <p>
+                  <strong>Path source:</strong>
+                  <%= @tracking.path_source %>
+                </p>
+
+                            <p>
+                  <strong>Ip:</strong>
+                  <%= @tracking.ip %>
+                </p>
+
+                            <p>
+                  <strong>Controller:</strong>
+                  <%= @tracking.controller %>
+                </p>
+
+                            <p>
+                  <strong>Action:</strong>
+                  <%= @tracking.action %>
+                </p>
+
+                            <p>
+                  <strong>Contenu:</strong>
+                  <%= @tracking.contenu %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

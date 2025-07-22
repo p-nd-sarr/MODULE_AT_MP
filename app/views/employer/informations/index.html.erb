@@ -1,0 +1,73 @@
+<%= content_for :titre_page, "Mes informations" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Modifier', '#', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>Raison Sociale</h5>
+          <h1 class="no-margins"><%= @nom %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>NINEA</h5>
+          <h1 class="no-margins"><%=  @ninea %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>IMMATRICULATION ?</h5>
+          <h1 class="no-margins"><%=  if (@num_immatriculation.nil?)
+                                        'NON'
+                                      else 'OUI'
+                                      end %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <table class="table table-bordered table-condensed table-hover">
+      <tr>
+        <td>Raison sociale</td>
+        <td><%= @nom %></td>
+      </tr>
+      <tr>
+        <td>NINEA</td>
+        <td><%= @ninea%></td>
+      </tr>
+      <tr>
+        <td>IMMATRICULATION</td>
+        <td><%= @num_immatriculation %></td>
+      </tr>
+      <tr>
+        <td>NUMERO CSS</td>
+        <td><%= @num_css %></td>
+      </tr>
+      <tr>
+        <td>NUMERO IPRES</td>
+        <td><%= @num_ipres %></td>
+      </tr>
+      <tr>
+        <td>TELEPHONE</td>
+        <td><%= @telephone %></td>
+      </tr>
+      <tr>
+        <td>Email</td>
+        <td><%= @email %></td>
+      </tr>
+
+    </table>
+
+</div>

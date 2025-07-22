@@ -1,0 +1,74 @@
+<% if @dossier_cnavs.count.zero? %>
+  <h2 style="text-align:center; margin-top:50px">
+    <hr>
+    La liste est vide !!!
+  </h2>
+<% else %>
+
+  <%= paginate @dossier_cnavs %>
+  <div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+    <table class="table table-striped">
+      <thead class="thead-primary">
+      <tr>
+        <th scope="col"> N° Dossier</th>
+        <th scope="col"> Année</th>
+        <th scope="col"> Mois</th>
+        <th scope="col"> Trimestre</th>
+        <th scope="col"> Usage</th>
+        <th scope="col"> Etat</th>
+        <th scope="col"> Date ouverture</th>
+<!--        <th scope="col"> Soumis le</th>-->
+<!--        <th scope="col"> Traité le</th>-->
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @dossier_cnavs.each do |dossier_cnav| %>
+        <tr>
+          <td><%= dossier_cnav.numero_dossier %></td>
+          <td><%= dossier_cnav.annee %></td>
+          <td><%= DossierCnav.human_enum_name(:mois, dossier_cnav.mois) unless dossier_cnav.mois.nil? %></td>
+          <td><%= DossierCnav.human_enum_name(:trimestre, dossier_cnav.trimestre) unless dossier_cnav.trimestre.nil? %></td>
+          <td><%= DossierCnav.human_enum_name(:usage, dossier_cnav.usage) unless dossier_cnav.usage.nil? %></td>
+          <td><%= DossierCnav.human_enum_name(:etat, dossier_cnav.etat) %></td>
+          <td><%= l dossier_cnav.date_ouverture %></td>
+<!--          <td>-->
+            <%# unless dossier_cnav.date_soumission.nil? %>
+              <%#= l dossier_cnav.date_soumission %>
+            <%# end %>
+<!--          </td>-->
+<!--          <td>-->
+            <%# unless dossier_cnav.traite_le.nil? %>
+              <%#= l dossier_cnav.traite_le %>
+            <%# end %>
+<!--          </td>-->
+
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_dossier_cnav_path(dossier_cnav), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+
+          <td width="90px" class="dropdown">
+            <button class="btn btn-primary btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+<!--              <li>-->
+                <%#= link_to 'supprimer', dossier_cnav, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-sm' %>
+<!--              </li>-->
+              <li>
+                <%= link_to 'Historique', admin_dossier_cnav_historique_dossier_path(dossier_cnav) %>
+              </li>
+              <li>
+                <%= link_to 'Allocataires', admin_dossier_cnav_allocataire_cnavs_path(dossier_cnav), class: 'btn btn-outline btn-primary btn-sm' %>
+              </li>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= paginate @dossier_cnavs %>
+
+<% end %>

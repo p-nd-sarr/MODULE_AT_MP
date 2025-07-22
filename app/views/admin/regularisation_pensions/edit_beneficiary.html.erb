@@ -1,0 +1,32 @@
+<%= content_for :titre_page do %>
+  Modification bénéficiaire
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+    <% unless @allocataire.nil? %>
+      <div class="col-sm-4">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Allocataire <%#= link_to @regularisation_pension.numero_allocataire, [:admin, @regularisation_pension.allocataire] %></h5>
+          </div>
+          <div class="ibox-content">
+            <%= render 'infos_allocataire' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Formulaire de modification</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/regularisation_pensions/form_beneficiary' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

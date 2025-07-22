@@ -1,0 +1,51 @@
+<div class="col-md-4 box2 pull-right">
+  <%= bootstrap_form_for(@demande_liquidation, url: admin_liquidation_retraite_activer_dossier_incomplet_path(@demande_liquidation)) do |f| %>
+    <%= f.alert_message "Please fix the errors below." %>
+
+    <%= f.check_box :not_completed, label: "Activer dossier incomplet?", disabled: !@demande_liquidation.can_make_not_incomplet?(current_user), option: @demande_liquidation.not_completed, id: "dossier_impcomplet" %>
+    <div id="detail_dossiers_incomplets" style="display: none;">
+      <%= f.select :motif_not_completed, LiquidationRetraite::MOTIF_NOT_COMPLETED.keys.collect { |motif| [LiquidationRetraite.human_enum_name(:motif_not_completed, motif), motif] }, label: "Motif: " %>
+    </div>
+    <% if @demande_liquidation.not_completed? %>
+      <p><strong>Motif: </strong> <%= @demande_liquidation.motif_not_completed_human %>  </p>
+    <% end %>
+    <%= f.button 'Enregistrer', class: 'btn btn-primary', disabled: !@demande_liquidation.can_make_not_incomplet?(current_user) %>
+  <% end %>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          var dossier_impcomplet = setCheckBoxVal('#dossier_impcomplet');
+          console.log(dossier_impcomplet);
+
+          if (setCheckBoxVal('#dossier_impcomplet')) {
+              enquetDrprVisibility();
+          }
+
+          $('#dossier_impcomplet').change(function () {
+              enquetDrprVisibility();
+          });
+
+          function enquetDrprVisibility() {
+              var check_avec_incomplet = document.getElementById("dossier_impcomplet");
+              var elem2 = document.getElementById("detail_dossiers_incomplets");
+              if (check_avec_incomplet.checked == true) {
+                  elem2.style.display = "block";
+              } else {
+                  elem2.style.display = "none";
+              }
+          }
+
+          function setCheckBoxVal(tagNameId) {
+              var option = $(tagNameId).attr('option');
+              console.log(option);
+              if (option == 'true') {
+                  $(tagNameId).prop("checked", true);
+              } else {
+                  $(tagNameId).prop("checked", false);
+              }
+          }
+      });
+  </script>
+<% end %>

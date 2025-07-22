@@ -1,0 +1,33 @@
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: 'liste') do |sheet|
+  titre = [
+      'Numéro dossier',
+      'Nom',
+      'Prénom',
+      'Date de naissance',
+      'Sexe',
+      'Date de décés',
+      'Date de cession activité',
+      'Etat du dossier',
+      'Agence de gestion',
+      'Gestionnaire qui a ouvert',
+      'Date d''ouverture',
+  ]
+  sheet.add_row titre, :b => true
+  @reversion_veuve_salaries.each do |t|
+    sheet.add_row [
+                      t.numero_dossier,
+                      t.nom,
+                      t.prenom,
+                      t.date_naissance,
+                      t.sexe,
+                      t.date_deces,
+                      t.date_cessation_activite,
+                      BaseReversionSalary.workflow_spec.states[t.workflow_state.to_sym].meta[:label],
+                      t.agence_creation.try(:description_prest),
+                      t.ajoute_par.try(:full_name),
+                      t.created_at,
+                  ]
+  end
+end

@@ -1,0 +1,53 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  numero_allocataire: MyString
+  categorie: 1
+  nom: MyString
+  prenom: MyString
+  sexe: 1
+  nationalite_id: 1
+  trimestre_naissance: 1
+  date_naissance: 2020-03-01
+  type_piece_identification_id: 1
+  numero_identification_nationale: MyString
+  situation_matrimoniale_code: MyString
+  type_etat_civil_id: 1
+  nombre_epouses: 1
+  nombre_enfants: 1
+  trimestre_sorti_enfant1: 1
+  trimestre_sorti_enfant2: 1
+  trimestre_sorti_enfant3: 1
+  nombre_enfant_veuve: 1
+  adresse_rue: MyString
+  adresse_ville: MyString
+  code_pays: MyString
+  code_region: MyString
+  code_commune: MyString
+  telephone: MyString
+
+two:
+  numero_allocataire: MyString
+  categorie: 1
+  nom: MyString
+  prenom: MyString
+  sexe: 1
+  nationalite_id: 1
+  trimestre_naissance: 1
+  date_naissance: 2020-03-01
+  type_piece_identification_id: 1
+  numero_identification_nationale: MyString
+  situation_matrimoniale_code: MyString
+  type_etat_civil_id: 1
+  nombre_epouses: 1
+  nombre_enfants: 1
+  trimestre_sorti_enfant1: 1
+  trimestre_sorti_enfant2: 1
+  trimestre_sorti_enfant3: 1
+  nombre_enfant_veuve: 1
+  adresse_rue: MyString
+  adresse_ville: MyString
+  code_pays: MyString
+  code_region: MyString
+  code_commune: MyString
+  telephone: MyString

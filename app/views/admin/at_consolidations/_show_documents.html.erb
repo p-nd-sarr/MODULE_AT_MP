@@ -1,0 +1,57 @@
+<style type="text/css">
+  label[title="required"] {
+    display: none;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+
+
+<ul class="text-danger">
+  <% if !@at_consolidation.documents.nil? and @at_consolidation.documents.where(type_document: [:pv_enquete]).empty? %>
+    <li>PV d’enquête signé par l’inspecteur dutravail est obligatoire</li>
+  <% end %>
+</ul>
+
+
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <h2>Liste des documents</h2>
+    </div>
+      <div class="col-lg-8">
+        <div class="alert alert-info alert-dismissable">
+          <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">x</font>
+            </font>
+          </button>
+          <font style="vertical-align: inherit;">
+            <font style="vertical-align: inherit;"><span class="fa fa-info-o"></span> Veuillez renseigner des documents
+              au format PDF</font>
+          </font>
+        </div>
+      </div>
+  </div>
+
+
+
+
+<%= render 'documents/liste',
+           object: @at_consolidation,
+           documents: @at_consolidation.documents,
+           include_add: true, 
+           include_delete: true, 
+           type_documents: AtConsolidation::TYPE_DOCUMENT,
+           type_documents_obligatoires: AtConsolidation::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_arret_travail_at_consolidation_path(@arret_travail,@at_consolidation)
+%>
+
+<%= render 'documents/modal_form',
+          type_documents: AtConsolidation::TYPE_DOCUMENT,
+          document: Document.new(documentable: @at_consolidation),
+            back_url: admin_arret_travail_at_consolidation_path(@arret_travail,@at_consolidation)
+%>
+

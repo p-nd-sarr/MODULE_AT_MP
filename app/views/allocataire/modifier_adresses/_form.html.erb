@@ -1,0 +1,13 @@
+<%= bootstrap_form_for([:allocataire, @modifier_adresse]) do |f| %>
+ <%= f.alert_message "Please fix the errors below." %>
+      <%= f.text_field :adresse_rue, label: 'Adresse Domicile: ' %> 
+      <%= f.text_field :adresse_ville, label: 'Ville: ' %> 
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+        <%= link_to 'Annuler', [:allocataire, @modifier_adresse], class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

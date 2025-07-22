@@ -1,0 +1,289 @@
+<%= content_for :titre_page, 'Demandes de services allocataires' %>
+
+<%= content_for :actions_page do %>
+  <% if current_user.admin? %>
+  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modificationModal" id="update_allo_id">Modification en masse
+  </button>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <!--<div class="col-lg-8"> -->
+
+      <div class="col-lg-3">
+        <%= link_to demandes_modifier_adresses_admin_allocataires_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Modification d'adresse</h5>
+                <span class="label label-success"><%= @modifier_adresses.count %></span>
+            </div>
+            <div class="ibox-content">             
+              <div>
+                <p>Affectées<span class="label label-info" style="float:right"><%= @modifier_adresses.count %></span></p>
+                <p>Soumises<span class="label label-warning" style="float:right"> <%= @modifier_adresses.count %></span></p>
+                <p>Validées<span class="label label-primary" style="float:right"><%= @modifier_adresses.count %></span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right"><%= @modifier_adresses.count %></span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-3">
+        <%= link_to demandes_regularisation_pensions_admin_allocataires_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Régularisation pension</h5> <span class="label label-success"><%= @regularisation_pensions.count %></span>
+            </div>
+            <div class="ibox-content">
+              <div>
+               <p>Affectées<span class="label label-info" style="float:right">0</span></p>
+                <p>Soumises<span class="label label-warning" style="float:right"> 0</span></p>
+                <p>Validées<span class="label label-primary" style="float:right">0</span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right">0</span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-3">
+        <%= link_to demandes_modifier_mode_paiements_admin_allocataires_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Modification mode paiement</h5> <span class="label label-success"><%= @modifier_mode_paiements.count %></span>
+            </div>
+            <div class="ibox-content">
+              <div>
+                <p>Créations<span class="label label-info" style="float:right"><%= @modifier_mode_paiements.creation.size %></span></p>
+                <p>Soumises<span class="label label-warning" style="float:right"> <%= @modifier_mode_paiements.soumis.size %></span></p>
+                <p>Validées<span class="label label-primary" style="float:right"><%= @modifier_mode_paiements.valide.size %></span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right"><%= @modifier_mode_paiements.rejete.size %></span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+
+
+      <div class="col-lg-3">
+        <%= link_to demandes_grappes_familiales_admin_allocataires_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Mise à jour grappe</h5><span class="label label-success"><%= @demande_grappe_familiales.count %></span>
+            </div>
+            <div class="ibox-content">
+              <div>
+                <p>Affectées<span class="label label-info" style="float:right">0</span></p>
+                <p>Soumises<span class="label label-warning" style="float:right"> 0</span></p>
+                <p>Validées<span class="label label-primary" style="float:right">0</span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right">0</span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+    <%if current_user.admin? or current_user.agent_dfc? or current_user.chef_service_dfc?%>
+    <div class="col-lg-3">
+      <%= link_to demandes_a_activer_admin_allocataires_path do %>
+        <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>Allocataires en attente</h5>
+            <span class="label label-success"><%= @en_attente_allocataires.count %></span>
+          </div>
+          <div class="ibox-content">
+            <div>
+              <p>Montant<span class="label label-info" style="float:right"><%= @en_attente_allocataires.map(&:montant_brut_rg).sum
+              %></span></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <% end %>
+
+      <div class="col-lg-12"></div>      
+
+      <div class="col-lg-12" >
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Evolution des demandes</h5>
+          </div>
+          <div class="ibox-content">
+            <div class="row">
+              <div class="col-lg-12">
+                  <canvas id="evolutionAlloc" height="100px"></canvas>
+              </div>
+               <!-- <div class="col-lg-3">
+                  <ul class="stat-list">
+                    <li>
+                      <h2 class="no-margins">0</h2>
+                      <small>Soumis</small>
+                      <div class="stat-percent">
+                        0%
+                        <i class="fa fa-level-up text-navy"></i>
+                      </div>
+                      <div class="progress progress-mini">
+                        <div style="width: 0%" class="progress-bar"></div>
+                      </div>
+                    </li>
+                    <li>
+                      <h2 class="no-margins">0</h2>
+                        <small>Validé</small>
+                        <div class="stat-percent">
+                        0%
+                          <i class="fa fa-level-up text-navy"></i>
+                        </div>
+                        <div class="progress progress-mini">
+                          <div style="width: 0%" class="progress-bar">
+                          </div>
+                        </div>
+                    </li>
+                    <li>
+                      <h2 class="no-margins">0</h2>
+                        <small>Rejeté</small>
+                      <div class="stat-percent">
+                        0%
+                        <i class="fa fa-level-up text-navy"></i>
+                      </div>
+                      <div class="progress progress-mini">
+                        <div style="width: 0%" class="progress-bar">
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div> --><!-- col-lg-3 -->
+              </div> <!-- row -->
+              <div class="m-t-md">
+                <small class="float-right" style="float: right;">
+                  <i class="fa fa-clock-o"></i>
+                  Pour l'année 2020
+                </small>
+                <small>
+                  <strong>Evolution des demandes </strong> dans l'année
+                </small>
+              </div>
+            </div> <!-- ibox-content -->
+          </div>  <!-- ibox -->
+        </div> <!-- col-lg-9 -->
+   <!-- </div> col-lg-8 -->
+      
+  </div>
+</div>
+
+
+
+
+<div class="modal inmodal" id="modificationModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-laptop modal-icon"></i>
+        <h5 class="modal-title">Modification etat en masse</h5>
+      </div>
+      <%= form_tag import_admin_allocataires_path, multipart: true do %>
+        <div class="modal-body" style="height:150px">
+          <div class="col-sm-12" style="text-align:left">
+          </div>
+          <div class="col-sm-4 col-lg-offset-4">
+            <div class="btn-file">
+              <label>
+                <%= file_field_tag :file, hide_label:true, label: '.', class: '', id:'label_file' %>
+
+                <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+                </div>
+              </label>
+              <%= select_tag :etat, options_for_select(Allocataire.etats.to_a.map { |w| [Allocataire.human_enum_name(:etat, w[0]), w[0]] }) %>
+
+            </div>
+          </div>
+          <div class="col-lg-12" style="text-align:center">
+            <h4 id="file_name" class="text-success">Aucun fichier choisi</h4>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= submit_tag "Importer fichier allocataire",  class: 'btn btn-primary'  %>
+        </div>
+      <% end %>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <button type="submit" class="btn btn-danger">rejeter</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById('evolutionAlloc');
+    // ctx.height = 100;
+     const color = Chart.helpers.color;
+     const myChart = new Chart(ctx, {
+         type: 'line',
+         data: {
+                labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jui', 'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+                    datasets: [
+                    {
+                      label: 'Modif. adresse',
+                      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                               borderColor: 'rgb(255,99,132)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| @modifier_adresses.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                           {
+                               label: 'Reg. pension',
+                               backgroundColor: '#36A2EB',
+                               borderColor: 'rgba(54, 162, 235, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| @regularisation_pensions.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                           {
+                               label: 'Mode paiement',
+                               backgroundColor: '#D9865B',
+                               borderColor: 'rgba(255, 206, 86, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| @modifier_mode_paiements.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count  }.join(',') %>],
+                           },
+                           {
+                               label: 'Grappe familiale',
+                               backgroundColor: '#BC5CE6',
+                               borderColor: 'rgba(75, 192, 192, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| @demande_grappe_familiales.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count  }.join(',') %>],
+                           },
+                           {
+                               label: 'Susp. allocataire',
+                               backgroundColor: '#848BE2',
+                               borderColor: 'rgba(153, 102, 255, 1)',
+                               borderWidth: 1,
+                               data: [<%= (1..12).map{ |m| @suspension_allocataires.where('extract(year from created_at) = ? AND extract(month from created_at) = ?', Date.today.year, m).count }.join(',') %>],
+                           },
+                       ]
+                   },
+                   options: {
+
+                    legend:{
+                      align:"start"
+                    },
+
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 5
+                            }
+                        }]
+                    }
+        }
+    });
+
+
+
+</script>

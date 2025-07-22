@@ -1,0 +1,28 @@
+<div class="modal inmodal" id="at_consolidation" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog"> 
+    <%#= bootstrap_form_for(@at_consolidation, url: "/admin/arret_travails/#{@demande_arret_travail.id}", method: :put, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+    <%= bootstrap_form_for(@at_consolidation, url:  admin_arret_travail_add_consolidation_path(@demande_arret_travail), label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+      <%= f.alert_message "Please fix the errors below." %>
+      <div class="modal-content animated fadeIn">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">x</span>
+            <span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title">Ajouter une demande de consolidation</h4>
+        </div>
+        <div class="modal-body">            
+          <%#=hidden_field_tag :custom_page, 'information_frais_engage'%>
+          <%=f.hidden_field :arret_travail_id, value: @demande_arret_travail.id%>
+          <%= f.number_field :taux_ipp_medecin_traitant, label: "Taux IPP medecin traitant" %>
+          <%= f.date_select :date_consolidation_medecin_traitant, label: 'Date consolidation' %>
+        </div>
+        
+        <div class="modal-footer form-group">
+          <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+          <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

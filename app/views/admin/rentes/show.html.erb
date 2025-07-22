@@ -1,0 +1,20 @@
+<%= content_for :titre_page, "Détails admin_rente" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_rentes_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_rente_path(@admin_rente), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_rente', new_admin_rente_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

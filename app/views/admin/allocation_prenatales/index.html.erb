@@ -1,0 +1,389 @@
+<%= content_for :titre_page do %>
+  Allocations Prénatales <br>
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_prestation.num_dossier}", admin_dossier_prestation_path(@dossier_prestation), class: 'text-info' %>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <% if current_user.gestionnaire_compte_allocataire? and not @dossier_prestation.allocation_prenatales.creation.empty? %>
+    <%#= (link_to 'TOUT LIQUIDER', admin_dossier_prestation_allocation_prenatale_soumission_form_path(@dossier_prestation, @allocation_prenatale), class: 'btn btn-primary btn-sm') if @allocation_prenatale.creation? and current_user.chef_agence?  %>
+  <!--  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#liquiderModal" id="liquider_id">TOUT
+      LIQUIDER
+    </button>-->
+    <%#= link_to 'TOUT LIQUIDER', admin_dossier_prestation_liquider_prenatales_path(@dossier_prestation), class: 'btn btn-primary' if @dossier_prestation.pret_pour_soumission? and current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer %>
+    <%= link_to 'TOUT LIQUIDER', admin_dossier_prestation_liquider_prenatales_path(@dossier_prestation), class: 'btn btn-primary' if current_user.gestionnaire_compte_allocataire? and @dossier_prestation.current_state < :cloturer %>
+  <% end %>
+
+  <%= (link_to 'Tout Valider', admin_dossier_prestation_valider_prenatales_path(@dossier_prestation), data: {confirm: 'En êtes vous sûr?'},
+               class: 'btn btn-primary btn-sm') if @dossier_prestation.valide? and current_user.chef_agence? and not @dossier_prestation.allocation_prenatales.soumis.empty? and DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, conjoint_id: nil, etat: :valide) %>
+
+  <%# if current_user.admin? or current_user.chef_agence? or current_user.gestionnaire_compte_allocataire? %>
+  <% if current_user.gestionnaire_compte_allocataire? and @dossier_prestation.masculin?%>
+    <%= link_to 'Déclarer une grossesse', new_admin_dossier_prestation_grossesse_path(@dossier_prestation), class: 'btn btn-info btn-sm' if @dossier_prestation.current_state < :cloturer and @dossier_prestation.est_legitime_allocation_pre_postnatale_bis?%>
+    <% elsif current_user.gestionnaire_compte_allocataire? and @dossier_prestation.feminin?%>
+    <%= link_to 'Déclarer une grossesse', new_admin_dossier_prestation_grossesse_path(@dossier_prestation), class: 'btn btn-info btn-sm' if @dossier_prestation.current_state < :cloturer %>
+    <!--<div class="btn-group">
+      <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">
+        AJOUTER UNE DEMANDE
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <%# for grossesse in @dossier_prestation.grossesses.valide.order('date_grossesse desc') %>
+    <%# unless grossesse.volets_eligibles.empty? %>
+            <li>
+              <%#= link_to "Grossesse #{l grossesse.date_grossesse}", new_admin_dossier_prestation_allocation_prenatale_path(@dossier_prestation, grossesse_id: grossesse.id) %>
+            </li>
+          <%# end %>
+    <% #end %>
+      </ul>
+    </div> -->
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12" style="padding:10px;">
+      <h3>CARNET DE GROSSESSE DE MATERNITE</h3>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet1">
+        <div class="ibox-title">
+          <h3>Volet 1 <span class="label label-success" style="float:right">Volet 1</span></h3>
+        </div>
+        <div class="ibox-content">
+          <h2 class="no-margins">
+            <%= format_cfa m1 = @dossier_prestation.allocation_prenatales.volet1.valide.sum(&:montant_paiement) %>
+          </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet2">
+        <div class="ibox-title">
+          <h3>Volet 2<span class="label label-warning" style="float:right">Volet 2</span></h3>
+        </div>
+        <div class="ibox-content">
+          <h2 class="no-margins">
+            <%= format_cfa m2 = @dossier_prestation.allocation_prenatales.volet2.valide.sum(&:montant_paiement) %>
+          </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox volet3 ">
+        <div class="ibox-title">
+          <h3>Volet 3<span class="label label-info" style="float:right">Volet 3</span></h3>
+        </div>
+        <div class="ibox-content"><h2 class="no-margins">
+          <%= format_cfa m3 = @dossier_prestation.allocation_prenatales.volet3.valide.sum(&:montant_paiement) %>
+        </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title" style="border-bottom:1px solid #1ab394;">
+          <h3><strong class="text-navy">Total</strong></h3>
+        </div>
+        <div class="ibox-content"><h2 class="no-margins">
+          <strong><%= format_cfa mTot = m1 + m2 + m3 %></strong>
+        </h2>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:10px; margin-bottom:5px">
+      <h3>ALLOCATIONS PRENATALES</h3>
+    </div>
+    <div class="col-lg-12">
+
+      <% if @dossier_prestation.grossesses.empty? %>
+        <div class="ibox-content">
+          <div class="text-center">
+            <h2>Merci de renseigner une grossesse pour ajouter les volets</h2>
+          </div>
+        </div>
+      <% else %>
+        <% for grossesse in @dossier_prestation.grossesses.order('created_at desc') %>
+          <div class="ibox">
+            <div class="ibox-title">
+              <h5>Allocations pour la grossesse du
+                <u class="text-danger"><%= l grossesse.date_grossesse %></u>
+              </h5>
+
+              <div style="text-align:right">
+                <% if grossesse.valide? and (current_user.chef_agence? or current_user.gestionnaire_compte_allocataire?) %>
+                  <%= link_to ' Déclarer une interruption de la grossesse', admin_dossier_prestation_grossesse_interruption_form_path(@dossier_prestation, grossesse), class: 'btn btn-danger btn-outline btn-sm fa fa-file' if @dossier_prestation.current_state < :cloturer && grossesse.can_be_interrupted?%>
+                  <%= link_to ' Supprimer grossesse', admin_dossier_prestation_grossesse_path(@dossier_prestation, grossesse), method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-danger btn-outline btn-sm fa fa-trash' if @dossier_prestation.current_state < :cloturer and !grossesse.can_not_edit_or_destroyed? %>
+                  <%= link_to ' Modifier grossesse', edit_admin_dossier_prestation_grossesse_path(@dossier_prestation, grossesse), class: 'btn btn-warning btn-outline btn-sm fa fa-edit' if @dossier_prestation.current_state < :cloturer and !grossesse.can_not_edit_or_destroyed? %>
+                <% end %>
+                <%# unless grossesse.volets_eligibles.empty? or current_user.comptable? %>
+                <% unless grossesse.volets_eligibles.empty? or not current_user.gestionnaire_compte_allocataire? %>
+                  <% if @dossier_prestation.conjoint.nil? && @dossier_prestation.masculin? %>
+                    <%= link_to " AJOUTER VOLET", new_admin_dossier_prestation_allocation_prenatale_path(@dossier_prestation, grossesse_id: grossesse.id), class: "btn btn-sm btn-primary fa fa-plus" if @dossier_prestation.current_state < :cloturer and !@dossier_prestation.conjoint.decedes? %>
+                  <%else %>
+                    <%= link_to " AJOUTER VOLET", new_admin_dossier_prestation_allocation_prenatale_path(@dossier_prestation, grossesse_id: grossesse.id), class: "btn btn-sm btn-primary fa fa-plus" if @dossier_prestation.current_state < :cloturer %>
+                  <% end %>
+                <% end %>
+
+                <%#= "<span class='label label-warning'>#{grossesse.etat_human}</span>".html_safe unless grossesse.valide? %>
+              </div>
+            </div>
+
+            <div class="ibox-content">
+              <% #if grossesse.a_terme? and not grossesse.volets_eligibles.empty? %>
+              <%#= link_to "Fin de grossesse : faire la déclaration du volet 3",
+                          new_admin_dossier_prestation_allocation_prenatale_path(@dossier_prestation, grossesse_id: grossesse.id), class: 'btn btn-outline btn-primary btn-sm'%>
+              <br> <br>
+              <%# end %>
+
+              <% unless grossesse.volets_eligibles.empty? %>
+                <div style="text-align:right; margin-bottom:5px;">
+                  Volets éligibles:
+                  <% for volet in grossesse.volets_eligibles.keys %>
+                    <%unless grossesse.allocation_prenatales.exists?(volet: volet)%>
+                      <p class="label label-primary" style="margin-right: 0.5%">
+                        <%= AllocationPrenatale.human_enum_name(:volet, volet) %>
+                      </p>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <% if grossesse.allocation_prenatales.count.zero? %>
+                <div>
+                  <hr>
+                  <h2>La liste d'allocations pour cette grossesse est vide, veuillez ajouter un volet !!!</h2>
+                </div>
+              <% else %>
+                <table class="table table-bordered table-condensed table-hover">
+                  <thead>
+                  <tr>
+                    <th scope="col">Volet</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Date liquidation</th>
+                    <th scope="col">Montant liquidé</th>
+                    <th scope="col">Date validation</th>
+                    <th scope="col">Date paiement</th>
+                    <th scope="col">Est repris?</th>
+                    <th colspan="2"></th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+
+                  <% grossesse.allocation_prenatales.each do |allocation_prenatale| %>
+
+
+                    <% if allocation_prenatale.motif_retour_volet? %>
+                      <p class="text-danger">
+                        Motif retour volet: <%= allocation_prenatale.motif_retour_volet %>
+                      </p>
+                    <% end %>
+
+                    <tr>
+                      <td>
+                        <% if allocation_prenatale.num_volet_generer? %>
+                          <h5 class="text-success">
+                            <%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %> N° <%= allocation_prenatale.num_volet_generer %>
+                          </h5>
+                        <% else %>
+                          <%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %>
+                        <% end %>
+                      </td>
+                      <td><%= AllocationPrenatale.human_enum_name(:etat, allocation_prenatale.etat) %></td>
+                      <td>
+                        <% unless allocation_prenatale.date_soumission.nil? %>
+                          <%= l allocation_prenatale.date_soumission %>
+                        <% end %>
+                      </td>
+                      <!--                  <td><%#= allocation_prenatale.montant_paiement unless allocation_prenatale.creation?%></td>-->
+                      <td><%= allocation_prenatale.montant_paiement %></td>
+                      <td>
+                        <% unless allocation_prenatale.date_validation.nil? %>
+                          <%= l allocation_prenatale.date_validation %>
+                        <% end %>
+                      </td>
+                      <td>
+                        <% if allocation_prenatale.date_paiement.nil? %>
+                          -
+                        <% else %>
+                          <%= allocation_prenatale.date_paiement %>
+                        <% end %>
+                      </td>
+                      <td>
+                          <%= state_yes_no allocation_prenatale.est_repris %>
+                      </td>
+                      <td style="width: 75px">
+                        <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_prenatale], class: 'btn btn-outline btn-primary btn-xs' %>
+                      </td>
+
+                      <% if allocation_prenatale.creation? and @dossier_prestation.current_state < :cloturer  and current_user.gestionnaire_compte_allocataire?%>
+                        <td width="90px" class="dropdown">
+                          <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                            Actions <span class="caret"></span>
+                          </button>
+
+                          <ul class="dropdown-menu" style="background-color:rgb(240,240,240)">
+                            <li>
+                              <%= link_to 'Modifier', edit_admin_dossier_prestation_allocation_prenatale_path(@dossier_prestation, allocation_prenatale), id: 'dd_hover'  if allocation_prenatale.creation? %>
+                            </li>
+                            <li>
+                              <%= link_to 'Liquider', admin_dossier_prestation_allocation_prenatale_soumettre_path(@dossier_prestation, allocation_prenatale) if allocation_prenatale.creation? and current_user.gestionnaire_compte_allocataire? and not @dossier_prestation.allocation_postnatales.creation.empty? %>
+                            </li>
+                            <li>
+                              <%= link_to 'Supprimer', [:admin, @dossier_prestation, allocation_prenatale], method: :delete, data: {confirm: 'En êtes vous sûr?'}, id: 'dd_hover' if allocation_prenatale.creation? %>
+                            </li>
+
+                            <li>
+                              <%= (link_to 'Valider', admin_dossier_prestation_allocation_prenatale_soumission_form_path(@dossier_prestation, allocation_prenatale), id: 'dd_hover') if allocation_prenatale.soumis? and current_user.chef_agence? and DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, conjoint_id: nil, etat: :valide) %>
+
+                              <%= (link_to 'Tout Valider', admin_dossier_prestation_valider_prenatales_path(@dossier_prestation), data: {confirm: 'En êtes vous sûr?'},
+                                           class: 'btn btn-primary btn-sm') if @dossier_prestation.valide? and current_user.chef_agence? and not @dossier_prestation.allocation_prenatales.soumis.empty? and DossierPrestation.exists?(num_affiliation: @dossier_prestation.num_affiliation, conjoint_id: nil, etat: :valide)%>
+                            </li>
+
+                          </ul>
+                        </td>
+                      <% end %>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              <% end %>
+            </div>
+          </div> <!-- end ibox-->
+        <% end %>
+        </div>
+
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Liste des volets rejetés</h5>
+            <% unless @dossier_prestation.allocation_prenatales.rejete.exists? %>
+              <div class="ibox-content">
+                <div class="text-center">
+                  <h2>Pas de volet rejeté</h2>
+                </div>
+              </div>
+
+              <hr>
+            <% else %>
+              <div class="ibox-content">
+                <table class="table table-bordered table-condensed table-hover">
+                  <thead>
+                  <tr>
+                    <th scope="col">Volet</th>
+                    <th scope="col">Etat</th>
+                    <th scope="col">Date liquidation</th>
+                    <th scope="col">Montant liquidé</th>
+                    <th scope="col">Date de rejet</th>
+                    <th colspan="2"></th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                    <% @dossier_prestation.allocation_prenatales.rejete.each do |allocation_prenatale| %>
+                      <tr>
+                        <td>
+                          <% if allocation_prenatale.num_volet_generer? %>
+                            <h5 class="text-success">
+                              <%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %> N° <%= allocation_prenatale.num_volet_generer %>
+                            </h5>
+                          <% else %>
+                            <%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet) %>
+                          <% end %>
+                        </td>
+                        <td><%= AllocationPrenatale.human_enum_name(:etat, allocation_prenatale.etat) %></td>
+                        <td>
+                          <% unless allocation_prenatale.date_soumission.nil? %>
+                            <%= l allocation_prenatale.date_soumission %>
+                          <% end %>
+                        </td>
+                        <td><%= allocation_prenatale.montant_paiement %></td>
+                        <td>
+                          <% unless allocation_prenatale.date_rejet.nil? %>
+                            <%= l allocation_prenatale.date_rejet %>
+                          <% end %>
+                        </td>
+                        <td style="width: 75px">
+                          <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_prenatale], class: 'btn btn-outline btn-primary btn-xs' %>
+                        </td>
+                      </tr>
+                    <%end %>
+                  </tbody>
+
+                </table>
+              </div>
+            <%end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+<!--<div class="modal inmodal" id="liquiderModal" tabindex="-1" role="dialog" aria-hidden="true">-->
+<!--  <div class="modal-dialog">-->
+<!--    <div class="modal-content animated bounceInRight">-->
+<!--      <div class="modal-header">-->
+<!--        <button type="button" class="close" data-dismiss="modal">-->
+<!--          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>-->
+<!--        <i class="fa fa-check modal-icon btn-primary"></i>-->
+<!--        <h4 class="modal-title">-->
+<!--          Liquider tous les volets-->
+<!--        </h4>-->
+
+<!--      </div>-->
+<!--      <div class="modal-body">-->
+<!--        <table class="table table-condensed table-hover">-->
+<!--          <tr>-->
+<!--            <td><input type="checkbox" name="vehicle1" value="Bike">-->
+<!--            </td>-->
+<!--            <td><strong>Condition 1 : </strong></td>-->
+
+<!--          </tr>-->
+
+<!--          <tr>-->
+<!--            <td><input type="checkbox" name="vehicle1" value="Bike">-->
+<!--            </td>-->
+<!--            <td>-->
+<!--              <strong>Condition 2 :-->
+<!--            </td>-->
+<!--          </tr>-->
+<!--        </table>-->
+<!--      </div>-->
+<!--      <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>-->
+        <%#= link_to 'Valider la Soumission', admin_dossier_prestation_liquider_prenatales_path(@dossier_prestation), class: 'btn btn-primary', id: 'accept_valide' %>
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<script>
+
+    $(document).ready(function () {
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#accept_valide").hide();
+        var all_checkboxes = $('#liquiderModal input[type="checkbox"]');
+
+        $(".modal-body").change(function () {
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#accept_valide").show();
+            } else {
+                $("#accept_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>

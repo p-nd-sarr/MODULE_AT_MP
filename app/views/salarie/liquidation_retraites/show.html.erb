@@ -1,0 +1,296 @@
+<%= content_for :titre_page, "Détails de la demande de liquidation [#{@demande_liquidation.workflow_state}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to ' Retour', salarie_liquidation_retraites_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <% if (not @demande_liquidation.versement_mensuel?) and @demande_liquidation.retraite_anticipee_valide? %>
+    <h5 style="color: red"> Ne peut pas faire une anticipation pour un paiement unique</h5>
+  <% end %>
+
+  <% if @demande_liquidation.dossier_valide? %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_liquidation_retraite_lettre_notification_path(@demande_liquidation, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+  <% end %>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="progressbar-wrapper">
+      <ul class="progressbar">
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :creation %>">Création</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :soumis %>">Soumission</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :instruit %>">Instruction</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :carriere_soumis %>">Soumission Carrière</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :cotisation_valide %>">Validation Carrière
+        </li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :recap_soumis %>">Soumission Recap</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :liquidation_valide %>">Validation Recap</li>
+        <li class="<%= ("active") if @demande_liquidation.current_state >= :dossier_valide %>">Validation Dossier</li>
+      </ul>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px;">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content" style="margin-bottom:50px;">
+            <div class="col-md-6">
+              <h4>
+                N° affiliation: <%= @demande_liquidation.numero_affiliation %>
+              </h4>
+              <% unless @demande_liquidation.num_dossier.nil? %>
+                <h4>
+                  N° dossier: <%= @demande_liquidation.num_dossier %>
+                </h4>
+              <% end %>
+            </div>
+
+            <!-- Signaler dossiers incomplets-->
+            <%#= render 'action_dossiers_incomplets' %>
+
+          </div>
+
+          <div class="wrapper wrapper-content" >
+            <% if @demande_liquidation.creation? %>
+              <% if @demande_liquidation.pret_pour_soumission? %>
+                <p class="text-info">
+                  Votre dossier est prêt pour soumission
+                </p>
+              <% else %>
+                <p class="text-warning">
+                  Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                </p>
+              <% end %>
+            <% end %>
+
+            <div>
+              <ul class="nav nav-tabs" style="font-size:10px">
+                <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+                <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil Demandeur
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.etat_civil_demandeur_valide? %>
+                </a></li>
+
+                <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Grappe familiale
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.epouses_valide? and @demande_liquidation.enfants_valide? %>
+                </a></li>
+
+                <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.documents_valide? %>
+                </a></li>
+
+                <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>Carrière
+                  <% if @demande_liquidation.current_state < :carriere_soumis %>
+                    <%= '<span class="label label-warning">à valider par un Gestionnaire Salarié</span>'.html_safe unless @demande_liquidation.carriere_valide? %>
+                  <% end %>
+                </a></li>
+
+                <li class="">
+                  <a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Tableau récapitulatif des points
+                    <% if @demande_liquidation.current_state < :recap_soumis %>
+                      <%= '<span class="label label-warning">à valider par un Gestionnaire Allocataire</span>'.html_safe unless @demande_liquidation.recap_point_valide? %>
+                    <% end %>
+                  </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-6"><i class="fa fa-folder"></i>Historiques
+                </a></li>
+
+              </ul>
+              <div class="tab-content">
+
+                <div id="tab-1" class="tab-pane active">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% if !@demande_liquidation.etat_civil_demandeur_valide? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                      <%= link_to "Je valide les informations sur l'état civil", admin_liquidation_retraite_valider_etat_civil_demandeur_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_etat_civil' %>
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                  <div class="row">
+                    <div class="col-lg-12" style="margin-top: 30px">
+                      <div class="panel-body">
+                        <div class="panel-group" id="accordion">
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                              <h5 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                                  <span class="fa fa-users"></span> Conjoint
+                                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.epouses_valide? %>
+                                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_liquidation.epouses_valide? %>
+                                </a>
+                              </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                              <div class="full-height-scroll">
+                                <br>
+                                <% if !@demande_liquidation.epouses_valide? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                                  <%= link_to "Je valide les informations sur les conjoints", admin_liquidation_retraite_valider_epouses_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                                  <hr>
+                                <% end %>
+                                <%= render 'show_epouses' %>
+                                <% if @demande_liquidation.creation? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                                  <%= link_to 'Modifier les informations sur les conjoints', admin_conjoints_path %>
+                                <% end %>
+                              </div>
+                            </div>
+                          </div> <!-- End panel default conjoint -->
+
+                          <div class="panel panel-default" style="padding: 10px">
+                            <div class="panel-heading">
+                              <h5 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                                  <span class="fa fa-users"></span> Enfants à charge
+                                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_liquidation.enfants_valide? %>
+                                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_liquidation.enfants_valide? %>
+                                </a>
+                              </h5>
+                            </div>
+                            <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                              <div class="full-height-scroll">
+                                <br>
+                                <% if !@demande_liquidation.enfants_valide? and current_user.can_allocataire? and @demande_liquidation.ajoute_par == current_user %>
+                                  <%= link_to "Je valide les informations sur les enfants", admin_liquidation_retraite_valider_enfants_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+
+                                <% end %>
+                                <hr>
+                                <%= render 'show_enfants' %>
+                                <% if @demande_liquidation.creation? and current_user.gestionnaire_compte_allocataire? %>
+                                  <%= link_to 'Modifier les informations sur les enfants', admin_enfants_url %>
+                                <% end %>
+                              </div>
+                            </div>
+                          </div> <!-- End panel default enfant -->
+                        </div>
+                      </div>
+                    </div> <!-- End col -->
+                  </div> <!-- End row -->
+                </div> <!-- End tab-2 -->
+
+                <div id="tab-3" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <% if !@demande_liquidation.documents_valide? and current_user.can_allocataire? %>
+                      <%#= link_to "Je valide tous les documents", admin_liquidation_retraite_valider_documents_path(@demande_liquidation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+
+                <div id="tab-4" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'show_carrieres_prestation' %>
+                    <% if @demande_liquidation.creation? %>
+                      <%= link_to "Faire une demande d'intégration de carrière", admin_carrieres_path %>
+                    <% end %>
+                  </div>
+                </div>
+                <div id="tab-5" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+                    <%= render 'show_tableau_recapitulatif_points' %>
+                  </div>
+                </div>
+                <div id="tab-6" class="tab-pane">
+                  <%= render 'historique_dossier' %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 10%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>
+

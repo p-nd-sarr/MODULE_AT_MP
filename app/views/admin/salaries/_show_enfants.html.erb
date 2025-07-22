@@ -1,0 +1,42 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Nom salarie</th>
+    <th scope="col">Prénom salarié</th>
+    <th scope="col"> Origine</th>
+    <th scope="col">Nom complet conjoint</th>
+    <th scope="col">Date fin prise en charge</th>
+    <th scope="col">Supprimé?</th>
+    <th scope="col">Incomplet?</th>
+    <th scope="col">Documents</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @salarie.enfants.each do |enfant| %>
+    <tr>
+      <td><%= enfant.nom %></td>
+      <td><%= enfant.prenom %></td>
+      <td><%= l enfant.date_naissance %></td>
+      <td><%= enfant.nom_salarie %></td>
+      <td><%= enfant.prenom_salarie %></td>
+      <td><%= enfant.origine_enfant %></td>
+      <% if enfant.conjoint_id %>
+        <td><%= enfant.conjoint.full_name %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <td><%= l enfant.date_fin_mineur %></td>
+      <td><%= state_yes_no enfant.deleted %></td>
+      <td><%= state_yes_no enfant.incomplete %></td>
+      <td style="width: 75px">
+        <%= link_to 'lien vers les documents', admin_enfant_path(enfant), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+
+    </tr>
+  <% end %>
+  </tbody>
+</table>

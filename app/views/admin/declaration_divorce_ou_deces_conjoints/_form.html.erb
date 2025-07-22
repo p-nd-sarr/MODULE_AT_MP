@@ -1,0 +1,174 @@
+<style type="text/css">
+
+    .no-text{
+        font-size:0px;
+    }
+    .invalid-feedback{
+        font-size:0px;
+    }
+</style>
+
+<%= bootstrap_form_for([:admin, @declaration_divorce_ou_deces_conjoint]) do |f| %>
+  <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+
+  <div class="content clearfix">
+    <h3>Informations du salarié</h3>
+    <hr>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-12">
+          <div class="col-sm-6">
+            <%= f.text_field :numero_affiliation, label: 'Numéro affiliation'%>
+          </div>
+
+          <div class="col-sm-6">
+            <%#= f.select :conjoint_id, [], include_blank: true, label: 'Conjoint' %>
+            <%= f.collection_select :conjoint_id, Conjoint.where(id: @declaration_divorce_ou_deces_conjoint.conjoint), :id, :full_name, label: 'Conjoint' %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.text_field :prenom_salarie, label: 'Prénom salarié', readonly: true%>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.text_field :nom_salarie, label: 'Nom salarié', readonly: true %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.select :status_with_conjoint, DeclarationDivorceOuDecesConjoint::ETAT.keys.collect { |status_with_conjoint| [DeclarationDivorceOuDecesConjoint.human_enum_name(:status_with_conjoint, status_with_conjoint), status_with_conjoint] }, label: 'Type de déclaration'%>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+
+  <div class="content clearfix">
+    <h3>Informations du conjoint à ajouter</h3>
+    <hr>
+    <div class="row">
+      <div class="form-group" style="align-content: center">
+        <div class="col-sm-12">
+
+          <div class="col-sm-6">
+            <%= f.select :type_piece,
+                         DeclarationDivorceOuDecesConjoint::TYPE_PIECE.keys.collect { |type_piece| [DeclarationDivorceOuDecesConjoint.human_enum_name(:type_piece, type_piece), type_piece] },
+                         label: "Type de pièce" %>
+          </div>
+
+          <div class="col-sm-6">
+            <%= f.date_select :date_declaration, label: "Date de déclaration",
+                              start_year: (Date.today - 10.year).year, end_year: Date.today.year %>
+          </div>
+        </div>
+
+        <div class="col-sm-6" style="height: 60px;  margin-top: 30px;">
+          <h4 style="font-weight: bold;">Pièce justificatif *</h4>
+          <div class="btn-file">
+            <label class="no-text">
+              <%= f.file_field :piece_jointe, hide_label:true, label: '.',
+                               help: (@declaration_divorce_ou_deces_conjoint.persisted?), id:'label-cert'  %>
+              <div class="btn btn-success" style="margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small id="certeficat-name"></small>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-group col-sm-12" style="margin-top: 50px;">
+      <hr>
+      <div class="col-sm-9"></div>
+      <div class="col-sm-3" style="text-align: right;">
+        <%= link_to 'Annuler', admin_declaration_divorce_ou_deces_conjoints_path, class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+
+      $(document).ready(function(){
+          load_conjoints();
+          load_salarie()
+          $('#declaration_divorce_ou_deces_conjoint_numero_affiliation').change(function() {
+              load_conjoints();
+              load_salarie()
+          });
+      })
+
+      function load_salarie(){
+          const numero_affiliation = $('#declaration_divorce_ou_deces_conjoint_numero_affiliation').val();
+          $.ajax({
+              url: "/admin/conjoints/salaries/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  conjoint = data
+                  if (data) {
+                      $("#declaration_divorce_ou_deces_conjoint_prenom_salarie").val(data[0].prenom);
+                      $("#declaration_divorce_ou_deces_conjoint_nom_salarie").val(data[0].nom);
+
+                  } else {
+                      $("#declaration_divorce_ou_deces_conjoint_prenom_salarie").val('');
+                      $("#declaration_divorce_ou_deces_conjoint_nom_salarie").val('');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#declaration_divorce_ou_deces_conjoint_prenom_salarie").val('');
+                  $("#declaration_divorce_ou_deces_conjoint_nom_salarie").val('');
+              }
+          });
+      }
+
+      function load_conjoints() {
+          const numero_affiliation = $('#declaration_divorce_ou_deces_conjoint_numero_affiliation').val();
+          $.ajax({
+              url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function( data ) {
+                  if(data) {
+                      $("#declaration_divorce_ou_deces_conjoint_prenom_conjoint").val(data.prenom);
+                      $("#declaration_divorce_ou_deces_conjoint_nom_conjoint").val(data.nom);
+
+                      html = '<option value=""></option>';
+
+                      $.each(data, function(key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+
+                      $("#declaration_divorce_ou_deces_conjoint_conjoint_id").html(html);
+                  }
+                  else{
+                      $("#declaration_divorce_ou_deces_conjoint_prenom_conjoint").val('');
+                      $("#declaration_divorce_ou_deces_conjoint_nom_conjoint").val('');
+
+                      $("#declaration_divorce_ou_deces_conjoint_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#declaration_divorce_ou_deces_conjoint_prenom_conjoint").val('');
+                  $("#declaration_divorce_ou_deces_conjoint_nom_conjoint").val('');
+
+                  $("#declaration_divorce_ou_deces_conjoint_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      }
+
+      const input2=document.getElementById('label-cert');
+      const infoArea2=document.getElementById('certeficat-name');
+      input2.addEventListener('change', showFileName2);
+      function showFileName2(event){
+          var input=event.srcElement;
+          var fileName=input.files[0].name;
+          infoArea2.textContent=fileName;
+      }
+
+  </script>
+<% end %>

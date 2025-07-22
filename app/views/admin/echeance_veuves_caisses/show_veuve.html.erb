@@ -1,0 +1,55 @@
+<%= content_for :titre_page do %>
+  Détails échéance caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+  Veuve : <%= @veuve.nom %> <%= @veuve.prenom %> <br>
+  Salarié : <%= @veuve.dossier_prestation.num_affiliation %> / <%= @veuve.dossier_prestation.prenom %> <%= @veuve.dossier_prestation.nom %>
+  <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_veuves_caiss_path(@echeance), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div style="font-size: large">
+      <b>Montant total : </b> <%= format_cfa @enfants.sum(:montant) %> <br>
+      <span class="text-danger"><b>Montant payable : </b> <%= format_cfa @enfants.where(document_valide: true).sum(:montant) %></span>
+      <br>
+      <span class="text-danger"><b>À valider : </b> <%= format_cfa @enfants.where(document_valide: false).sum(:montant) %></span>
+      <br>
+    </div>
+    <br>
+    <br>
+    <% (1..3).each { |mois| %>
+      <h3>Enfants mois <%= mois %></h3>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Numéro ordre</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Nom</th>
+          <th scope="col">Date de naissance</th>
+          <th scope="col">Montant</th>
+          <th scope="col">Document enfant valide ?</th>
+          <th scope="col">Options</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @enfants.where(mois: mois).each do |enfant| %>
+          <tr>
+            <td><%= enfant.numero_ordre %></td>
+            <td><%= enfant.enfant.prenom %></td>
+            <td><%= enfant.enfant.nom %></td>
+            <td><%= l enfant.enfant.date_naissance %></td>
+            <td class="text-right"><%= format_cfa enfant.montant %></td>
+            <td><%= state_yes_no enfant.document_valide? %></td>
+            <td><%= link_to 'Renouveler pièce', admin_enfant_path(enfant.enfant_id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' unless enfant.document_valide? %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+</div>

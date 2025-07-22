@@ -1,0 +1,60 @@
+<%= paginate @allocation_prenatales %>
+<table class="table table-bordered table-condensed table-hover" style="font-size: 11px">
+  <thead>
+  <tr>
+    <th scope="col">N° Dossier</th>
+    <th scope="col">Allocataire</th>
+    <th scope="col">Conjoint(e)</th>
+    <th scope="col">Début grossesse (approximative)</th>
+    <th scope="col">Volet</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Date Création</th>
+    <th scope="col">Date Liquidation</th>
+    <th scope="col">Montant Liquidé</th>
+    <th scope="col">Date Paiement</th>
+    <th colspan="4"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% unless @allocation_prenatales.nil? %>
+    <% @allocation_prenatales.each do |allocation_prenatale| %>
+      <tr>
+        <td><%= allocation_prenatale.dossier_prestation.num_dossier%></td>
+        <td><%= allocation_prenatale.dossier_prestation.full_name%></td>
+        <% unless allocation_prenatale.dossier_prestation.conjoint.nil? %>
+          <td><%= allocation_prenatale.dossier_prestation.conjoint.full_name%></td>
+        <%end %>
+        <td><%= l allocation_prenatale.grossesse.date_grossesse %></td>
+        <td><%= AllocationPrenatale.human_enum_name(:volet, allocation_prenatale.volet)%></td>
+        <td><%= AllocationPrenatale.human_enum_name(:etat, allocation_prenatale.etat) %></td>
+        <td><%= allocation_prenatale.created_at.strftime('%d-%m-%Y') %></td>
+        <td>
+          <% unless allocation_prenatale.date_validation.nil? %>
+            <%= l allocation_prenatale.date_validation %>
+          <%end %>
+        </td>
+        <td><%= allocation_prenatale.montant_paiement %></td>
+        <td>
+          <% unless allocation_prenatale.date_paiement.nil? %>
+            <%= l allocation_prenatale.date_paiement %>
+          <%end %>
+        </td>
+
+        <td style="width: 75px">
+          <%= link_to 'détails',  [:admin, allocation_prenatale.dossier_prestation, allocation_prenatale], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+        <%if allocation_prenatale.soumis? %>
+          <td style="width: 75px">
+              <%= (link_to 'valider', admin_allocation_prenatale_valider_path(allocation_prenatale), class: 'btn btn-outline btn-primary btn-xs')%>
+          </td>
+          <td style="width: 75px">
+              <%= (link_to 'rejeter', admin_allocation_prenatale_rejeter_path(allocation_prenatale), class: 'btn btn-outline btn-danger btn-xs') %>
+          </td>
+          <%end %>
+      </tr>
+    <%end %>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @allocation_prenatales %>

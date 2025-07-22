@@ -1,0 +1,200 @@
+<%= content_for :titre_page, "Demandes de liquidation retraité affectées" %>
+
+<%= content_for :actions_page do %>
+
+  <% if current_user.chef_section_liquidation? and @demande_liquidations.size >0 %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalAllocataire">
+      Affecter les Demandes Allocations
+    </button>
+  <% end %>
+
+
+  <% if current_user.chef_service_cotisation? and @demande_liquidations.size > 0 %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModalSalarie">
+      Affecter Validation fiche Carrière
+    </button>
+  <% end %>
+
+<% end %>
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/liquidation_retraites/search_demandes' %>
+
+    <br>
+    <h3>Nombre de dossier: <%= @demande_liquidations_export.size %></h3>
+
+    <br>
+
+    <%= render 'liste_demandes' %>
+  </div>
+</div>
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="myModalAllocataire" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-check modal-icon"></i>
+          <h4 class="modal-title">Affectation des demandes Allocataires</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-condensed table-hover" id="Table1">
+            <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Prénom</th>
+              <th colspan="3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @gestionnaires.each do |gestionnaire| %>
+              <tr>
+                <td><%= gestionnaire.id %></td>
+                <td><%= gestionnaire.nom %></td>
+                <td><%= gestionnaire.prenom %></td>
+                <td style="width: 75px">
+                  <%= check_box_tag 'gestionnaires_ids[]', gestionnaire.id %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnGet">Affecter Demandes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<%end %>
+<% unless @gestionnaires_salaries.nil? %>
+  <div class="modal inmodal" id="myModalSalarie" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-check modal-icon"></i>
+          <h4 class="modal-title">Affectation Pour Validation Carrière</h4>
+        </div>
+        <div class="modal-body">
+          <table class="table table-bordered table-condensed table-hover" id="Table2">
+            <thead>
+            <tr>
+              <th scope="col">Id</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Prénom</th>
+              <th colspan="3"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @gestionnaires_salaries.each do |gestionnaire| %>
+              <tr>
+                <td><%= gestionnaire.id %></td>
+                <td><%= gestionnaire.nom %></td>
+                <td><%= gestionnaire.prenom %></td>
+                <td style="width: 75px">
+                  <%= check_box_tag 'gestionnaires_ids[]', gestionnaire.id %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnGetSalaire">Valider Affectation</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<%end %>
+<div class="modal inmodal" id="myModalOk" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">Résultat Affectation des demandes</h4>
+      </div>
+      <div class="modal-body">
+        <p>Affectation effectuée avec succès!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript" charset="utf-8">
+
+    $(document).ready(function () {
+
+        $("#btnGet").click(function () {
+            var message = [];
+
+            $("#Table1 input[type=checkbox]:checked").each(function () {
+                var row = $(this).closest("tr")[0];
+                message.push(row.cells[0].innerHTML);
+
+            })
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/liquidation_retraites/affecter_allocataire_all?gestionnaires_ids=" + message,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    console.log("=> success");
+                    $('#myModalOk').modal('show');
+                    window.setTimeout(function () {
+                        window.location.reload()
+                    }, 5000);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log('error');
+                }
+            });
+            return true;
+        });
+
+
+        $("#btnGetSalaire").click(function () {
+            var message = [];
+
+            $("#Table2 input[type=checkbox]:checked").each(function () {
+                var row = $(this).closest("tr")[0];
+                message.push(row.cells[0].innerHTML);
+
+            })
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/liquidation_retraites/affecter_salarie_all?gestionnaires_ids=" + message,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    console.log(data);
+                    console.log("=> success");
+                    $('#myModalOk').modal('show');
+                    window.setTimeout(function () {
+                        window.location.reload()
+                    }, 5000);
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log('error');
+                }
+            });
+            return true;
+        });
+
+
+    })
+
+</script>
+

@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dossier_maternite: one
+  type_document: 1
+  commentaire: MyText
+  date_depot: 2020-02-29
+
+two:
+  dossier_maternite: two
+  type_document: 1
+  commentaire: MyText
+  date_depot: 2020-02-29

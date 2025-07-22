@@ -1,0 +1,74 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+
+
+        <h3>Régime Général</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Entreprise</th>
+            <th scope="col">Période</th>
+            <th scope="col">Salaire</th>
+            <th scope="col">Points</th>
+            <th scope="col">From EDI?</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @carrieres.sort_by(&:exercice).each do |carriere| %>
+            <% unless carriere.salaire_rg.zero? %>
+              <tr class="<%= 'bg-danger' if carriere.calcul_points_rg.zero? %>">
+                <td><%= carriere.exercice %></td>
+                <td><%= link_to(carriere.fhrsoc, admin_carriere_employeur_path(carriere.fhnum)) %></td>
+                <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+                <td align="right"><%= format_cfa(carriere.salaire_rg, false) %></td>
+                <td align="right"><%= carriere.calcul_points_rg %></td>
+                <td><%= state_yes_no carriere.edi_id? %></td>
+              </tr>
+            <% end %>
+          <% end %>
+          </tbody>
+        </table>
+
+        <h3>Régime Cadre</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Entreprise</th>
+            <th scope="col">Période</th>
+            <th scope="col">Salaire</th>
+            <th scope="col">Points</th>
+            <th scope="col">From EDI?</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @carrieres.sort_by(&:exercice).each do |carriere| %>
+            <% unless carriere.salaire_rcc.zero? %>
+              <tr class="<%= 'bg-danger' if carriere.calcul_points_rcc.zero? %>">
+                <td><%= carriere.exercice %></td>
+                <td><%= link_to(carriere.fhrsoc, admin_carriere_employeur_path(carriere.fhnum)) %></td>
+                <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+                <td align="right"><%= format_cfa(carriere.salaire_rcc, false) %></td>
+                <td align="right"><%= carriere.calcul_points_rcc %></td>
+                <td><%= state_yes_no carriere.edi_id? %></td>
+              </tr>
+            <% end %>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.ibox-content.carrieres {
+    background-color: #f1f3f4;
+    color: black;
+    font-weight: bold;
+}
+</style>

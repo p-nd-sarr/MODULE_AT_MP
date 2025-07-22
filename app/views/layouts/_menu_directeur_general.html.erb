@@ -1,0 +1,80 @@
+<li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Salariés</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/salaries') %>">
+    <li class="<%= 'active' if is_active_controller('admin/salaries') %>">
+      <%= link_to 'Liste', admin_salaries_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Employeurs</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/employeurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+      <%= link_to 'Liste des employeurs', admin_employeurs_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%=I18n.t('module_arret_travail.admin_menu.arret_travail_label')%></span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+      <%= link_to 'Accueil', admin_arret_travails_path %>
+      <%#= link_to I18n.t('module_arret_travail.admin_menu.ajouter_dossier'), new_admin_arret_travail_path %>
+    </li>
+     <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente soumission liquidation', en_attente_soumission_liquidation_admin_arret_travails_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/at_consolidations') or is_active_controller('admin/allocataires/at_consolidations')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Consolidation</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_consolidations') %>">
+     <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+      <%= link_to 'Tous les dossiers', admin_at_consolidations_path %>
+    </li>
+
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+      <%= link_to 'En attente validation', en_attente_validation_dg_admin_at_consolidations_path %>
+    </li>
+
+  </ul>
+</li>
+
+<!--Rente Famille-->
+<li class="<%= 'active' if is_active_controller('admin/at_rente_familles') or is_active_controller('admin/at_consolidations')%>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Rente famiile</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/at_consolidations') %>">
+
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+      <%= link_to 'Tous les dossiers', admin_at_rente_familles_path %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/at_consolidations') %>">
+      <%= link_to 'En attente validation', en_attente_validation_dg_admin_at_rente_familles_path %>
+    </li>
+
+   
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
+    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+      <%= link_to 'Accueil', admin_maladie_professionnelles_path %>
+      <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
+    </li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/rentiers') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Rentiers</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/rentiers') %>">
+    <li class="<%= 'active' if is_active_controller('admin/rentiers') and is_active_action('index') %>">
+      <%= link_to 'Liste des rentiers', admin_rentiers_path %>
+       <%= link_to 'En attente activation', en_attente_activation_admin_rentiers_path %>
+    </li>
+  </ul>
+</li>
+
+

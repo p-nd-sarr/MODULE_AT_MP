@@ -1,0 +1,33 @@
+<div class="modal inmodal" id="rejet_attributaire<%= object.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-ban modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Rejet attributaire
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for(object, url: admin_dossier_prestation_rejeter_attributaire_tierce_path(object.dossier_prestation, object), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <%= f.text_area :motif_rejet, label: 'Motif rejet', required: true, disabled: !current_user.chef_agence? %>
+            <div class="form-group row">
+              <div class="modal-footer">
+                <% if current_user.chef_agence? %>
+                  <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                  <%= f.submit 'Rejeter', class: 'btn btn-danger' %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

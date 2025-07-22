@@ -1,0 +1,66 @@
+<li class="<%= 'active' if is_active_controller('employer/immatriculations') %>">
+  <%= link_to employer_immatriculations_path do %>
+    <i class="fa fa-briefcase"></i> <span class="nav-label">Mon immatriculation</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('employer/effectifs') %>">
+  <%= link_to employer_effectifs_path do %>
+    <i class="fa fa-users"></i> <span class="nav-label">Mes effectifs</span>
+  <% end %>
+</li>
+
+
+<li class="<%= 'active' if is_active_controller('employer/declarations') %>">
+  <%= link_to employer_declarations_path do %>
+    <i class="fa fa-calculator"></i> <span class="nav-label">Mes déclarations</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('employer/factures') %>">
+  <%= link_to employer_factures_path do %>
+    <i class="fa fa-money"></i> <span class="nav-label">Mes Paiements</span>
+  <% end %>
+</li>
+
+
+<li class="<%= 'active' if is_active_controller('salarie/epouses') or
+    is_active_controller('salarie/enfants') %>">
+  <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">Mes demandes de service</span><span class="fa arrow"></span></a>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/moratoires') %>"><%= link_to 'Mise à jour fiche employeur', employer_moratoires_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/services') %>"><%= link_to 'Demande d''attestation ', employer_attestations_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/services') %>"><%= link_to 'Demande de changement de statut', employer_moratoires_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/moratoires') %>"><%= link_to 'Demande d''attestation de régularité', employer_moratoires_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/services') %>"><%= link_to 'Demande de justificatif de compte', employer_moratoires_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/moratoires') %>"><%= link_to 'Demande de moratoire', employer_moratoires_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/moratoires') %>"><%= link_to 'Demande de remise facieuse', employer_moratoires_path %></li>
+  </ul>
+
+  <ul class="nav nav-second-level <%= is_active_controller('employer/services') %>">
+    <li class="<%= 'active' if is_active_controller('employer/moratoires') %>"><%= link_to 'Demande d''admission', employer_moratoires_path %></li>
+  </ul>
+</li>
+
+<li class="<%= 'active' if is_active_controller('salarie/demande_liquidations') %>">
+  <%= link_to root_path do %>
+    <i class="fa fa-folder"></i> <span class="nav-label">Mes documents</span>
+  <% end %>
+</li>

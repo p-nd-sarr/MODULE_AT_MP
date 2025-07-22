@@ -1,0 +1,45 @@
+<%= content_for :titre_page, 'Admin Bareme Pensions' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_bareme_pension_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Régime</th>
+        <th scope="col">Période validité</th>
+        <th scope="col">Valeur point annuelle</th>
+        <th scope="col">Valeur point trimestrielle</th>
+        <th scope="col">Valeur point bimestrielle</th>
+        <th scope="col">Valeur point mensuelle</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_bareme_pensions.each do |admin_bareme_pension| %>
+        <tr>
+          <td><%= admin_bareme_pension.admin_type_regime.description %></td>
+          <td><%= l admin_bareme_pension.date_debut_validite %> - <%= l admin_bareme_pension.date_fin_validite %></td>
+          <td align="right"><%= admin_bareme_pension.valeur_point_annuelle.try(:ceil, 4) %></td>
+          <td align="right"><%= admin_bareme_pension.valeur_point_trimestrielle.try(:ceil, 4) %></td>
+          <td align="right"><%= admin_bareme_pension.valeur_point_bimestrielle.try(:ceil, 4) %></td>
+          <td align="right"><%= admin_bareme_pension.valeur_point_mensuelle.try(:ceil, 4) %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_bareme_pension, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_bareme_pension_path(admin_bareme_pension), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_bareme_pension, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

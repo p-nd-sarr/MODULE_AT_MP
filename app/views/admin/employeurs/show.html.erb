@@ -1,0 +1,90 @@
+<%= content_for :titre_page, "Détails employeur #{@employeur.fhnum}" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_employeurs_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-3">
+      <div class="ibox">
+        <div class="ibox-content">
+          <%= render 'information_employeur' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-sm-6">
+              <h3>Déclarations chargées</h3>
+
+              <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                  <th>Exercice</th>
+                  <th>Regime</th>
+                  <th>Effectif</th>
+                  <th>Code Agence</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @employeur.declaration_salaire_manquantes.chargee.order(:exercice).each do |declaration| %>
+                  <tr>
+                    <td><%= declaration.exercice %></td>
+                    <td><%= declaration.regime == 1 ? "GENERAL" : (declaration.regime == 2 ? 'CADRE' : declaration.regime) %></td>
+                    <td><%= declaration.effectif %></td>
+                    <td><%= declaration.code_agence %></td>
+                    <td>
+                      <%= link_to 'Voir le chargement', admin_employeur_declaration_manquante_charger_show_path(@employeur, declaration, declaration.declaration_chargements.order('created_at').last), class: 'btn btn-outline btn-default btn-xs' %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="col-sm-6">
+              <h3>Déclarations manquantes</h3>
+              <table class="table table-bordered table-condensed table-hover">
+                <thead>
+                <tr>
+                  <th>Exercice</th>
+                  <th>Regime</th>
+                  <th>Effectif</th>
+                  <th>Code Agence</th>
+                  <th>Statut</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% @employeur.declaration_salaire_manquantes.where.not(statut: :chargee).order(:exercice).each do |declaration| %>
+                  <tr>
+                    <td><%= declaration.exercice %></td>
+                    <td><%= declaration.regime == 1 ? "GENERAL" : (declaration.regime == 2 ? 'CADRE' : declaration.regime) %></td>
+                    <td><%= declaration.effectif %></td>
+                    <td><%= declaration.code_agence %></td>
+                    <td><%= declaration.statut %></td>
+                    <td>
+                      <% if declaration.manquante? %>
+                        <% if current_user.gestionnaire_compte_salarie? %>
+                          <%= link_to 'Faire la déclaration', admin_employeur_declaration_manquante_charger_path(@employeur, declaration), class: 'btn btn-outline btn-primary btn-xs' %>
+                        <% end %>
+                      <% else %>
+                        <%= link_to 'Voir le chargement', admin_employeur_declaration_manquante_charger_show_path(@employeur, declaration, declaration.declaration_chargements.order('created_at').last), class: 'btn btn-outline btn-default btn-xs' %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

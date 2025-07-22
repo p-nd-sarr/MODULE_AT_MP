@@ -1,0 +1,69 @@
+
+  <div class="row">
+  <br>
+  <div class="col-lg-6">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+           ANCIEN <i class="fa fa-warning fa-2x"></i> 
+        </div>
+        <div class="panel-body">
+            <p>
+            <strong>Modde paiement:</strong>
+            <%= @modifier_mode_paiement.old_mode_paiement %>
+          </p>
+          <% if @modifier_mode_paiement.old_mode_paiement=="virement" %>
+            <p>
+              <strong>Nom de la banque:</strong>
+              <%= @modifier_mode_paiement.old_compte_bancaire_nom_banque %>
+            </p>
+            <p>
+              <strong>Code bancaire:</strong>
+              <%= @modifier_mode_paiement.old_compte_bancaire_code_banque %>
+            </p>
+            <p>
+              <strong>Code guichet du compte:</strong>
+              <%= @modifier_mode_paiement.old_compte_bancaire_code_guichet %>
+            </p>
+            <p>
+              <strong>Numero du compte:</strong>
+              <%= @modifier_mode_paiement.old_compte_bancaire_numero_compte %>
+            </p>
+          <% end %>
+        </div>
+    </div>
+  </div>
+
+    <div class="col-lg-6">
+     <div class="panel panel-primary">
+        <div class="panel-heading">
+           NOUVEAU <i class="fa fa-check-circle fa-2x"></i> 
+        </div>
+        <div class="panel-body">
+            <p>
+            <strong>Modde paiement:</strong>
+            <%= @modifier_mode_paiement.mode_paiement %>
+          </p>
+          <% if @modifier_mode_paiement.mode_paiement=="virement" %>
+            <p>
+              <strong>Nom de la banque:</strong>
+              <%= @modifier_mode_paiement.compte_bancaire_nom_banque %>
+            </p>
+            <p>
+              <strong>Code bancaire:</strong>
+              <%= @modifier_mode_paiement.compte_bancaire_code_banque %>
+            </p>
+            <p>
+              <strong>Code guichet du compte:</strong>
+              <%= @modifier_mode_paiement.compte_bancaire_code_guichet %>
+            </p>
+            <p>
+              <strong>Numero du compte:</strong>
+              <%= @modifier_mode_paiement.compte_bancaire_numero_compte %>
+            </p>
+          <% end %>
+        </div>
+    </div>
+  </div>
+  </div>  
+
+  

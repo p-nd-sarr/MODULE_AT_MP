@@ -1,0 +1,41 @@
+<%= content_for :titre_page, 'Admin Quartiers' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_quartier_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= paginate @admin_quartiers %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Admin commune</th>
+        <th scope="col">Code</th>
+        <th scope="col">Designation</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_quartiers.each do |admin_quartier| %>
+        <tr>
+          <td><%= admin_quartier.admin_commune.designation %></td>
+          <td><%= admin_quartier.code %></td>
+          <td><%= admin_quartier.designation %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_quartier, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_quartier_path(admin_quartier), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_quartier, method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @admin_quartiers %>
+  </div>
+</div>

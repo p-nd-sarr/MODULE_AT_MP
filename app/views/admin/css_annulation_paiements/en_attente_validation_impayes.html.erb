@@ -1,0 +1,11 @@
+<%= content_for :titre_page, "Liste des paiements à rendre impayés" %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/css_annulation_paiements/search' %>
+    <br>
+    <%= paginate @css_annulation_paiements %>
+    <%= render 'admin/css_annulation_paiements/liste' %>
+    <%= paginate @css_annulation_paiements %>
+  </div>
+</div>

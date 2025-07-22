@@ -1,0 +1,59 @@
+<%= content_for :titre_page, "La liste des dossiers en attente de clôture." %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <% if @requests.count.zero? %>
+      <h2 style="text-align:center; margin-top:50px">
+        <hr>
+        La liste des dossiers en attente de clôture est vide !!!
+      </h2>
+    <% else %>
+
+      <%= paginate @requests %>
+      <div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+        <table class="table table-striped">
+          <thead class="thead-primary">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">N° Dossier</th>
+            <th scope="col">N° affiliation</th>
+            <th scope="col">Age</th>
+            <th scope="col">Salarié(e)</th>
+            <th colspan="3"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @requests.each do |request| %>
+            <tr>
+              <td></td>
+              <td><%= request.dossier_prestation.num_dossier %></td>
+              <td><%= request.dossier_prestation.num_affiliation %></td>
+              <td><%= request.dossier_prestation.age %></td>
+              <td><%= request.dossier_prestation.full_name %></td>
+              <td>
+              </td>
+              <td style="width: 75px">
+                <span>
+                  <a data-toggle="modal" data-target="#cloture_demande_details" id="" class="btn btn-primary  btn-xs"> Clôturer dossier </a>
+                </span>
+                <%= render 'admin/dossier_prestations/cloture_request_details_modal', object: request %>
+              </td>
+              <td style="width: 75px">
+                <span>
+                  <a data-toggle="modal" data-target="#rejet_demande" id="" class="btn btn-danger  btn-xs"> Rejeter demande </a>
+                </span>
+                <%= render 'admin/dossier_prestations/rejet_demande_cloture', object: request %>
+              </td>
+              <td style="width: 75px">
+                <%= link_to 'Voir dossier', admin_dossier_prestation_path(request.dossier_prestation), target: '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @requests %>
+      </div>
+    <% end %>
+  </div>
+</div>

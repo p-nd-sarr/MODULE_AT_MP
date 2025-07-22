@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails document" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', documents_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_document_path(@document), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Ajouter document', new_document_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Type document:</strong>
+              <%= @document.type_document %>
+            </p>
+
+            <p>
+              <strong>Commentaire:</strong>
+              <%= @document.commentaire %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

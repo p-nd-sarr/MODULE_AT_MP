@@ -1,0 +1,366 @@
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-2">
+        <%= link_to admin_liquidation_retraites_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Liquidations Retraite</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/1.Liquidation Retratite.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= LiquidationRetraite.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to 'Accéder', new_admin_liquidation_retraite_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+      <div class="col-lg-2">
+        <%= link_to admin_base_reversion_salaries_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Reversion Avant Liquidation</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/2.Reversion pension.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= ReversionVeuve.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_reversion_veuve_path, class: 'btn btn-primary btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+      <div class="col-lg-2">
+        <%= link_to toutes_demandes_admin_reversion_veuves_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Reversion Aprés Liquidation</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/2.Reversion pension.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= ReversionVeuve.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_reversion_veuve_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-2">
+        <%= link_to admin_bordereaux_regularisations_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Régularisation</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/3.Regularisation pension.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= RegularisationPension.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_regularisation_pension_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+      <div class="col-lg-2">
+        <%= link_to en_attente_soumission_admin_revision_pensions_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Révision De Carriere</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/4.Revision carière.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= RevisionPension.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_revision_pension_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+      <div class="col-lg-2">
+        <%= link_to admin_cfs_reversion_veuves_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Prestations Extérieures IPRES</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/5.Prestation ext.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= PrestationExtFrance.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_prestation_ext_france_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+    </div>
+
+    <div class="col-lg-12">
+
+      <div class="col-lg-2">
+        <%= link_to admin_dossier_prestations_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Prestations Familiales</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/8.Allocation fam.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= DossierPrestation.where(conjoint_id: nil).count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_dossier_prestation_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-2">
+        <%= link_to admin_arret_travails_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Arrêts De Travail</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/11.Accident du travail.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= ArretTravail.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_arret_travail_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-2">
+        <%= link_to admin_dossier_maternites_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Indemnités De Congés Maternité</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/9.Indemnite maternite.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= DossierMaternite.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_dossier_maternite_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-2">
+        <%= link_to admin_maladie_professionnelles_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Maladies Professionnelles</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/12.Maladie travail.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= MaladieProfessionnelle.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_maladie_professionnelle_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-2">
+        <%= link_to admin_prestation_exterieures_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Prestations Extérieures CAF</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/5.Prestation ext.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= PrestationExterieure.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_prestation_exterieure_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+      <div class="col-lg-2">
+        <%#= link_to admin_pension_alimentaires_path do %>
+        <%= link_to admin_prestation_exterieures_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Pensions Alimentaires</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/7.Prestation alimentaire.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= PensionAlimentaire.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+<!--                <div style="text-align:center">-->
+                  <%#= link_to ' Accéder', new_admin_pension_alimentaire_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+<!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-lg-12">
+
+      <div class="col-lg-2">
+        <%= link_to admin_demande_remboursement_cotisations_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Remboursement De Cotisation</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/6.Remboursement pension.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= RemboursementCotisation.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+              <%# if current_user.gestionnaire_compte_allocataire? %>
+              <!--                <div style="text-align:center">-->
+              <%#= link_to ' Accéder', new_admin_pension_alimentaire_path, class: 'btn btn-success btn-xs fa fa-file', style: 'margin-top:15px;' %>
+              <!--                </div>-->
+              <%# end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="col-lg-2">
+        <%= link_to admin_dossier_juridiques_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Dossiers Juridiques</h5>
+            </div>
+            <div class="m-b-sm thumbnail" style="margin-bottom: 1px">
+              <img src="/images/7.Prestation alimentaire.png" style="height:135px">
+            </div>
+            <div class="ibox-content product-box">
+              <div class="stat-percent text-success font-bold">
+                <%#= DossierJuridique.count %>
+                <i class="fa fa-bolt"></i>
+              </div>
+              <small>Total dossier(s)</small>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,55 @@
+<%= content_for :titre_page, "Dossier De Prestation exterieure [#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  statut dossier: <%= @prestation_exterieure.get_status? ? 'Complet' : 'Incomplet' %>
+  <br>
+  Salarié : <%= @prestation_exterieure.prenom unless @prestation_exterieure.nil? %> <%= @prestation_exterieure.nom unless @prestation_exterieure.nil? %>
+  <br>
+  Etat du dossier : <%= "#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}" %>
+  <br>
+  Crée le : <%= l(@prestation_exterieure.created_at) %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'voir etat de famille', admin_prestation_exterieure_generate_etat_path(@prestation_exterieure), class: 'btn btn-primary' %>
+  <%= link_to 'Retour', admin_droits_liquidation_path, class: 'btn btn-white btn-sm' %> <br> <br>
+<% end %>
+
+
+
+<div class="wrapper wrapper-content" style="font-size:medium;">
+  <div class="ibox">
+    <div class="ibox-content">
+      <ul class="nav nav-tabs" style="font-size:10px">
+        <li class="tab-link-top">
+          <a data-toggle="tab" href="#tab-5"><i class="fa fa-money"></i>Indemnités
+          </a>
+        </li>
+        <% if current_user.comptable? %>
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-6"><i class="fa fa-money"></i>Paiements
+            </a>
+          </li>
+        <% end %>
+      </ul>
+      <div class="tab-content">
+        <div id="tab-5" class="tab-pane tab-pane-section">
+          <div class="full-height-scroll">
+            <br>
+            <%= render 'caf_indemnites' %>
+          </div>
+        </div>
+
+        <div id="tab-6" class="tab-pane tab-pane-section">
+          <div class="full-height-scroll">
+            <br>
+            <%= render 'paiements' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'rejeter_droits_liquidation' %>
+

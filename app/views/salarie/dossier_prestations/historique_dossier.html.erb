@@ -1,0 +1,62 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-title">
+                <h5>Historique du  dossier de prestation <%=@dossier_prestations.num_dossier%></h5>
+                <div class="ibox-tools">
+
+                    <a class="close-link">
+                        <%= link_to 'Retour', salarie_dossier_prestations_path, class: 'btn btn-primary btn-sm' %>
+                    </a>
+                </div>
+            </div>
+            <div class="ibox-content table-responsive">
+                <table class="table table-hover no-margins">
+                    <thead>
+                    <tr>
+                        <th scope="col">Status</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Utilisateurs</th>
+                        <th scope="col">Progression</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><small>Ajouté</small></td>
+                        <td><i class="fa fa-clock-o"></i><%= @dossier_prestations.created_at.strftime("%d/%m/%Y") %> </td>
+                        <td><%= @dossier_prestations.ajoute_par.full_name %> </td>
+                        <td class="text-navy"> <i class="fa fa-level-up"></i> 25% </td>
+                    </tr>
+                    <tr>
+                        <td><span class="label label-warning">modifié</span> </td>
+                        <td><i class="fa fa-clock-o"></i>  <%= @dossier_prestations.updated_at.strftime("%d/%m/%Y") %></td>
+                        <td><%= @dossier_prestations.ajoute_par.full_name %>  </td>
+                        <td class="text-navy"> <i class="fa fa-level-up"></i> - </td>
+                    </tr>
+             <% if @dossier_prestations.soumis? %>
+                    <tr>
+                        <td><small>Soumis</small> </td>
+                        <td><i class="fa fa-clock-o"></i> <%= @dossier_prestations.date_soumission.strftime("%d/%m/%Y") %> </td>
+                        <td><%= @dossier_prestations.ajoute_par.full_name %> </td>
+                        <td class="text-navy"> <i class="fa fa-level-up"></i> 50% </td>
+                    </tr>
+              <% end%>
+              <% if @dossier_prestations.valide? %>
+                    <tr>
+                        <td><small>validé</small> </td>
+                        <td><i class="fa fa-clock-o"></i> <%= @dossier_prestations.date_validation.strftime("%d/%m/%Y") %>                        </td>
+                        <td><%= @dossier_prestations.traite_par.full_name %> </td>
+                        <td class="text-navy"> <i class="fa fa-level-up"></i> 100% </td>
+                    </tr>
+              <% end%>
+                    <!-- <tr>
+                        <td><small>Pending...</small> </td>
+                        <td><i class="fa fa-clock-o"></i> 12:08am</td>
+                        <td>Damian</td>
+                        <td class="text-navy"> <i class="fa fa-level-up"></i> 23% </td>
+                    </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,51 @@
+<%= content_for :titre_page, "Dossier De Prestation exterieure [#{PrestationExterieure.human_enum_name(:state, @prestation_exterieure.current_state)}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_prestation_exterieure_path(@prestation_exterieure.id), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="ibox ">
+  <div class="ibox-title">
+    <h5>Renouvellement des documents</h5>
+  </div>
+  <div class="ibox-content">
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+      <tr>
+        <th scope="col" style="width: 300px">Nom complet de l'enfant</th>
+        <th scope="col" style="width: 500px">Choisir document</th>
+        <th scope="col" style="width: 100px">Action</th>
+      </tr>
+      </thead>
+      <% @enfants.each do |enfant| %>
+        <tbody>
+        <% if enfant.require_piece_change(enfant.id) %>
+          <%= bootstrap_form_for([:admin, enfant], url: admin_prestation_exterieure_replace_extrait_path(enfant.id), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <tr>
+              <td>
+                <%= enfant.prenom %>  <%= enfant.prenom %>
+              </td>
+              <td>
+                <%= f.file_field :extrait_naissance, label: ''.html_safe, required: true %>
+              </td>
+
+              <td>
+                <%= f.button 'Renouveler', class: 'btn btn-outline btn-primary btn-xs' %>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr>
+            <td>
+              <%= enfant.prenom %>  <%= enfant.prenom %>
+            </td>
+            <td>
+              <span class='btn btn-primary btn-xs'>Déjà renouvelé</span>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      <% end %>
+    </table>
+  </div>
+</div>

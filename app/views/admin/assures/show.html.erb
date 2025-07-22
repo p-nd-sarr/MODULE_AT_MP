@@ -1,0 +1,113 @@
+<%= content_for :titre_page, "Détails enrolement assuré KIT ##{@assure.id}" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_assures_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <%= image_tag "data:image/jpeg;base64,#{@assure.photo}", height: 200 %>
+            </p>
+            <p>
+              <strong>PrenomNom:</strong>
+              <%= @assure.PrenomNom %>
+            </p>
+            <p>
+              <strong>Numéro carte:</strong>
+              <%= @assure.numero_carte %>
+            </p>
+            <p>
+              <strong>Date de naissance:</strong>
+              <%= @assure.date_naissance %>
+            </p>
+            <p>
+              <strong>cdao:</strong>
+              <%= @assure.cdao %>
+            </p>
+            <p>
+              <strong>nin:</strong>
+              <%= @assure.nin %>
+            </p>
+            <p>
+              <strong>Numéro allocataire:</strong>
+              <%= @assure.numero_allocataire %>
+            </p>
+            <p>
+              <strong>Prénom:</strong>
+              <%= @assure.prenom %>
+            </p>
+            <p>
+              <strong>Nom:</strong>
+              <%= @assure.nom %>
+            </p>
+            <p>
+              <strong>Téléphone:</strong>
+              <%= @assure.telephone %>
+            </p>
+            <p>
+              <strong>Adresse:</strong>
+              <%= @assure.adresse %>
+            </p>
+            <p>
+              <strong>Pays:</strong>
+              <%= @assure.pays %>
+            </p>
+            <p>
+              <strong>Type document:</strong>
+              <%= @assure.typeDocument %>
+            </p>
+            <p>
+              <strong>Numéro document:</strong>
+              <%= @assure.numeroDocument %>
+            </p>
+            <p>
+              <strong>Date de validité:</strong>
+              <%= @assure.dateValidite %>
+            </p>
+            <p>
+              <strong>Statut:</strong>
+              <%= @assure.statut %>
+            </p>
+            <p>
+              <strong>Observation:</strong>
+              <%= @assure.observation %>
+            </p>
+            <p>
+              <strong>Doigt 1:</strong>
+              <%= image_tag "data:image/jpeg;base64,#{@assure.doigt1}", height: 150 %>
+            </p>
+            <p>
+              <strong>Doigt 2:</strong>
+              <%= image_tag "data:image/jpeg;base64,#{@assure.doigt2}", height: 150 %>
+            </p>
+            <p>
+              <strong>Sexe:</strong>
+              <%= @assure.sexe %>
+            </p>
+            <p>
+              <strong>Code d'authentification:</strong>
+              <%= @assure.code_authentification %>
+            </p>
+            <p>
+              <strong>Code local:</strong>
+              <%= @assure.codeLocal %>
+            </p>
+            <p>
+              <strong>Date d'enrolement:</strong>
+              <%= @assure.dateEnroll %>
+            </p>
+            <p>
+              <strong>Date d'insertion:</strong>
+              <%= @assure.dateInsert %>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

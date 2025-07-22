@@ -1,0 +1,42 @@
+<%= bootstrap_form_for([:admin, @dossier_audit], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <%= f.date_field :date_debut, label: 'Date début' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :description, label: 'Description' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :motif, label: 'Motif' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :objectifs, label: 'Onjectifs' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :etendu_controle, label: 'Étendu du contrôle' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :techniques_controle, label: 'Techniques de contrôle' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :programme_travail, label: 'Programme de travail' %>
+      </div>
+    </div>
+    <div class=" col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', (@dossier_audit.persisted? ? [:admin, @dossier_audit] : admin_dossier_audits_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+      });
+  </script>
+<% end %>

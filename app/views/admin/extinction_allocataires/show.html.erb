@@ -1,0 +1,239 @@
+<%= content_for :titre_page, "Details extinction allocataire" %>
+
+<%= content_for :actions_page do %>
+  <% if @extinction_allocataire.creation? and current_user.gestionnaire_compte_allocataire?%>
+   <%= link_to 'Editer', edit_admin_extinction_allocataire_path(@extinction_allocataire), class: 'btn btn-white btn-sm' %>
+    <%= (link_to 'Supprimer',admin_extinction_allocataire_path(@extinction_allocataire), method: :delete, data: {confirm: 'Êtes-vous sûr de vouloir supprimer ?'}, class: 'btn btn-danger btn-sm') %>
+    <%= link_to 'soumettre',admin_allocataire_extinction_allocataire_soumettre_path(@extinction_allocataire.allocataire,@extinction_allocataire), class: 'btn btn-primary btn-sm' %>
+  <%end%>
+  <% if @extinction_allocataire.soumis? and current_user.chef_service_allocation? and @extinction_allocataire.affectation_allocataire.nil? %>
+    <button type="button" class="btn btn-outline btn-success btn-sm" data-toggle="modal" data-target="#affecter-modal" id="affecter_allocataire_id">
+      Affecter 
+    </button>
+    <%#= render 'affectation_allocataire', locals: { suspension: suspension_allocataire } %>
+  <% end%> 
+  <% if @extinction_allocataire.affecter? and current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Valider la verification',admin_allocataire_extinction_allocataire_verifier_path(@allocataire,@extinction_allocataire), class: 'btn btn-primary btn-sm' %>
+  <%end%>
+  <% if @extinction_allocataire.verifie? and current_user.chef_service_allocation? %>
+    <%= link_to 'Valider la suspension',admin_allocataire_extinction_allocataire_valider_path(@allocataire,@extinction_allocataire), class: 'btn btn-primary btn-sm' %>
+  <%end%>
+  <% if @extinction_allocataire.verifie? and current_user.chef_service_allocation? %>     
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejeter-modal<%=@extinction_allocataire.id%>" id="affecter_allocataire_id">
+      Rejeter
+    </button>
+        <%#= link_to 'Rejeter',admin_rejet_modal_modifier_mode_paiement_path(modifier_mode_paiement), class: 'btn btn-outline btn-danger btn-xs' %>    
+  <% end%>
+<% end %>
+
+<div class="wrapper wrapper-content">
+
+  <div class="progressbar-wrapper">
+    <ul class="progressbar">
+      <li class="<%= ("active") if @extinction_allocataire.current_state >= :creation %>">Création</li>
+      <li class="<%= ("active") if @extinction_allocataire.current_state >= :soumis %>">Soumission</li>
+      <li class="<%= ("active") if @extinction_allocataire.current_state >= :verifie %>">Vérification demande </li>
+      <li class="<%= ("active") if @extinction_allocataire.current_state >= :dossier_valide %>">Validation extinction</li>
+    </ul>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <h4>
+            N° affiliation: <%= @extinction_allocataire.numero_allocataire %>
+          </h4>
+          <%unless @extinction_allocataire.numero_allocataire.nil?%>
+          <h4>
+            N° dossier: <%= @extinction_allocataire.numero_allocataire %>
+          </h4>
+          <% end %>
+          <div class="wrapper wrapper-content">
+            <ul class="nav nav-tabs">
+              <!-- <span class="pull-right small text-muted">1406 Elements</span>-->
+              <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Informations Allocataire
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @extinction_allocataire.information_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @extinction_allocataire.information_valide? %> 
+              </a></li>
+              <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Documents
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless @extinction_allocataire.document_valide? %>
+                  <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @extinction_allocataire.document_valide? %> 
+              </a></li>
+              <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Historiques
+              </a></li>
+
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                    <br>
+                    <% if !@extinction_allocataire.information_valide? %>
+                      <%#= link_to "Je valide les informations sur l'état civil", admin_allocataire_extinction_allocataire_valider_etat_civil_demandeur_path(@allocataire, @extinction_allocataire), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <hr>
+                    <% end %>
+                    <%= render 'information' %>
+                  </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                 <br>
+                  <% if !@extinction_allocataire.document_valide? %>
+                    <%#= link_to "Je valide tous les documents", admin_allocataire_modifier_mode_paiement_valider_documents_path(@allocataire, @modifier_mode_paiement), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                    <hr>
+                  <% end %>
+                  <%= render 'show_documents' %>
+                  <br>
+                </div>
+              </div>
+         
+              <div id="tab-3" class="tab-pane">
+                <div class="full-height-scroll">
+                  <%= render 'historique' %>
+                  <br>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="modal inmodal" id="affecter-modal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@extinction_allocataire, url: admin_allocataire_extinction_allocataire_affecter_path(@allocataire, @extinction_allocataire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Affectation la demande : <%= @extinction_allocataire.id %> </h4>
+          <small class="font-bold">Choisir le gestionnaire</small>
+        </div>
+        <div class="modal-body">
+         <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+        </div>
+      </div>
+    <%end %>
+  </div>
+</div>
+<div class="modal inmodal" id="rejeter-modal<%=@extinction_allocataire.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@extinction_allocataire, url: admin_allocataire_extinction_allocataire_rejeter_path(@allocataire,@extinction_allocataire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Rejet de la demande : <%= @extinction_allocataire.id %> </h4>
+        
+        </div>
+        <div class="modal-body">
+            <%= f.text_field :motif_rejet, label: 'Motif du rejet' %> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-danger">Rejeter la demande</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+
+<style>
+  .progressbar-wrapper {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 12%;
+  }
+
+  .progressbar li {
+    list-style-type: none;
+    width: 20%;
+    float: left;
+    font-size: 10px;
+    position: relative;
+    text-align: center;
+    text-transform: uppercase;
+    color: #7d7d7d;
+    margin-bottom: 20px;
+  }
+
+  .progressbar li:before {
+    width: 60px;
+    height: 60px;
+    content: "";
+    line-height: 60px;
+    border: 2px solid #7d7d7d;
+    display: block;
+    text-align: center;
+    margin: 0 auto 3px auto;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    background-color: #fff;
+  }
+
+  .progressbar li:after {
+    width: 100%;
+    height: 2px;
+    content: '';
+    position: absolute;
+    background-color: #7d7d7d;
+    top: 30px;
+    left: -50%;
+    z-index: 0;
+  }
+
+  .progressbar li:first-child:after {
+    content: none;
+  }
+
+  .progressbar li.active {
+    color: #000;
+    font-weight: normal;
+  }
+
+  .progressbar li.active:before {
+    border-color: #1ab394;
+    background: #1ab394;
+  }
+
+  .progressbar li.active + li:after {
+    background-color: #1ab394;
+  }
+
+  .progressbar li.active:before {
+    background: #1ab394;
+    background-size: 60%;
+  }
+
+  .progressbar li::before {
+    background: #fff;
+    background-size: 60%;
+  }
+
+  .progressbar {
+    counter-reset: step;
+  }
+
+  .progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+  }
+</style>
+
+
+    
+
+      
+
+     

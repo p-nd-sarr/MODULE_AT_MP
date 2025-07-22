@@ -1,0 +1,107 @@
+<%= content_for :titre_page, "Les demandes suspension allocataire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour accueil allocataires', toutes_les_demandes_admin_allocataires_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+       <th scope="col">N°</th>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+         <th scope="col">Motif_suspension</th>
+        <th scope="col">Etat</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @demandes_suspension_allocataires.each do |demandes_suspension_allocataire| %>
+        <tr>
+          <td><%= demandes_suspension_allocataire.id %></td>
+          <td><%= demandes_suspension_allocataire.numero_allocataire %></td>
+          <td><%= demandes_suspension_allocataire.prenom %></td>
+          <td><%= demandes_suspension_allocataire.nom %></td>
+          <td><%= demandes_suspension_allocataire.motif_suspension %></td>
+          <td><%= demandes_suspension_allocataire.etat %></td>
+        
+          <td style="width: 75px">
+             <% if demandes_suspension_allocataire.soumis? and current_user.chef_service_allocation? %>
+             <%= link_to 'Valider',admin_valider_suspension_allocataire_path(demandes_suspension_allocataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          
+              <% end%>  
+          </td>
+       
+          <td>
+             <% unless regularisation_pension.valide? || regularisation_pension.rejete? %>
+              <button type="button" class="btn btn-outline btn-danger btn-xs" data-toggle="modal" data-target="#rejeter-modal<%=regularisation_pension.id%>" id="affecter_allocataire_id">
+                 Rejeter
+              </button>
+             <% end%>
+          </td>
+          <td>
+              <%= link_to 'details', admin_show_demandes_suspension_allocataire_path(regularisation_pension) ,class: 'btn btn-outline btn-warning btn-xs' %>
+          </td>
+
+        <% unless @gestionnaires.nil? %>
+          <div class="modal inmodal" id="affecter-modal<%=regularisation_pension.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+              <%= bootstrap_form_for(regularisation_pension, url: admin_affecter_demande_regulation_pension_path(regularisation_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-laptop modal-icon"></i>
+                    <h4 class="modal-title">Affectation la demande : <%= regularisation_pension.id %> </h4>
+                    <small class="font-bold">Choisir le gestionnaire</small>
+                  </div>
+                  <div class="modal-body">
+                    <%= f.collection_select :affectation_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+          <div class="modal inmodal" id="rejeter-modal<%=regularisation_pension.id%>" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+              <%= bootstrap_form_for(demandes_suspension_allocataire, url: admin_rejeter_suspension_allocataire_path(demandes_suspension_allocataire), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                    <div class="modal-content animated bounceInRight">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <i class="fa fa-laptop modal-icon"></i>
+                    <h4 class="modal-title">Rejet de la demande : <%= demandes_suspension_allocataire.id %> </h4>
+                  
+                  </div>
+                  <div class="modal-body">
+                      <%= f.text_field :motif_rejet, label: 'Motif du rejet' %> 
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                    <button type="submit" class="btn btn-danger">Rejeter la demande</button>
+                  </div>
+               </div>
+              <% end %>
+            </div>
+          </div>
+         
+        </tr>   
+        
+      <% end %>
+      
+      </tbody>
+    </table>
+  
+  </div>
+</div>

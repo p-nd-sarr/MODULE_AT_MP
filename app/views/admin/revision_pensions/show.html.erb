@@ -1,0 +1,505 @@
+<%= content_for :titre_page, "Détails de la demande de revision [#{@revision_pension.workflow_state}]" %>
+
+<%= content_for :actions_page do %>
+
+  <% if @revision_pension.affectation_allocataire.nil? and current_user.chef_section_liquidation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+      Affecter la Demande Allocation
+    </button>
+  <% end %>
+
+  <% if @revision_pension.instruit? and @revision_pension.affectation_salarie.nil? and current_user.chef_service_cotisation? %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#affecter-one-salarie" id="affecter_salarie_id">
+      Affecter pour révision carrière
+    </button>
+  <% end %>
+
+  <%= link_to 'Retour', admin_allocataire_revision_pensions_path(@allocataire), class: 'btn btn-white btn-sm' %>
+  <%= (link_to 'Suppression exceptionnelle', admin_allocataire_revision_pension_path(@revision_pension.allocataire, @revision_pension), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn btn-danger btn-sm') if current_user.admin? or current_user.chef_service_allocation? or current_user.chef_service_cotisation? %>
+  <% if @revision_pension.creation? %>
+    <%= link_to 'Editer', edit_admin_allocataire_revision_pension_path(@allocataire, @revision_pension), class: 'btn btn-white btn-sm' %>
+    <% if @revision_pension.pret_pour_soumission? and current_user.can_allocataire? and @revision_pension.ajouter_par_id == current_user %>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Soumettre</button>
+    <% end %>
+  <% end %>
+
+  <% if @revision_pension.creation? and @revision_pension.soumis_par == current_user %>
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#soumettre" id="soumttre_id">
+      Soumettre Dossier
+    </button>
+  <% end %>
+
+  <% if @revision_pension.soumis? %>
+    <% if current_user.chef_section_instruction? or current_user.can_instruction? %>
+      <%= (link_to 'Instruire Dossier', admin_allocataire_revision_pension_instruire_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_instruction? %>
+    <% end %>
+  <% end %>
+
+  <% if @revision_pension.instruit? and @revision_pension.affectation_salarie == current_user and (@revision_pension.carrieres_prestation.traite.size == @revision_pension.carrieres_prestation.size) %>
+    <%= link_to "Soumettre la révision de carrière", admin_allocataire_revision_pension_soumettre_carriere_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+  <% end %>
+
+  <% if @revision_pension.carriere_soumis? and (@revision_pension.carrieres_prestation.traite.size == @revision_pension.carrieres_prestation.size) %>
+    <%= (link_to 'Valider Carrière', admin_allocataire_revision_pension_valider_cotisation_path(@allocataire, @revision_pension), data: { turbolinks: false }, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_service_cotisation? %>
+  <% end %>
+
+  <% if @revision_pension.cotisation_valide? and @revision_pension.affectation_allocataire == current_user %>
+    <%= (link_to "Soumettre la validation du tableau", admin_allocataire_revision_pension_soumettre_recapitulatif_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @revision_pension.affecter_allocataire.nil? %>
+  <% end %>
+
+  <% if @revision_pension.recap_soumis? %>
+    <%= (link_to 'Valider Tableau Recapitulatif', admin_allocataire_revision_pension_valider_liquidation_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_liquidation? %>
+  <% end %>
+
+  <% if @revision_pension.liquidation_valide? and current_user.chef_service_allocation? %>
+    <%= (link_to 'Valider', admin_allocataire_revision_pension_valider_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+    <%= (link_to 'Rejeter', admin_allocataire_revision_pension_rejeter_path(@allocataire, @revision_pension), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+  <% if @revision_pension.valider? and current_user.directeur_prestation? %>
+    <%= (link_to "Valider Dossier", admin_allocataire_revision_pension_valider_directeur_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @revision_pension.affecter_allocataire.nil? %>
+    <%= (link_to 'Rejeter', admin_allocataire_revision_pension_rejeter_path(@allocataire, @revision_pension), class: 'btn btn-danger btn-sm') %>
+
+  <% end %>
+
+  <% if @revision_pension.valider_directeur? and current_user.inspection? %>
+    <%= (link_to "Valider Dossier", admin_allocataire_revision_pension_valider_revision_path(@allocataire, @revision_pension), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') unless @revision_pension.affecter_allocataire.nil? %>
+    <%= (link_to 'Rejeter', admin_allocataire_revision_pension_rejeter_path(@allocataire, @revision_pension), class: 'btn btn-danger btn-sm') %>
+  <% end %>
+
+
+  <% if @revision_pension.valider_revision? %>
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_revision_pension_lettre_notification_path(@revision_pension, format: :pdf), class: 'btn btn-outline btn-default btn-xs' %>
+  <% end %>
+
+  <br> <br>
+  <% if @revision_pension.motif_retour? %>
+    <button type="button" class="btn btn-white btn-sm" data-toggle="modal" data-target="#motif-retour" id="motif_retour">
+      Voir motif de retour
+    </button>
+  <% end %>
+  <% if @revision_pension.can_return_back? %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner-dossier" id="retourner_dossier">
+      Retourner Dossier
+    </button>
+  <% end %>
+
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+
+  <div class="row">
+    <p>
+      <span style="color: red"><%= (" Motif :  #{@revision_pension.motif} ") unless @revision_pension.motif.nil? %> </span>
+    </p>
+    <div class="progressbar-wrapper">
+      <ul class="progressbar">
+        <li class="<%= ("active") if @revision_pension.current_state >= :creation %>">Création</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :soumis %>">Soumission</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :instruit %>">Instruction</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :carriere_soumis %>">Soumission Carrière</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :cotisation_valide %>">Validation Carrière
+        </li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :recap_soumis %>">Soumission Recap</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :liquidation_valide %>">Validation Recap</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :valider %>">Validation Chef de Service</li>
+        <li class="<%= ("active") if @revision_pension.current_state >= :valider_directeur %>">Validation Directeur</li>
+      </ul>
+    </div>
+
+  </div>
+  <hr>
+  <div class="row">
+
+    <div class="col-sm-4">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/revision_pensions/infos_allocataire' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <% unless @revision_pension.ajouter_par.nil? %>
+              <h5>Crée et soumis Par
+                : <%= (@revision_pension.ajouter_par.try(:full_name)) unless @revision_pension.ajouter_par.nil? %> </h5>
+              <h5>Date de création
+                : <%= (@revision_pension.created_at.strftime("%d/%m/%Y")) unless @revision_pension.created_at.nil? %></h5>
+              <h5>Date de soumission
+                : <%= (@revision_pension.date_soumission.strftime("%d/%m/%Y")) unless @revision_pension.date_soumission.nil? %></h5>
+              <hr>
+            <% end %>
+            <% unless @revision_pension.instruit_par.nil? %>
+
+              <h5>Instruit
+                par: <%= (@revision_pension.instruit_par.full_name) unless @revision_pension.instruit_par.nil? %> </h5>
+              <h5>Date
+                instruction: <%= (@revision_pension.instruit_le.strftime("%d/%m/%Y")) unless @revision_pension.instruit_le.nil? %></h5>
+              <hr>
+            <% end %>
+
+            <% unless @revision_pension.affecter_allocataire.nil? %>
+
+              <h5>Affecter à ges.
+                allocataire: <%= (@revision_pension.affectation_allocataire.full_name) unless @revision_pension.affecter_allocataire.nil? %> </h5>
+              <h5>Date
+                Affectation: <%= (@revision_pension.affecter_allocataire_date.strftime("%d/%m/%Y")) unless @revision_pension.affecter_allocataire_date.nil? %></h5>
+              <hr>
+            <% end %>
+
+            <% unless @revision_pension.affectation_salarie.nil? %>
+
+              <h5>Affecter à ges.
+                salarie: <%= (@revision_pension.affectation_salarie.full_name) unless @revision_pension.affectation_salarie.nil? %> </h5>
+              <h5>Date
+                Affectation: <%= (@revision_pension.affecter_salarie_date.strftime("%d/%m/%Y")) unless @revision_pension.affecter_salarie_date.nil? %></h5>
+              <hr>
+            <% end %>
+
+            <% unless @revision_pension.valider_par.nil? %>
+
+              <h5>Validé Par
+                : <%= (@revision_pension.valider_par.try(:full_name)) unless @revision_pension.valider_par.nil? %> </h5>
+              <h5>Date de validation
+                : <%= (@revision_pension.valider_le.strftime("%d/%m/%Y")) unless @revision_pension.valider_le.nil? %></h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <!--      <div class="col-sm-12">-->
+      <!--        <div class="ibox">-->
+      <!--          <div class="ibox-title">-->
+      <!--            <h5>Historique traitement de la révision</h5>-->
+      <!--          </div>-->
+      <!--          <div class="ibox-content">-->
+
+      <%#= render 'historique_dossier' %>
+
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </div>-->
+
+    </div>
+
+    <div class="col-sm-8">
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la demande</h5>
+          </div>
+          <div class="ibox-content">
+
+            <p style="color: green">
+              <% if (@revision_pension.instruit? and @revision_pension.affectation_salarie.nil?) %>
+                <strong>En attente affectation à ges. salarié </strong>
+              <% end %>
+            </p>
+
+            <p style="color: green">
+              <% if (@revision_pension.cotisation_valide? and @revision_pension.affectation_allocataire.nil?) %>
+                <strong>En attente affectation à ges. allocataire </strong>
+              <% end %>
+            </p>
+
+            <p style="color: green">
+              <% if (@revision_pension.instruit? and @revision_pension.affectation_salarie == current_user) %>
+                <strong>En attente soumission carrière par le ges. salarié </strong>
+              <% end %>
+            </p>
+
+            <p style="color: green">
+              <% if (@revision_pension.cotisation_valide? and @revision_pension.affectation_allocataire == current_user) %>
+                <strong>En attente soumission récap tableau par le ges. allocataire </strong>
+              <% end %>
+            </p>
+
+            <p>
+              <strong>Type :</strong>
+              <%= RevisionPension.human_enum_name(:type_motif, @revision_pension.type_motif) %>
+            </p>
+
+            <p>
+              <strong>Date reception:</strong>
+              <%= l @revision_pension.date_reception.to_date %>
+            </p>
+
+            <p>
+              <strong>Période révision:</strong>
+              <%= l(@revision_pension.date_debut_revision) unless @revision_pension.date_debut_revision.nil? %> -
+              <%= l(@revision_pension.date_fin_revision) unless @revision_pension.date_fin_revision.nil? %>
+            </p>
+
+            <p>
+              <strong>Commentaire:</strong>
+              <%= @revision_pension.commentaire %>
+            </p>
+
+            <p>
+              <strong>Commentaire gestionnaire:</strong>
+              <%= @revision_pension.commentaire_allocataire %>
+            </p>
+
+            <p>
+              <strong>Document justificatif:</strong>
+
+              <% if @revision_pension.document.attached? %>
+                <a href="<%= url_for(@revision_pension.document) %>" target="_blank">
+                  <%= image_tag @revision_pension.document.preview(resize: "300x300>"), class: "m-t-xs img-responsive" %>
+                </a>
+              <% end %>
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la carrière révisée</h5>
+          </div>
+          <div class="ibox-content">
+
+            <%= render 'show_carrieres' %>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Tableau récapitulatif de point de la révision</h5>
+          </div>
+          <div class="ibox-content">
+
+            <%= render 'show_tableau_recapitulatif_points' %>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<% unless @gestionnaires.nil? %>
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@revision_pension, url: admin_allocataire_revision_pension_affecter_allocataire_path(@allocataire, @revision_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @revision_pension.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affecter_allocataire, @gestionnaires, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<% unless @gestionnaires_salaries.nil? %>
+  <div class="modal inmodal" id="affecter-one-salarie" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@revision_pension, url: admin_allocataire_revision_pension_affecter_salarie_path(@allocataire, @revision_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @revision_pension.numero_affiliation %> </h4>
+            <small class="font-bold">Choisir le gestionnaire</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affecter_salarie, @gestionnaires_salaries, :id, :full_name, label: 'Choisir gestionnaire', required: true %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+
+<div class="modal inmodal" id="soumettre" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@revision_pension, url: admin_allocataire_revision_pension_soumettre_path(@allocataire, @revision_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Soumission Demande </h4>
+          <small class="font-bold">Saisir un commentaire</small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :commentaire_allocataire, label: 'Commentaire' %>
+
+          <%= f.file_field :document, label: '&nbsp;'.html_safe %>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Soumettre</button>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal inmodal" id="retourner-dossier" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@revision_pension, url: admin_allocataire_revision_pension_retourner_dossier_path(@allocataire, @revision_pension), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Retourner dossier </h4>
+          <small class="font-bold">Saisir le motif</small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :motif_retour, label: 'Motif' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Retourner</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal inmodal" id="motif-retour" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-laptop modal-icon"></i>
+        <h4 class="modal-title">Motif retour dossier</h4>
+      </div>
+      <div class="modal-body">
+        <p>Motif retour : <%= @revision_pension.motif_retour unless @revision_pension.motif_retour.nil? %></p>
+        <p>Retourné par :
+          le <%= User.human_enum_name(:type_profil, @revision_pension.retourne_par.type_profil) unless @revision_pension.retourne_par.nil? or @revision_pension.retourne_par.type_profil.nil? %> <%= @revision_pension.retourne_par.full_name unless @revision_pension.retourne_par.nil? %></p>
+        <p>Retourné le : <%= l(@revision_pension.retourne_le) unless @revision_pension.retourne_le.nil? %></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 10%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>

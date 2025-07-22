@@ -1,0 +1,84 @@
+<%= bootstrap_form_for([:admin, @demande_arret_travail], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+    <div class="ibox ">
+    <div class="ibox-title">
+    </div>
+    <div class="ibox-content">
+      <div class="row">
+        <div class="col-sm-12 b-r">
+          <%= f.select :declarant , ArretTravail::DECLARANT.keys.collect{|item| [item, item]}, label: 'Déclarant', required: is_required_field?(ArretTravail, 'declarant') %>
+          <span class='declarant-section'>
+          <div id="declarant_salarie">
+            <%= f.text_field :prenom_declarant, value: @demande_arret_travail.prenom_salarie,  readonly: true%> 
+            <%= f.text_field :nom_salarie,value: @demande_arret_travail.nom_salarie, readonly: true%>
+            <%= f.text_field :adresse_declarant, value: @demande_arret_travail.adresse, readonly: true%>
+            <%= f.text_field :telephone_declarant, value: @demande_arret_travail.telephone, readonly: true%>
+            <%= f.text_field :qualite_declarant %>
+            </span>
+            <%= f.text_field :lieu_declaration, required: is_required_field?(ArretTravail, 'lieu_declaration')  %>
+          </div>
+
+
+          <div id="declarant_autre">
+            <%= f.text_field :prenom_declarant, required: is_required_field?(ArretTravail, 'prenom_declarant'), readonly: false%> 
+            <%= f.text_field :nom_salarie, required: is_required_field?(ArretTravail, 'nom_declarant'), readonly: false%>
+            <%= f.text_field :adresse_declarant, required: is_required_field?(ArretTravail, 'adresse_declarant'), readonly: false%>
+            <%= f.text_field :telephone_declarant, required: is_required_field?(ArretTravail, 'telephone_declarant'), readonly: false%>
+            <%= f.text_field :qualite_declarant %>
+            </span>
+            <%= f.text_field :lieu_declaration, required: is_required_field?(ArretTravail, 'lieu_declaration')  %>
+          </div>
+
+        </div>
+       
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+       <% if @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user)%>
+                <%= f.button 'Mettre à jour', class: 'btn btn-primary' %>
+            <%end%>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      
+      selectDeclarant();
+      $('#arret_travail_declarant').change(function() {
+        
+        selectDeclarant();
+          
+      });
+
+        function selectDeclarant() {
+          var salarie = $("#arret_travail_declarant").val();
+          var elem4= $('#declarant_salarie');
+          var elem5= $('#declarant_autre');
+           elem4.hide();
+          if (salarie == "salarie") {
+            elem5.hide();
+            elem4.show();
+          }
+          else{
+            elem4.hide();
+            elem5.show();
+          }
+        }
+
+    })
+  </script>
+<% end %>
+
+

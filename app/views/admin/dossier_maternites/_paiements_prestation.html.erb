@@ -1,0 +1,55 @@
+<div class="wrapper wrapper-content">
+  <% if @transactions.nil? or @transactions.empty? %>
+    <h2>Pas de Paiements à afficher</h2>
+  <% else %>
+    <h2>Paiements</h2>
+
+    <table class="table table-bordered table-condensed table-hover" id="paiements_id">
+      <tr>
+        <td>N° Ordre</td>
+        <td>Dossier</td>
+        <td>Montant Net</td>
+        <td>Mode Paiement</td>
+        <td>Date Paiement</td>
+        <td>Etat</td>
+        <td>Visualiser Ordre</td>
+      </tr>
+
+      <% @transactions.each do |paiement| %>
+        <tr>
+          <td><%= paiement.ordre_paiement.numero_format %></td>
+          <td><%= paiement.dossier_type %>#<%= paiement.dossier_id %></td>
+          <td><%= format_cfa paiement.montant %></td>
+          <td><%= paiement.mode_paiement_human %></td>
+          <td><%= paiement.created_at %></td>
+          <td><%= paiement.statut_human %></td>
+          <td><%= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_paiement_generer_paiement_icm_path(paiement.ordre_paiement.id, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function () {
+        let pickedup;
+        let paiements = [];
+
+        $("#paiements_id tr").on("click", function (event) {
+            let reference = $(this).find("td").eq(1).html();
+            console.log($(this).find("td").eq(0).html());
+            console.log($(this).find("td").eq(1).html());
+            console.log($(this).find("td").eq(3).html());
+
+            // get back to where it was before if it was selected :
+
+            if (paiements.indexOf(reference) <= -1) {
+
+            }
+            paiements.push(reference);
+            // $( this ).css( "background-color", "red" );
+            pickedup = $(this);
+        });
+    })
+</script>

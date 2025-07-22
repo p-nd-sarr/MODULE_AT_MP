@@ -1,0 +1,15 @@
+        <%= bootstrap_form_for([:admin, @arret_travail, @at_avi], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <%#= bootstrap_form_for([:admin, @arret_travail, @at_frais_engage], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>           
+            <%#=f.hidden_field :arret_travail_id, value: @demande_arret_travail.id%>
+            <%=f.hidden_field :fait_par, value: current_user.id%>
+            <%=f.hidden_field :fait_par_profil, value: current_user.type_profil%>
+            <%=f.text_area :description %>
+            <%= f.select :avis, AtAvi::AVIS.keys.collect { |item| [AtAvi.human_enum_name(:avis, item), item] }, label: 'Avis' %> 
+            <div class="form-group row">
+                <div class="col-sm-4 col-sm-offset-4">
+                   <%= link_to 'Annuler', (@arret_travail.persisted? ? [:admin, @arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                  <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+                </div>
+            </div>
+        <% end %>

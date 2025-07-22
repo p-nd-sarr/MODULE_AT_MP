@@ -1,0 +1,71 @@
+<div class="wrapper wrapper-content">
+
+  <% if @paiements.nil? or @paiements.empty? %>
+    <h2>Pas de Paiements allocataires à afficher</h2>
+  <% else %>
+
+    <h2>Paiements allocataires</h2>
+
+    <table class="table table-bordered table-condensed table-hover" id="paiements_id">
+      <tr>
+        <td>Référence</td>
+        <td>Allocataire</td>
+        <td>Période</td>
+        <td>Montant Net</td>
+        <td>Type Paiement</td>
+        <td>Date paiement</td>
+        <td>Etat</td>
+        <td>Voir Ordre</td>
+
+      </tr>
+
+      <% @paiements.each do |paiement| %>
+        <tr>
+          <td><%= paiement.code %></td>
+          <td><%= paiement.numero_allocataire %></td>
+          <td><%= paiement.periode %></td>
+          <td><%= paiement.montant_net.round(-1) %></td>
+          <td><%= paiement.type_paiement %></td>
+          <td><%= paiement.date_paiement %></td>
+          <td><%= paiement.etat %></td>
+          <td><%= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_paiement_generer_paiement_path(paiement, format: :pdf), class: 'btn btn-outline btn-default btn-xs',  target: :_blank %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+    <%= paginate @paiements %>
+
+    </div>
+
+    <script type="text/javascript" charset="utf-8">
+
+        $(document).ready(function(){
+
+            var pickedup;
+
+            var paiements = [];
+
+            $( "#paiements_id tr" ).on( "click", function( event ) {
+
+                var reference = $(this).find("td").eq(1).html();
+                console.log($(this).find("td").eq(0).html());
+                console.log($(this).find("td").eq(1).html());
+                console.log($(this).find("td").eq(3).html());
+
+                // get back to where it was before if it was selected :
+
+
+                if(paiements.indexOf(reference) <= -1){
+
+                }
+
+                paiements.push(reference);
+                // $( this ).css( "background-color", "red" );
+                pickedup = $( this );
+
+            });
+
+        })
+
+    </script>
+  <%end %>

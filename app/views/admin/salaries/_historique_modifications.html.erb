@@ -1,0 +1,43 @@
+<div class="wrapper wrapper-content">
+  <% if @historique_modifications.nil? or @historique_modifications.empty? %>
+    <h2>Aucune modification à afficher</h2>
+  <% else %>
+    <h2>Liste des modifications</h2>
+    <hr>
+    <br>
+    <%= paginate @historique_modifications %>
+    <table class="table table-bordered table-condensed table-hover" id="paiements_id">
+      <tr>
+        <td>Prenom</td>
+        <td>Nom</td>
+        <td>Date naissance</td>
+        <td>Numéro pièce</td>
+        <td>Adresse</td>
+        <td>Téléphone</td>
+        <td>Profession</td>
+        <td>Genre</td>
+        <td>Utilisateur</td>
+        <td>Date modification</td>
+
+      </tr>
+
+      <% @historique_modifications.each do |modification| %>
+        <tr>
+          <td><%= modification.prenom %></td>
+          <td><%= modification.nom %></td>
+          <td><%= modification.date_naissance unless modification.date_naissance.nil? %></td>
+          <td><%= modification.numero_piece unless modification.numero_piece.nil? %></td>
+          <td><%= modification.addr unless modification.addr.nil? %></td>
+          <td><%= modification.phone unless modification.phone.nil? %></td>
+          <td><%= modification.profession unless modification.profession.nil? %></td>
+          <td><%= modification.genre unless modification.genre.nil? %></td>
+          <td><%= modification.user.full_name unless modification.user.nil? %></td>
+          <td><%= modification.created_at unless modification.created_at.nil? %></td>
+          <td><%#= link_to "<i class='fa fa-file-pdf-o'></i> Paiement".html_safe, admin_paiement_generer_paiement_path(paiement.ordre_paiement.id, format: :pdf), class: 'btn btn-outline btn-default btn-xs', target: :_blank %>
+          </td>
+        </tr>
+      <% end %>
+    </table>
+    <%= paginate @historique_modifications %>
+  <% end %>
+</div>

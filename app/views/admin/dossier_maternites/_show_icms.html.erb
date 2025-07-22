@@ -1,0 +1,63 @@
+<% if @dossier_maternite.indemnite_conges_maternites.empty? or @dossier_maternite.indemnite_conges_maternites.nil? %>
+  <div class="ibox-content">
+    <div class="text-center">
+      <h1>Pas d'allocations effectuées.</h1>
+    </div>
+  </div>
+<% else %>
+  <h5>Indemnités de Congès Maternité</h5>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Tranche</th>
+      <th scope="col">Etat</th>
+      <th scope="col">N° liquidation</th>
+      <th scope="col">Montant liquidé</th>
+      <th scope="col">Date liquidation</th>
+      <th scope="col">Échéance</th>
+      <th scope="col">Date de mise en paiement</th>
+      <th scope="col">Jours à payer</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @dossier_maternite.indemnite_conges_maternites.order('num_tranche asc').each do |indemnite_conges_maternite| %>
+      <% unless indemnite_conges_maternite.creation? %>
+        <tr>
+          <td><%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, indemnite_conges_maternite.tranche_paiement) %></td>
+          <td><%= IndemniteCongesMaternite.human_enum_name(:etat, indemnite_conges_maternite.etat) %></td>
+          <td>
+            <% unless indemnite_conges_maternite.numero_liquidation.nil? %>
+              <%= indemnite_conges_maternite.numero_liquidation %>
+            <% end %>
+          </td>
+          <td>
+            <% unless indemnite_conges_maternite.creation? %>
+              <%= format_cfa indemnite_conges_maternite.montant_paiement %>
+            <% end %>
+          </td>
+          <td>
+            <% unless indemnite_conges_maternite.date_soumission.nil? %>
+              <%= l indemnite_conges_maternite.date_soumission %>
+            <% end %>
+          </td>
+          <td>
+            <% unless (indemnite_conges_maternite.creation? or indemnite_conges_maternite.rejete?) %>
+              <%= l indemnite_conges_maternite.date_echeance unless indemnite_conges_maternite.date_echeance.nil? %>
+            <% end %>
+          </td>
+          <td>
+            <% unless indemnite_conges_maternite.date_paiement.nil? %>
+              <%= l indemnite_conges_maternite.date_paiement %>
+            <% end %>
+          </td>
+          <td>
+            <%= indemnite_conges_maternite.nbre_jr_payes.to_s + " jrs" unless indemnite_conges_maternite.nbre_jr_payes.nil? %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+
+<% end %>

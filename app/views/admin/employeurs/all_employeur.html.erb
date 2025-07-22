@@ -1,0 +1,45 @@
+<%= content_for :titre_page, 'Liste de tous les employeurs' %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/employeurs/search' %>
+
+    <br>
+    <% if @employeurs.count.zero? %>
+      <h2 style="text-align:center"><hr>La liste est vide !!!</h2>
+    <% else %>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Numéro Unique</th>
+          <th scope="col">Numéro Ipres</th>
+          <th scope="col">Numéro CSS</th>
+          <th scope="col">Raison Sociale</th>
+          <th scope="col">Telephone</th>
+          <th scope="col">Activité Principal</th>
+          <th scope="col">Adresse</th>
+          <th colspan="2"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @employeurs.each do |employeur| %>
+          <tr>
+            <td><%= employeur.fhnum %></td>
+            <td><%= employeur.ancien_num_ipres %></td>
+            <td><%= employeur.ancien_num_css %></td>
+            <td><%= employeur.fhrsoc %></td>
+            <td><%= employeur.fhtel %></td>
+            <td><%= employeur.activite_prinicipal %></td>
+            <td><%= employeur.fhadr %></td>
+            <td style="width: 75px">
+              <%= link_to 'Détails',  admin_employeur_path(employeur.fhnum), class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+      <%= paginate @employeurs %>
+  <% end %>
+  </div>
+</div>

@@ -1,0 +1,895 @@
+<%= content_for :titre_page, "Liste des salariés du temps de présence collectif [#{(@bordereau.numero_bordereau)}]" %>
+<%= content_for :titre_page_autres_details, "Employeur : #{(@employeur.fhrsoc)}" unless @employeur.fhrsoc.nil? %>
+<%= content_for :titre_page_autres_details do %>
+  <% if !@bordereau.motif_rejet.nil? and current_user.gestionnaire_compte_allocataire? and @bordereau.creation? %>
+    <br> <br>
+    (Temps de présence collectif rejeté par le chef d'agence) <br>
+    Motif du rejet : <%= @bordereau.motif_rejet %>
+  <% end %>
+
+  <% if !@bordereau.motif_rejet.nil? and current_user.chef_agence? and @bordereau.liquidation? %>
+    <br> <br>
+    (Temps de présence collectif rejeté par le comptable) <br>
+    Motif du rejet : <%= @bordereau.motif_rejet %>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Renseigner tous les temps de présence', admin_traitement_collectif_fill_all_carriers_path(@bordereau.numero_bordereau), 'data-turbolinks': false, data: { confirm: 'Voulez-vous vraiment renseigner les temps de présence ?' }, class: 'btn btn-primary btn-sm' if !@bordereau.is_bordereau_complete?(@salaries, @bordereau) and @bordereau.creation? %>
+  <%= link_to 'Réinitialiser les temps de présence', admin_traitement_collectif_clear_all_carriers_path(@bordereau.numero_bordereau), 'data-turbolinks': false, data: { confirm: 'Voulez-vous vraiment réinitialiser les temps de présence ?' }, class: 'btn btn-primary btn-sm' if @bordereau.is_bordereau_complete?(@salaries, @bordereau) and @bordereau.creation? %>
+  <%= link_to 'Retour', admin_traitement_collectif_list_bordereau_path(@employeur.fhnum), class: 'btn btn-white btn-sm' %>
+  <% if !@bordereau.is_bordereau_complete?(@salaries, @bordereau) and current_user.gestionnaire_compte_allocataire? %>
+    <br> <br>
+    <span>Merci de renseigner les temps de présence pour chaque salarié afin de pouvoir liquider le temps de présence collectif</span>
+  <% end %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+        <div class="none" style="margin-top: 10px">
+          <div class="row">
+            <div class="col-sm-3">
+              <h4> Bordereau
+                :  <%= BordereauCollectif.human_enum_name(:bordereau_type, @bordereau.bordereau_type) unless @bordereau.bordereau_type.nil? %> </h4>
+            </div>
+            <div class="col-sm-3">
+              <h5>Nombre de salariés <span class="label label-warning"> <%= @salaries.count %></span> :
+                <span width="300px" class="dropdown">
+                  <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+                    <span class="caret"></span>
+                  </button>
+                  <ul class="dropdown-menu pull-left" style="background-color:rgb(240,240,240); z-index: 99999">
+                    <% if @bordereau.creation? and @bordereau.normal? and !@bordereau.document.attached? and current_user.gestionnaire_compte_allocataire? %>
+                      <button style="width: 100%" type="button" class="btn btn-white btn-sm" data-toggle="modal" data-target="#bordereuDoc">
+                        Ajouter le document justificatif
+                      </button>
+                    <% end %>
+
+                    <% if @bordereau.is_bordereau_complete?(@salaries, @bordereau) and current_user.gestionnaire_compte_allocataire? and @bordereau.creation? and !@bordereau.nil? and @bordereau.document.attached?
+                         #!@bordereau.is_bordereau_liquided?(@bordereau.trimestre, @bordereau.annee) %>
+                      <li>
+                        <%= link_to 'Liquider le temps de présence collectif', admin_traitement_collectif_liquider_bordereau_path(@employeur.fhnum, @bordereau.numero_bordereau), data: { turbolinks: false }, class: 'btn btn-white btn-sm' %>
+                      </li>
+                    <% end %>
+                    <% if @bordereau.current_state >= :liquidation %>
+                      <li>
+                        <%= link_to "Voir l'état de paiement", admin_traitement_collectif_voir_paiement_path(@employeur.fhnum, @bordereau.numero_bordereau, format: :pdf), class: 'btn btn-white btn-sm', target: '_blank' %>
+                      </li>
+                    <% end %>
+                    <% if @bordereau.normal? and @bordereau.current_state == :creation %>
+                      <li>
+                        <%= link_to 'Voir le temps de présence collectif ', admin_traitement_collectif_voir_bordereau_path(@employeur.fhnum, @bordereau.annee, @bordereau.trimestre, format: :pdf), class: 'btn btn-white btn-sm', target: '_blank' %>
+                      </li>
+                      <li>
+                        <%= link_to 'Envoyer le temps de présence collectif au mandataire', admin_traitement_collectif_envoyer_bordereau_path(@employeur.fhnum, @bordereau.numero_bordereau), class: 'btn btn-white btn-sm', target: '_blank' %>
+                      </li>
+                    <% end %>
+                    <% if @bordereau.liquidation? and current_user.chef_agence?
+                         #@bordereau.is_bordereau_liquided?(@bordereau.trimestre, @bordereau.annee)  %>
+                      <li>
+                        <%= link_to 'Valider le temps de présence collectif', admin_traitement_collectif_valider_bordereau_path(@employeur.fhnum, @bordereau.numero_bordereau), class: 'btn btn-white btn-sm' %>
+                      </li>
+                    <% end %>
+                    <% if (@bordereau.liquidation? and current_user.chef_agence?) or (@bordereau.validation_chef_agence? and current_user.comptable?) %>
+                      <button style="width: 100%" type="button" class="btn btn-white btn-sm" data-toggle="modal" data-target="#RejetBordereauModal">Rejeter
+                        le temps de présence collectif
+                      </button>
+                    <% end %>
+                  </ul>
+              </span>
+              </h5>
+            </div>
+            <div class="col-sm-6 text-center">
+              <% if @bordereau.normal? %>
+                <% if @bordereau.document.attached? %>
+            <span> Document justificatif :
+              <a href="<%= url_for(@bordereau.document) %>" class="btn btn-primary btn-sm" target="_blank">
+                <i class="fa fa-eye"></i>
+              </a>
+              <% if @bordereau.creation? and current_user.gestionnaire_compte_allocataire? %>
+                <a data-toggle="modal" data-target="#bordereuDoc" id="" class="btn btn-primary btn-sm"> <i class="fa fa-pencil"></i>
+                </a>
+              <% end %>
+              <span class="badge">Fait le : <%= @bordereau.date_document.strftime('%m/%d/%Y') unless @bordereau.date_document.nil? %></span>
+          </span>
+                <% end %>
+              <% else %>
+                <% if @bordereau_normal.document.attached? %>
+              <span> Document justificatif :
+                <a href="<%= url_for(@bordereau_normal.document) %>" class="btn btn-primary btn-sm" target="_blank">
+                  <i class="fa fa-eye"></i>
+                </a>
+                <span class="badge">Déposé" le : <%= @bordereau_normal.date_document.strftime('%m/%d/%Y') unless @bordereau_normal.date_document.nil? %></span>
+                <% end %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col col-sm-4">
+              <% if @bordereau.current_state >= :liquidation
+                   #@bordereau.is_bordereau_liquided?(@bordereau.trimestre, @bordereau.annee) %>
+                <span>Liquidé par le gestionnaire : <%= @bordereau.liquide_par.prenom unless @bordereau.liquide_par.nil? %> <%= @bordereau.liquide_par.nom unless @bordereau.liquide_par.nil? %></span>
+                <br>
+                <span>Date de liquidation : <%= @bordereau.date_liquidation.strftime('%m/%d/%Y') unless @bordereau.liquide_par.nil? %></span>
+              <% end %> <br> <br>
+            </div>
+            <div class="col col-sm-4">
+              <% if @bordereau.current_state >= :validation_chef_agence
+                   #@bordereau.is_bordereau_liquided?(@bordereau.trimestre, @bordereau.annee) %>
+                <span>Validé par chef d'agence : <%= @bordereau.valide_chef_agence_par.prenom unless @bordereau.valide_chef_agence_par.nil? %> <%= @bordereau.valide_chef_agence_par.nom unless @bordereau.valide_chef_agence_par.nil? %></span>
+                <br>
+                <span>Date de validation : <%= @bordereau.date_validation_chef_agence.strftime('%m/%d/%Y') unless @bordereau.date_validation_chef_agence.nil? %></span>
+              <% end %>
+            </div>
+            <div class="col col-sm-4">
+              <% if @bordereau.current_state >= :validation_comptable %>
+                <span>Validé par comptable : <%= @bordereau.valide_comptable_par.prenom unless @bordereau.valide_comptable_par.nil? %> <%= @bordereau.valide_comptable_par.nom unless @bordereau.valide_comptable_par.nil? %></span>
+                <br>
+                <span>Date de validation : <%= @bordereau.date_validation_comptable.strftime('%m/%d/%Y') unless @bordereau.date_validation_comptable.nil? %></span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <div id="collapseExample1" class="tab-pane">
+              <div class="card card-header">
+                <h3>Critères de recherche</h3>
+              </div>
+              <hr>
+              <div class="card card-body">
+                <%= search_form_for @q, url: admin_traitement_collectif_ouvrir_bordereau_path(@employeur.fhnum, @bordereau.numero_bordereau) do |f| %>
+
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <%= f.label :matric_cont, 'Matricule' %>
+                      <%= f.search_field :matric_cont, class: 'form-control' %>
+                    </div>
+                    <div class="col-sm-3">
+                      <%= f.label :ipres_ancien_matric_cont, 'Ancien matricule IPRES' %>
+                      <%= f.search_field :ipres_ancien_matric_cont, class: 'form-control' %>
+                    </div>
+                    <div class="col-sm-3">
+                      <%= f.label :css_ancien_matric_cont, 'Ancien matricule CSS' %>
+                      <%= f.search_field :css_ancien_matric_cont, class: 'form-control' %>
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <%= f.label :prenom_cont, 'Prénom: ' %>
+                      <%= f.search_field :prenom_cont, class: 'form-control' %>
+                    </div>
+                    <div class="col-sm-3">
+                      <%= f.label :nom_cont, 'Nom: ' %>
+                      <%= f.search_field :nom_cont, class: 'form-control' %>
+                    </div>
+
+                    <div class="col-sm-3">
+                      <%= f.label :numero_piece_eq, 'NIN: ' %>
+                      <%= f.search_field :numero_piece_eq, class: 'form-control' %>
+                    </div>
+
+                  </div>
+
+                  <div class="hr-line-dashed"></div>
+                  <%= link_to "Annuler", request.path, class: "btn" %>
+                  <%= f.submit class: 'btn btn-primary' %>
+                <% end %>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+        <hr>
+        <br>
+
+        <%= paginate @salaries %>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Matricule</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Nombre d'enfants elligibles</th>
+            <th scope="col"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @salaries.each do |salarie| %>
+            <tr>
+              <td>
+                <%= link_to salarie.matric, admin_dossier_prestation_path(salarie.get_dossier_pf), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+              </td>
+              <td><%= salarie.prenom %></td>
+              <td><%= salarie.nom %></td>
+              <td>
+                <%= salarie.enfants.eligible_for_alloc_familiale(@period, salarie.matric).eligible_plus.count %>
+                <% if salarie.has_children_not_eligible(@period) %>
+                  <i class="fa fa-exclamation-triangle"></i>
+                  <span class="badge"><%= salarie.get_children_not_eligible(@period) %></span>
+                <% end %>
+              </td>
+              <td width="250px">
+                <%= render 'layouts/errors', object: @carriere_dossier_prestation %>
+                <% if salarie.has_dossier_prestation_familial? %>
+                  <% if !salarie.has_carriere_dossier_prestation?(@bordereau) %>
+                    <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#tdp<%= salarie.matric %>">
+                      <span class="fa fa-plus"></span> Renseigner les temps de présence
+                    </button>
+                  <% else %>
+                    <% unless salarie.get_carriere_dossier_prestation(@bordereau).nil? %>
+                      premier mois
+                      : <%= salarie.get_carriere_dossier_prestation(@bordereau).premier_mois unless salarie.get_carriere_dossier_prestation(@bordereau).premier_mois.nil? %>
+                      <% if salarie.get_carriere_dossier_prestation(@bordereau).infos_jour %>
+                        jour(s)
+                      <% else %>
+                        heure(s)
+                      <% end %>
+                      <br>
+                      deuxième mois
+                      : <%= salarie.get_carriere_dossier_prestation(@bordereau).deuxiem_mois unless salarie.get_carriere_dossier_prestation(@bordereau).deuxiem_mois.nil? %>
+                      <% if salarie.get_carriere_dossier_prestation(@bordereau).infos_jour %>
+                        jour(s)
+                      <% else %>
+                        heure(s)
+                      <% end %>
+                      <br>
+                      troisième mois
+                      : <%= salarie.get_carriere_dossier_prestation(@bordereau).troisiem_mois unless salarie.get_carriere_dossier_prestation(@bordereau).troisiem_mois.nil? %>
+                      <% if salarie.get_carriere_dossier_prestation(@bordereau).infos_jour %>
+                        jour(s)
+                      <% else %>
+                        heure(s)
+                      <% end %>
+                      <br> <br>
+                    <% end %>
+
+                    <% if @bordereau.creation? and current_user.gestionnaire_compte_allocataire? and @bordereau.normal? %>
+                      <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#update-tdp<%= salarie.matric %>">
+                        <span class="fa fa-pencil"></span> Modifier
+                      </button>
+                    <% end %>
+                    <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#tdpview<%= salarie.matric %>">
+                      <span class="fa fa-eye"></span> Détails
+                    </button>
+
+                  <% end %>
+                <% else %>
+                  <button type="button" class="btn btn-xs" data-toggle="modal" data-target="#dpf<%= salarie.matric %>">
+                    <span class="fa fa-plus"></span> Ajouter dossier prestation familial
+                  </button>
+                <% end %>
+              </td>
+
+              <!-- update modal tdp -->
+              <div class="modal inmodal" id="update-tdp<%= salarie.matric %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                  <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                        <span class="sr-only">Close</span>
+                      </button>
+                      <h4 class="modal-title">Modifier le temps de présence</h4>
+                    </div>
+                    <% if salarie.has_carriere_dossier_prestation?(@bordereau) %>
+                      <%= bootstrap_form_for(salarie.get_carriere_dossier_prestation(@bordereau), url: admin_traitement_collectif_update_carrieres_dp_path(@employeur.fhnum, @bordereau.numero_bordereau, salarie.matric, salarie.get_carriere_dossier_prestation(@bordereau).id), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                        <div class="modal-body">
+
+                          <div class="row">
+                            <div class="info">
+                              <ul>
+                                <li>Numéro employeur : <%= @employeur.fhnum %> </li>
+                                <li>Raison sociale : <%= @employeur.fhrsoc %> </li>
+                                <li>Trimestre : <%= @bordereau.trimestre %> </li>
+                                <li>Année : <%= @bordereau.annee %> </li>
+                              </ul>
+                            </div>
+                          </div>
+                          <br>
+                          <div class="row">
+                            <%= f.alert_message '' %>
+
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <%= f.select :infos_jour, [['Jour', true], ['Heure', false]], label: " Présence saisie en jours" %>
+                              </div>
+                            </div>
+                            <hr>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <%= f.number_field :premier_mois, min: 0, required: true %>
+                              </div>
+                            </div>
+                            <div class="row justifier_mois1" style="display: none" id="justifier_mois1">
+                              <div class="col-sm-6">
+                                <%= f.check_box :est_justifier, checked: salarie.get_carriere_dossier_prestation(@bordereau).est_justifier, label: ' Temps de présence justifié ?', style: "margin-top:30px;" %>
+                              </div>
+                              <div class="col-sm-6">
+                                <%= f.select :motif_mois1, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, label: "Motif d'absence" %>
+                              </div>
+                            </div>
+
+                            <hr>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <%= f.number_field :deuxiem_mois, min: 0, label: 'Deuxième mois', required: true %>
+                              </div>
+                            </div>
+                            <div class="row justifier_mois2" style="display: none" id="justifier_mois2">
+                              <div class="col-sm-6">
+                                <%= f.check_box :est_justifier_mois2, checked: salarie.get_carriere_dossier_prestation(@bordereau).est_justifier_mois2, label: ' Temps de présence justifié ?', style: "margin-top:30px;" %>
+                              </div>
+                              <div class="col-sm-6">
+                                <%= f.select :motif_mois2, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, label: "Motif d'absence" %>
+                              </div>
+                            </div>
+
+                            <hr>
+                            <hr>
+
+                            <div class="row">
+                              <div class="col-sm-6" style="padding-top:9px">
+                                <%= f.number_field :troisiem_mois, min: 0, label: 'Troisième mois', required: true %>
+                              </div>
+                            </div>
+                            <div class="row justifier_mois3" style="display: none" id="justifier_mois3">
+                              <div class="col-sm-6">
+                                <%= f.check_box :est_justifier_mois3, checked: salarie.get_carriere_dossier_prestation(@bordereau).est_justifier_mois3, label: ' Temps de présence justifié ?', style: "margin-top:30px;" %>
+                              </div>
+                              <div class="col-sm-6">
+                                <%= f.select :motif_mois3, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, label: "Motif d'absence" %>
+                              </div>
+                            </div>
+
+                          </div>
+
+                        </div> <!--modal body-->
+
+                        <div class="modal-footer form-group">
+                          <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                          <%= f.submit 'Enregistrer', class: 'btn btn-primary' %>
+                        </div>
+                      <% end %>
+
+                    <% end %>
+                  </div> <!--modal content -->
+                </div> <!--modal dialog-->
+              </div>  <!--modal-->
+              <!-- Fin update modal tdp -->
+
+              <!-- modal tdp -->
+              <div class="modal inmodal" id="tdp<%= salarie.matric %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                  <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                        <span class="sr-only">Close</span>
+                      </button>
+                      <h4 class="modal-title">Renseigner le temps de présence</h4>
+                    </div>
+                    <%= bootstrap_form_for(@carriere_dossier_prestation, url: admin_traitement_collectif_create_carrieres_dp_path(@employeur.fhnum, @bordereau.numero_bordereau, salarie.matric), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                      <div class="modal-body">
+
+                        <div class="row">
+                          <div class="info">
+                            <ul>
+                              <li>Numéro employeur : <%= @employeur.fhnum unless @employeur.fhnum.nil? %> </li>
+                              <li>Raison sociale : <%= @employeur.fhrsoc unless @employeur.fhrsoc.nil? %> </li>
+                              <li>Trimestre : <%= @bordereau.trimestre unless @bordereau.trimestre.nil? %> </li>
+                              <li>Année : <%= @bordereau.annee unless @bordereau.annee.nil? %> </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                          <%= f.alert_message '' %>
+
+                          <div class="row">
+                            <div class="col-sm-6">
+                              <%= f.select :infos_jour, [['Jour', true], ['Heure', false]], label: " Présence saisie en jours" %>
+                            </div>
+                          </div>
+                          <hr>
+                          <hr>
+
+                          <div class="row">
+                            <div class="col-sm-6">
+                              <%= f.number_field :premier_mois, min: 0, value: 18, required: true %>
+                            </div>
+                          </div>
+                          <div class="row justifier_mois1" style="display: none" id="justifier_mois1">
+                            <div class="col-sm-6">
+                              <%= f.check_box :est_justifier, value: nil, checked: false, label: ' Temps de présence justifié ?', style: "margin-top:30px;" %>
+                            </div>
+                            <div class="col-sm-6">
+                              <%= f.select :motif_mois1, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, label: "Motif d'absence" %>
+                            </div>
+                          </div>
+
+                          <hr>
+                          <hr>
+
+                          <div class="row">
+                            <div class="col-sm-6">
+                              <%= f.number_field :deuxiem_mois, min: 0, value: 18, label: 'Deuxième mois', required: true %>
+                            </div>
+                          </div>
+                          <div class="row justifier_mois2" style="display: none" id="justifier_mois2">
+                            <div class="col-sm-6">
+                              <%= f.check_box :est_justifier_mois2, value: nil, checked: false, label: ' Temps de présence justifié ?', style: "margin-top:30px;" %>
+                            </div>
+                            <div class="col-sm-6">
+                              <%= f.select :motif_mois2, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, label: "Motif d'absence" %>
+                            </div>
+                          </div>
+
+                          <hr>
+                          <hr>
+
+                          <div class="row">
+                            <div class="col-sm-6" style="padding-top:9px">
+                              <%= f.number_field :troisiem_mois, min: 0, value: 18, label: 'Troisième mois', required: true %>
+                            </div>
+                          </div>
+                          <div class="row justifier_mois3" style="display: none" id="justifier_mois3">
+                            <div class="col-sm-6">
+                              <%= f.check_box :est_justifier_mois3, value: nil, checked: false, label: ' Temps de présence justifié ?', style: "margin-top:30px;" %>
+                            </div>
+                            <div class="col-sm-6">
+                              <%= f.select :motif_mois3, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, label: "Motif d'absence" %>
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div> <!--modal body-->
+
+                      <div class="modal-footer form-group">
+                        <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                        <%= f.submit 'Enregistrer', class: 'btn btn-primary' %>
+                      </div>
+                    <% end %>
+                    <%#end %>
+                  </div> <!--modal content -->
+                </div> <!--modal dialog-->
+              </div>  <!--modal-->
+              <!-- Fin modal tdp -->
+
+              <!-- modal dpf -->
+              <div class="modal inmodal" id="dpf<%= salarie.matric %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                  <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                        <span class="sr-only">Close</span>
+                      </button>
+                      <h4 class="modal-title">Ajouter dossier de prestation familial</h4>
+                    </div>
+                    <%= bootstrap_form_for([:admin, @dossier_prestation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                      <%= f.alert_message "Please fix the errors below." %>
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="col-lg-6">
+                            <%= f.text_field :num_affiliation, value: salarie.matric, readonly: true, label: 'Numéro affiliation' %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.text_field :prenom, label: 'Prénom' %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.text_field :nom, label: 'Nom' %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.text_field :sexe_salarie, label: 'Sexe salarié' %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.date_select :date_naissance, label: "Date de naissance",
+                                              start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.text_field :lieu_naissance, label: "lieu de naissance" %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.text_field :adresse_domicile, label: "Adresse domicile" %>
+                          </div>
+                          <div class="col-lg-6">
+                            <%= f.date_select :date_reception, label: "Date de reception" %>
+                          </div>
+                        </div>
+                        <div class=" col-lg-12 form-group">
+                          <hr>
+                          <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+                            <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                            <%= f.button 'Valider', class: 'btn btn-primary' %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div> <!--modal content -->
+                </div> <!--modal dialog-->
+              </div>  <!--modal-->
+              <!-- Fin modal dpf -->
+
+              <!-- modal document -->
+              <div class="modal inmodal" id="bordereuDoc" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                  <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                        <span class="sr-only">Close</span>
+                      </button>
+                      <% if @bordereau.document.attached? %>
+                        <h4 class="modal-title">Modifier le document justificatif</h4>
+                      <% else %>
+                        <h4 class="modal-title">Ajouter le document justificatif</h4>
+                      <% end %>
+                    </div>
+                    <%= bootstrap_form_for([:admin, @bordereau], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+                      <div class="modal-body">
+                        <div class="row">
+                          <div class="col-sm-6">
+                            <h4 style="font-weight: bold;">Document</h4>
+                            <div class="btn-file">
+                              <label class="no-text">
+                                <%= f.file_field :document, hide_label: true, label: '.',
+                                                 required: !@bordereau.document.attached?, id: 'label-text-bordereau' %>
+                                <div class="btn btn-success" style="margin-top:-20px; margin-left: 1px;">
+                                  <span class="fa fa-upload"></span> Choisir un fichier
+                                </div>
+                              </label>
+                              <small class="doc-name-bordereau" id="doc-name-bordereau">
+                                <% if @bordereau.document.attached? %>
+                                  <%= @bordereau.document.filename %>
+                                <% end %>
+                              </small>
+                            </div>
+                          </div>
+                          <div class="col-sm 6">
+                            <%= f.date_select :date_document, label: "Déposé le ",
+                                              start_year: (Date.today - 1.year).year, end_year: (Date.today + 1.year).year %>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="modal-footer form-group">
+
+                        <%= f.submit("Fermer", { :name => 'reset', :id => 'reset_form', :type => 'reset', :class => 'btn btn-white', 'data-dismiss': "modal" }) %>
+
+                        <%= f.submit 'Enregistrer', class: 'btn btn-primary' %>
+                      </div>
+                    <% end %>
+                    <%#end %>
+                  </div> <!--modal content -->
+                </div> <!--modal dialog-->
+              </div>  <!--modal-->
+              <!-- Fin modal document -->
+
+              <!-- modal tdpview -->
+              <div class="modal inmodal" id="tdpview<%= salarie.matric %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                  <div class="modal-content animated bounceInRight">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                        <span class="sr-only">Close</span>
+                      </button>
+                      <h4 class="modal-title">Détails temps de présence</h4>
+                    </div>
+                    <div class="modal-body">
+                      <% if salarie.has_dossier_prestation_familial? %>
+                        <% if !salarie.has_carriere_dossier_prestation?(@bordereau) %>
+                          <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#tdp<%= salarie.matric %>">
+                            <span class="fa fa-plus"></span> Renseigner les temps de présence
+                          </button>
+                        <% else %>
+                          premier mois
+                          : <%= salarie.get_carriere_dossier_prestation(@bordereau).premier_mois %>
+                          <% if salarie.get_carriere_dossier_prestation(@bordereau).infos_jour %>
+                            jour(s)
+                          <% else %>
+                            heure(s)
+                          <% end %>
+
+                          <% if salarie.get_carriere_dossier_prestation(@bordereau).check_time_of_presence(1) == true %>
+                            - Justifié
+                            <% unless salarie.get_carriere_dossier_prestation(@bordereau).motif_mois1.nil? %>
+                              - <%= salarie.get_carriere_dossier_prestation(@bordereau).motif_mois1 %>
+                            <% end %>
+                          <% elsif salarie.get_carriere_dossier_prestation(@bordereau).check_time_of_presence(1) == false %>
+                            - Non justifié
+                          <% end %>
+
+                          <br>
+                          deuxième mois
+                          : <%= salarie.get_carriere_dossier_prestation(@bordereau).deuxiem_mois %>
+                          <% if salarie.get_carriere_dossier_prestation(@bordereau).infos_jour %>
+                            jour(s)
+                          <% else %>
+                            heure(s)
+                          <% end %>
+
+                          <% if salarie.get_carriere_dossier_prestation(@bordereau).check_time_of_presence(2) == true %>
+                            - Justifié
+                            <% unless salarie.get_carriere_dossier_prestation(@bordereau).motif_mois2.nil? %>
+                              - <%= salarie.get_carriere_dossier_prestation(@bordereau).motif_mois2 %>
+                            <% end %>
+                          <% elsif salarie.get_carriere_dossier_prestation(@bordereau).check_time_of_presence(2) == false %>
+                            - Non justifié
+                          <% end %>
+
+                          <br>
+                          troisième mois
+                          : <%= salarie.get_carriere_dossier_prestation(@bordereau).troisiem_mois %>
+                          <% if salarie.get_carriere_dossier_prestation(@bordereau).infos_jour %>
+                            jour(s)
+                          <% else %>
+                            heure(s)
+                          <% end %>
+
+                          <% if salarie.get_carriere_dossier_prestation(@bordereau).check_time_of_presence(3) == true %>
+                            - Justifié
+                            <% unless salarie.get_carriere_dossier_prestation(@bordereau).motif_mois3.nil? %>
+                              - <%= salarie.get_carriere_dossier_prestation(@bordereau).motif_mois3 %>
+                            <% end %>
+                          <% elsif salarie.get_carriere_dossier_prestation(@bordereau).check_time_of_presence(3) == false %>
+                            - Non justifié
+                          <% end %>
+
+                          <br> <br>
+
+                        <% end %>
+                      <% else %>
+                        <button type="button" class="btn btn-xs" data-toggle="modal" data-target="#dpf<%= salarie.matric %>">
+                          <span class="fa fa-plus"></span> Ajouter dossier prestation familial
+                        </button>
+                      <% end %>
+                    </div>
+                  </div> <!--modal content -->
+                </div> <!--modal dialog-->
+              </div>  <!--modal-->
+              <!-- Fin modal tdpview -->
+
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <%= paginate @salaries %>
+      </div>
+
+    </div>
+  </div>
+</div>
+<%= render 'rejeter_bordereau_form' %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+
+              // Show or hide est_justifie input
+
+              var est_justifie1 = document.getElementsByName('carriere_dossier_prestation[est_justifier]');
+              var est_justifie2 = document.getElementsByName('carriere_dossier_prestation[est_justifier_mois2]');
+              var est_justifie3 = document.getElementsByName('carriere_dossier_prestation[est_justifier_mois3]');
+
+
+          var justifier_mois1 = document.getElementsByClassName('justifier_mois1');
+          var justifier_mois2 = document.getElementsByClassName('justifier_mois2');
+          var justifier_mois3 = document.getElementsByClassName('justifier_mois3');
+
+          var premier_mois = document.getElementsByName('carriere_dossier_prestation[premier_mois]');
+          var deuxiem_mois = document.getElementsByName('carriere_dossier_prestation[deuxiem_mois]');
+          var troisiem_mois = document.getElementsByName('carriere_dossier_prestation[troisiem_mois]');
+          var info_jour = document.getElementsByName('carriere_dossier_prestation[infos_jour]');
+
+          var motif_mois1 = document.getElementsByName('carriere_dossier_prestation[motif_mois1]');
+          var motif_mois2 = document.getElementsByName('carriere_dossier_prestation[motif_mois2]');
+          var motif_mois3 = document.getElementsByName('carriere_dossier_prestation[motif_mois3]');
+          var rc_motif_mois1 = Array.from(motif_mois1).map(x => x.value);
+          var rc_motif_mois2 = Array.from(motif_mois2).map(x => x.value);
+          var rc_motif_mois3 = Array.from(motif_mois3).map(x => x.value);
+
+          // show or hide last motif option
+
+
+          // show or hide last motif option
+
+          // On page load
+
+          for (let i = 0; i < info_jour.length; i++) {
+              even_nature(i, premier_mois, justifier_mois1);
+              even_nature(i, deuxiem_mois, justifier_mois2);
+              even_nature(i, troisiem_mois, justifier_mois3);
+
+          }
+
+              for (let i = 0; i < est_justifie1.length; i++) {
+
+                  shor_orhide_motif(i, est_justifie1)
+                  shor_orhide_motif(i, est_justifie2)
+                  shor_orhide_motif(i, est_justifie3)
+
+              }
+
+              // On page load
+
+
+              function add_listener(array_listener, target_array) {
+                  for (let i = 0; i < array_listener.length; i++) {
+                      array_listener[i].addEventListener('change', function (event) {
+                          even_nature(i, array_listener, target_array);
+                      });
+                  }
+              }
+
+              function add_listener_to_justify_field(array_listener) {
+                  for (let i = 0; i < array_listener.length; i++) {
+                      array_listener[i].addEventListener('change', function (event) {
+                          shor_orhide_motif(i, array_listener)
+                      });
+                  }
+              }
+
+          add_listener(premier_mois, justifier_mois1)
+          add_listener(deuxiem_mois, justifier_mois2)
+          add_listener(troisiem_mois, justifier_mois3)
+
+          add_listener_to_justify_field(est_justifie1)
+          add_listener_to_justify_field(est_justifie2)
+          add_listener_to_justify_field(est_justifie3)
+
+
+          for (let i = 0; i < info_jour.length; i++) {
+              show_or_hide_last_motif_option(i)
+              info_jour[i].addEventListener('change', function (event) {
+                  even_nature(i, premier_mois, justifier_mois1);
+                  even_nature(i, deuxiem_mois, justifier_mois2);
+                  even_nature(i, troisiem_mois, justifier_mois3);
+                  show_or_hide_last_motif_option(i)
+              });
+          }
+
+          function show_or_hide_last_motif_option(index) {
+              if (info_jour[index].value === "true") {
+                  motif_mois1[index].options[motif_mois1[index].options.length - 1].style.display = 'none'
+                  motif_mois2[index].options[motif_mois2[index].options.length - 1].style.display = 'none'
+                  motif_mois3[index].options[motif_mois3[index].options.length - 1].style.display = 'none'
+                  motif_mois1[index].value = ''
+                  motif_mois2[index].value = ''
+                  motif_mois3[index].value = ''
+              } else {
+                  motif_mois1[index].options[motif_mois1[index].options.length - 1].style.display = 'block'
+                  motif_mois2[index].options[motif_mois2[index].options.length - 1].style.display = 'block'
+                  motif_mois3[index].options[motif_mois3[index].options.length - 1].style.display = 'block'
+
+                  motif_mois1[index].value = rc_motif_mois1[index]
+                  motif_mois2[index].value = rc_motif_mois2[index]
+                  motif_mois3[index].value = rc_motif_mois3[index]
+              }
+          }
+
+          function shor_orhide_motif(i, array_listener) {
+              const elt = array_listener[i].parentElement.parentElement.nextElementSibling
+
+              if (array_listener[i].checked) {
+                  elt.style.display = 'block'
+              } else {
+                  //  elt.getElementsByClassName('form-control')[0].selectedIndex = 0
+                  elt.style.display = 'none'
+              }
+          }
+
+
+          function even_nature(i, array_listener, target_array) {
+              if (info_jour[i].value === "true") {
+                  if (array_listener[i].value !== '' && array_listener[i].value < 18) {
+                      target_array[i].style.display = 'block'
+                  } else {
+                      if (target_array[i].getElementsByClassName('form-check-input')[0].checked) {
+                          target_array[i].getElementsByClassName('form-check-input')[0].click()
+                      }
+                      target_array[i].style.display = 'none'
+                  }
+              } else if (info_jour[i].value === "false") {
+                  if (array_listener[i].value !== '' && array_listener[i].value < 120) {
+                      target_array[i].style.display = 'block'
+                  } else {
+                      if (target_array[i].getElementsByClassName('form-check-input')[0].checked) {
+                          target_array[i].getElementsByClassName('form-check-input')[0].click()
+                      }
+                      target_array[i].style.display = 'none'
+                  }
+              }
+          }
+
+
+          // Show or hide est_justifié input
+
+
+          var num_af_array = document.getElementsByName("dossier_prestation[num_affiliation]");
+          var prenom_array = document.getElementsByName("dossier_prestation[prenom]");
+          var nom_array = document.getElementsByName("dossier_prestation[nom]");
+          var sexe_array = document.getElementsByName("dossier_prestation[sexe_salarie]");
+
+
+          function showFileName(event) {
+              var input = event.srcElement;
+              var fileName = input.files[0].name;
+              infoArea.textContent = fileName;
+          }
+
+              for (let i = 0; i < num_af_array.length; i++) {
+                  setDtata(i);
+                  num_af_array[i].addEventListener('change', function (event) {
+                      setDtata(event, i);
+                  });
+              }
+
+              function setDtata(i) {
+                  var numero_affiliation = num_af_array[i].value
+                  $.ajax({
+                      url: "/admin/salaries/" + numero_affiliation + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          if (data) {
+                              prenom_array[i].value = data.prenom;
+                              nom_array[i].value = data.nom;
+
+
+                              if (data.genre === 'HOMME') {
+                                  sexe_array[i].value = 'masculin';
+                              } else {
+                                  sexe_array[i].value = 'féminin';
+
+                              }
+                          } else {
+                              prenom_array[i].value = '';
+                              nom_array[i].value = '';
+                          }
+                      },
+                      error: function (XMLHttpRequest, textStatus, errorThrown) {
+                          prenom_array[i].value = '';
+                          nom_array[i].value = '';
+                      }
+                  });
+              }
+
+          }
+      )
+
+      /* show file label name */
+
+      var file_name = document.getElementById('label-text-bordereau');
+      var label_document_info = document.getElementById('doc-name-bordereau');
+
+      file_name.addEventListener('change', function (event) {
+          showFileName(event);
+      });
+
+      function showFileName(event) {
+          let input = event.srcElement;
+          let fileName = input.files[0].name;
+          label_document_info.textContent = fileName;
+      }
+
+
+      $('#reset_form').click(() => {
+          label_document_info.textContent = '<%= @bordereau.document.filename if @bordereau.document.attached? %>'
+      })
+
+  </script>
+<% end %>

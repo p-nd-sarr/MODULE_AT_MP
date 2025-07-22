@@ -1,0 +1,77 @@
+<% if @demande_remboursement_cotisation.current_state >= :cotisation_valide  %>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Montant remboursement cotisation</th>
+     
+    </tr>
+    </thead>
+
+    <tbody></tbody>
+    <tr>
+      <td>RGR</td>
+      <td><%= @demande_remboursement_cotisation.calcul_remboursement_regime_general %></td>
+    </tr>
+    <tr>
+      <td>RCC</td>
+      <td><%= @demande_remboursement_cotisation.calcul_remboursement_regime_cadre %></td>
+    </tr>
+    <tr>
+      <td>Taux contractuel RGR</td>
+      <td>0</td>
+    </tr>
+      <tr>
+      <td>Taux contractuel RCC</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>P.PATRONALE + P.SALARIALE</td>
+      <td><%= @demande_remboursement_cotisation.calcul_total_remboursement %></td>
+    </tr>
+
+
+    <tr>
+      <td>PART PATRONALE (60%)</td>
+      <td><%= @demande_remboursement_cotisation.calcul_remboursement_patronal %></td>
+    </tr>
+      <tr>
+      <td>PART SALARIALE (40%)</td>
+      <td><%= @demande_remboursement_cotisation.calcul_remboursement_salarial %></td>
+    </tr>
+  
+    
+   
+    </tbody>
+  </table>
+
+  <h3>
+    Montant à rembourser:
+    <%#= format_cfa @demande_liquidation.calcul_allocation %>
+    <%= @demande_remboursement_cotisation.calcul_remboursement_salarial%> CFA
+  
+  </h3>
+
+  
+ 
+<br>
+
+
+  
+
+  <div>
+    <%#= @demande_liquidation.carriere.taux_majoration %>
+    <% if @demande_remboursement_cotisation.creation? or @demande_remboursement_cotisation.soumis? %>
+      <strong>
+        <em>sous réserve de validation définitive de la demande</em>
+      </strong>
+    <% elsif @demande_remboursement_cotisation.dossier_valide? %>
+      <strong>
+        <em>sous réserve de révision du dossier</em>
+      </strong>
+    <%end %>
+  </div>
+  <% else %>
+  <h4> Les carrières ne sont pas encore validées.</h4>
+<% end %>

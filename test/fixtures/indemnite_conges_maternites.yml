@@ -1,0 +1,39 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  dossier_prestation: one
+  date_soumission: 2020-02-21
+  date_validation: 2020-02-21
+  valide_par_id: 1
+  user: one
+  ajoute_par_id: 1
+  traite_le: 2020-02-21 00:21:38
+  traite_par_id: 1
+  motif_rejet: MyString
+  montant_paiement: 1
+  paiement: false
+  etat: 1
+  tranche_paiement: 1
+  debut_grossesse: 2020-02-21
+  debut_conges: 2020-02-21
+  date_accouchement: 2020-02-21
+  date_reprise_service: 2020-02-21
+
+two:
+  dossier_prestation: two
+  date_soumission: 2020-02-21
+  date_validation: 2020-02-21
+  valide_par_id: 1
+  user: two
+  ajoute_par_id: 1
+  traite_le: 2020-02-21 00:21:38
+  traite_par_id: 1
+  motif_rejet: MyString
+  montant_paiement: 1
+  paiement: false
+  etat: 1
+  tranche_paiement: 1
+  debut_grossesse: 2020-02-21
+  debut_conges: 2020-02-21
+  date_accouchement: 2020-02-21
+  date_reprise_service: 2020-02-21

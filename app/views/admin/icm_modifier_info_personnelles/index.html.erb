@@ -1,0 +1,71 @@
+<%= content_for :titre_page do %>
+  Liste demandes modificatiosn info personnelles -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%#= link_to "Dossier #{@dossier_maternite.num_dossier}", admin_dossier_maternite_path(@dossier_maternite), class: 'text-info' %>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_maternites_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+    <%= link_to ' Ajouter', new_admin_dossier_maternite_icm_modifier_info_personnelle_path(1),
+                class: 'btn btn-primary btn-sm fa fa-plus' %>
+    <%#= link_to 'Tout Liquider', admin_dossier_maternite_liquider_indemnites_path(@dossier_maternite), class: 'btn btn-info btn-sm ' unless @dossier_maternite.indemnite_conges_maternites.creation.empty? and @dossier_maternite.pret_pour_soumission? %>
+
+
+
+<% end %>
+
+
+
+<div class="ibox-content">
+  <%# unless @indemnite_conges_maternites.empty? %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Dossier maternité</th>
+        <th scope="col">Créé par</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% unless @icm_modifier_info_personnelles.nil? %>
+        <% @icm_modifier_info_personnelles.each do |info_perso| %>
+          <tr>
+
+            <td><%=info_perso.prenom %></td>
+            <td><%=info_perso.nom %></td>
+            <td><%=info_perso.dossier_maternite.num_affiliation %></td>
+            <td><%=info_perso.dossier_maternite.ajoute_par.full_nam %></td>
+            
+            <td style="width: 75px" class="dropdown">
+              <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown"> Options
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+
+                <%# if indemnite_conges_maternite.creation? and current_user == indemnite_conges_maternite.ajoute_par %>
+                  <li>
+                    <%= link_to 'Modifier', edit_admin_dossier_maternite_icm_modifier_info_personnelle_path(@dossier_maternite, info_perso),
+                                class: 'btn btn-outline btn-info btn-xs', id: "dd_hover" %>
+                    <%= link_to 'Supprimer', [:admin, @dossier_maternite, info_perso], method: :delete, data: {confirm: 'En êtes vous sûr?'},
+                                class: 'btn btn-outline btn-danger btn-xs', id: "dd_hover" %>
+                  </li>
+                <%# end %>
+              </ul>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+      </tbody>
+    </table>
+  <%# else %>
+    <div>
+      <h2> Liste des indemnités vide </h2>
+    </div>
+  <%# end %>
+</div>
+</div>
+

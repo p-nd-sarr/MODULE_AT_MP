@@ -1,0 +1,86 @@
+<%= content_for :titre_page, "Détails demande carte allocataire" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_demande_carte_allocataires_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Allocataire', [:admin, @admin_demande_carte_allocataire.allocataire], class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_demande_carte_allocataire_path(@admin_demande_carte_allocataire), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Imprimer', admin_demande_carte_allocataire_imprimer_path(@admin_demande_carte_allocataire, format: :pdf), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Ajouté par :</strong>
+              <%= @admin_demande_carte_allocataire.user.full_name %>
+            </p>
+
+            <p>
+              <strong>Numero document:</strong>
+              <%= @admin_demande_carte_allocataire.numero_document %>
+            </p>
+
+            <p>
+              <strong>Agence enregistrement:</strong>
+              <%= @admin_demande_carte_allocataire.agence_enregistrement.try(:description_prest) %>
+            </p>
+
+            <p>
+              <strong>Numéro allocataire:</strong>
+              <%= @admin_demande_carte_allocataire.allocataire.numero_allocataire %>
+            </p>
+
+            <p>
+              <strong>Ancien Numéro allocataire:</strong>
+              <%= @admin_demande_carte_allocataire.allocataire.ipres_ancien_matric %>
+            </p>
+
+            <p>
+              <strong>Nom:</strong>
+              <%= @admin_demande_carte_allocataire.nom %>
+            </p>
+
+            <p>
+              <strong>Prenom:</strong>
+              <%= @admin_demande_carte_allocataire.prenom %>
+            </p>
+
+            <p>
+              <strong>Date de naissance:</strong>
+              <%= l @admin_demande_carte_allocataire.date_naissance %>
+            </p>
+
+            <p>
+              <strong>Nin:</strong>
+              <%= @admin_demande_carte_allocataire.nin %>
+            </p>
+
+            <p>
+              <strong>Email:</strong>
+              <%= @admin_demande_carte_allocataire.email %>
+            </p>
+
+            <p>
+              <strong>Adresse:</strong>
+              <%= @admin_demande_carte_allocataire.adresse %>
+            </p>
+
+            <p>
+              <strong>Agence retrait:</strong>
+              <%= @admin_demande_carte_allocataire.agence_retrait.try(:description_prest) %>
+            </p>
+
+            <p>
+              <strong>Telephone:</strong>
+              <%= @admin_demande_carte_allocataire.telephone %>
+            </p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<li class="<%= 'active' if is_active_controller('salarie/carrieres') %>">
+  <%= link_to salarie_information_path do %>
+    <i class="fa fa-briefcase"></i> <span class="nav-label">Informations générales</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('salarie/carrieres') %>">
+  <%= link_to salarie_carrieres_path do %>
+    <i class="fa fa-briefcase"></i> <span class="nav-label">Carrières</span>
+  <% end %>
+</li>
+
+
+<li class="<%= 'active' if is_active_controller('salarie/conjoints') or is_active_controller('salarie/enfants') %>">
+  <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Grappe familiale</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/epouses') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/conjoints') %>"><%= link_to 'Mes conjoints', salarie_conjoints_path %></li>
+  </ul>
+  <ul class="nav nav-second-level <%= is_active_controller('salarie/enfants') %>">
+    <li class="<%= 'active' if is_active_controller('salarie/enfants') %>"><%= link_to 'Mes enfants', salarie_enfants_path %></li>
+  </ul>
+</li>
+
+
+
+
+ 
+
+  <li class="<%= 'active' if is_active_controller('salarie/dossier_prestations') %>">
+    <%= link_to salarie_liquidation_retraites_path do %>
+      <i class="fa fa-briefcase"></i> <span class="nav-label">Liquidation Retraite</span>
+    <% end %>
+  </li>
+
+  <li class="<%= 'active' if is_active_controller('salarie/liquidation_retraites') %>">
+    <%= link_to salarie_dossier_prestations_path do %>
+      <i class="fa fa-briefcase"></i> <span class="nav-label">Prestations Familiales</span>
+    <% end %>
+  </li>
+
+  <% unless current_participant.nil? %>
+    <li class="<%= 'active' if is_active_controller('salarie/liquidation_retraites') %>">
+      <%= link_to salarie_dossier_maternites_path do %>
+        <i class="fa fa-briefcase"></i> <span class="nav-label">Indemnités de Congés Maternité</span>
+      <% end %>
+  </li>
+  <% end %>
+
+

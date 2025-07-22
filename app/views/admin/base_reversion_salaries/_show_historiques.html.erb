@@ -1,0 +1,152 @@
+<div class="row animated fadeInRight">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-content" id="ibox-content">
+                <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon red-bg">
+                            <i class="fa fa-folder"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Ouverture et Instruction</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">OUVERT PAR:</strong><br> <%= @reversion_veuve_salarie.ajoute_par.full_name %></h5>
+                                        <h5><strong class="text-navy">DATE D'OUVERTURE:</strong><br> <%= @reversion_veuve_salarie.created_at.strftime("%d/%m/%Y à %H:%M") %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                       <h5><strong class="text-navy">SOUMIS PAR:</strong><br> <%= @reversion_veuve_salarie.ajoute_par.full_name %></h5>
+                                        SOUMISSION:</strong><br> <%= (@reversion_veuve_salarie.date_soumission.strftime("%d/%m/%Y à %H:%M")) unless @reversion_veuve_salarie.date_soumission.nil? %>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong class="<%='text-navy' unless @reversion_veuve_salarie.instruit_par.nil? %>" >INSTRUIT PAR:</strong><br> <%= (@reversion_veuve_salarie.instruit_par.full_name) unless @reversion_veuve_salarie.instruit_par.nil? %></h5>
+                                        <h5><strong class="<%='text-navy' unless @reversion_veuve_salarie.instruit_le.nil? %>" >DATE D'INSTRUCTION:</strong><br> <%= (@reversion_veuve_salarie.instruit_le.strftime("%d/%m/%Y à %H:%M")) unless @reversion_veuve_salarie.instruit_le.nil? %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="vertical-timeline-icon blue-bg">
+                            <i class="fa fa-file-text"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Affectation et Traitement du dossier</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <h5><strong class="<%='text-navy' unless @reversion_veuve_salarie.affecter_salarie.nil? %>" >AFFECTE A GESTIONNAIRE COTISATION:</strong><br> <%= @reversion_veuve_salarie.affecter_salarie.full_name unless @reversion_veuve_salarie.affecter_salarie.nil? %></h5>
+                                        <h5><strong>PAR LE CHEF DE SERVICE COTISATION:</strong><br> </h5>
+                                        <h5><strong class="<%='text-navy' unless @reversion_veuve_salarie.affectation_salarie_date.nil? %>" >DATE D'AFFECTATION:</strong><br> <%= (@reversion_veuve_salarie.affectation_salarie_date.strftime("%d/%m/%Y à %H:%M")) unless @reversion_veuve_salarie.affectation_salarie_date.nil? %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong class="<%='text-navy' unless @reversion_veuve_salarie.affecter_allocataire.nil? %>">AFFECTE A GESTIONNAIRE ALLOCATION:</strong><br> <%= @reversion_veuve_salarie.affecter_allocataire.full_name unless @reversion_veuve_salarie.affecter_allocataire.nil?%></h5>
+                                        <h5><strong>PAR LE CHEF DE SECTION LIQUIDATION:</strong><br></h5>
+                                        <h5><strong class="<%='text-navy' unless @reversion_veuve_salarie.affectation_allocataire_date.nil? %>">DATE D'AFFECTATION:</strong><br> <%= (@reversion_veuve_salarie.affectation_allocataire_date.strftime("%d/%m/%Y à %H:%M")) unless @reversion_veuve_salarie.affectation_allocataire_date.nil? %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong class="<%= 'text-navy' unless @reversion_veuve_salarie.soumission_validation_par.nil? %>">SOUMISSION
+                                        VALIDATION FICHE DE LIQUIDATION
+                                        PAR:</strong><br> <%= @reversion_veuve_salarie.soumission_validation_par.full_name unless @reversion_veuve_salarie.soumission_validation_par.nil? %>
+                                        </h5>
+                                        <h5><strong class="<%= 'text-navy' unless @reversion_veuve_salarie.soumission_validation_par.nil? %>">DATE
+                                        DE SOUMISSION VALIDATION FICHE DE
+                                        LIQUIDATION: </strong><br> <%= (@reversion_veuve_salarie.date_soumission_validation.strftime("%d/%m/%Y à %H:%M")) unless @reversion_veuve_salarie.date_soumission_validation.nil? %>
+                                        </h5>
+                                    </div>
+                                      
+                                </div>
+                                <div class="col-lg-12">
+                                <h2>Validation tableau récap</h2>
+                                    <hr>
+                                    <div class="col-lg-4">
+                                        <h5><strong class="<%= 'text-navy' unless @reversion_veuve_salarie.validation_liquidation_par.nil? %>">VALIDATION
+                                            FICHE DE LIQUIDATION PAR CHEF DE SECTION
+                                            LIQUIDATION:</strong><br><%= @reversion_veuve_salarie.validation_liquidation_par.full_name unless @reversion_veuve_salarie.validation_liquidation_par.nil? %>
+                                            </h5>
+                                            <h5><strong class="<%= 'text-navy' unless @reversion_veuve_salarie.validation_liquidation_par.nil? %>">DATE
+                                            DE VALIDATION FICHE DE
+                                            LIQUIDATION: </strong><br> <%= (@reversion_veuve_salarie.date_validation_liquidation.strftime("%d/%m/%Y à %H:%M")) unless @reversion_veuve_salarie.date_validation_liquidation.nil? %>
+                                        </h5>
+                                    </div>
+
+                                </div>
+                                <div class="col-lg-12">
+                                <h2>Validation du dossier</h2>
+                                <hr>
+                                <div class="col-lg-4">
+                                    <h5>
+                                    <strong class="<%= 'text-navy' unless @reversion_veuve_salarie.valider_par.nil? %>">VALIDATION DOSSIER
+                                        PAR CHEF DE SERVICE
+                                        ALLOCATION:</strong><br> <%= @reversion_veuve_salarie.valider_par.full_name unless @reversion_veuve_salarie.valider_par.nil? %>
+                                    </h5>
+                                    <h5><strong class="<%= 'text-navy' unless @reversion_veuve_salarie.valider_le.nil? %>">DATE DE
+                                    VALIDATION: </strong><br> <%= @reversion_veuve_salarie.valider_le.strftime("%d/%m/%Y à %H:%M") unless @reversion_veuve_salarie.valider_le.nil? %>
+                                    </h5>
+                                </div>
+                            </div>     
+                        </div>
+
+                        
+                    </div>
+                </div>
+                <div class="vertical-timeline-block">
+                    <div class="vertical-timeline-icon blue-bg">
+                    <i class="fa fa-file-text"></i>
+                    </div>
+                    <div class="vertical-timeline-content">
+                        <h2>Historique Traitement du dossier</h2>
+                        <hr>
+                        <div class='row'>
+                            
+                            <table class="table table-bordered table-condensed table-hover">
+                            <tr>
+                                <td>User</td>
+                                <td>Date</td>
+                                <td>Etat Origine</td>
+                                <td>Etat Aprés traitement</td>
+                            </tr>
+                            <% @reversion_veuve_salarie.workflow_histories.order(created_at: :desc).each do |workflow| %>
+                                <tr>
+                                <td><%= workflow.user.try(:full_name) %></td>
+                                <td><%= workflow.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+                                <td><%= workflow.from %></td>
+                                <td><%= workflow.to %></td>
+                                </tr>
+                            <% end %>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon blue-bg">
+                        <i class="fa fa-file-text"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                        <h2>Commentaire sur le dossier</h2>
+                        <hr>
+                        <div class='row'>
+                        <ul>
+                            <li> <%= "Soumission: #{@reversion_veuve_salarie.commentaire_soumission}" unless @reversion_veuve_salarie.commentaire_soumission.nil?%></li>
+                            <li> <%= "Instruction: #{@reversion_veuve_salarie.commentaire_instruction}" unless @reversion_veuve_salarie.commentaire_instruction.nil?%></li>
+                            <li> <%= "Affectation fiche Carrière: #{@reversion_veuve_salarie.commentaire_affectation_salaire}" unless @reversion_veuve_salarie.commentaire_affectation_salaire.nil?%></li>
+                            <li> <%= "Affectation demande Allocations: #{@reversion_veuve_salarie.commentaire_affectation_allocataire}" unless @reversion_veuve_salarie.commentaire_affectation_allocataire.nil?%></li>
+                            <li> <%= "Soumission carrière: #{@reversion_veuve_salarie.commentaire_carriere}" unless @reversion_veuve_salarie.commentaire_carriere.nil?%></li>
+                            <li> <%= "Validation carrière: #{@reversion_veuve_salarie.commentaire_validation_carriere}" unless @reversion_veuve_salarie.commentaire_validation_carriere.nil?%></li>
+                            <li> <%= "Soumission Tableau Récap:  #{@reversion_veuve_salarie.commentaire_tableau}" unless @reversion_veuve_salarie.commentaire_tableau.nil?%></li>
+                            <li> <%= "Validation Tableau récap #{@reversion_veuve_salarie.commentaire_validation_tableau}" unless @reversion_veuve_salarie.commentaire_validation_tableau.nil?%></li>
+                            <li> <%= "Validation dossier: #{@reversion_veuve_salarie.commentaire_validation}" unless @reversion_veuve_salarie.commentaire_validation.nil?%></li>
+                        </ul>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

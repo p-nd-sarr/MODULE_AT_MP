@@ -1,0 +1,167 @@
+<%= content_for :titre_page, 'Traitement collectif de dossiers prestations' %>
+<%= content_for :titre_page_autres_details, "Employeur : #{(@employeur.fhrsoc)}" unless @employeur.fhrsoc.nil? %>
+
+<%= content_for :actions_page do %>
+  <% unless @employeur.has_bordereau? %>
+    <h5>Aucun bordereau collectif enregistré pour cet employeur</h5>
+  <% end %>
+  <%= link_to 'Voir la liste des temps de présence collectifs', admin_traitement_collectif_list_bordereau_path(@employeur.fhnum), class: 'btn btn-primary btn-sm' if @employeur.has_bordereau? %>
+  <%= link_to 'Retour', admin_traitement_collectifs_path, class: 'btn btn-white btn-sm' %>
+
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#searchModal">Renseigner
+      période
+    </button>
+    <% unless params[:trimestre].nil? %>
+      <br> <br>
+      <span>Résultats recherche :  trimestre => <%= params[:trimestre] %>
+        , Année => <%= @annee_presence["presence(1i)"] %> </span>
+    <% end %>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Matricule</th>
+            <th scope="col">Prénom</th>
+            <th scope="col">Nom</th>
+            <th scope="col">Nombre d'enfants elligibles</th>
+            <th scope="col"></th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @salaries.each do |salarie| %>
+            <tr>
+              <td><%= salarie.matric %></td>
+              <td><%= salarie.prenom %></td>
+              <td><%= salarie.nom %></td>
+              <% unless params[:trimestre].nil? %>
+                <td>
+                  <%= salarie.enfants.eligible_for_alloc_familiale(@period, salarie.matric).eligible_plus.count %>
+                  <% if salarie.has_children_not_eligible(@period) %>
+                    <i class="fa fa-exclamation-triangle"></i>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
+        <% if @salaries.size == 0 and params[:annee] and !@employeur.has_specific_bordereau(@trimestre_presence, @annee_presence["presence(1i)"]) %>
+          <br>
+          <h5>0 salarié pour cette période</h5>
+        <% end %>
+
+        <% if params[:annee] and @employeur.has_specific_bordereau(@trimestre_presence, @annee_presence["presence(1i)"]) %>
+          <br>
+          <h5>Il existe déjà un bordereau pour cette période :
+            <%= link_to 'Ouvrir le temps de présence collectif', admin_traitement_collectif_ouvrir_bordereau_path(@employeur.fhnum, @employeur.get_specific_bordereau(@trimestre_presence, @annee_presence["presence(1i)"]).numero_bordereau), class: 'btn btn-outline btn-primary btn-xs' if current_user.gestionnaire_compte_allocataire? %>
+          </h5>
+        <% end %>
+
+      </div>
+      <div class="ibox-content">
+        <div class="submit-box">
+          <% unless params[:trimestre].nil? or @salaries.size == 0 %>
+            <div class="row">
+              <div class="col col-sm-2">
+                <%= link_to 'Voir  état de contrôle', admin_traitement_collectif_voir_bordereau_path(@employeur.fhnum, @annee_presence["presence(1i)"], @trimestre_presence, format: :pdf), class: 'btn btn-primary btn-sm', target: '_blank' %>
+              </div>
+              <div class="col col-sm-2">
+                <%= form_tag(admin_traitement_collectif_generate_bordereau_path(@employeur.fhnum, @annee_presence["presence(1i)"], @trimestre_presence), method: :post) do %>
+                  <%= submit_tag 'Générer les temps de présence collect', name: nil, data: { confirm: 'Voulez-vous vraiment générer le bordereau ?' }, class: 'btn btn-primary btn-sm' %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+        <div class="message-box">
+          <h5>Vous ne pouvez pas créer un bordereau pour un trimestre en cours!</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'search_form' %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('.message-box').hide()
+
+          var trimestre = document.getElementById('trimestre');
+          set_trimestre();
+          <% unless params[:trimestre].nil? %>
+          if ($('#annee_presence_1i').val() == new Date().getFullYear()) {
+              trimestre.selectedIndex = <%= @trimestre_presence %> -1
+          } else {
+              trimestre.selectedIndex = 4 -
+              <%= @trimestre_presence %>
+          }
+
+          if ($('#annee_presence_1i').val() == new Date().getFullYear()) {
+              let checkout = true
+
+              if (trimestre.selectedIndex === 0 && new Date().getMonth() <= 2) {
+                  checkout = false
+              }
+              if (trimestre.selectedIndex === 1 && new Date().getMonth() <= 5) {
+                  checkout = false
+              }
+              if (trimestre.selectedIndex === 2 && new Date().getMonth() <= 8) {
+                  checkout = false
+              }
+              if (trimestre.selectedIndex === 3 && new Date().getMonth() <= 11) {
+                  checkout = false
+              }
+
+              if (!checkout) {
+                  //$('.submit-box').hide()
+                  //$('.message-box').show()
+              }
+          }
+
+          <% end %>
+
+          $('#annee_presence_1i').change(function () {
+              set_trimestre();
+          });
+
+          function set_trimestre() {
+              let annee = $('#annee_presence_1i').val();
+              var html = '';
+              if (annee == new Date().getFullYear()) {
+                  i = 1;
+                  let nb_month = new Date().getMonth() + 1;
+                  while (nb_month > 0) {
+                      html += '<option value="' + i + '">Trimestre' + i + '</option>';
+                      i++;
+                      nb_month -= 3;
+                  }
+              } else {
+                  i = 4;
+                  let nb_month = 12 - (new Date().getMonth() + 1);
+                  while (nb_month > 0) {
+                      html += '<option value="' + i + '">Trimestre' + i + '</option>';
+                      i--;
+                      nb_month -= 3;
+                  }
+              }
+
+              $("#trimestre").each(function () {
+                  $(this).html(html);
+              });
+          }
+      });
+
+  </script>`
+<% end %>

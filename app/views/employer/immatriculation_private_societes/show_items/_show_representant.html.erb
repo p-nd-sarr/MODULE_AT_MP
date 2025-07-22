@@ -1,0 +1,37 @@
+<% if @representant != nil && @immatriculation.representant_valide? %>
+  <div class="row" style="padding-top:20px" id="details_representant1">
+    <div class="col-lg-12" style="text-align:right; margin-bottom:20px;">
+      <% unless @immatriculation == nil or @immatriculation.soumis? %>
+        <button class="btn btn-white" id="show_representant"><span class="fa fa-edit"></span> Modifier les informations du représentant</button>
+      <% end %>
+      <hr>
+    </div>
+    <%= render 'employer/immatriculations/templates/infos_representant' %>
+  </div>
+<% end %>
+
+<% unless @immatriculation.id == nil  or @immatriculation.representant_valide  %>
+  <%= link_to "Je valide les informations sur le représentant legal", employer_immatriculation_private_societe_valider_representant_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+<% end %>
+    <div class="row" id="update_representant" >
+      <%= render 'employer/immatriculations/templates/form_represetant' %>
+    </div>
+
+<% if @immatriculation != nil && @immatriculation.representant_valide? %>
+  <script type="text/javascript">
+
+      $(document).ready(function(){
+
+          console.log('test representant');
+
+          $('#update_representant').hide();
+
+          $("#show_representant").click(function () {
+              $('#update_representant').show();
+              $('#details_representant1').hide();
+              return false;
+          });
+
+          });
+  </script>
+<% end %>

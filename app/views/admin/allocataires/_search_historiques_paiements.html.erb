@@ -1,0 +1,62 @@
+<h3>Critères de recherche</h3>
+<br>
+<div class="row form-group">
+<%= search_form_for @q, url: request.path do |f| %>
+
+  <div class="col-md-12">
+
+    <div class="col-sm-3">
+      <%= f.label :numero_cont, 'Numéro ordre' %>
+      <%= f.search_field :numero_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :numero_allocataire_cont, 'Numéro allocataire' %>
+      <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+    </div>
+
+
+    <div class="col-sm-3">
+      <%= f.label :statut_eq, 'État' %>
+      <%= f.select :statut_eq, OrdrePaiement.statuts.to_a.map { |w| [OrdrePaiement.human_enum_name(:statut, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :echeance_paiement_periode_eq, 'Période' %>
+      <%= f.select :echeance_paiement_periode_eq, EcheancePaiement.periodes.to_a.map { |w| [EcheancePaiement.human_enum_name(:periode, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+  <br>
+
+  <div class="col-md-12">
+    <div class="col-sm-3">
+      <%= f.label :echeance_paiement_numero_periode_eq, 'Numéro période' %>
+      <%= f.search_field :echeance_paiement_numero_periode_eq, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :echeance_paiement_annee_eq, 'Exercice' %>
+      <%= f.search_field :echeance_paiement_annee_eq, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :dossier_type_eq, 'Type dossier' %>
+      <%= f.search_field :dossier_type_eq, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :compta_transaction_code_operation_eq, 'Opération' %>
+      <%= f.search_field :compta_transactions_code_operation_eq, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <div class="hr-line-dashed"></div>
+
+    <%= f.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>
+
+
+ </div>

@@ -1,0 +1,2 @@
+json.extract! dossier_maternite, :id, :num_affiliation, :prenom, :nom, :date_naissance, :lieu_naissance, :adresse_domicile, :etat_civil_demandeur_valid, :carriere_valid, :document_valid, :user_id, :debut_grossesse, :etat, :date_soumission, :ajoute_par_id, :traite_le, :traite_par_id, :motif_rejet, :num_dossier, :created_at, :updated_at
+json.url dossier_maternite_url(dossier_maternite, format: :json)

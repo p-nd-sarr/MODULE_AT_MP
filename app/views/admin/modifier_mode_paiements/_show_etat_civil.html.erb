@@ -1,0 +1,130 @@
+<div class="row" style="margin-top:30px">
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:prenom) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Nom:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:nom) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:date_naissance) %>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @modifier_mode_paiement.try(:telephone) %>
+      </div>
+    </d1>
+   <% unless @allocataire.admin_association_allocataire.nil?%>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-users"></span> Association:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.admin_association_allocataire.try(:name) %>
+      </div>
+    </d1>
+    <% end %>
+  </div>
+
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse domicile:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:adresse_rue) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Ville:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.try(:adresse_ville) %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt><span class="fa fa-info"></span> Etat:</dt>
+      </div>
+      <div class="col-sm-6 " style="text-align: left;">
+        <dd class="mb-1"><%= @allocataire.etat_human %></dd>
+      </div>
+    </d1>
+    <% if @allocataire.suspendus? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-list"></span> Motif de suspension:</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.try(:motif_suspension) %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <% if @allocataire.rejete? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-6" style="text-align: right;">
+          <dt><span class="fa fa-list"></span> Motif rejet:</dt>
+        </div>
+        <div class="col-sm-6 text-danger" style="text-align: left;">
+          <dd class="mb-1"><%= @allocataire.try(:motif_rejet) %></dd>
+        </div>
+      </d1>
+    <% end %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Mode paiement: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1">   <%= ModifierModePaiement.human_enum_name(:mode_paiement, @modifier_mode_paiement.mode_paiement) %></dd>
+      </div>
+    </d1>
+    
+    <% unless @modifier_mode_paiement.admin_agence.nil?%>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Agence de paiement: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"> <%= @modifier_mode_paiement.admin_agence.try(:code_psrm) %></dd>
+      </div>
+    </d1>
+    <% end %>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-12" style="text-align: center; font-size: 11px; color: rgb(50, 50 50);">
+        <% if @modifier_mode_paiement.adresse_domicile? %>
+          <p><strong style="font-style: italic;" class="text-info">ADRESSE DOMICILE
+            :</strong> <%= @modifier_mode_paiement.adresse_domicile %></strong>
+          </p>
+          <p><strong style="font-style: italic;" class="text-info">TELEPHONE
+            :</strong> <%= @modifier_mode_paiement.telephone %></strong>
+          </p>
+        <%end %>
+      </div>
+    </d1>
+  </div>
+
+</div>
+
+
+

@@ -1,0 +1,327 @@
+<%= content_for :titre_page do %>
+  Détails Indemnité Congés Maternité -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_maternite.num_dossier}", admin_dossier_maternite_path(@dossier_maternite), class: 'text-info' %>
+  </span>
+<% end %>
+<%#= content_for :titre_page, "Détails indemnite_conges_maternite" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite), class: 'btn btn-white btn-sm' %>
+  <% if @indemnite_conges_maternite.creation? and current_user.gestionnaire_compte_allocataire? and (current_user == @dossier_maternite.ajoute_par or current_user == @dossier_maternite.affecte_a) %>
+    <%= link_to 'Modifier', edit_admin_dossier_maternite_indemnite_conges_maternite_path(@dossier_maternite, @indemnite_conges_maternite), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Supprimer', [:admin, @dossier_maternite, @indemnite_conges_maternite], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-danger btn-sm' %>
+    <% if @indemnite_conges_maternite.nbre_jr_payes > 0 %>
+      <%= link_to 'Liquider', admin_dossier_maternite_indemnite_conges_maternite_soumettre_path(@dossier_maternite, @indemnite_conges_maternite), class: 'btn btn-primary btn-sm' %>
+      <%#= link_to 'Liquider', admin_dossier_maternite_indemnite_conges_maternite_soumettre_path(@dossier_maternite, @indemnite_conges_maternite),
+          class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire? %>
+    <% end %>
+  <% end %>
+  <% if @indemnite_conges_maternite.soumis? and current_user.chef_agence? %>
+    <% if @dossier_maternite.valide? %>
+      <%= link_to 'Valider', admin_dossier_maternite_indemnite_conges_maternite_valider_path(@dossier_maternite, @indemnite_conges_maternite), class: 'btn btn-primary btn-sm' %>
+      <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_indemnite" id="retourner">
+        Retourner
+      </button>
+    <% else %>
+      <h6 class="text-warning"> Dossier Pas Validé </h6>
+    <% end %>
+  <% end %>
+  <% if @indemnite_conges_maternite.valide? and !@indemnite_conges_maternite.paiement and current_user.comptable? %>
+    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#retourner_indemnite" id="retourner">
+      Retourner
+    </button>
+  <% end %>
+  <% if (@indemnite_conges_maternite.creation? or @indemnite_conges_maternite.soumis?) and @indemnite_conges_maternite.motif_retour? %>
+    <button type="button" class="btn btn-white btn-sm" data-toggle="modal" data-target="#motif-retour" id="motif_retour">
+      VOIR MOTIF RETOUR
+    </button>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="contact-box" style="min-height: 180px">
+        <h3>
+          <strong> <%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement) %> </strong>
+        </h3>
+
+        <% unless @indemnite_conges_maternite.numero_liquidation.nil? %>
+          <p>
+            <strong>N° Liquidation : </strong>
+            <%= @indemnite_conges_maternite.numero_liquidation %>
+          </p>
+        <% end %>
+
+        <% if @indemnite_conges_maternite.avant_acouchement? %>
+          <p>
+            <strong>N° Dossier : </strong>
+            <%= @indemnite_conges_maternite.dossier_maternite.num_dossier %>
+          </p>
+
+          <p>
+            <strong>Début de la grossesse : </strong>
+            <%= l @indemnite_conges_maternite.dossier_maternite.debut_grossesse unless @indemnite_conges_maternite.dossier_maternite.debut_grossesse.nil? %>
+          </p>
+          <% unless @indemnite_conges_maternite.debut_conges.nil? %>
+            <p>
+              <strong>Debut des conges:</strong>
+              <%= l @indemnite_conges_maternite.debut_conges %>
+            </p>
+          <% end %>
+          <p class="text-success">
+            <strong>Date de l'échéance : </strong>
+            <%#= l (@indemnite_conges_maternite.debut_conges + 30.days) %>
+            <%= l (@indemnite_conges_maternite.date_echeance) unless @indemnite_conges_maternite.date_echeance.nil? %>
+          </p>
+        <% end %>
+
+        <% unless @indemnite_conges_maternite.avant_acouchement? %>
+          <div class="col-sm-4">
+            <div class="text-center">
+              <% if @indemnite_conges_maternite.apres_acouchement? %>
+                <p>
+                  <strong>Attestation accouchement :</strong>
+                  <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.attestation_accouchement, target: :_blank %>
+                  <%#= link_to image_tag(@indemnite_conges_maternite.attestation_accouchement.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @indemnite_conges_maternite.attestation_accouchement, target: :_blank %>
+                </p>
+                <% if @indemnite_conges_maternite.hors_senegal? %>
+                  <p>
+                    <strong>Document Rapport :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.document_rapport, target: :_blank %>
+                    <%#= link_to image_tag(@indemnite_conges_maternite.document_rapport.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @indemnite_conges_maternite.document_rapport, target: :_blank %>
+                  </p>
+                <% end %>
+              <% elsif @indemnite_conges_maternite.apres_reprise? %>
+                <p>
+                  <% if @indemnite_conges_maternite.cas_force_majeur? %>
+                    <strong>Document Cas de Force Majeur :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.document_cas_force_majeur, target: :_blank %>
+                    <%#= link_to image_tag(@indemnite_conges_maternite.document_cas_force_majeur.preview(resize: "300x300>"), class: "m-t-xs img-responsive"), @indemnite_conges_maternite.document_cas_force_majeur, target: :_blank %>
+                  <% else %>
+
+                  <% end %>
+
+                  <% if @indemnite_conges_maternite.prolongation %>
+                    <strong>Certificat médical :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_medical, target: :_blank %>
+                    <strong>Certificat de non reprise :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_medical, target: :_blank %>
+                  <% else %>
+                    <strong>Certificat de reprise :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_reprise, target: :_blank %>
+                  <% end %>
+                </p>
+
+              <% elsif @indemnite_conges_maternite.tranche_prolongation? %>
+                <strong>Certificat de reprise :</strong>
+                <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_reprise, target: :_blank %>
+              <% end %>
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <h3>
+              <strong> <%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement) %> </strong>
+            </h3>
+            <p>
+              <strong>Dossier maternite : </strong>
+              <%= @indemnite_conges_maternite.dossier_maternite.num_dossier %>
+            </p>
+
+            <p>
+              <strong>Début de la grossesse : </strong>
+              <%= l @indemnite_conges_maternite.dossier_maternite.debut_grossesse unless @indemnite_conges_maternite.dossier_maternite.debut_grossesse.nil? %>
+            </p>
+            <% unless @indemnite_conges_maternite.debut_conges.nil? %>
+              <p>
+                <strong>Debut des conges:</strong>
+                <%= l @indemnite_conges_maternite.debut_conges %>
+              </p>
+            <% end %>
+
+            <% unless @indemnite_conges_maternite.date_accouchement.nil? %>
+              <p>
+                <strong>Date d'accouchement:</strong>
+                <%= l @indemnite_conges_maternite.date_accouchement %>
+              </p>
+            <% end %>
+
+            <% unless @indemnite_conges_maternite.lieu_accouchement.nil? %>
+              <p>
+                <strong>Lieu de l'accouchement:</strong>
+                <%= IndemniteCongesMaternite.human_enum_name(:lieu_accouchement, @indemnite_conges_maternite.lieu_accouchement) %>
+              </p>
+            <% end %>
+
+            <% if @indemnite_conges_maternite.apres_acouchement? %>
+              <p>
+                <strong>Date de reprise :</strong>
+                <%= l @indemnite_conges_maternite.date_reprise_service unless @indemnite_conges_maternite.date_reprise_service.nil? %>
+              </p>
+            <% end %>
+
+            <% unless @indemnite_conges_maternite.rapport_controle.nil? %>
+              <p>
+                <strong>Rapport : </strong>
+                <%= @indemnite_conges_maternite.rapport_controle %>
+              </p>
+            <% end %>
+
+            <% if @indemnite_conges_maternite.apres_reprise? %>
+              <% if @indemnite_conges_maternite.date_reprise_reelle.nil? %>
+                <p>
+                  <strong>Date de reprise :</strong>
+                  <%= l @indemnite_conges_maternite.date_reprise_service %>
+                </p>
+              <% else %>
+                <p>
+                  <!--                  <strong>Date de reprise prévue :</strong>-->
+                  <strong>Date de fin de congés prévue :</strong>
+                  <%= l @indemnite_conges_maternite.date_reprise_service %>
+                </p>
+                <p>
+                  <!--                  <strong>Date de reprise réelle :</strong>-->
+                  <strong>Date de fin de congés réelle :</strong>
+                  <%= l (@indemnite_conges_maternite.date_reprise_reelle) %>
+                </p>
+              <% end %>
+            <% end %>
+
+            <% if @indemnite_conges_maternite.tranche_prolongation? %>
+              <p>
+                <!--                  <strong>Date de reprise prévue :</strong>-->
+                <strong>Date de fin de congés prévue :</strong>
+                <%= l @indemnite_conges_maternite.date_reprise_service unless @indemnite_conges_maternite.date_reprise_service.nil? %>
+              </p>
+              <p>
+                <!--                  <strong>Date de reprise réelle :</strong>-->
+                <strong>Date de fin de congés réelle :</strong>
+                <%= l (@dossier_maternite.date_fin_cong_reel + 1.days) unless @dossier_maternite.date_fin_cong_reel.nil? %>
+              </p>
+            <% end %>
+            <p class="">
+              <strong>Date de l'échéance : </strong>
+              <%= l (@indemnite_conges_maternite.date_echeance) unless @indemnite_conges_maternite.date_echeance.nil? %>
+            </p>
+          </div>
+        <% end %>
+
+        <% if @indemnite_conges_maternite.decedee? %>
+          <div class="row">
+            <div class="col-lg-12">
+              <!--            <div class="form-group" style="align-content: center">-->
+              <br>
+              <hr>
+              <p>
+                <strong class="text-danger">Date décès : </strong>
+                <%= l (@indemnite_conges_maternite.date_deces) unless @indemnite_conges_maternite.date_deces.nil? %>
+              </p>
+
+              <div class="col-lg-12">
+                <div class="col-lg-4">
+                  <p>
+                    <strong class="text-warning">NIN Mandataire : </strong>
+                    <%= @indemnite_conges_maternite.nin_mandataire unless @indemnite_conges_maternite.nin_mandataire.nil? %>
+                  </p>
+                </div>
+                <div class="col-lg-4">
+                  <p>
+                    <strong class="text-warning">Nom Mandataire : </strong>
+                    <%= @indemnite_conges_maternite.nom_mandataire unless @indemnite_conges_maternite.nom_mandataire.nil? %>
+                  </p>
+                </div>
+                <div class="col-lg-4">
+                  <p>
+                    <strong class="text-warning">Prénom Mandataire : </strong>
+                    <%= @indemnite_conges_maternite.prenom_mandataire unless @indemnite_conges_maternite.prenom_mandataire.nil? %>
+                  </p>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <div class="col-lg-4">
+                  <p>
+                    <strong class="text-warning">Certificat de décès :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_deces, target: :_blank %>
+                  </p>
+                </div>
+                <div class="col-lg-4">
+                  <p>
+                    <strong class="text-warning">Procuration légalisée :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.procuration_legalisee, target: :_blank %>
+                  </p>
+                </div>
+                <div class="col-lg-4">
+                  <p>
+                    <strong class="text-warning">Certificat d'hérédité :</strong>
+                    <%= link_to image_tag('missing_logo.png', size: "300x300>", class: "m-t-xs img-responsive"), @indemnite_conges_maternite.certificat_heredite, target: :_blank %>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <% unless @indemnite_conges_maternite.creation? %>
+          <p class="text-success">
+            <strong>Date de liquidation : </strong>
+            <%= l (@indemnite_conges_maternite.date_soumission) unless @indemnite_conges_maternite.date_soumission.nil? %>
+          </p>
+        <% end %>
+
+        <% if @indemnite_conges_maternite.valide? %>
+          <p class="text-info">
+            <strong>Date de validation : </strong>
+            <%= l (@indemnite_conges_maternite.date_validation) unless @indemnite_conges_maternite.date_validation.nil? %>
+          </p>
+        <% end %>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="modal inmodal" id="retourner_indemnite" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@indemnite_conges_maternite, url: admin_dossier_maternite_indemnite_conges_maternite_retourner_path(@dossier_maternite, @indemnite_conges_maternite), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-arrow-left modal-icon"></i>
+          <h4 class="modal-title">Retourner </h4>
+          <small class="font-bold">Saisir le motif</small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :motif_retour, label: 'Motif' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Retourner</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal inmodal" id="motif-retour" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-arrow-left modal-icon"></i>
+        <h4 class="modal-title">Motif retour dossier</h4>
+      </div>
+      <div class="modal-body">
+        <p>Motif retour
+          : <%= @indemnite_conges_maternite.motif_retour unless @indemnite_conges_maternite.motif_retour.nil? %></p>
+        <p>Retourné par :
+          le <%= User.human_enum_name(:type_profil, @indemnite_conges_maternite.retourne_par.type_profil) unless @indemnite_conges_maternite.retourne_par.nil? or @indemnite_conges_maternite.retourne_par.type_profil.nil? %> <%= @indemnite_conges_maternite.retourne_par.full_name unless @indemnite_conges_maternite.retourne_par.nil? %></p>
+        <p>Retourné le
+          : <%= l(@indemnite_conges_maternite.retourne_le) unless @indemnite_conges_maternite.retourne_le.nil? %></p>
+      </div>
+    </div>
+  </div>
+</div>

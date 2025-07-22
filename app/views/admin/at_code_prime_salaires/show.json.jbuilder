@@ -1,0 +1,1 @@
+json.partial! "admin_at_code_prime_salaires/admin_at_code_prime_salaire", admin_at_code_prime_salaire: @admin_at_code_prime_salaire

@@ -1,0 +1,50 @@
+<%= content_for :titre_page, "Détails admin_gesadm" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_gesadms_path, class: 'btn btn-white btn-sm' %>
+    <%#= link_to 'Modifier', edit_admin_gesadm_path(@admin_gesadm), class: 'btn btn-white btn-sm' %>
+    <%#= link_to 'Ajouter admin_gesadm', new_admin_gesadm_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                <p>
+                  <strong>MATRICULE:</strong>
+                  <%= @admin_gesadm.MATRICULE %>
+                </p>
+
+                <p>
+                  <strong>PRENOM:</strong>
+                  <%= @admin_gesadm.PRENOM %>
+                </p>
+
+                <p>
+                  <strong>NOM:</strong>
+                  <%= @admin_gesadm.NOM %>
+                </p>
+
+                <p>
+                  <strong>NAISSLIEU:</strong>
+                  <%= @admin_gesadm.NAISSLIEU %>
+                </p>
+
+                <p>
+                  <strong>NAISSMM:</strong>
+                  <%= @admin_gesadm.NAISSMM %>
+                </p>
+
+                <p>
+                  <strong>NAISSAA:</strong>
+                  <%= @admin_gesadm.NAISSAA %>
+                </p>
+
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

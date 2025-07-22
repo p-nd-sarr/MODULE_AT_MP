@@ -1,0 +1,64 @@
+<div class="modal inmodal" id="show_rec<%= object.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-user modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Détails de la recommandation
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-sm-12 p-sm" style="height: 40px; background-color: #fcf8e3; border-bottom: 1px solid #d33333">
+              <p>Date de création : <%= l object.created_at %></p>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col-sm-12 p-sm" style="height: 40px; background-color: #fcf8e3; border-bottom: 1px solid #d33333">
+              <p>Ajoutée par : <%= object.ajoute_par.full_name unless object.ajoute_par.nil? %>
+                (<%= object.ajoute_par.type_profil.humanize unless object.ajoute_par.nil? %>)</p>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col-sm-12 p-sm" style="height: 40px; background-color: #fcf8e3; border-bottom: 1px solid #d33333">
+              <p>Affectée à : <%= object.affecte_a.full_name unless object.affecte_a.nil? %>
+                (<%= object.affecte_a.type_profil.humanize unless object.affecte_a.nil? %>)</p>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col-sm-12 p-sm" style="height: 80px; background-color: #fcf8e3; border-bottom: 1px solid #d33333">
+              <p>Recommandation : <%= object.recommandation unless object.recommandation.nil? %></p>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col-sm-12 p-sm" style="height: 80px; background-color: #fcf8e3; border-bottom: 1px solid #d33333">
+              <p>Reponse direction concernée
+                : <%= object.direction_response unless object.direction_response.nil? %></p>
+            </div>
+          </div>
+          <br><br>
+          <div class="row">
+            <div class="col-sm-12 p-sm" style="height: 80px; background-color: #fcf8e3; border-bottom: 1px solid #d33333">
+              <% if object.response_file.attached? %>
+                <span> Pièce jointe : <a href="<%= url_for(object.response_file) %>" class="btn btn-primary btn-sm" target="_blank"> <i class="fa fa-eye"></i> </a></span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hr-line-dashed"></div>
+      <br>
+      <div class="modal-footer form-group">
+        <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

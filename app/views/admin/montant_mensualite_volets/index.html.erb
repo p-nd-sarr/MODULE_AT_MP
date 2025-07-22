@@ -1,0 +1,39 @@
+<%= content_for :titre_page, 'Montant Mensualite Volets' %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Ajouter', new_admin_montant_mensualite_volet_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+                <th scope="col">Num volet</th>
+                <th scope="col">Montant</th>
+                <th scope="col">Date changement</th>
+            <th colspan="3"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @montant_mensualite_volets.each do |montant_mensualite_volet| %>
+    <tr>
+                <td><%= montant_mensualite_volet.num_volet %></td>
+                <td><%= montant_mensualite_volet.montant %></td>
+                <td><%= montant_mensualite_volet.date_changement %></td>
+            <td style="width: 75px">
+        <%= link_to 'détails', montant_mensualite_volet, class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'modifier', edit_admin_montant_mensualite_volet_path(montant_mensualite_volet), class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'supprimer', montant_mensualite_volet, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+      </td>
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

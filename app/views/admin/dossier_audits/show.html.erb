@@ -1,0 +1,237 @@
+<%= content_for :titre_page, "Détails Dossier d'audit [#{@dossier_audit.current_state}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_audit.ajoute_par.nil? %>
+    Créé par : <%= @dossier_audit.ajoute_par.full_name unless @dossier_audit.ajoute_par.nil? %>
+    <br>
+    <strong class="text-info">Date création :</strong>
+    <%= "#{ @dossier_audit.created_at.strftime('%d/%m/%Y') }" %>
+  <% end %> <br>
+  Etat du dossier d'audit : <%= "#{@dossier_audit.current_state.meta[:label] }" %> <br>
+  <% if @dossier_audit.soumission? %>
+    Dossier soumis au chef de service d'audit par : <%= @dossier_audit.soumis_par.full_name unless @dossier_audit.soumis_par.nil? %>
+    <br>
+    <% unless @dossier_audit.date_soumission.nil? %>
+      <strong class="text-info">Date soumission :</strong>
+      <%= "#{l @dossier_audit.date_soumission}" %>
+      <br>
+    <% end %>
+  <% end %>
+  <% if @dossier_audit.soumission_directeur? %>
+    Dossier soumis au directeur d'audit par : <%= @dossier_audit.soumis_directeur_par.full_name unless @dossier_audit.soumis_directeur_par.nil? %>
+    <br>
+    <% unless @dossier_audit.date_soumission_directeur.nil? %>
+      <strong class="text-info">Date soumission :</strong>
+      <%= "#{l @dossier_audit.date_soumission_directeur}" %>
+      <br>
+    <% end %>
+  <% end %>
+  <% if @dossier_audit.validation? %>
+    Dossier validé par le directeur d'audit : <%= @dossier_audit.valide_par.full_name unless @dossier_audit.valide_par.nil? %>
+    <br>
+    <% unless @dossier_audit.date_validation.nil? %>
+      <strong class="text-info">Date validation :</strong>
+      <%= "#{l @dossier_audit.date_validation}" %>
+      <br>
+    <% end %>
+  <% end %>
+  <% if @dossier_audit.cloturation? %>
+    Dossier clôturé par le directeur d'audit : <%= @dossier_audit.cloture_par.full_name unless @dossier_audit.cloture_par.nil? %>
+    <br>
+    <% unless @dossier_audit.date_cloture.nil? %>
+      <strong class="text-info">Date clôture :</strong>
+      <%= "#{l @dossier_audit.date_cloture}" %>
+      <br>
+    <% end %>
+  <% end %>
+<% end %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_audit.motif_rejet.nil? %>
+    <strong class="text-info">Dossier retourné </strong>
+    <br>
+    <strong class="text-info">Motif de retour :</strong>
+    <%= @dossier_audit.motif_rejet %>
+    <br>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour Accueil', admin_dossier_audits_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to "Générer le rapport d'audit", admin_dossier_audit_generate_audit_report_path(@dossier_audit, format: :pdf), class: 'btn btn-primary btn-sm', target: '_blank' if @dossier_audit.cloturation? %>
+
+  <% if @dossier_audit.creation? %>
+    <%= (link_to 'Modifier', edit_admin_dossier_audit_path(@dossier_audit), class: 'btn btn-white btn-sm') if @dossier_audit.creation? and current_user == @dossier_audit.ajoute_par %>
+    <%= (link_to 'Supprimer', [:admin, @dossier_audit], method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                 class: 'btn btn-danger btn-sm') if @dossier_audit.creation? and current_user == @dossier_audit.ajoute_par %>
+  <% end %>
+  <br> <br>
+  <% @dossier_audit.current_state.events.values.each { |event| %>
+    <% event = event.first %>
+    <% if event.meta[:types_profils].include?(current_user.type_profil.to_sym) %>
+      <%= link_to event.meta[:label], admin_dossier_audit_change_statut_path(@dossier_audit, event.name), 'data-turbolinks': false, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-primary btn-sm' if event.meta[:back] == false %>
+      <br>
+      <%= link_to "Retourner dossier", '#', "data-toggle" => "modal", 'data-target' => '#retourner', class: 'btn btn-primary btn-sm' if event.meta[:back] == true %>
+      <%= render 'dossier_audit_back_modal', object: event.name if event.meta[:back] == true %>
+    <% end %>
+  <% } %>
+
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="progressbar-wrapper">
+              <ul class="progressbar">
+                <li class="<%= ("active") if @dossier_audit.current_state >= :creation %>">Création</li>
+                <li class="<%= ("active") if @dossier_audit.current_state >= :soumission %>">Soumission chef de
+                  service
+                </li>
+                <li class="<%= ("active") if @dossier_audit.current_state >= :soumission_directeur %>">Soumission
+                  directeur
+                </li>
+                <li class="<%= ("active") if @dossier_audit.current_state >= :validation %>">Validation dossier</li>
+                <li class="<%= ("active") if @dossier_audit.current_state >= :cloturation %>">Cloturation dossier</li>
+              </ul>
+            </div>
+            <div class="col-lg-12" style="margin-top: 30px;">
+              <%= link_to 'Activités', admin_dossier_audit_activities_path(@dossier_audit),
+                          class: 'btn btn-outline btn-primary btn-sm' %>
+            </div>
+            <div class="col-lg-12" style="margin-top: 50px">
+              <div>
+                <ul class="nav nav-tabs" style="font-size:10px">
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-1"><i class="fa fa-folder"></i>Informations
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_audit %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_audit %>
+                    </a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Ressources
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_audit %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_audit %>
+                    </a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-3"><i class="fa fa-file"></i>Documents
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_audit %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_audit %>
+                    </a>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_info' %>
+                    </div>
+                  </div>
+                  <div id="tab-2" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'admin/dossier_audits/ressources' %>
+                    </div>
+                  </div>
+                  <div id="tab-3" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'documents' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 15%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>

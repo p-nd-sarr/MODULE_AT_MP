@@ -1,0 +1,217 @@
+<%= bootstrap_form_for([:admin, @prestation_exterieure], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="ibox ">
+    <div class="ibox-title">
+      <h5 style="text-decoration: underline;"> Formulaire de demande de prestation </h5>
+      <div class="ibox-tools">
+        <a class="collapse-link">
+          <i class="fa fa-chevron-up"></i>
+        </a>
+        <a class="close-link">
+          <i class="fa fa-times"></i>
+        </a>
+      </div>
+    </div>
+    <br>
+    <div class="ibox-content">
+      <% if is_active_controller('admin/prestation_exterieures') and is_active_action('modifier_dossier') %>
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.select :situation_matrimoniale_salarie,
+                         PrestationExterieure::SITUATION_MATRIMONIALE.keys.collect { |situation_matrimoniale_salarie| [PrestationExterieure.human_enum_name(:situation_matrimoniale_salarie, situation_matrimoniale_salarie), situation_matrimoniale_salarie] }, label: 'Situation Matrimoniale' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :adresse_pays_emploi, required: 'true' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :adresse_pays_origine, required: 'true' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.phone_field :telephone, label: 'Téléphone', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.email_field :email, label: 'Adresse mail' %>
+          </div>
+        </div>
+      <% else %>
+        <div class="row">
+          <div class="col-lg-6">
+            <%= f.text_field :prenom, required: true if (is_active_controller('admin/prestation_exterieures') and is_active_action('new')) or @query == 'new' %>
+            <%= f.text_field :prenom, readonly: true if (is_active_controller('admin/prestation_exterieures') and is_active_action('edit')) or @query == 'edit' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :nom, required: true if (is_active_controller('admin/prestation_exterieures') and is_active_action('new')) or @query == 'new' %>
+            <%= f.text_field :nom, readonly: true if (is_active_controller('admin/prestation_exterieures') and is_active_action('edit')) or @query == 'edit' %>
+          </div>
+          <div class="col-lg-6">
+            <div id="nom_jf">
+              <%= f.text_field :nom_jeune_fille if (is_active_controller('admin/prestation_exterieures') and is_active_action('new')) or @query == 'new' %>
+              <%= f.text_field :nom_jeune_fille, readonly: true if (is_active_controller('admin/prestation_exterieures') and is_active_action('edit')) or @query == 'edit' %>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <%= f.select :sexe_salarie,
+                         PrestationExterieure::SEXE_SALARIE.keys.collect { |sit_mat| [sit_mat, sit_mat] }, label: 'Sexe' if (is_active_controller('admin/prestation_exterieures') and is_active_action('new')) or @query == 'new' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :sexe_salarie, readonly: true, label: 'Sexe' if (is_active_controller('admin/prestation_exterieures') and is_active_action('edit')) or @query == 'edit' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.date_select :date_naissance, label: "Date de naissance",
+                              start_year: (Date.today - 65.year).year, end_year: (Date.today - 18.year).year if (is_active_controller('admin/prestation_exterieures') and is_active_action('new')) or @query == 'new' %>
+            <%= f.date_select :date_naissance, label: "Date de naissance" if (is_active_controller('admin/prestation_exterieures') and is_active_action('edit')) or @query == 'edit' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :lieu_naissance, required: true, label: 'Pays de naissance' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.select :nationalite_salarie,
+                         PrestationExterieure::NATIONALITE_SALARIE.keys.collect { |nat| [nat, nat] }, label: 'Nationalite' if (is_active_controller('admin/prestation_exterieures') and is_active_action('new')) or @query == 'new' %>
+            <%= f.text_field :nationalite_salarie, readonly: true, label: 'Situation Matrimoniale' if (is_active_controller('admin/prestation_exterieures') and is_active_action('edit')) or @query == 'edit' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.select :type_piece,
+                         PrestationExterieure::TYPE_PIECE.keys.collect { |type_piece| [PrestationExterieure.human_enum_name(:type_piece, type_piece), type_piece] },
+                         label: "Type de pièce" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :nin_salarie, required: true, label: 'Numéro de pièce' %>
+            <div id="alert_nin" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">le nin doit etre
+              compris entre 13 et 14 chiffres
+            </div>
+            <div id="alert_nin_start_h" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">le nin
+              d'un homme commence par le chiffre "1"
+            </div>
+            <div id="alert_nin_start_f" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px;">le nin
+              d'une femme commence par le chiffre "2"
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <%= f.select :situation_matrimoniale_salarie,
+                         PrestationExterieure::SITUATION_MATRIMONIALE.keys.collect { |situation_matrimoniale_salarie| [PrestationExterieure.human_enum_name(:situation_matrimoniale_salarie, situation_matrimoniale_salarie), situation_matrimoniale_salarie] }, label: 'Situation Matrimoniale' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.collection_select :admin_country_id, Admin::Country.where(est_pays_caf: true), :id, :description, label: 'Pays de la convention CAF' %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :numero_secu_social, label: 'Numéro sécurité sociale - Pays convention', required: true %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.text_field :adresse_pays_emploi %>
+            <%= f.text_field :adresse_pays_origine %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.phone_field :telephone, label: 'Téléphone', help: "spécifiez l'indicatif du pays (ex: 221 77 000 00 00)" %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.email_field :email,  label: 'Adresse mail' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', (@prestation_exterieure.persisted? ? [:admin, @prestation_exterieure] : new_admin_prestation_exterieure_path), class: 'btn btn-white btn-xs' %>
+      <%= f.button 'Valider', class: 'btn btn-primary btn-xs', id: 'prestation_exterieure_submit_button' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#alert_nin').hide();
+          $('#alert_nin_start_h').hide();
+          $('#alert_nin_start_f').hide();
+
+          load_nom_jf();
+          if ($('#nom_jf').length) {
+              add_nom_jf();
+          }
+          $('#prestation_exterieure_sexe_salarie').change(function () {
+              load_nom_jf();
+          });
+          $('#prestation_exterieure_situation_matrimoniale_salarie').change(function () {
+              if ($('#nom_jf').length) {
+                  add_nom_jf();
+              }
+          });
+
+          function load_nom_jf() {
+              if ($('#prestation_exterieure_sexe_salarie').val() === 'homme') {
+                  $('#nom_jf').hide();
+              } else {
+                  $('#nom_jf').show();
+              }
+          }
+
+          function add_nom_jf() {
+              let nom = $('#prestation_exterieure_nom').val();
+              if ($('#prestation_exterieure_situation_matrimoniale_salarie').val() === 'marie') {
+                  $('#prestation_exterieure_nom_jeune_fille').val('');
+              } else {
+                  $('#prestation_exterieure_nom_jeune_fille').val(nom);
+              }
+          }
+
+          $('#prestation_exterieure_numero_secu_social').change(() => {
+              if ($('#prestation_exterieure_numero_secu_social').val().length == 0) {
+                  $('#prestation_exterieure_submit_button').attr("disabled", true)
+              } else {
+                  $('#prestation_exterieure_submit_button').attr("disabled", false)
+              }
+          })
+
+          $('#prestation_exterieure_nin_salarie, #prestation_exterieure_type_piece').change(() => {
+              let x = $('#prestation_exterieure_nin_salarie').val().length;
+              console.log($('#prestation_exterieure_type_piece').val())
+              if ($('#prestation_exterieure_type_piece').val() === 'cni') {
+                  if (x < 13 || x > 14) {
+                      $('#alert_nin').show();
+                      $('#prestation_exterieure_submit_button').attr("disabled", true)
+                  } else {
+                      $('#alert_nin').hide();
+                      $('#prestation_exterieure_submit_button').attr("disabled", false)
+                  }
+              } else {
+                  $('#alert_nin').hide();
+                  $('#prestation_exterieure_submit_button').attr("disabled", false)
+              }
+          })
+
+          $('#prestation_exterieure_nin_salarie, #prestation_exterieure_sexe_salarie, #prestation_exterieure_type_piece').change(() => {
+              let x = $('#prestation_exterieure_nin_salarie').val().slice(0, 1);
+              let sexe = $('#prestation_exterieure_sexe_salarie').val();
+              if ($('#prestation_exterieure_type_piece').val() === 'cni') {
+
+                  if (sexe == 'homme' && x != '1') {
+                      $('#alert_nin_start_h').show();
+                      $('#prestation_exterieure_submit_button').attr("disabled", true)
+                  } else {
+                      $('#alert_nin_start_h').hide();
+                      $('#prestation_exterieure_submit_button').attr("disabled", false)
+
+                  }
+                  if (sexe == 'femme' && x != '2') {
+                      $('#alert_nin_start_f').show();
+                      $('#prestation_exterieure_submit_button').attr("disabled", true)
+                  } else {
+                      $('#alert_nin_start_f').hide();
+                      $('#prestation_exterieure_submit_button').attr("disabled", false)
+                  }
+              } else {
+                  $('#alert_nin_start_h').hide();
+                  $('#alert_nin_start_f').hide();
+                  $('#prestation_exterieure_submit_button').attr("disabled", false)
+              }
+          })
+
+
+      });
+  </script>
+<% end %>

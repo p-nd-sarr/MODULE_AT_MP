@@ -1,0 +1,76 @@
+<%if @dossier_prestations.count.zero?%>
+  <h2 style="text-align:center; margin-top:50px"><hr>La liste des dossiers en attente de validation est vide !!!</h2>
+<%else%>
+
+<%= paginate @dossier_prestations %>
+<div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+  <table class="table table-striped">
+    <thead class="thead-primary">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">N° Dossier</th>
+          <th scope="col">Salarié(e)</th>
+          <th scope="col">Conjoint(e)</th>
+          <th scope="col">Traité le</th>
+          <th colspan="3"></th>
+        </tr>
+    </thead>
+    <tbody>
+    <% @dossier_prestations.each do |dossier_prestation| %>
+        <tr>
+          <td></td>
+          <td><%= dossier_prestation.num_dossier %></td>
+          <td><%= dossier_prestation.prenom + ' ' + dossier_prestation.nom%></td>
+          <td>
+            <%unless dossier_prestation.conjoint.nil? %>
+              <%= dossier_prestation.conjoint.prenom + ' ' + dossier_prestation.conjoint.nom %>
+            <%end %>
+          </td>
+          <td>
+            <% unless dossier_prestation.date_validation.nil? %>
+              <%= l dossier_prestation.date_validation %>
+            <%end %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'Valider dossier', admin_dossier_prestation_valider_path(dossier_prestation), class: 'btn btn-primary btn-sm' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_dossier_prestation_path(dossier_prestation), class: 'btn btn-outline btn-primary btn-sm' %>
+          </td>
+          <td style="width: 75px" class="dropdown">
+            <button class="btn btn-success btn-sm dropdown-toggle" type="button" data-toggle="dropdown"> Prestations <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu pull-right" style="background-color:rgb(240,240,240)">
+              <% unless dossier_prestation.conjoint.nil? %>
+                <li>
+                  <%= link_to 'Prénatales', admin_dossier_prestation_allocation_prenatales_path(dossier_prestation), id:"dd_hover" %>
+                </li>
+                <li>
+                  <%= link_to 'Postnatales', admin_dossier_prestation_allocation_postnatales_path(dossier_prestation), id:"dd_hover"%>
+                </li>
+              <% end %>
+              <% if dossier_prestation.conjoint.nil? && dossier_prestation.masculin?%>
+                <li>
+                  <%= link_to 'Familiales', admin_dossier_prestation_allocation_familiales_path(dossier_prestation), id:"dd_hover"%>
+                </li>
+              <% elsif dossier_prestation.conjoint.nil? && dossier_prestation.feminin?%>
+                <li>
+                  <%= link_to 'Prénatales', admin_dossier_prestation_allocation_prenatales_path(dossier_prestation), id:"dd_hover" %>
+                </li>
+                <li>
+                  <%= link_to 'Postnatales', admin_dossier_prestation_allocation_postnatales_path(dossier_prestation), id:"dd_hover"%>
+                </li>
+                <li>
+                  <%= link_to 'Familiales', admin_dossier_prestation_allocation_familiales_path(dossier_prestation), id:"dd_hover"%>
+                </li>
+              <% end %>
+            </ul>
+          </td>
+        </tr>
+        <%end%>
+      </tbody>
+    </table>
+  <%= paginate @dossier_prestations %>
+</div>
+
+<%end%>

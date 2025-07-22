@@ -1,0 +1,45 @@
+<%= content_for :titre_page, 'Admin Mandataires' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_mandataire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Nin</th>
+        <th scope="col">Entreprise</th>
+        <th scope="col">Téléphone</th>
+        <th scope="col">Email</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @mandataires.each do |mandataire| %>
+        <tr>
+          <td><%= mandataire.prenom unless mandataire.prenom.nil? %></td>
+          <td><%= mandataire.nom unless mandataire.nom.nil? %></td>
+          <td><%= mandataire.nin unless mandataire.nin.nil? %></td>
+          <td><%= mandataire.psrm_employeur.fhrsoc unless mandataire.psrm_employeur.nil? or mandataire.psrm_employeur.fhrsoc.nil? %></td>
+          <td><%= mandataire.telephone unless mandataire.telephone.nil? %></td>
+          <td><%= mandataire.email unless mandataire.email.nil? %></td>
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_mandataire_path(mandataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_mandataire_path(mandataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', mandataire, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

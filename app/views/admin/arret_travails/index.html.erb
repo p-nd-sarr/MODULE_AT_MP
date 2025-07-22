@@ -1,0 +1,56 @@
+<%= content_for :titre_page, 'Accidents du Travail' %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/arret_travails/search' %>
+    <br>
+
+    <%= paginate @demande_arret_travails %>
+
+    <table class="table table-striped" style="margin-top: 20px">
+      <thead>
+      <tr>
+        <th scope="col">Numéro Affiliation</th>
+        <th scope="col">Numéro Sinistre</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Agence</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Status</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @demande_arret_travails.each do |at| %>
+        <tr>
+          <td>
+            <% unless at.est_journalier? %>
+              <%= at.numero_affiliation %>
+            <% else %>
+              <%= at.nin_salarie %>
+            <% end %>
+          </td>
+          <td><%= at.num_dossier %></td>
+          <td><%= at.prenom_salarie %></td>
+          <td><%= at.nom_salarie %></td>
+          <td><%= at.admin_agence.description_prest unless at.admin_agence.nil? %></td>
+          <td><%= at.etat %>
+          <td><%= at.workflow_state %>
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_arret_travail_path(at), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <% if at.document_valid? && at.creation? %>
+            <td>
+              <%= link_to 'Recipissé de dépôt', admin_arret_travail_recipisse_dossier_at_path(at, format: :pdf), class: 'btn btn-outline btn-primary btn-xs', target: "_blank" %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @demande_arret_travails %>
+  </div>
+</div>

@@ -1,0 +1,106 @@
+<%= content_for :titre_page do %>
+  Détails échéance caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+  Employeur : <%= @employeur.matric %> <br>
+  Modification
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_caisse_employeur_path(@echeance, @employeur), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-sm-7">
+      </div>
+      <div class="col-sm-5">
+        <%= search_form_for @q, url: request.path do |f| %>
+          <div class="input-group mb-4" style="float: right;">
+            <%= f.search_field :num_affiliation_cont, class: "form-control form-control-sm", placeholder: "Numéro d'affiliation", style: "width:150px; position: relative; z-index: 1" %>
+            <div class="input-group-append" style="float: right; position:relative; z-index: 2; margin-left: 2px">
+              <%= f.submit nil, :class => "btn btn-sm btn-primary", :style => "height:34px" do %>
+                <i class="fa fa-search" aria-hidden="true"></i>
+              <% end %>
+              <%= link_to "Réinitialiser", admin_echeance_caisse_edit_employeur_path(@echeance, @employeur), :class => "btn btn-sm btn-white", :style => "height:34px" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <br> <br>
+    <%= bootstrap_form_for @employeur, url: admin_echeance_caisse_update_employeur_path(@echeance, @employeur) do |form| %>
+      <%= form.alert_message "Please fix the errors below." %>
+      <%= form.text_field :identifiant_mandataire, label: 'Nuuméro CNI du mandataire', required: true %>
+      <%= form.text_field :prenom_mandataire, label: 'Prénom du mandataire', required: true %>
+      <%= form.text_field :nom_mandataire, label: 'Nom du mandataire', required: true %>
+      <%= form.text_field :telephone_mandataire, label: 'Téléphone du mandataire' %>
+      <%= form.text_field :email_mandataire, label: 'Email du mandataire' %>
+      <%= form.file_field :bordereau_rempli, label: 'Document justificatif du bordereau', help: "le document PDF sur lequel l'employeur a saisi les temps de présence" %>
+
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col" colspan="3" rowspan="2"></th>
+          <th scope="col" colspan="9" class="text-center">Temps de présence</th>
+        </tr>
+        <tr>
+          <th scope="col" colspan="3" class="text-center">Mois 1</th>
+          <th scope="col" colspan="3" class="text-center">Mois 2</th>
+          <th scope="col" colspan="3" class="text-center">Mois 3</th>
+        </tr>
+        <tr>
+          <th scope="col">Numéro</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Nom</th>
+          <th scope="col" class="text-center">Temp présence</th>
+          <th scope="col" class="text-center">Absence Justifiée</th>
+          <th scope="col" class="text-center">Motif absence</th>
+          <th scope="col" class="text-center">Temp présence</th>
+          <th scope="col" class="text-center">Absence Justifiée</th>
+          <th scope="col" class="text-center">Motif absence</th>
+          <th scope="col" class="text-center">Temp présence</th>
+          <th scope="col" class="text-center">Absence Justifiée</th>
+          <th scope="col" class="text-center">Motif absence</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <%= form.fields_for :echeance_caisse_dossiers, @dossiers do |dossier_subform| %>
+          <%# @dossiers.each do |dossier| %>
+          <tr>
+            <td><%= dossier_subform.object.num_affiliation %></td>
+            <td><%= dossier_subform.object.prenom %></td>
+            <td><%= dossier_subform.object.nom %></td>
+            <td><%= dossier_subform.text_field :temps_presence_mois1, hide_label: true, required: true, disabled: @employeur.temps_presence_valide %></td>
+            <td class="text-center"><%= dossier_subform.check_box :absence_justifie_mois1, hide_label: true, disabled: @employeur.temps_presence_valide, :onclick => "document.getElementById('motif1'+#{dossier_subform.index}).style.display = (this.checked ? 'inline' : 'none');" %></td>
+            <td>
+              <div id="motif1<%= dossier_subform.index %>" style="<%= dossier_subform.object.absence_justifie_mois1 == false ? 'display:none' : 'display:inline' %>">
+                <%= dossier_subform.select :motif_absence_mois1, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, hide_label: true, disabled: @employeur.temps_presence_valide %>
+              </div>
+            </td>
+            <td><%= dossier_subform.text_field :temps_presence_mois2, hide_label: true, required: true, disabled: @employeur.temps_presence_valide %></td>
+            <td class="text-center"><%= dossier_subform.check_box :absence_justifie_mois2, hide_label: true, disabled: @employeur.temps_presence_valide, :onclick => "document.getElementById('motif2'+#{dossier_subform.index}).style.display = (this.checked ? 'inline' : 'none');" %></td>
+            <td>
+              <div id="motif2<%= dossier_subform.index %>" style="<%= dossier_subform.object.absence_justifie_mois2 == false ? 'display:none' : 'display:inline' %>">
+                <%= dossier_subform.select :motif_absence_mois2, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, hide_label: true, disabled: @employeur.temps_presence_valide %>
+              </div>
+            </td>
+            <td><%= dossier_subform.text_field :temps_presence_mois3, hide_label: true, required: true, disabled: @employeur.temps_presence_valide %></td>
+            <td class="text-center"><%= dossier_subform.check_box :absence_justifie_mois3, hide_label: true, disabled: @employeur.temps_presence_valide, :onclick => "document.getElementById('motif3'+#{dossier_subform.index}).style.display = (this.checked ? 'inline' : 'none');" %></td>
+            <td>
+              <div id="motif3<%= dossier_subform.index %>" style="<%= dossier_subform.object.absence_justifie_mois3 == false ? 'display:none' : 'display:inline' %>">
+                <%= dossier_subform.select :motif_absence_mois3, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement', 'Travail intermittent'], :include_blank => true, hide_label: true, disabled: @employeur.temps_presence_valide %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= form.submit 'Enregistrer', class: 'btn btn-primary btn-sm' %>
+    <% end %>
+  </div>
+</div>

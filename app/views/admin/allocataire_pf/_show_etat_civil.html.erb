@@ -1,0 +1,35 @@
+<div class="row">
+  <div class="col-lg-3"></div>
+  <div class="col-lg-6">
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <h5>
+          <strong>Numéro salarié:</strong> &nbsp;  <%= @allocataire_pf.numero_allocataire %>
+        </h5>
+        <h5>
+          <strong>Prénom:</strong> &nbsp;  <%= @allocataire_pf.prenom %>
+        </h5>
+        <h5>
+          <strong>Nom:</strong> &nbsp;  <%= @allocataire_pf.nom %>
+        </h5>
+        <h5>
+          <strong>Date de
+            naissance:</strong> &nbsp;   <%= l(@allocataire_pf.date_naissance) unless @allocataire_pf.date_naissance.nil? %>
+        </h5>
+        <% if @allocataire_pf.lieu_naissance? %>
+          <h5>
+            <strong>Lieu de naissance:</strong> &nbsp;  <%= @allocataire_pf.lieu_naissance %>
+          </h5>
+        <% end %>
+        <% unless @dossier_prestation_f.nil? %>
+          <h5>
+            <strong>adresse:</strong> <%= @dossier_prestation.adresse_domicile unless @dossier_prestation.adresse_domicile.nil?%>
+          </h5>
+          <h5>
+            <strong>Nombre de conjoint:</strong> <%= Conjoint.where(numero_affiliation: params[:id]).count  unless @dossier_prestation.conjoint_id.nil?%>
+          </h5>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

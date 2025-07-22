@@ -1,0 +1,31 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-lg-10">
+    <h2>Nouveau dossier prestation GED</h2>
+    <ol class="breadcrumb">
+      <li>
+        <%= link_to 'Accueil', admin_root_path %>
+      </li>
+      <li>
+        <%= link_to 'Dossiers Prestation GED', admin_dossier_prestation_geds_path %>
+      </li>
+      <li class="active">
+        <strong>Nouveau</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Formulaire de création</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form', dossier_prestation_ged: @dossier_prestation_ged %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

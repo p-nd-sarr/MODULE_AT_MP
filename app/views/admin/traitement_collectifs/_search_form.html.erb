@@ -1,0 +1,34 @@
+<div class="modal inmodal" id="searchModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-search modal-icon btn-white"></i>
+        <h4 class="modal-title">
+
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="search_section">
+          <%= form_tag(admin_traitement_collectif_path(@employeur.fhnum), method: :get) do %>
+            <div class="row">
+              <div class="col-sm-3">
+                <span>Année</span> <%= date_select('annee', 'presence', discard_day: true, discard_month: true,
+                                                   start_year: (Date.today - 1.year).year, end_year: Date.today.year, selected: params[:annee].nil? ? Date.today : Date.civil(params[:annee]["presence(1i)"].to_i, params[:annee]["presence(2i)"].to_i, params[:annee]["presence(3i)"].to_i)) %>
+              </div>
+              <div class="col-sm-5">
+                <span>Trimestre</span> <%= select_tag :trimestre, options_for_select([]) %>
+              </div>
+              <div class="col-sm-4">
+                <%= submit_tag 'Rechercher', id: 'submit_button', name: nil %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,82 @@
+<div class="modal inmodal" id="SoumissionModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+          Soumission du dossier de prestation extérieure / CFS
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <table class="table table-condensed table-hover">
+          <tr>
+            <td><input class="conditions" type="checkbox" name="condition1">
+            </td>
+            <td>
+              <strong>
+                Condition 1 : Je déclare ne plus exercer d'activité salariée à compter du
+                <% if @cfs_reversion_veuve.resident_fr? %>
+                  <%= l @cfs_reversion_veuve.date_cess_act_sn %>
+                <% else %>
+                  <%= l @cfs_reversion_veuve.date_cess_act_fr %>
+                <% end %>
+                et je m'engage à n'en plus reprendre sans avoir préalablement avisé l'IPRES.
+              </strong>
+            </td>
+
+          </tr>
+
+          <tr>
+            <td><input class="conditions" type="checkbox" name="condition2">
+            </td>
+            <td>
+              <strong>Condition 2 : Je déclare en outre n'avoir pas adressé d'autre demande d'allocation via la
+                convention CFS et n'avoir jamais perçu à ce titre quelque somme que ce soit.</strong>
+            </td>
+          </tr>
+          <tr>
+
+            <td><input class="conditions" type="checkbox" name="condition3">
+            </td>
+
+            <td><strong>Condition 3 : Je certifie que les renseignements portés sur la présente demande sont
+              exacts.</strong></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= link_to 'Valider la soumission',
+                    admin_cfs_reversion_veuve_soumettre_path(@cfs_reversion_veuve), class: 'btn btn-primary', id: 'soummetre_valide' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        $('input:checkbox').removeAttr('checked');
+
+        $("#soummetre_valide").hide();
+        var all_checkboxes = $('#SoumissionModal input[type="checkbox"]');
+
+        $(".modal-body").change(function () {
+
+            if (all_checkboxes.length === all_checkboxes.filter(":checked").length) {
+                $("#soummetre_valide").show();
+            } else {
+                $("#soummetre_valide").hide();
+
+            }
+
+        });
+
+    });
+
+</script>
+

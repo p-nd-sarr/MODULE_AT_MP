@@ -1,0 +1,218 @@
+<% if @immatriculation.effectif_employe == nil %>
+<div class="row" style="margin-top:20px">
+  <%= render 'employer/immatriculation_associations/show_items/new_infos_salaries' %>
+</div>
+<% end %>
+
+<% if @immatriculation.effectif_employe != nil %>
+
+<div class="row">
+
+  <div class="col-sm-12">
+    <% unless @immatriculation.id == nil  or @immatriculation.salarie_valide?  %>
+      <%= link_to "Je valide les informations des salariés", employer_immatriculation_association_valider_salarie_path(current_user), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <% end %>
+  </div>
+
+</div>
+<div class="row">
+
+  <div class="col-sm-8" style="margin-top:20px">
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">NIN</th>
+        <th scope="col">Actions</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @salaries.each do |salarie| %>
+        <tr>
+          <td><%= salarie.nom %></td>
+          <td><%= salarie.prenom %></td>
+          <td><%= salarie.numero_piece %></td>
+          <td>
+              <% if salarie.etat != 'retrait' %>
+                <%= link_to "Retirer", employer_immatriculation_associations_path(immatriculation_id: @immatriculation.id, salarie_id: salarie.id), 'data-confirm': 'Vous retirez ce salarié ?', class: 'btn btn-outline btn-danger btn-xs' %>
+              <% end %>
+            </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @salaries %>
+  </div>
+  <div class="col-sm-4" style="text-align:right">
+    <div class="col-lg-12">
+      <%= render 'employer/immatriculation_associations/show_items/new_salarie' %>
+    </div>
+    
+    <div class="col-lg-12">
+    <h3>Ou</h3>
+            <h4>Ajouter Salariés par Chargement de Fichier</h4>
+            <%= link_to "Télécharger template ICI", employer_immatriculation_associations_path(@immatriculation) %>
+            <%= form_tag import_employer_salarie_immatriculations_path, multipart: true do %>
+              <%= file_field_tag :file, label: 'Choisir fichier', class: 'custom-file-input', style:'float:right' %>
+              <%= submit_tag "Importer fichier salarié",  class: 'btn btn-primary', style:'margin-top:10px'  %>
+            <% end %>
+    </div>
+  </div>
+</div>
+
+    <!--<div class="row">
+      <div class="col-sm-5">
+
+      </div>
+      <div class="col-sm-7">
+        <h4>Ajouter Salariés par Chargement de Fichier</h4>
+        <%= link_to "Télécharger template ICI", employer_immatriculation_associations_path(@immatriculation) %>
+        <%= form_tag import_employer_salarie_immatriculations_path, multipart: true do %>
+          <%= file_field_tag :file, label: 'Choisir fichier', class: 'custom-file-input' %>
+          <%= submit_tag "Importer fichier salarié",  class: 'btn btn-primary'  %>
+        <% end %>
+      </div>
+    </div> -->
+
+  <script type="text/javascript">
+
+          $(document).ready(function(){
+
+
+          });
+
+  </script>
+<% end %>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $('#salarie_immatriculation_region').change(function(){
+
+            console.log('change region');
+            var e = document.getElementById("salarie_immatriculation_region");
+
+            //var strOption = e.options[e.selectedIndex].text;
+            var regionRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_associations/1/load_adresse?region="+regionRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_immatriculation_departement')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#salarie_immatriculation_departement').change(function(){
+
+
+            console.log('change departement');
+
+            var e = document.getElementById("salarie_immatriculation_departement");
+            var departementRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_associations/1/load_adresse?departement="+departementRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_immatriculation_ville')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#salarie_immatriculation_ville').change(function(){
+
+            console.log('change ville');
+
+
+            var e = document.getElementById("salarie_immatriculation_ville");
+            var villeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_associations/1/load_adresse?ville="+villeRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_immatriculation_commune')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#salarie_immatriculation_commune').change(function(){
+
+            console.log('change commune');
+
+            var e = document.getElementById("salarie_immatriculation_commune");
+            var communeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculation_associations/1/load_adresse?commune="+communeRepresentant,
+                data: null,
+                success: function(data, textStatus, jqXHR){
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_immatriculation_quartier')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function(jqXHR, textStatus, errorThrown){
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+
+
+
+    });
+
+</script>

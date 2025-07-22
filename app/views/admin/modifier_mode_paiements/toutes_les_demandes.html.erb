@@ -1,0 +1,12 @@
+<%= content_for :titre_page, "Toutes les demandes de modification mode paiement" %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-title">
+    <h5>Demandes de modification mode paiements</h5>
+    <span class="label label-warning">Total demande <%= @total %></span>
+  </div>
+  <div class="ibox-content">
+    <%= render 'admin/modifier_mode_paiements/search' %>
+    <%= render "liste_modifier_mode_paiement" %>
+  </div>
+</div>

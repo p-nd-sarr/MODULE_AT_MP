@@ -1,0 +1,834 @@
+<%= content_for :titre_page, "Dossier De Prestation exterieure [#{PrestationExterieure.human_enum_name(:state, @prestation_exterieure.current_state)}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  statut dossier: <%= @prestation_exterieure.get_status? ? 'Complet' : 'Incomplet' %>
+  <br>
+  <%# if @prestation_exterieure.require_pieces_change? %>
+  <!--    <p>-->
+  <%# if @prestation_exterieure.dossier_suspendu? %>
+  <!--        Votre dossier est suspendu, merci de renouveler les pièces :-->
+  <%# else %>
+  <!--        Attention! Veuillez svp renouveler les pièces avant le 01 avril :-->
+  <%# end %>
+  <%#= link_to "Je renouvelle les pièces", admin_prestation_exterieure_renouveler_pieces_path(@prestation_exterieure), class: 'btn btn-danger btn-sm' %>
+  <!--    </p>-->
+  <%# end %>
+
+  Salarié : <%= @prestation_exterieure.prenom unless @prestation_exterieure.nil? %> <%= @prestation_exterieure.nom unless @prestation_exterieure.nil? %>
+  <br>
+  Etat du dossier : <%= "#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}" %>
+  <br>
+  Crée le : <%= l(@prestation_exterieure.created_at) %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <% if @prestation_exterieure.dossier_valide? %>
+    <%= link_to 'Modifier dossier', admin_prestation_exterieure_modifier_dossier_path(@prestation_exterieure), class: 'btn btn-primary btn-xs' %>
+  <% end %>
+
+  <%= link_to 'Retour', admin_prestation_exterieures_path, class: 'btn btn-white btn-xs' %>
+  <% unless @prestation_exterieure.information_valid %>
+    <%= link_to 'Editer', edit_admin_prestation_exterieure_path(@prestation_exterieure), class: 'btn btn-white btn-xs' %>
+  <% end %>
+  <br>
+  <% if @prestation_exterieure.pret_pour_validation? and @prestation_exterieure.initialisation? and !@prestation_exterieure.valide? %>
+    <br>
+    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#SoumissionModal" id="soumettre_id">Valider
+      le dossier
+    </button>
+  <% end %>
+  <% if @prestation_exterieure.valide? %>
+    <br>
+    <%= link_to 'Régularisation', admin_prestation_exterieure_reouvrir_dossier_path(@prestation_exterieure), class: 'btn btn-primary btn-xs' if @prestation_exterieure.dossier_valide? %>
+    <%= link_to 'voir etat de famille', admin_prestation_exterieure_generate_etat_path(@prestation_exterieure), class: 'btn btn-primary btn-xs' %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="ibox float-e-margins">
+      <div class="ibox-content">
+        <div class="row">
+          <div class="progressbar-wrapper">
+            <ul class="progressbar">
+              <li class="<%= ("active") if @prestation_exterieure.current_state >= :initialisation %>">Création</li>
+              <li class="<%= ("active") if @prestation_exterieure.current_state >= :soumission_etat_chef_grp %>">Soumission
+                état de famille CAF
+              </li>
+              <li class="<%= ("active") if @prestation_exterieure.current_state >= :dossier_valide %>">Validation
+                dossier
+                CAF
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content" style="font-size:medium;">
+  <div class="row" style="margin-top: -60px">
+    <div class="col-lg-12 col-md-12">
+      <div class="ibox-content">
+        <div class="row">
+          <div class="col-lg-9" style="margin-bottom: 25px; margin-top: 20px;">
+            <%= link_to 'Grappe familliale', admin_prestation_exterieure_grappe_familliale_path(@prestation_exterieure),
+                        class: 'btn btn-outline btn-primary btn-sm' %>
+            <%= link_to 'Historique du dossier', admin_prestation_exterieure_historique_dossier_path(@prestation_exterieure),
+                        class: 'btn btn-outline btn-primary btn-sm' %>
+            <%= link_to 'Suspendre dossier', admin_prestation_exterieure_suspendre_dossier_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-warning btn-sm' if @prestation_exterieure.dossier_valide? %>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-12">
+            <h5 class="text-warning" style="font-family: Georgia;">
+              N° Dossier : <%= @prestation_exterieure.numero_dossier %>
+            </h5>
+          </div>
+        </div>
+        <ul class="nav nav-tabs" style="font-size:10px">
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Information
+              Salarié
+              <%= '<span class="label label-warning">à valider</span>'.html_safe unless @prestation_exterieure.information_valid? %>
+              <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @prestation_exterieure.information_valid? %>
+            </a>
+          </li>
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Conjoint(s)
+              <%= '<span class="label label-warning">à valider</span>'.html_safe unless @prestation_exterieure.conjoint_valid? %>
+              <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @prestation_exterieure.conjoint_valid? %>
+            </a>
+          </li>
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-3"><i class="fa fa-users"></i>Enfant(s)
+              <%= '<span class="label label-warning">à valider</span>'.html_safe unless @prestation_exterieure.enfant_valid? %>
+              <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @prestation_exterieure.enfant_valid? %>
+            </a>
+          </li>
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Documents
+              <%= '<span class="label label-warning">à valider</span>'.html_safe unless @prestation_exterieure.document_valid? %>
+              <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @prestation_exterieure.document_valid? %>
+            </a>
+          </li>
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-5"><i class="fa fa-money"></i>Indemnités
+              <!--<%#= '<span class="label label-warning">à valider</span>'.html_safe unless @prestation_exterieure.indemnite_valid? %>
+              <%#= '<span class="label label-primary">&#10003;</span>'.html_safe if @prestation_exterieure.indemnite_valid? %>-->
+            </a>
+          </li>
+          <li class="tab-link-top">
+            <a data-toggle="tab" href="#tab-6"><i class="fa fa-money"></i>Paiements
+            </a>
+          </li>
+
+        </ul>
+        <div class="tab-content">
+
+          <div id="tab-1" class="tab-pane tab-pane-section">
+            <div class="full-height-scroll">
+              <br>
+              <% unless @prestation_exterieure.information_valid %>
+                <%= link_to "Je valide les informations du salarié", admin_prestation_exterieure_valider_informations_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-xs' %>
+                <hr>
+              <% end %>
+              <%= render 'information_salarie' %>
+            </div>
+          </div>
+
+
+          <div id="tab-2" class="tab-pane tab-pane-section">
+            <div class="full-height-scroll">
+              <br>
+              <% unless @prestation_exterieure.conjoint_valid %>
+                <%= link_to "Je valide les informations sur les conjoints", admin_prestation_exterieure_valider_conjoints_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-xs' %>
+                <hr>
+              <% end %>
+              <% if @prestation_exterieure.conjoint_valid and @prestation_exterieure.initialisation? %>
+                <%= link_to "Je réouvre la section conjoints", admin_prestation_exterieure_reouvrir_conjoints_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-xs' %>
+                <hr>
+              <% end %>
+              <%= render 'list_caf_conjoints' %>
+            </div>
+          </div>
+
+
+          <div id="tab-3" class="tab-pane tab-pane-section">
+            <div class="full-height-scroll">
+              <br>
+              <% unless @prestation_exterieure.enfant_valid %>
+                <%= link_to "Je valide les informations sur les enfants", admin_prestation_exterieure_valider_enfants_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-xs' %>
+                <hr>
+              <% end %>
+              <% if @prestation_exterieure.enfant_valid and @prestation_exterieure.initialisation? %>
+                <%= link_to "Je réouvre la section enfants", admin_prestation_exterieure_reouvrir_enfants_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-xs' %>
+                <hr>
+              <% end %>
+              <%= render 'list_caf_enfants' %>
+            </div>
+          </div>
+
+          <div id="tab-4" class="tab-pane tab-pane-section">
+            <div class="full-height-scroll">
+              <br>
+              <% unless @prestation_exterieure.document_valid %>
+                <% if @prestation_exterieure.get_status? %>
+                  <%= link_to "Je valide tous les documents", admin_prestation_exterieure_valider_documents_path(@prestation_exterieure), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-xs' %>
+                  <hr>
+                <% else %>
+                  <p>Veuillez completer le dossier pour valider la section documents</p>
+                <% end %>
+              <% end %>
+              <%= render 'list_caf_documents' %>
+            </div>
+          </div>
+
+
+          <div id="tab-5" class="tab-pane tab-pane-section">
+            <% if @prestation_exterieure.dossier_valide? %>
+              <div class="full-height-scroll">
+                <br>
+                <div class="row" style="font-size: small">
+                  <div class="col-sm-3">
+                    <% unless @prestation_exterieure.numero_caf? %>
+                      <a style="" data-toggle="modal" data-target="#NumeroCafModal" id="numero_caf" class="btn btn-primary btn-xs">Renseigner
+                        le numéro CAF du dossier </a>
+                    <% else %>
+                      <span> Numero dossier CAF : <%= @prestation_exterieure.numero_caf %>
+                        <% unless @prestation_exterieure.indemnite_valid? %>
+                        <a data-toggle="modal" data-target="#NumeroCafModal" id="numero_caf" class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> </a>
+                          </span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <div class="col-sm-3">
+                    <% unless @prestation_exterieure.has_beneficiary? %>
+                      <a data-toggle="modal" data-target="#beneficiaire" id="" class="btn btn-primary btn-xs">Renseigner
+                        le beneficiaire des allocations </a>
+                    <% else %>
+                      <span> beneficiaire : <%= @beneficiary.prenom unless @beneficiary.nil? %> <%= @beneficiary.nom_jeune_fille unless @beneficiary.nil? %>
+                        <% unless @prestation_exterieure.indemnite_valid? %>
+                        <a data-toggle="modal" data-target="#beneficiaire" id="" class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> </a>
+                          </span>
+                      <% end %>
+                    <% end %>
+                  </div>
+                  <div class="col-sm-3">
+                    <% unless @prestation_exterieure.admin_cities_id %>
+                      <a data-toggle="modal" data-target="#CaisseCaf" id="caisse_caf" class="btn btn-primary btn-xs">Renseigner
+                        la caisse CAF </a>
+                    <% else %>
+                <span> Caisse CAF : <%= @prestation_exterieure.getCity(@prestation_exterieure.admin_cities_id).description %>
+                  <% unless @prestation_exterieure.indemnite_valid %>
+                    <a data-toggle="modal" data-target="#CaisseCaf" id="caisse_caf" class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> </a>
+                    </span>
+                  <% end %>
+                    <% end %> <br> <br>
+                  </div>
+                  <div class="col-sm-3">
+                    <% unless @prestation_exterieure.piece_justificative_caf.attached? %>
+                      <a data-toggle="modal" data-target="#PieceJustificativeModal" id="piece_justificative" class="btn btn-primary btn-xs">Je
+                        joins la pièce justificative </a>
+                    <% else %>
+                <span> Pièce justificative : <a href="<%= url_for(@prestation_exterieure.piece_justificative_caf) %>" class="btn btn-primary btn-xs" target="_blank"> <i class="fa fa-eye"></i> </a>
+                  </i>
+                  <% unless @prestation_exterieure.indemnite_valid %>
+                    <a data-toggle="modal" data-target="#PieceJustificativeModal" id="numero_caf" class="btn btn-primary btn-xs"> <i class="fa fa-pencil"></i> </a>
+                  <% end %>
+                </span>
+                    <% end %>
+                  </div>
+                </div>
+                <hr>
+                <%= render 'caf_indemnites' %>
+              </div>
+            <% end %>
+            <% if @prestation_exterieure.dossier_suspendu? %>
+              <div class="full-height-scroll">
+                <div class="ibox-content" style="font-size: 13px">
+                  <div class="row" style="padding: 20px; font-size: 12px">
+                    <p>Le dossier a été suspendu !</p> <br>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <% if @prestation_exterieure.current_state < :dossier_valide %>
+              <div class="full-height-scroll">
+                <div class="ibox-content" style="font-size: 13px">
+                  <div class="row" style="padding: 20px; font-size: 12px">
+                    <p>Vous devez valider l'état de famille avant de renseigner les indémnités.</p>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+
+
+          <div id="tab-6" class="tab-pane tab-pane-section">
+            <div class="full-height-scroll">
+              <br>
+              <%= render 'paiements' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!--End col-lg-12-->
+  </div><!--End row-->
+</div><!--END wrapper wrapper-content"-->
+
+
+<%= render 'validation_form' %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+
+      function findAncestor(el, wantedClass) {
+          while ((el = el.parentElement) && !el.classList.contains(wantedClass)) ;
+          return el;
+      }
+
+      function findNextElt(el, wantedClass) {
+          while ((el = el.nextElementSibling) && !el.classList.contains(wantedClass)) ;
+          return el;
+      }
+
+      function findSpecifiChild(el, wantedClass) {
+          return el.querySelector('.' + wantedClass);
+      }
+
+      /* Start section form conjoint */
+      $(document).ready(function () {
+          load_separation_section();
+
+          $('.reset_form_conjoint').on('click', () => {
+              $(".new_caf_conjoint").trigger("reset");
+              $('#alert_nin').hide();
+              $('#alert_nin_start_h').hide();
+              $('#alert_nin_start_f').hide();
+              $('#separation').hide();
+
+              <% if  @prestation_exterieure.masculin? %>
+              $('#new_conjoint_caf_conjoint_nom').val('<%= @prestation_exterieure.nom %>')
+              <% end %>
+
+              clearFileName(type_input.cert)
+              clearFileName(type_input.piece)
+              clearFileName(type_input.cert_div)
+              clearFileName(type_input.cert_dec)
+
+          })
+
+
+          $('#new_conjoint_caf_conjoint_etat_couple').change(function () {
+              load_separation_section();
+          });
+
+          var etat_couple_array = document.getElementsByName('caf_conjoint[etat_couple]');
+
+
+          for (let i = 0; i < etat_couple_array.length; i++) {
+              etat_couple_array[i].addEventListener('change', function (event) {
+                  let elt = etat_couple_array[i]
+                  let selectAncestor = findAncestor(elt, 'parentClass')
+                  let sectionAncestor = findNextElt(selectAncestor, 'containerClass')
+                  let sectionDivorce = findSpecifiChild(sectionAncestor, 'section-cert-div')
+                  let sectionDeces = findSpecifiChild(sectionAncestor, 'section-cert-dec')
+
+                  if (sectionDivorce) {
+                      sectionDivorce.style.display = elt.value === 'divorce' ? 'block' : 'none'
+                  }
+
+                  if (sectionDeces) {
+                      sectionDeces.style.display = elt.value === 'decede' ? 'block' : 'none'
+                  }
+
+              });
+          }
+
+          function load_separation_section() {
+              if ($('#new_conjoint_caf_conjoint_etat_couple').val() == 'divorce') {
+                  $('#separation').show();
+                  $('#new_conjoint_caf_conjoint_date_separation_1i').attr('disabled', false);
+                  $('#new_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', false);
+
+              } else {
+                  $('#separation').hide();
+                  $('#new_conjoint_caf_conjoint_date_separation_1i').attr('disabled', true);
+                  $('#new_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', true);
+              }
+          }
+      });
+
+      /* section list caf conjoint */
+      var date_naissance_array = document.getElementsByName('caf_conjoint[date_naissance(1i)]');
+      var sexe_array = document.getElementsByName('caf_conjoint[sexe]');
+      var date_mariage_array = document.getElementsByName('caf_conjoint[date_mariage(1i)]');
+
+
+      for (let i = 0; i < date_naissance_array.length; i++) {
+          setDateMariage(event, i);
+          date_naissance_array[i].addEventListener('change', function (event) {
+              setDateMariage(event, i);
+          });
+      }
+      for (let i = 0; i < sexe_array.length; i++) {
+          setDateMariage(event, i);
+          sexe_array[i].addEventListener('change', function (event) {
+              setDateMariage(event, i);
+          });
+      }
+
+      function setDateMariage(event, i) {
+          const marge = sexe_array[i].value == 'masculin' ? 16 : 18;
+          const birth_year = parseInt(date_naissance_array[i].value) + marge;
+          const rg = range(birth_year, new Date().getFullYear());
+
+          for (let j = date_mariage_array[i].length - 1; j >= 0; j--) {
+              date_mariage_array[i].remove(j);
+          }
+
+          let html = '';
+          $.each(rg, function (key) {
+              html += '<option value="' + rg[key] + '">' + rg[key] + '</option>';
+          });
+
+          for (let j = rg.length - 1; j >= 0; j--) {
+              let opt = document.createElement('option');
+              opt.value = rg[j];
+              opt.innerHTML = rg[j];
+              date_mariage_array[i].appendChild(opt)
+          }
+
+      }
+
+      /*  section list caf conjoint */
+
+      function range(startAt, endAt) {
+          return [...Array(endAt - startAt + 1).keys()].map(i => i + startAt);
+      }
+
+
+      var input_cert = document.getElementsByClassName('label-cert');
+      var input_piece = document.getElementsByClassName('label-piece');
+      var input_ext = document.getElementsByClassName('label-ext');
+      var input_cert_div = document.getElementsByClassName('label-cert-div');
+      var input_cert_dec = document.getElementsByClassName('label-cert-dec');
+
+
+      var cert_name = document.getElementsByClassName('certificat-name');
+      var piece_name = document.getElementsByClassName('piece_name');
+      var ext_name = document.getElementsByClassName('extrait_name');
+      var cert_name_div = document.getElementsByClassName('certificat-div-name');
+      var cert_name_dec = document.getElementsByClassName('certificat-dec-name');
+
+
+      const type_input = {
+          cert: cert_name,
+          piece: piece_name,
+          extrait: ext_name,
+          cert_div: cert_name_div,
+          cert_dec: cert_name_dec
+      }
+
+      for (let i = 0; i < input_cert.length; i++) {
+          input_cert[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.cert);
+          });
+      }
+
+      for (let i = 0; i < input_piece.length; i++) {
+          input_piece[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.piece);
+          });
+      }
+
+      for (let i = 0; i < input_ext.length; i++) {
+          input_ext[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.extrait);
+          });
+      }
+
+      for (let i = 0; i < input_cert_div.length; i++) {
+          input_cert_div[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.cert_div);
+          });
+      }
+
+      for (let i = 0; i < input_cert_dec.length; i++) {
+          input_cert_dec[i].addEventListener('change', function (event) {
+              showFileName(event, i, type_input.cert_dec);
+          });
+      }
+
+      function showFileName(event, i, array_label) {
+          let input = event.srcElement;
+          let fileName = input.files[0].name;
+          array_label[i].textContent = fileName;
+      }
+
+      function clearFileName(array_label) {
+          for (let i = 0; i < array_label.length; i++) {
+              array_label[i].textContent = '';
+          }
+      }
+
+      /* end section form conjoint */
+
+
+
+      /* Start section list caf conjoint*/
+
+      var conjoint_names = document.getElementsByClassName('nom_conjoint');
+      var conjoint_njf = document.getElementsByClassName('nom_jeune_fille');
+
+      <% if  @prestation_exterieure.masculin? %>
+      Array.from(conjoint_names).forEach(function (event) {
+          event.value = '<%= @prestation_exterieure.nom %>';
+          event.setAttribute("readonly", true);
+      });
+      <% else %>
+      Array.from(conjoint_njf).forEach(function (event) {
+          event.style.display = 'none';
+      });
+      <% end %>
+
+      $('.select_etat_couple').each(function () {
+          display_section(this);
+
+          $(this).change(function () {
+              display_section(this);
+          });
+
+          function display_section(e) {
+              if ($(e).val() == 'divorce') {
+                  $(e).parent().parent().next().next().show();
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_separation_1i').attr('disabled', false);
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', false);
+              } else {
+                  $(e).parent().parent().next().next().hide();
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_separation_1i').attr('disabled', true);
+                  $(e).parent().parent().next().next().find('#update_conjoint_caf_conjoint_date_divorce_1i').attr('disabled', true);
+              }
+          }
+      });
+
+      function setCollapse() {
+          $('.div_to_collapse').each(function () {
+              $(this).collapse('hide')
+          });
+      }
+
+      /* Start section list caf conjoint */
+
+
+      /* Start section list caf enfant */
+      var enfant_names = document.getElementsByName('caf_enfant[nom]');
+      var enfant_link_parents = document.getElementsByName('caf_enfant[lien_parente]');
+
+      function set_children_names(i) {
+          if (enfant_link_parents[i].value === 'mariage' || enfant_link_parents[i].value === 'naturel') {
+              enfant_names[i].value = '<%= @prestation_exterieure.nom %>';
+              enfant_names[i].setAttribute("readonly", 'true');
+          } else {
+              enfant_names[i].removeAttribute("readonly");
+          }
+      }
+
+      <% if  @prestation_exterieure.masculin? %>
+      for (let i = 0; i < enfant_link_parents.length; i++) {
+          set_children_names(i)
+
+          enfant_link_parents[i].addEventListener('change', function (event) {
+              set_children_names(i)
+          });
+      }
+      <% end %>
+
+      $(document).ready(function () {
+          $.ajax({
+              url: "/admin/caf_conjoints/list_caf_conjoints/" + prestation_id + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      conjoint = data;
+                      html = '';
+
+                      $.each(data, function (key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+                      $(".caf_conjoint_id").each(function () {
+                          $(this).html(html);
+                      });
+                  } else {
+                      $(".caf_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $(".caf_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      });
+      /* End section list caf enfant */
+
+
+      /* Start section form enfant */
+      var conjoint;
+      var prestation_id = <%= @prestation_exterieure.id %>;
+      $(document).ready(function () {
+          $.ajax({
+              url: "/admin/caf_conjoints/list_caf_conjoints/" + prestation_id + ".json",
+              method: 'get',
+              dataType: "json",
+              success: function (data) {
+                  if (data) {
+                      conjoint = data;
+                      html = '';
+
+                      $.each(data, function (key, conjoint) {
+                          html += '<option value="' + conjoint.id + '">' + conjoint.prenom + ' ' + conjoint.nom + '</option>';
+                      });
+
+                      $("#new_enfant_caf_enfant_caf_conjoint_id").html(html);
+                  } else {
+                      $("#V_caf_enfant_caf_conjoint_id").html('<option value=""></option>');
+                  }
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                  $("#new_enfant_caf_enfant_caf_conjoint_id").html('<option value=""></option>');
+              }
+          });
+      });
+
+
+      $(document).ready(function () {
+          $('#new_enfant_label-ext').change(function () {
+              if ($('#new_enfant_label-ext').val() != null) {
+                  $('#new_enfant_label-piece').removeAttr('required')
+              }
+          });
+      });
+
+
+      $(document).ready(function () {
+          $('.date_naissance_validation').hide();
+
+          var date_day_array = document.getElementsByName('caf_enfant[date_naissance(3i)]');
+          var date_month_array = document.getElementsByName('caf_enfant[date_naissance(2i)]');
+          var date_year_array = document.getElementsByName('caf_enfant[date_naissance(1i)]');
+
+          var conjoint_array = document.getElementsByName('caf_enfant[caf_conjoint_id]');
+          var lien_parente_array = document.getElementsByName('caf_enfant[lien_parente]');
+          var date_naiss_label_array = document.getElementsByName('date_naissance_validation');
+
+          addEvent(date_day_array)
+          addEvent(date_month_array)
+          addEvent(date_year_array)
+          addEvent(lien_parente_array)
+
+
+          function addEvent(arrayObject) {
+              for (let i = 0; i < arrayObject.length; i++) {
+                  arrayObject[i].addEventListener('change', function (event) {
+                      setDateNaissance(event, i);
+                  });
+              }
+          }
+
+          function setDateNaissance(event, i) {
+
+              for (let j = 0; j < conjoint.length; j++) {
+                  if (conjoint[j].id == conjoint_array[i].value && lien_parente_array[i].value === "mariage") {
+                      if (conjoint[j].date_mariage < (date_year_array[i].value + '-' + date_month_array[i].value + '-' + date_year_array[i].value)) {
+                          $('.date_naissance_validation').hide();
+                          $('#enfant_submit_button').attr("disabled", false)
+                      } else {
+                          $('.date_naissance_validation').show();
+                          $('#enfant_submit_button').attr("disabled", true)
+                      }
+                  } else {
+                      $('.date_naissance_validation').hide();
+                      $('#enfant_submit_button').attr("disabled", false)
+                  }
+              }
+          }
+
+
+      });
+
+      /* End section form enfant */
+
+
+      /* Start section caf_indemnites */
+      $(document).ready(function () {
+          var month_start_array = document.getElementsByName('indemnites_prestation_exterieure[date_debut(2i)]');
+          var month_end_array = document.getElementsByName('indemnites_prestation_exterieure[date_fin(2i)]');
+          var year_start_array = document.getElementsByName('indemnites_prestation_exterieure[date_debut(1i)]');
+          var year_end_array = document.getElementsByName('indemnites_prestation_exterieure[date_fin(1i)]');
+          var display_section_array = document.getElementsByClassName('enfants_eligibles');
+          var display_section_doc_array = document.getElementsByClassName('enfants_eligibles_document');
+
+          for (let i = 0; i < month_start_array.length; i++) {
+              set_children_list(i);
+              year_start_array[i].addEventListener('change', function (event) {
+                  set_children_list(i);
+              });
+              year_end_array[i].addEventListener('change', function (event) {
+                  set_children_list(i);
+              });
+              month_start_array[i].addEventListener('change', function (event) {
+                  set_children_list(i);
+              });
+              month_end_array[i].addEventListener('change', function (event) {
+                  set_children_list(i);
+              });
+          }
+
+          function set_children_list(event) {
+              let html = '';
+              let html2 = '';
+              let debut_period = new Date(year_start_array[event].value, month_start_array[event].value, 0);
+              let fin_period = new Date(year_end_array[event].value, month_end_array[event].value, 0);
+
+              sendDatesToController(debut_period, fin_period, function (children, documents) {
+                  let children_el = children.filter(child => {
+                      let date_end_el = new Date(new Date(child.date_naissance).getFullYear() + 21, new Date(child.date_naissance).getMonth() + 1, 0);
+
+                      return (new Date(child.date_naissance).getTime() <= debut_period.getTime() && new Date(child.date_naissance).getTime() <= fin_period.getTime()) &&
+                          (date_end_el.getTime() >= debut_period.getTime() && date_end_el.getTime() >= fin_period.getTime());
+                  });
+
+                  let children_el2 = children_el.filter(child => {
+                      let expiration_date = documents.find(document => document.documentable_id === child.id)?.date_expiration;
+                      return (new Date(expiration_date).getTime() >= debut_period.getTime() || new Date(child.migrated_document_exp_date).getTime() >= debut_period.getTime());
+                  });
+
+                  $.each(children_el, function (key, child) {
+                      let date_end = new Date(new Date(child.date_naissance).getFullYear() + 21, new Date(child.date_naissance).getMonth() + 1, 0).toLocaleDateString("fr-FR");
+                      html += '<li>' + child.prenom + ' ' + child.nom + ' ' + "éligible jusqu'au" + ' ' + date_end + '</li>';
+                  });
+
+                  $.each(children_el2, function (key, child) {
+                      let date_end = new Date(new Date(child.date_naissance).getFullYear() + 21, new Date(child.date_naissance).getMonth() + 1, 0).toLocaleDateString("fr-FR");
+                      html2 += '<li>' + child.prenom + ' ' + child.nom + ' ' + "éligible jusqu'au" + ' ' + date_end + '</li>';
+                  });
+
+                  display_section_array[event].innerHTML = html;
+                  if (display_section_doc_array[event]) {
+                      display_section_doc_array[event].innerHTML = html2;
+                  }
+              });
+          }
+
+          function sendDatesToController(debutPeriod, finPeriod, callback) {
+              $.ajax({
+                  url: '/admin/prestation_exterieures/fill_start_and_end_date',
+                  type: 'POST',
+                  data: {
+                      date_debut: debutPeriod.toISOString().split('T')[0],
+                      date_fin: finPeriod.toISOString().split('T')[0],
+                      prest_id: <%= @prestation_exterieure.id %>
+                  },
+                  headers: {
+                      'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+                  },
+                  success: function (response) {
+                      callback(JSON.parse(response.children), JSON.parse(response.documents));
+                  },
+                  error: function (error) {
+                      console.error("Erreur lors de l'envoi des données :", error);
+                  }
+              });
+          }
+      });
+
+      /* End section caf_indemnites */
+  </script>
+<% end %>
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 30%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 12%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>

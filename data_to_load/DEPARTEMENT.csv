@@ -1,0 +1,46 @@
+DEPARTEMENTID;REGIONID;DESIGNATION;CODE
+1;1;Dakar;1
+2;1;Pikine;2
+3;1;Guédiawaye;4
+4;4;Saint-Louis;3
+5;4;Podor;2
+6;4;Dagana;1
+7;1;Rufisque;3
+8;7;Thiès;2
+9;7;M'bour;1
+10;7;Tivaouane;3
+21;3;Bambey;1
+22;3;Diourbel;2
+23;3;Mbacké;3
+24;71;Fatick;1
+25;71;Foundiougne;2
+26;71;Gossas;3
+27;58;Birkelane;2
+28;58;Kaffrine;1
+29;58;Koungheul;3
+30;58;Malem Hodar;4
+31;52;Guinguinéo;3
+32;52;Kaolack;1
+33;52;Nioro du Rip;2
+34;51;Kédougou;1
+35;51;Salemata;2
+36;51;Saraya;3
+37;53;Kolda;1
+38;53;Médina Yoro Foulah;3
+39;53;Vélingara;2
+40;54;Kébémer;1
+41;54;Linguère;2
+42;54;Louga;3
+43;55;Kanel;2
+44;55;Matam;1
+45;55;Ranérou-Ferlo;3
+49;57;Bounkiling;2
+50;57;Goudomp;3
+51;57;Sédhiou;1
+52;56;Bakel;1
+53;56;Goudiry;3
+54;56;Koumpentoum;4
+55;56;Tambacounda;2
+59;2;Bignona;1
+60;2;Oussouye;2
+61;2;Ziguinchor;3

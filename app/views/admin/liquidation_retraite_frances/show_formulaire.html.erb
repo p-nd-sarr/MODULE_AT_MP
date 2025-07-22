@@ -1,0 +1,1117 @@
+<div class="container" style="float: initial; font-size: large">
+  <div class="row">
+    <div class="col col-lg-6" style="float: left">
+      <p style="font-weight: bold; font-size: 17px"> SECURITÉ SOCIALE </p>
+    </div>
+    <div class="col col-lg-6" style="float: right">
+      <p style="font-weight: bold; font-size: 17px"> FORMULAIRE N° SE 341-11 </p>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 3%">
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-weight: bold; font-size: xx-large"> CONVENTION FRANCO-SENEGALAISE DE COORDINATION </p>
+    </div>
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-weight: bold; font-size: xx-large"> EN MATIÈRE D'ASSURANCE-VIEILLESSE </p>
+    </div>
+  </div>
+
+  <hr style="height: 0; border: 2px solid grey;">
+
+  <div class="row" style="margin-top: 1%">
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-weight: bold; font-size: x-large">
+        INSTRUCTION DES DEMANDES DE PRESTATIONS DE VIEILLESSE PAR TOTALISATION
+      </p>
+    </div>
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-weight: bold; font-size: x-large"> (Article 9 de l'Arrangement Complémentaire) </p>
+    </div>
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-weight: bold; font-size: x-large">
+        Dossier n° <%= @demande_liquidation.num_dossier %>
+      </p>
+    </div>
+    <div class="col col-lg-12" style="text-align: left; margin-top: 2%;">
+      <p>
+        <span style="font-weight: bold; font-size: large"> IMPORTANT </span>
+        Le présent formulaire est adressé en double exemplaire par «l'institution d'instruction» de la demande (1)
+        à l'institution compétente de l'autre pays.
+      </p>
+    </div>
+
+    <hr style="height: 0; border: 1px solid rgb(130,130,130);">
+    <hr style="height: 0; border: 1px solid rgb(130,130,130); margin-top: -17px;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; text-align: center;">
+      <p style="font-weight: bold; font-size: x-large"> Partie à remplir par l'institution d'instruction </p>
+    </div>
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        A - <span style="text-decoration: underline;"> Renseignements concernant l'état civil </span>
+      </p>
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large"> du Demandeur </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-lg-12">
+      <table style="width: 100%; border-collapse: separate; border-spacing: 0 10px;">
+        <tr>
+          <td> Nom :
+            <span style="font-weight: bold; font-style: italic;"> <%= @demande_liquidation.nom unless @demande_liquidation.nom.nil? %> </span>
+          </td>
+          <td> Nom de jeune fille :
+            <span style="font-weight: bold; font-style: italic;"> <%= @demande_liquidation.nom_jeune_fille unless @demande_liquidation.nom_jeune_fille.nil? %> </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> Prénom :
+            <span style="font-weight: bold; font-style: italic;"> <%= @demande_liquidation.prenom unless @demande_liquidation.prenom.nil? %> </span>
+          </td>
+        </tr>
+        <tr>
+          <td> Date de naissance :
+            <span style="font-weight: bold; font-style: italic;"> <%= l @demande_liquidation.date_naissance unless @demande_liquidation.date_naissance %> </span>
+          </td>
+          <td> Lieu de naissance :
+            <span style="font-weight: bold; font-style: italic;"> <%= @demande_liquidation.lieu_naissance unless @demande_liquidation.lieu_naissance.nil? %> </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> Sexe : masculin - féminin (2) :
+            <span style="font-weight: bold; font-style: italic;">
+            <%= LiquidationRetraiteFrance.human_enum_name(:sexe, @demande_liquidation.sexe) %>
+          </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            Fils (ou Fille) de : Prénom et Nom du père
+            <span style="font-weight: bold; font-style: italic;">
+              <%= @demande_liquidation.full_name_pere %>
+              <%#= @demande_liquidation.prenom_pere unless @demande_liquidation.prenom_pere.nil? %>
+              <%#= @demande_liquidation.nom_pere unless @demande_liquidation.nom_pere.nil? %>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span style="margin-left: 140px;">
+              Prénom et Nom de la mère :
+            </span>
+            <span style="font-weight: bold; font-style: italic;">
+              <%= @demande_liquidation.full_name_mere %>
+              <%#= @demande_liquidation.nom_mere unless @demande_liquidation.nom_mere.nil? %>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> Adresse de l'assuré</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span style="margin-left: 45px;">
+              dans le pays de résidence :
+            </span>
+            <span style="font-weight: bold; font-style: italic;">
+              <%= @demande_liquidation.adresse_reception_allocation unless @demande_liquidation.adresse_reception_allocation.nil? %>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            Numéro d'immatriculation à l'IPRES :
+            <span style="font-style: italic; font-weight: bold;">
+              <%= @demande_liquidation.numero_affiliation unless @demande_liquidation.numero_affiliation.nil? %>
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span style="margin-left: 220px;">
+              en France : </span>
+            <span style="font-weight: bold; font-style: italic;">
+                <%= @demande_liquidation.numero_securite_sociale unless @demande_liquidation.numero_securite_sociale.nil? %> </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2"> Situation de famille actuelle :</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <span style="margin-left: 45px; font-style: italic; font-weight: bold;">
+              <%= LiquidationRetraiteFrance.human_enum_name(:situation_familiale, @demande_liquidation.situation_familiale) unless @demande_liquidation.situation_familiale.nil? %>
+              <!--              Célibataire - marié - veuf(ve) - divorcé - remarié - séparé de corps - séparé de fait   (2)-->
+            </span>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <% unless @demande_liquidation.situation_familiale.nil? %>
+              <% if @demande_liquidation.marie? %>
+                Date du mariage :
+              <% elsif @demande_liquidation.veuf? %>
+                Date du décès du conjoint :
+                <span style="margin-left: 45px; font-style: italic; font-weight: bold;">
+                  <%= l @demande_liquidation.date_situation_fam unless @demande_liquidation.date_situation_fam.nil? %>
+                </span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+<!--        <tr>-->
+<!--          <td colspan="2">-->
+            <%# if @demande_liquidation.marie? %>
+<!--              Date du décès du conjoint :-->
+<!--              <span style="margin-left: 45px; font-style: italic; font-weight: bold;">-->
+              <%#= @demande_liquidation.date_situation_fam unless @demande_liquidation.date_situation_fam.nil? %>
+<!--            </span>-->
+            <%# end %>
+<!--          </td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <td colspan="2">-->
+<!--            <span style="margin-left: 45px;">-->
+<!--              ou du jugement de divorce, de séparation, de corps ou la date de séparation de fait   (2)-->
+<!--            </span>-->
+<!--          </td>-->
+<!--        </tr>-->
+        <tr>
+          <td colspan="2">
+            Date d'ouverture du dossier :
+            <span style="margin-left: 45px; font-style: italic; font-weight: bold;">
+              <%= l @demande_liquidation.date_ouverture unless @demande_liquidation.date_ouverture.nil? %>
+            </span>
+          </td>
+        </tr>
+      </table>
+
+      <hr style="height: 0; border: 2px solid grey;">
+
+      <p style="font-size: medium">
+      <span style="margin-left: 45px;">
+              (1) ..L'institution d'instruction» sera, le plus souvent, l'institution du pays de résidence du demandeur
+      </span>
+        <br>
+        <span style="margin-left: 45px;">
+              (2) Rayer les mentions inutiles.
+          </span>
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large">
+        DU OU DES CONJOINTS DU DEMANDEUR
+      </p>
+    </div>
+
+    <div class="col col-lg-12 table-responsive">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead class="thead-primary">
+        <tr>
+          <th rowspan="2">Nom</th>
+          <th rowspan="2">Prénom</th>
+          <th colspan="2" style="text-align: center">Naissance</th>
+          <th rowspan="2">Nationalité</th>
+          <th colspan="2" style="text-align: center">Fille ou fils de</th>
+          <th rowspan="2">Numéro d'immatriculation</th>
+          <th rowspan="2">Date du mariage</th>
+          <th rowspan="2">Date du décès</th>
+        </tr>
+        <tr>
+          <th scope="col" style="text-align: center">Date</th>
+          <th scope="col" style="text-align: center">Lieu</th>
+          <th scope="col" style="text-align: center">Prénom Nom du père</th>
+          <th scope="col" style="text-align: center">Prénom Nom de la mère</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% unless @demande_liquidation.conjoints.valide.empty? %>
+          <% @demande_liquidation.conjoints.valide.each do |epouse| %>
+            <tr>
+              <td><%= epouse.nom %></td>
+              <td><%= epouse.prenom %></td>
+              <td><%= l epouse.date_naissance %></td>
+              <td> -</td>
+              <td> -</td>
+              <td> -</td>
+              <td> -</td>
+              <td><%= epouse.numero_piece unless epouse.numero_piece.nil? %></td>
+              <td><%= l epouse.date_mariage unless epouse.date_mariage.nil? %></td>
+              <td> -</td>
+            </tr>
+          <% end %>
+        <% end %>
+
+        <% unless @demande_liquidation.cfs_conjoints.nil? %>
+          <% @demande_liquidation.cfs_conjoints.each do |conjoint| %>
+            <!--    <tr style="background-color: lavender">-->
+            <tr style="background-color: bisque">
+              <td><%= conjoint.nom %></td>
+              <td><%= conjoint.prenom %></td>
+              <td><%= l conjoint.date_naissance %></td>
+              <td><%= conjoint.lieu_naissance %></td>
+              <td><%= conjoint.nationalite.description %></td>
+              <td><%= conjoint.prenom_pere %> <%= conjoint.nom_pere %></td>
+              <td><%= conjoint.prenom_mere %> <%= conjoint.nom_mere %></td>
+              <td><%= conjoint.numero_immatriculation %></td>
+              <td><%= l conjoint.date_mariage %></td>
+              <td><%= l conjoint.date_deces if conjoint.situation? %></td>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col col-lg-12" style="margin-top: 2%; text-align: center;">
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large">
+        DES ENFANTS
+      </p>
+      <p style="font-size: x-large; margin-top: 0%;">
+        1° - Enfants ayant avec le demandeur un lien de filiation direct :
+      </p>
+    </div>
+
+    <div class="col col-lg-12 table-responsive">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead class="thead-primary">
+        <tr>
+          <th scope="col">Nom</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Date de naissance</th>
+          <th scope="col"> Date du décès</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <% unless @demande_liquidation.enfants.valide.empty? %>
+          <% @demande_liquidation.enfants.each do |enfant| %>
+            <%# @demande_liquidation.enfants.each do |enfant| %>
+            <tr>
+              <td><%= enfant.nom %></td>
+              <td><%= enfant.prenom %></td>
+              <td><%= l enfant.date_naissance %></td>
+              <td> -</td>
+            </tr>
+          <% end %>
+        <% end %>
+
+        <% unless CfsEnfant.where(liquidation_retraite_france_id: @demande_liquidation.id).nil? %>
+          <%# @cfs_enfants_direct.each do |enfant| %>
+          <% CfsEnfant.where(liquidation_retraite_france_id: @demande_liquidation.id, filiation: :direct).each do |enfant| %>
+            <tr style="background-color: lavender">
+              <td><%= enfant.nom %></td>
+              <td><%= enfant.prenom %></td>
+              <td><%= l enfant.date_naissance %></td>
+              <td><%= l enfant.date_deces if enfant.situation? %></td>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col col-lg-12" style="margin-top: 2%;">
+      <p style="font-size: x-large; margin-left: 32%; ">
+        2° - Enfants n'ayant pas avec le demandeur un lien de filiation direct, mais ayant été élevés par lui
+        pendant au moins 9 ans avant l'âge de 16 ans et ayant été à sa charge ou à celle de son conjoint:
+      </p>
+    </div>
+
+    <div class="col col-lg-12 table-responsive">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead class="thead-primary">
+        <tr>
+          <th scope="col">Nom</th>
+          <th scope="col">Prénom</th>
+          <th scope="col">Date de naissance</th>
+          <th scope="col"> Date du décès</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% unless CfsEnfant.where(liquidation_retraite_france_id: @demande_liquidation.id).nil? %>
+          <%# @cfs_enfants_direct.each do |enfant| %>
+
+          <% CfsEnfant.where(liquidation_retraite_france_id: @demande_liquidation.id, filiation: :indirect).each do |enfant| %>
+            <tr style="background-color: mistyrose">
+              <td><%= enfant.nom %></td>
+              <td><%= enfant.prenom %></td>
+              <td><%= l enfant.date_naissance %></td>
+              <td><%= l enfant.date_deces if enfant.situation? %></td>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        B - <span style="text-decoration: underline;"> Nature de l'avantage de vieillesse demandé </span>
+      </p>
+    </div>
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%;">
+      <p style="font-size: large; margin-left: 30%">
+        - pension rente ou retraite de vieillesse .................... oui
+      </p>
+    </div>
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        C - <span style="text-decoration: underline;"> Inaptitude au travail </span>
+      </p>
+    </div>
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%;">
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Est-il reconnu inapte au travail :? oui - non (3)
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Si oui, point de départ de l'inaptitude :
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Date de la décision reconnaissant l'inaptitude :
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Est-il titulaire d'une pension d'invalidité ? :
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Au titre du régime général de la sécurité sociale : oui - non (3)
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Au titre du régime agricole : oui - non (3)
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Au titre du régime minier : oui - non (3)
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Au titre d'un régime spécial : oui - non (3)
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Si oui, indiquer l'institution débitrice
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: 1%">
+        Le numéro de la pension N°
+        <% @demande_liquidation.numero_affiliation %>
+      </p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        D - <span style="text-decoration: underline;"> Activité Professionnelle salariée du travailleur : </span>
+      </p>
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large"> AU SENEGAL </p>
+    </div>
+
+    <h2>Régime Général</h2>
+    <div class="col col-lg-12 table-responsive">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead class="thead-primary">
+        <tr>
+          <th scope="col">Noms et Adresses Des Employeurs</th>
+          <th scope="col">Début du travail</th>
+          <th scope="col">Fin du travail</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @demande_liquidation.carrieres_prestation.regime_general.order("date_sortie asc").each do |carriere| %>
+          <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+            <td><%= carriere.raison_sociale %></td>
+            <td> <%= l carriere.date_entree %> </td>
+            <td> <%= l carriere.date_sortie %> </td>
+
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>Régime Cadre</h2>
+    <div class="col col-lg-12 table-responsive">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead class="thead-primary">
+        <tr>
+          <th scope="col">Noms et Adresses Des Employeurs</th>
+          <th scope="col">Début du travail</th>
+          <th scope="col">Fin du travail</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <% @demande_liquidation.carrieres_prestation.regime_cadre.order("date_sortie asc").each do |carriere| %>
+          <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+            <td><%= carriere.raison_sociale %> - <%= carriere.ref_employeur %></td>
+            <td> <%= l carriere.date_entree %> </td>
+            <td> <%= l carriere.date_sortie %> </td>
+
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%;">
+      <p style="font-size: large; margin-left: 15%; margin-top: 1%">
+        Date à laquelle le demaneur a cessé toute activité salariée :
+        <% l @demande_liquidation.date_cessation_activite unless @demande_liquidation.date_cessation_activite.nil? %>
+        <%= l @demande_liquidation.date_jouissance unless @demande_liquidation.date_jouissance.nil? %>
+      </p>
+      <p style="font-size: large; margin-left: 15%; margin-top: 1%">
+        Nombre total d'années de salariat au Sénégal :
+        <%= @demande_liquidation.participant.nombre_annee_cotisation unless @demande_liquidation.participant.nil? %>
+      </p>
+
+
+      <p style="font-size: large; margin-left: 1%; margin-top: 3%">
+        3) Rayer al mention inutile.
+      </p>
+      <p style="font-size: large; margin-left: 1%; margin-top: -1%">
+        4) Pour les travailleurs des mines, préciser ne regard de chaque période mentionnée s'il s'agit: (3) de travail
+        au jour, (F) de travail au fond.
+      </p>
+    </div>
+
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large"> EN FRANCE </p>
+    </div>
+    <div class="col col-lg-12 table-responsive">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead class="thead-primary">
+        <tr>
+          <th scope="col">Noms et Adresses Des Employeurs</th>
+          <th scope="col">Début du travail</th>
+          <th scope="col">Fin du travail</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <% @demande_liquidation.carrieres_exterieures.each do |carriere| %>
+          <tr>
+            <td>
+              <%= carriere.employeur_exterieur.raison_sociale unless carriere.employeur_exterieur.raison_sociale.nil? %>
+              -
+              <%= carriere.employeur_exterieur.adresse unless carriere.employeur_exterieur.adresse.nil? %>
+            </td>
+            <td> <%= l carriere.date_debut %> </td>
+            <td> <%= l carriere.date_fin %> </td>
+
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%;">
+      <p style="font-size: large; margin-left: 15%; margin-top: 1%">
+        Date à laquelle le demaneur a cessé toute activité salariée :
+        <%= l @demande_liquidation.date_cess_act_fr unless @demande_liquidation.date_cess_act_fr.nil? %>
+      </p>
+      <p style="font-size: large; margin-left: 15%; margin-top: 1%">
+        Nombre total d'années de salariat en France :
+        <%= @demande_liquidation.total_an_carriere_fr unless @demande_liquidation.total_an_carriere_fr.nil? %>
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        E -
+        <span style="text-decoration: underline;"> Ressources Personnelles du ou des conioints du demandeur : </span>
+      </p>
+      <p style="font-size: x-large"> SI LE CONJOINT DU DEMANDEUR </p>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:-1%;">
+
+      <% if @demande_liquidation.carriere_conjoint? %>
+        <p style="margin-top: 2%;">
+          Exerce ou a exercé une activité salarié dont le montant des salaires perçus est indiqué
+          ci-dessous.
+        </p>
+        <% unless @demande_liquidation.salaire_trimestre_conjoint.nil? %>
+          <p style="margin-left: 2%;">
+            - du trimestre précédant la demande :
+            <strong><%= format_cfa @demande_liquidation.salaire_trimestre_conjoint %></strong>
+          </p>
+        <% end %>
+        <% unless @demande_liquidation.salaire_annuel_conjoint.nil? %>
+          <p style="margin-left: 2%;">
+            - de l'année précédant la demande :
+            <strong><%= format_cfa @demande_liquidation.salaire_annuel_conjoint %></strong>
+          </p>
+        <% end %>
+        <% unless @demande_liquidation.date_cess_act_conjoint.nil? %>
+          <p style="margin-left: 2%;">
+            - date de cessation d'activité : <strong><%= l @demande_liquidation.date_cess_act_conjoint %></strong>
+          </p>
+        <% end %>
+      <% end %>
+
+
+      <% if @demande_liquidation.avantage_viellesse_conjoint? %>
+        <p style="margin-top: 2%;">
+          À déjà obtenu le bénéfice de l'avantage
+          <strong><%= LiquidationRetraiteFrance.human_enum_name(:nature_avantage_conjoint, @demande_liquidation.nature_avantage_conjoint) %></strong>
+        </p>
+        <p style="margin-left: 2%;">
+          - le nom de l'institution débitrice :
+          <strong><%= @demande_liquidation.nom_instit_deb_conjoint unless @demande_liquidation.nom_instit_deb_conjoint.nil? %></strong>
+        </p>
+        <p style="margin-left: 2%;">
+          - l'adresse de l'institution débitrice :
+          <strong><%= @demande_liquidation.adresse_instit_deb_conjoint unless @demande_liquidation.adresse_instit_deb_conjoint.nil? %></strong>
+        </p>
+        <p style="margin-left: 2%;">
+          - le numéro de pension ou de la rente :
+          <strong><%= @demande_liquidation.numero_pension_conjoint unless @demande_liquidation.numero_pension_conjoint.nil? %></strong>
+        </p>
+        <p style="margin-left: 2%;">
+          - le montant du dernier trimestre perçu :
+          <strong><%= format_cfa(@demande_liquidation.montant_pension_conjoint, false) unless @demande_liquidation.montant_pension_conjoint.nil? %></strong>
+        </p>
+      <% end %>
+
+      <% if @demande_liquidation.autres_revenus_conjoint? %>
+        <p style="margin-top: 2%;">
+          Dispose d'autres revenus que les salaires.(5) <br>La nature et le montant de ces revenus au cours des
+          trois derniers mois et des douze mois précedant la demande sont listés ci-dessous:
+        </p>
+        <div class="panel panel-info">
+          <div class="panel-body">
+            <div class="table-responsive" style="margin-top: 0px">
+              <table class="table table-bordered">
+                <thead class="thead-primary">
+                <tr>
+                  <th rowspan="2">Nature des revenus</th>
+                  <th colspan="2" style="text-align: center">Montant perçu</th>
+                </tr>
+                <tr>
+                  <th scope="col" style="text-align: center">Au cours des trois mois</th>
+                  <th scope="col" style="text-align: center">Au cours des douze mois</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <% @demande_liquidation.revenu_conjoints.each do |revenu| %>
+                  <tr>
+                    <td><%= revenu.nature %></td>
+                    <td><%= format_cfa(revenu.montant_trimestriel, false) %></td>
+                    <td><%= format_cfa(revenu.montant_annuel, false) %></td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      <% end %>
+
+      <div style="margin-top: 2%;">
+        <% if @demande_liquidation.biens_perso_conjoint? %>
+          <p>
+            Le conjoint posséde des biens personnels, mobiliers et immobiliers ci-dessous :
+          </p>
+          <div class="panel panel-warning">
+            <div class="panel-body">
+              <div class="table-responsive" style="margin-top: 0px">
+                <table class="table table-bordered">
+                  <thead class="thead-primary">
+                  <tr>
+                    <th scope="col" style="text-align: center">Description sommaire</th>
+                    <th scope="col" style="text-align: center">Valeur actuelle</th>
+                    <th scope="col" style="text-align: center">Situation - Département - Commune - Rue - n° Lieu dit
+                    </th>
+                    <th scope="col" style="text-align: center">Lieu d'imposition et article du rôle</th>
+                    <th scope="col" style="text-align: center">Revenu cadastral actuel</th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <% @demande_liquidation.bien_pers_conjoints.each do |bien| %>
+                    <tr>
+                      <td><%= bien.description %></td>
+                      <td><%= format_cfa(bien.valeur_actuelle, false) %></td>
+                      <td><%= bien.situation_departement %></td>
+                      <td><%= bien.lieu_imposition %></td>
+                      <td><%= format_cfa(bien.revenu_cadastral, false) %></td>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div style="margin-top: 2%;">
+        <% if @demande_liquidation.biens_donation_conjoint? %>
+          <p>
+            Le conjoint a fait donation des biens mobiliers et immobiliers depuis moins de 5 ans ci-dessous :
+          </p>
+          <div class="panel panel-success">
+            <div class="panel-body">
+
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead class="thead-primary">
+                  <tr>
+                    <th scope="col" style="text-align: center">Description sommaire</th>
+                    <th scope="col" style="text-align: center">Valeur actuelle</th>
+                    <th scope="col" style="text-align: center">Situation - Département - Commune - Rue - n° Lieu dit
+                    </th>
+                    <th scope="col" style="text-align: center">Nom bénéficiaire</th>
+                    <th scope="col" style="text-align: center">Adresse bénéficiaire</th>
+                    <th scope="col" style="text-align: center">Quantité de bénéficiaires</th>
+                    <th scope="col" style="text-align: center">Date de l'acte de donation</th>
+                  </tr>
+                  </thead>
+
+                  <tbody>
+                  <% @demande_liquidation.donation_conjoints.each do |donation| %>
+                    <tr>
+                      <td><%= donation.description %></td>
+                      <td><%= format_cfa(donation.valeur_actuelle, false) %></td>
+                      <td><%= donation.situation_departement %></td>
+                      <td><%= donation.nom_beneficiaire %></td>
+                      <td><%= donation.adresse_beneficiaire %></td>
+                      <td><%= format_cfa(donation.quantite, false) %></td>
+                      <td><%= l donation.date_donation %></td>
+                    </tr>
+                  <% end %>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        F -
+        <span style="text-decoration: underline;">
+          Périodes d'assurances (ou équivalentes) accomplies dans le pays de résidence du travailleur :
+        </span>
+      </p>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:0%;">
+      <p style="font-size: large">
+        N.B: -
+        L'institution d'instruction de la demande compétente en matière d'assurance vieillesse indique
+        dans le tableau ci-dessous les périodes d'assurance ou équivalentes accomplies sous le régime
+        qu'elle est chargée d'appliquer.
+      </p>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:3%;">
+      <p style="font-size: medium">
+        (6) Dans el cadre du régime français, pour les demandes instruites en 1966, el délai prévu est de 7 ans.
+        Pour les demandes instruites en 1967 el délai prévu est de 6 ans. Le délai de 5 ans entrera en vigueur
+        à partir de 1968.
+      </p>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:3%;">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Périodes</th>
+          <th scope="col">Nombre de trimestres d'assurance</th>
+          <th scope="col">Nombre de trimestres (périodes équivalentes)</th>
+        </tr>
+        </thead>
+
+        <%# unless CfsEnfant.where(liquidation_retraite_france_id: 3).nil? %>
+        <%# CfsEnfant.where(liquidation_retraite_france_id: 3, filiation: :direct).each do |enfant| %>
+        <%# unless @periode_assurances_PR.nil? %>
+        <%
+          unless PeriodeAssurance.where(liquidation_retraite_france_id: @demande_liquidation.id).nil?
+            @periode_assurances_PR = PeriodeAssurance.where(liquidation_retraite_france_id: @demande_liquidation.id, type_periode: :pays_residence)
+        %>
+          <tbody>
+          <% @periode_assurances_PR.each do |periode_assurance| %>
+
+            <%# PeriodeAssurance.where(liquidation_retraite_france_id: 3, type_periode: :pays_residence).each do |periode_assurance| %>
+            <tr>
+              <td>Du <%= l periode_assurance.date_debut %> au <%= l periode_assurance.date_fin %> </td>
+              <td style="text-align: right;"><%= periode_assurance.trimestre_assurance %></td>
+              <td style="text-align: right;"><%= periode_assurance.trimestre_equivalente %></td>
+            </tr>
+          <% end %>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td>Total</td>
+            <td style="text-align: right;">
+        <span style="font-weight: bold">
+          <%= m11 = @periode_assurances_PR.sum(&:trimestre_assurance) %>
+        </span>
+              <% if m11 > 1 %>
+                trimestres
+              <% elsif m11 == 1 %>
+                trimestre
+              <% end %>
+            </td>
+            <td style="text-align: right;">
+        <span style="font-weight: bold">
+          <%= m12 = @periode_assurances_PR.sum(&:trimestre_equivalente) %>
+        </span>
+              <% if m12 > 1 %>
+                trimestres
+              <% elsif m12 == 1 %>
+                trimestre
+              <% end %>
+            </td>
+          </tr>
+          </tfoot>
+        <% end %>
+      </table>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:1%;">
+      <p style="font-size: medium; text-align: center;">
+        Total général ............... trimestres
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <hr style="height: 0; border: 1px solid rgb(130,130,130);">
+    <hr style="height: 0; border: 1px solid rgb(130,130,130); margin-top: -17px;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; text-align: center;">
+      <p style="font-weight: bold; font-size: x-large"> L'INSTITUTION D'INSTRUCTION CI-DESSOUS DESIGNEE: </p>
+    </div>
+    <!--    <hr style="height: 0; border: 2px solid grey;">-->
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+      <p style="font-size: large"> Désignation : ................... </p>
+      <p style="font-size: large"> Adresse : ................... </p>
+    </div>
+    <div class="col col-lg-12" style="text-align: center">
+      <div class="col col-lg-6">
+        <p style="font-size: large">
+          Certifie l'exactitude des renseignements communiqués c-i
+          dessus et demande à l'institution compétente
+          de l'autre pays de lui faire connaître les périodes d'assurances ou équivalentes accomplies dans le pays par
+          le demandeur,
+          ainsi que la part de pension mise à sa charge.
+        </p>
+        <p style="font-size: large">
+          A ........ , le ......
+        </p>
+      </div>
+    </div>
+    <div class="col col-lg-8" style="text-align: center">
+      <div class="col col-lg-12" style="text-align: center">
+        <div class="col col-lg-6" style="float: left;">
+          <p style="font-size: large;">
+            Cachet de l'Institution
+          </p>
+        </div>
+        <div class="col col-lg-6" style=" float: right;">
+          <p style="font-size: large">
+            Signature du Représentant de l'institution
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row" style="margin-top: 5%">
+
+
+    <hr style="height: 0; border: 1px solid rgb(130,130,130);">
+    <hr style="height: 0; border: 1px solid rgb(130,130,130); margin-top: -17px;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; text-align: center;">
+      <p style="font-weight: bold; font-size: x-large"> Partie à remplir par l'institution du second pays</p>
+    </div>
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        G -
+        <span style="text-decoration: underline;">
+          Périodes d'assurance (ou équivalentes) accomplies
+        </span>
+      </p>
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large"> dans le second pays </p>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:3%;">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Périodes</th>
+          <th scope="col">Nombre de trimestres d'assurance</th>
+          <th scope="col">Nombre de trimestres (périodes équivalentes)</th>
+        </tr>
+        </thead>
+
+        <%# unless @periode_assurances_PR.nil? %>
+        <%
+          unless PeriodeAssurance.where(liquidation_retraite_france_id: @demande_liquidation.id).nil?
+            @periode_assurances_SP = PeriodeAssurance.where(liquidation_retraite_france_id: @demande_liquidation.id, type_periode: :second_pays)
+        %>
+          <tbody>
+          <% @periode_assurances_SP.each do |periode_assurance| %>
+
+            <tr>
+              <td>Du <%= l periode_assurance.date_debut %> au <%= l periode_assurance.date_fin %> </td>
+              <td style="text-align: right;"><%= periode_assurance.trimestre_assurance %></td>
+              <td style="text-align: right;"><%= periode_assurance.trimestre_equivalente %></td>
+            </tr>
+          <% end %>
+          </tbody>
+          <tfoot>
+          <tr>
+            <td>Total</td>
+            <td style="text-align: right;">
+        <span style="font-weight: bold">
+          <%= m11 = @periode_assurances_SP.sum(&:trimestre_assurance) %>
+        </span>
+              <% if m11 > 1 %>
+                trimestres
+              <% elsif m11 == 1 %>
+                trimestre
+              <% end %>
+            </td>
+            <td style="text-align: right;">
+        <span style="font-weight: bold">
+          <%= m12 = @periode_assurances_SP.sum(&:trimestre_equivalente) %>
+        </span>
+              <% if m12 > 1 %>
+                trimestres
+              <% elsif m12 == 1 %>
+                trimestre
+              <% end %>
+            </td>
+          </tr>
+          </tfoot>
+        <% end %>
+      </table>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:1%;">
+      <p style="font-size: medium; text-align: center;">
+        Total général ............... trimestres
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <hr style="height: 0; border: 2px solid grey;">
+
+    <div class="col col-lg-12" style="margin-bottom: 1%; margin-top: 2%; text-align: center;">
+
+      <p style="font-weight: bold; font-size: x-large">
+        H -
+        <span style="text-decoration: underline;">
+          Détermination de l'avantage de vieillesse à la charge
+        </span>
+      </p>
+      <p style="font-weight: bold; text-decoration: underline; font-size: x-large"> du second pays </p>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:3%;">
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th scope="col">Avantages À Servir</th>
+          <th scope="col">
+            Montant de la pension qui serait servie si la totalité des périodes
+            avait été accomplie dans le pays considéré
+          </th>
+          <th scope="col">
+            Montant de la pension due proportionnellement au nombre de trimestres d'assurance
+            ou équivalents accomplis dans le pays considéré
+          </th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+          <td> Rente (ou allocation de solidarité)</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        <tr>
+          <td> Pension (ou allocation de retraite)</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        <tr>
+          <td> Pension de reversion</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        <tr>
+          <td> Bonification pour enfants</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        <tr>
+          <td> Majoration pour conjoint</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        <tr>
+          <td> Majoration pour tierce personne</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        <tr>
+          <td> Total</td>
+          <td style="text-align: right;"> -</td>
+          <td style="text-align: right;"> -</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-lg-12" style="margin-top:-1%;">
+      <p style="font-size: large; text-align: center;">
+        Total arrondi
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <hr style="height: 0; border: 2px solid grey;">
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-weight: bold; font-size: xx-large">
+        L'INSTITUTION D'ASSURANCE VIEILLESSE DU SECOND PAYS CI-DESSOUS DESIGNEE
+      </p>
+      <p style="font-weight: bold; font-size: xx-large;">
+        DECIDE
+      </p>
+    </div>
+    <div class="col col-lg-12" style="text-align: left; margin-top: 3%;">
+      <p style="font-size: large">
+        - La fraction de prestation à sa charge est égale à ........... points ...............
+        représentant un montant annuel de .............. prenant effet à compter du ..........
+      </p>
+      <p style="font-size: large;">
+        Le demandeur
+        <span style="font-weight: bold;">
+            NE PEUT SE PREVALOIR
+          </span> de la convention de coordination du 29 Mars 1974 en
+        matière d'assurance vieillesse pour le motif suivant :
+      </p>
+      <br>
+      <p style="font-size: large;">
+          <span style="font-weight: bold;">
+            VOIES DE RECOURS
+          </span> mises à la disposition du demandeur, si celui-ci entend contester la décision prise à son égard :
+      </p>
+      <p style="font-size: large;">
+          <span style="font-weight: bold;">
+            DELAI
+          </span> à l'expiration duquel le recours ne sera plus recevable :
+      </p>
+    </div>
+
+    <div class="col col-lg-12" style="text-align: center">
+      <p style="font-size: large">
+        A ................ , le ...........
+      </p>
+    </div>
+    <div class="col col-lg-8" style="text-align: center">
+      <div class="col col-lg-12" style="text-align: center">
+        <div class="col col-lg-6" style="float: left;">
+          <p style="font-size: large;">
+            Cachet de l'Institution
+          </p>
+        </div>
+        <div class="col col-lg-6" style=" float: right;">
+          <p style="font-size: large">
+            Signature du Représentant de l'institution
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-lg-12" style="margin-top: 5%;">
+
+      <hr style="height: 0; border: 2px solid grey;">
+      <p style="font-size: large;">
+          <span style="font-weight: bold;">
+            IMPORTANT :
+          </span> il est rappelé
+      </p>
+      <p style="font-size: large">
+        - à l'institution du second pays, qu'elle doit renvoyer à l'institution d'instruction un
+        exemplaire dûment complété du present formulaire, et en conserver dans ses archives;
+      </p>
+      <p style="font-size: large">
+        - a l'institution d'instruction du premier pays, qu'elle doit au retour du présent formulaire :
+      </p>
+      <p style="font-size: large; margin-left: 3%;">
+        1° Déterminer les droits qui s'ouvrent en vertu du régime qu'elle est chargée d'appliquer et fixer
+        le montant de l'avantage auquel peut prétendre l'intéressé;
+      </p>
+      <p style="font-size: large; margin-left: 3%;">
+        2° Notifier à l'intéressé par lettre recommandée, d'une part l'ensemble des décisions prises par les
+        organismes compétents des deux pays concernant la liquidation des avantages de vieillesse,
+        d'autre part les voies et délais de recours prévus par chacune des deux législations;
+      </p>
+      <p style="font-size: large; margin-left: 3%;">
+        3° Adresser à l'institution compétente du second pays copie de la notification ci-dessus et lui communiquer
+        la date à laquelle cette notification a été remise à l'intéressé.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+

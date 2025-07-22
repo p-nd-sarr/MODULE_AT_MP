@@ -1,0 +1,49 @@
+<%= content_for :titre_page, 'Bordereaux de régularisations de pension' %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Matricule</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        
+         <th scope="col">Motif</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Durée suspension</th>
+        <th scope="col">Pension mensuelle</th>
+         <th scope="col">Montant à régulariser</th>
+        <th colspan="4"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @regularisation_pensions.each do |regularisation_pension| %>
+        <tr>
+          <td><%= regularisation_pension.id %></td>
+          <td><%= regularisation_pension.numero_allocataire %></td>
+          <td><%= regularisation_pension.prenom %></td>
+          <td><%= regularisation_pension.nom %></td>
+          <td><%= regularisation_pension.motif_regularisation_pension %></td>
+          <td><%= RegularisationPension.human_enum_name(:etat, regularisation_pension.etat) %></td>
+           <td><%= regularisation_pension.duree_suspension %></td>
+          <td><%= Allocataire.find_by(numero_allocataire: regularisation_pension.numero_allocataire).montant_net %></td>
+          <td><%= regularisation_pension.montant_regularisation %></td>
+         
+          <td style="width: 75px">
+            <%= link_to 'Payer', class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%#= link_to 'modifier', edit_base_reversion_path(base_reversion), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%#= link_to 'supprimer', base_reversion, method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+class CreateArretTravailGeds < ActiveRecord::Migration[5.2]
+  def change
+    create_table :arret_travail_geds do |t|
+      t.string   :raison_sociale_employeur
+      t.string   :numero_employeur
+      t.string   :adresse_employeur
+      t.string   :email_employeur
+      t.string   :telephone_employeur
+      t.string   :activite_principale_entreprise
+      t.string   :numero_affiliation
+      t.integer  :type_de_piece
+      t.string   :nin_salarie
+      t.string   :prenom_salarie
+      t.string   :nom_salarie
+      t.integer  :sexe
+      t.date     :date_de_naissance_salarie
+      t.integer  :nationalite_salarie
+      t.string   :adresse_domiciliaire_salarie
+      t.string   :telephone_salarie
+      t.integer  :qualification_professionnelle_salarie
+      t.date     :date_embauche_salarie
+      t.integer  :type_de_contrat_travail_salarie
+      t.string   :nature_du_travail_au_moment_accident
+      t.boolean  :infirmite_anterieure_accident
+      t.float    :taux_infirmite_anterieure_accident
+      t.string   :numero_rente_infirmite_anterieure_accident
+      t.datetime :date_accident
+      t.integer  :nombre_hr_entre_accident_et_prise_travail
+      t.integer  :lieu_accident
+      t.boolean  :accident_mortel
+      t.date     :debut_arret_travail
+      t.integer  :agent_materiel
+      t.text     :cause_circonstances_acccident
+      t.boolean  :avec_constat
+      t.text     :detail_constat
+      t.string   :raison_absence_constat
+      t.boolean  :avec_temoin
+      t.string   :nom_temoin
+      t.string   :adresse_temoin
+      t.boolean  :personne_avisee
+      t.string   :nom_personne_avisee
+      t.string   :adresse_personne_avisee
+      t.datetime :personne_avisee_quand
+      t.string   :personne_avisee_par_qui
+      t.boolean  :accident_cause_par_tiers
+      t.string   :prenom_tiers
+      t.string   :nom_tiers
+      t.string   :adresse_tiers
+      t.string   :prenom_civilement_responsable
+      t.string   :nom_civilement_responsable
+      t.string   :adresse_civilement_responsable
+      t.string   :raison_sociale_assureur
+      t.string   :nom_assureur
+      t.string   :adresse_assureur
+      t.string   :numero_police_assurance
+      t.boolean  :salaire_verse_en_totalite_en_at
+      t.integer  :declarant
+      t.string   :prenom_declarant
+      t.string   :nom_declarant
+      t.string   :adresse_declarant
+      t.string   :telephone_declarant
+      t.string   :lieu_declaration
+      t.string   :qualite_declarant
+      t.date     :date_declaration
+      t.boolean  :est_journalier
+      t.boolean  :is_subrogation
+      t.integer  :admin_agence_id
+      t.date     :date_reception
+      t.integer  :etat
+      t.string   :status_ged
+      t.string   :id_item
+      t.string   :lien_ged
+      t.boolean  :est_mp
+      t.timestamps
+    end
+  end
+end

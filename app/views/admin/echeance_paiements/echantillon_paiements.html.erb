@@ -1,0 +1,12 @@
+<%= content_for :titre_page, "Echantillon sur les paiements  [#{ @echeance_paiement.periode_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_fin.strftime("%d/%m/%Y")}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <br>
+</div>
+</div>

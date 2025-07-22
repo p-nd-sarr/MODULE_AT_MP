@@ -1,0 +1,88 @@
+
+<% if (@demande_remboursement_cotisation.remboursement_cotisations.soumis.size > 0) and current_user.chef_service_cotisation? %>
+  <%= link_to "Je valide tous les remboursements soumis", admin_demande_remboursement_cotisation_valider_all_carrieres_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+  <hr>
+<% end %>
+<h3>Régime Général</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Période</th>
+<!--    <th scope="col">Régime</th>-->
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Taux contractuel</th>
+    <th scope="col">Cotisation contractuelle</th>
+    <th scope="col">Etat</th>
+     <th colspan="2"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+
+  <% @demande_remboursement_cotisation.remboursement_cotisations.regime_general.order("date_sortie desc").each do |remboursement| %>
+    <tr class="<%= 'bg-danger' if remboursement.points.zero? %>">
+      <td><%= remboursement.exercice %></td>
+      <td><%= remboursement.ref_employeur %></td>
+      <td> <%= l remboursement.date_entree %> - <%= l remboursement.date_sortie %> </td>
+<!--      <td><%#= carriere.type_regime.code %></td>-->
+      <td align="right"><%= format_cfa(remboursement.salaire, false) %></td>
+<!--      <td align="right"><%#= carriere.points %></td>-->
+      <td align="right"><%= remboursement.taux_contractuel %></td>
+      <td align="right"><%= remboursement.calcul_cotisation_contractuel %></td>
+      <td align="right"><%= remboursement.etat %></td>
+      <% if current_user.chef_service_cotisation?  %>
+        <td style="width: 75px">
+          <%= (link_to 'valider', admin_demande_remboursement_cotisation_valider_ligne_remboursement_path(@demande_remboursement_cotisation, remboursement_id: remboursement.id), class: 'btn btn-outline btn-primary btn-xs') unless remboursement.valide? or  remboursement.rejete? %>
+        </td>
+        <td style="width: 75px">
+          <%= (link_to 'rejeté', admin_demande_remboursement_cotisation_rejeter_ligne_remboursement_path(@demande_remboursement_cotisation, remboursement_id: remboursement.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless remboursement.valide? or  remboursement.rejete? %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>Régime Cadre</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Période</th>
+<!--    <th scope="col">Régime</th>-->
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Taux contractuel</th>
+    <th scope="col">Cotisation contractuelle</th>
+    <th scope="col">Etat</th>
+     <th colspan="2"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @demande_remboursement_cotisation.remboursement_cotisations.regime_cadre.order("date_sortie desc").each do |remboursement| %>
+    <tr class="<%= 'bg-danger' if remboursement.points.zero? %>">
+      <td><%= remboursement.exercice %></td>
+      <td><%= remboursement.ref_employeur %></td>
+      <td> <%= l remboursement.date_entree %> - <%= l remboursement.date_sortie %> </td>
+<!--      <td><%#= carriere.type_regime.code %></td>-->
+      <td align="right"><%= format_cfa(remboursement.salaire, false) %></td>
+<!--      <td align="right"><%#= carriere.points %></td>-->
+      <td align="right"><%= remboursement.taux_contractuel %></td>
+      <td align="right"><%= remboursement.calcul_cotisation_contractuel %></td>
+      <td align="right"><%= remboursement.etat %></td>
+
+      <% if current_user.chef_service_cotisation?  %>
+        <td style="width: 75px">
+          <%= (link_to 'valider', admin_demande_remboursement_cotisation_valider_ligne_remboursement_path(@demande_remboursement_cotisation, remboursement_id: remboursement.id), class: 'btn btn-outline btn-primary btn-xs') unless remboursement.valide? or  remboursement.rejete? %>
+        </td>
+        <td style="width: 75px">
+          <%= (link_to 'rejeté', admin_demande_remboursement_cotisation_rejeter_ligne_remboursement_path(@demande_remboursement_cotisation, remboursement_id: remboursement.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless remboursement.valide? or  remboursement.rejete? %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

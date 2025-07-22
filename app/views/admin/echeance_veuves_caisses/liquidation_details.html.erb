@@ -1,0 +1,78 @@
+<%= content_for :titre_page do %>
+  Détails liquidation : #<%= @echeance_lot_liquidation.id %> <br>
+  Date liquidation : <%= @echeance_lot_liquidation.created_at %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br><br>
+  <span style="float: right">
+      <b>Montant total liquidé: </b> <%= format_cfa @echeance_lot_liquidation.montant_total %> <br>
+      <span class="badge">Nombre total de veuves: </span> <%= @q.result.count %> <br>
+      <span class="badge">Nombre total d'enfants : </span> <%= @echeance_lot_liquidation.nombre_enfants %>
+  </span>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_veuves_caiss_all_liquidations_slices_path, class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @q, url: request.path do |f| %>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :numero_affiliation_cont, 'Numéro' %>
+          <%= f.search_field :numero_affiliation_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :nom_cont, 'Nom' %>
+          <%= f.search_field :nom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :prenom_cont, 'Prenom' %>
+          <%= f.search_field :prenom_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+
+    <br>
+
+    <%= paginate @epouses %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro d'affiliation</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Nombre d'enfants</th>
+        <th scope="col">Nombre de mois</th>
+        <th scope="col">Montant</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @epouses.each do |epouse| %>
+        <tr>
+          <td><%= epouse.numero_affiliation %></td>
+          <td><%= epouse.prenom %></td>
+          <td><%= epouse.nom %></td>
+          <td><%= epouse.nombre_enfants_liquidation(@echeance_lot_liquidation) %></td>
+          <td><%= epouse.nombre_mois_liquidation(@echeance_lot_liquidation) %></td>
+          <td><%= format_cfa epouse.montant_liquidation(@echeance_lot_liquidation) %></td>
+          <td style="width: 75px">
+            <%= link_to "dossier de l'allocataire", admin_dossier_prestation_path(epouse.dossier_prestation_id), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to "ordre de paiement", admin_paiement_generer_paiement_path(epouse.get_payment_order(@echeance_lot_liquidation), format: :pdf), class: 'btn btn-outline btn-primary btn-xs', target: '_blank' if @echeance_lot_liquidation.liquide? and not epouse.get_payment_order(@echeance_lot_liquidation).nil? %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @epouses %>
+  </div>
+</div>

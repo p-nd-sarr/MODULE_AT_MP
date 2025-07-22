@@ -1,0 +1,147 @@
+<div class="ibox-content">
+  <div class="row">
+    <div class="col-sm-12 m-b-xs">
+      <div data-toggle="buttons" class="btn-group btn-group-toggle">
+        <label class="btn btn-white active" style="outline: none; font-size:14px" data-toggle="pill" href="#prenatale">
+          <input type="radio" id="option1" name="options">Allocations prénatales
+          <span class="label label-warning"><%= @allocations_prenatales_migrees.count %></span> </label>
+        <label class="btn btn-white" style="outline: none; font-size:14px" data-toggle="pill" href="#postnatale">
+          <input type="radio" id="option2" name="options"> Allocations postnatales
+          <span class="label label-warning"><%= @allocations_postnatales_migrees.count %></span> </label>
+        <label class="btn btn-white" style="outline: none; font-size:14px" data-toggle="pill" href="#familiale">
+          <input type="radio" id="option3" name="options"> Allocations familiales
+          <span class="label label-warning"><%= @allocations_familiales_migrees.count %></span> </label>
+      </div>
+    </div>
+    <div class="col-lg-12 tab-content" style="margin-bottom: 60px; margin-top: 30px">
+      <div id="prenatale" class="tab-pane fade in active">
+        <%= paginate @allocations_prenatales_migrees %>
+        <div class="table-responsive" style="margin-top: 5px; padding-bottom:5px;">
+          <table class="table table-striped">
+            <thead class="thead-primary">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Conjoint</th>
+              <th scope="col">Grossesse ID</th>
+              <th scope="col">Volet</th>
+              <th scope="col">Montant liquidé</th>
+              <th colspan="3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @allocations_prenatales_migrees.each do |allocation_prenatale_migree| %>
+              <tr>
+                <td></td>
+                <td>
+                  <%= allocation_prenatale_migree.conjoint.try(:prenom) %>
+                  <%= allocation_prenatale_migree.conjoint.try(:nom) %>
+                </td>
+                <td>
+                  <%= allocation_prenatale_migree.grossesse_id unless allocation_prenatale_migree.grossesse_id.nil? %>
+                </td>
+                <td>
+                  <%= allocation_prenatale_migree.volet unless allocation_prenatale_migree.volet.nil? %>
+                </td>
+                <td>
+                  <%= allocation_prenatale_migree.montant_liquide unless allocation_prenatale_migree.montant_liquide.nil? %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'Détails', admin_dossier_prestation_detail_allocation_prenatales_migree_path(@dossier_prestation, allocation_prenatale_migree), class: 'btn btn-success btn-sm btn-outline' %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <%= paginate @allocations_prenatales_migrees %>
+      </div>
+      <div id="postnatale" class="tab-pane fade in">
+        <%= paginate @allocations_postnatales_migrees %>
+        <div class="table-responsive" style="margin-top: 5px; padding-bottom:5px;">
+          <table class="table table-striped">
+            <thead class="thead-primary">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Conjoint</th>
+              <th scope="col">Enfant</th>
+              <th scope="col">Volet</th>
+              <th scope="col">Montant liquidé</th>
+              <th colspan="3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @allocations_postnatales_migrees.each do |allocation_postnatale_migree| %>
+              <tr>
+                <td></td>
+                <td>
+                  <%= allocation_postnatale_migree.conjoint.try(:prenom) %>
+                  <%= allocation_postnatale_migree.conjoint.try(:nom) %>
+                </td>
+                <td>
+                  <%= allocation_postnatale_migree.enfant.try(:prenom) %>
+                  <%= allocation_postnatale_migree.enfant.try(:nom) %>
+                </td>
+                <td>
+                  <%= allocation_postnatale_migree.volet unless allocation_postnatale_migree.volet.nil? %>
+                </td>
+                <td>
+                  <%= allocation_postnatale_migree.montant_liquide unless allocation_postnatale_migree.montant_liquide.nil? %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'Détails', admin_dossier_prestation_detail_allocation_postnatale_migree_path(@dossier_prestation, allocation_postnatale_migree), class: 'btn btn-success btn-sm btn-outline' %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <%= paginate @allocations_postnatales_migrees %>
+      </div>
+      <div id="familiale" class="tab-pane fade in">
+        <%= paginate @allocations_familiales_migrees %>
+        <div class="table-responsive" style="margin-top: 5px; padding-bottom:5px;">
+          <table class="table table-striped">
+            <thead class="thead-primary">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Enfant ID</th>
+              <th scope="col">Enfant nom complet</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Montant liquidé</th>
+              <th colspan="3"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% @allocations_familiales_migrees.each do |allocation_familiale_migree| %>
+              <tr>
+                <td></td>
+                <td>
+                  <%= allocation_familiale_migree.enfant_id unless allocation_familiale_migree.enfant_id.nil? %>
+                </td>
+                <td>
+                  <%= allocation_familiale_migree.enfant.try(:prenom) %>
+                  <%= allocation_familiale_migree.enfant.try(:nom) %>
+                </td>
+                <td>
+                  <%= allocation_familiale_migree.trimestre unless allocation_familiale_migree.trimestre.nil? %>
+                </td>
+                <td>
+                  <%= allocation_familiale_migree.annee unless allocation_familiale_migree.annee.nil? %>
+                </td>
+                <td>
+                  <%= allocation_familiale_migree.montant_liquide unless allocation_familiale_migree.montant_liquide.nil? %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'Détails', admin_dossier_prestation_detail_allocation_familiale_migree_path(@dossier_prestation, allocation_familiale_migree), class: 'btn btn-success btn-sm btn-outline' %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <%= paginate @allocations_familiales_migrees %>
+      </div>
+    </div>
+  </div>
+</div>

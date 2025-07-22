@@ -1,0 +1,64 @@
+<div class="row">
+  <% @allocation_familiale.document_allocat_familiales.each do |document_allocat_familiales| %>
+    <div class="col-lg-4">
+      <div class="contact-box" style="min-height: 180px">
+        <a href="<%= url_for(document_allocat_familiales.document) %>" target="_blank">
+          <div class="col-sm-4">
+            <div class="text-center">
+              <%= image_tag document_allocat_familiales.document.preview(resize: "500x500>"), class: "m-t-xs img-responsive" %>
+<!--              preview-->
+            </div>
+          </div>
+          <div class="col-sm-8">
+            <h3><strong><%= DocumentAllocatFamiliale.human_enum_name(:type_document, document_allocat_familiales.type_document) %></strong></h3>
+            <p>
+              <strong>Commentaires :</strong><br>
+              <%= document_allocat_familiales.commentaire %>
+            </p>
+          </div>
+          <div class="clearfix"></div>
+        </a>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<% if @allocation_familiale.creation? %>
+
+  <%= link_to 'Ajouter un document', '#', id: :ajouter_document %>
+
+  <%= bootstrap_form_for(@document_allocation_familiale, url: salarie_dossier_prestation_allocation_familiale_create_document_path(@dossier_prestation, @allocation_familiale),
+                         layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+    <%= f.alert_message 'aa' %>
+    <div class="row">
+      <div class="col-sm-8 col-sm-offset-2">
+        <h2>Ajouter un document</h2>
+        <%= f.select :type_document,
+                     DocumentAllocatFamiliale::TYPE_DOCUMENT.keys.collect {
+                         |type_document| [DocumentAllocatFamiliale.human_enum_name(:type_document, type_document), type_document] },
+                     label: 'Type' %>
+        <%= f.file_field :document, label: 'Document', required: true %>
+        <%= f.text_area :commentaire, label: 'Commentaire' %>
+
+        <div class="hr-line-dashed"></div>
+
+        <div class="form-group row">
+          <div class="col-sm-4 col-sm-offset-2">
+            <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <script type="text/javascript">
+      $(document).ready(function(){
+          $('#new_document_allocat_familiale').hide();
+
+          $("#ajouter_document").click(function () {
+              $('#new_document_allocat_familiale').show();
+              return false;
+          });
+      })
+  </script>
+<% end %>

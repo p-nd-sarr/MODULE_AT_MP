@@ -1,0 +1,49 @@
+<%= content_for :titre_page, "Liste des nouveaux dossiers activés  [#{ @echeance_paiement.periode_variation_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_variation_fin.strftime("%d/%m/%Y")}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+   <%= render 'admin/allocataires/search' %>
+    <br>
+    <%= paginate @allocataires %>
+
+    <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+      <thead>
+      <tr>
+        <th scope="col">Numero affiliation</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Type versement</th>
+        <th scope="col">Versement</th>
+        <th scope="col">Etat</th>
+
+        <th scope="col">Type</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @allocataires.each do |allocataire| %>
+        <tr>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= allocataire.prenom %></td>
+          <td><%= allocataire.nom %></td>
+          <td><%= allocataire.versement_unique? ? "Versement unique" : "Versement mensuel" %></td>
+          <td><%= allocataire.montant_net %></td>
+          <td><%= allocataire.etat %></td>
+          <td><%= allocataire.categorie unless allocataire.nil? %></td>
+
+          <td style="width: 75px">
+            <%= (link_to 'Details Allocataire', admin_allocataire_path(allocataire), class: 'btn btn-outline btn-primary btn-xs') unless allocataire.nil? %>
+            <%= (link_to 'Details Dossier', admin_liquidation_retraite_path(allocataire.liquidation_retraite), class: 'btn btn-outline btn-primary btn-xs') unless allocataire.liquidation_retraite.nil? %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @allocataires %>
+  </div>
+</div>

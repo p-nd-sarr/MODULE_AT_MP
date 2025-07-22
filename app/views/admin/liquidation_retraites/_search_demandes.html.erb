@@ -1,0 +1,67 @@
+<h3>Critères de recherche</h3>
+<br>
+<%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :num_dossier_cont, 'Numéro dossier' %>
+      <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :prenom_cont, 'Prénom' %>
+      <%= f.search_field :prenom_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-4">
+      <%= f.label :nom_cont, 'Nom' %>
+      <%= f.search_field :nom_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+  </div>
+  <div class="row">
+    <div class="col-sm-4">
+      <%= f.label :workflow_state_eq, 'Etat' %>
+      <%= f.select :workflow_state_eq, LiquidationRetraite.workflow_spec.states.keys.map { |k| [LiquidationRetraite.workflow_spec.states[k].meta[:label], k] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :affectation_allocataire_eq, 'Gestionnaire Allocataire' %>
+      <%= f.collection_select :affectation_allocataire_eq, User.gestionnaire_compte_allocataire.order(:prenom), :id, :full_name,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-4">
+      <%= f.label :affectation_salarie_eq, 'Gestionnaire Salarié' %>
+      <%= f.collection_select :affectation_salarie_eq, User.gestionnaire_compte_salarie.order(:prenom), :id, :full_name,
+                              { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+  <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= demandes_affectees_admin_liquidation_retraites_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= demandes_affectees_admin_liquidation_retraites_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

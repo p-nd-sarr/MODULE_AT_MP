@@ -1,0 +1,43 @@
+<%= content_for :titre_page, "Liste des demandeurs de reversion avant liquidation" %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Type</th>
+               <th scope="col">Peut etre eligible</th>
+              <th scope="col">Etat</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @dossier_reversion_salaries.each do |dossier_reversion_salarie| %>
+              <tr>
+                <td><%= dossier_reversion_salarie.prenom %></td>
+                <td><%= dossier_reversion_salarie.nom %></td>
+                
+                <% unless dossier_reversion_salarie.conjoint_id.nil?%>
+                   <td><%= l dossier_reversion_salarie.conjoint.date_naissance %></td>
+                <% end%>
+                 <% unless dossier_reversion_salarie.enfant_id.nil?%>
+                   <td><%= l dossier_reversion_salarie.enfant.date_naissance %></td>
+                <% end%>
+
+                  <td><%= dossier_reversion_salarie.type_ayant_droit %></td>
+                  <td><%= state_yes_no dossier_reversion_salarie.peut_etre_eligible? %></td>
+                  <td><%= dossier_reversion_salarie.etat %> </td>
+            
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin,dossier_reversion_salarie], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+  </div>
+</div>

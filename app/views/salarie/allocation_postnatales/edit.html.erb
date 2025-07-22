@@ -1,0 +1,23 @@
+<%= content_for :titre_page, "Modification Allocation Postnatale #{AllocationPostnatale.human_enum_name(:volet, @allocation_postnatale.volet)}" %>
+
+<% @enfant ||= @allocation_postnatale.enfant %>
+<%= bootstrap_form_for([:salarie, @dossier_prestation, @allocation_postnatale], layout: :horizontal) do |f| %>
+  <%= f.alert_message 'Erreurs :' %>
+  <%= f.hidden_field :enfant_id, value: @enfant.id %>
+  <%= f.date_select :date_accouchement, label: "Date accouchement",
+                    start_year: (Date.today - 1.year).year, end_year: (Date.today).year %>
+  <%# <%= f.select :volet, @enfant.volets_eligibles.keys.collect{ |volet|
+    [AllocationPostnatale.human_enum_name(:volet, volet), volet] },
+               label: 'N° Volet' %>
+  <%= f.file_field :document, label: 'Document', required: true %>
+  <%= f.text_area :commentaire, label: 'Commentaire' %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', salarie_dossier_prestation_allocation_postnatales_path(@dossier_prestation), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

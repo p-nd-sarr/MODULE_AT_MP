@@ -1,0 +1,49 @@
+
+<div class="table-responsive" style="margin-top: 20px; padding-bottom:100px;">
+  <table class="table table-striped">
+    <thead class="thead-primary">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">N° liquidation</th>
+          <th scope="col">Trimestre</th>
+          <th scope="col">Année</th>
+          <th scope="col">Date liquidation</th>
+          <th scope="col">Montant liquidé</th>
+          <th colspan="3"></th>
+        </tr>
+    </thead>
+    <tbody>
+    <% @mes_dossiers_valides.pret_pour_allocations_f.each do |dossier_prestation| %>
+      <% dossier_prestation.allocation_familiales.est_liquide.each do |familiale| %>
+        <tr>
+          <td></td>
+          <td>
+            <%= familiale.numero_liquidation_generer unless familiale.numero_liquidation_generer.nil? %>
+          </td>
+          <td><%= AllocationFamiliale.human_enum_name(:trimestre, familiale.trimestre) %></td>
+          <td><%= familiale.annee %></td>
+          <td>
+            <% unless familiale.date_liquidation.nil? %>
+              <%= familiale.date_liquidation.strftime('%d-%m-%Y') %>
+            <% end %>
+          </td>
+          <td>
+            <% unless familiale.date_liquidation.nil? %>
+              <%= familiale.montant_paiement %>
+            <% end %>
+          </td>
+          <td style="width: 75px">
+            <%= (link_to 'Valider', admin_dossier_prestation_allocation_familiale_valider_path(dossier_prestation, familiale), class: 'btn btn-primary btn-sm') %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to "Détails de l'allocation", [:admin, dossier_prestation, familiale], class: 'btn btn-success btn-sm btn-outline' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'Détails du dossier', admin_dossier_prestation_path(dossier_prestation), class: 'btn btn-success btn-sm btn-outline' %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+    </tbody>
+  </table>
+</div>

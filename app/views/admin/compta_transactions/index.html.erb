@@ -1,0 +1,98 @@
+<%= content_for :titre_page, 'Comptabilité' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', '#', class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h3>Critères de recherche</h3>
+    <br>
+    <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :ordre_paiement_numero_cont, 'Numéro ordre paiement' %>
+          <%= f.search_field :ordre_paiement_numero_cont, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :numero_allocataire_cont, 'Numéro affiliation' %>
+          <%= f.search_field :numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :prenom_cont, 'Prénom' %>
+          <%= f.search_field :prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :nom_cont, 'Nom' %>
+          <%= f.search_field :nom_cont, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :mode_paiement_eq, 'Mode de paiement' %>
+          <%= f.select :mode_paiement_eq, Allocataire.mode_paiements.to_a.map { |w| [Allocataire.human_enum_name(:mode_paiement, w[0]), w[1]] },
+                       { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :code_operation_cont, 'Code Opération' %>
+          <%= f.search_field :code_operation_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :code_agence_liquidation_cont, 'Code Agence' %>
+          <%= f.search_field :code_agence_liquidation_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%#= f.submit class: 'btn btn-primary' %>
+      <%= f.submit 'Rechercher', class: 'btn btn-primary' %>
+    <% end %>
+    <br>
+
+    <%= paginate @compta_transactions %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Ordre</th>
+        <th scope="col">Dossier</th>
+        <th scope="col">Opération</th>
+        <th scope="col">Agence</th>
+        <th scope="col">Allocataire</th>
+        <th scope="col">Montant</th>
+        <th scope="col">Mode Paiement</th>
+        <th scope="col">Généré le</th>
+        <th scope="col">Envoyé à compta ?</th>
+        <th scope="col">Est repris ?</th>
+        <th scope="col">Statut</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @compta_transactions.each do |compta_transaction| %>
+        <tr>
+          <td><%= compta_transaction.ordre_paiement.try(:numero_format) %></td>
+          <td><%= compta_transaction.dossier_type %>#<%= compta_transaction.dossier_id %></td>
+          <td><%= compta_transaction.code_operation %></td>
+          <td><%= compta_transaction.code_agence_liquidation %></td>
+          <td>
+            <%= compta_transaction.numero_allocataire %> /
+            <%= compta_transaction.prenom %>
+            <%= compta_transaction.nom %>
+          </td>
+          <td><%= format_cfa compta_transaction.montant, false %></td>
+          <td><%= compta_transaction.mode_paiement_human %></td>
+          <td><%= l compta_transaction.created_at, format: :short %></td>
+          <td><%= state_yes_no compta_transaction.send_to_compta? %></td>
+          <td><%= state_yes_no compta_transaction.est_repris? %></td>
+          <td><%= compta_transaction.statut.humanize %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @compta_transactions %>
+  </div>
+</div>

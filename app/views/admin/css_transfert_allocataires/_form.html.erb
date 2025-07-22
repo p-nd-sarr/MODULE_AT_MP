@@ -1,0 +1,121 @@
+<%= bootstrap_form_for([:admin, @css_transfert_allocataire], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+
+  <div class="">
+    <%= f.text_field :numero_affiliation, label: 'Numéro affiliation' %>
+    <%= f.text_field :employeur_source_id, label: 'Employeur source' %>
+    <%= f.text_field :employeur_destination_id, label: 'Employeur destination' %>
+    <%= f.collection_select :agence_source_id, Admin::Agence.css, :id, :description_prest, label: 'Agence source', class: 'form-control', required: true %>
+    <%= f.collection_select :agence_destination_id, Admin::Agence.css, :id, :description_prest, label: 'Agence destination', class: 'form-control', required: true %>
+
+    <%= f.date_select :date_transfert, class: 'form-control', label: 'Date transfert', required: true %>
+    <%= f.date_select :date_embauche, class: 'form-control', label: 'Date Embauche', required: true %>
+    <%= f.text_area :commentaire, class: 'form-control', label: 'Commentaire' %>
+
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', (@css_transfert_allocataire.persisted? ? [:admin, @css_transfert_allocataire] : admin_css_transfert_allocataires_path), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          load_salary();
+          load_employer();
+
+          $('#css_transfert_allocataire_numero_affiliation').change(function () {
+              load_salary();
+          });
+          $('#css_transfert_allocataire_employeur_source_id').change(function () {
+              load_employer();
+          });
+          $('#css_transfert_allocataire_employeur_destination_id').change(function () {
+              load_employer();
+          });
+
+          function load_salary() {
+              const matric = $('#css_transfert_allocataire_numero_affiliation').val();
+              if (matric) {
+                  $.ajax({
+                      url: "/admin/salaries/" + matric + ".json",
+                      method: 'get',
+                      dataType: "json",
+                      success: function (data) {
+                          $('#css_transfert_allocataire_employeur_source_id').val(data?.id_employeur || '');
+                          $('#css_transfert_allocataire_employeur_source_id').trigger('change');
+                      },
+                      error: function () {
+                          $('#css_transfert_allocataire_employeur_source_id').val('');
+                          $('#css_transfert_allocataire_employeur_source_id').trigger('change');
+                      }
+                  });
+              } else {
+                  $('#css_transfert_allocataire_employeur_source_id').val('');
+                  $('#css_transfert_allocataire_employeur_source_id').trigger('change');
+              }
+          }
+
+          function load_employer() {
+              const fhnum = $('#css_transfert_allocataire_employeur_source_id').val();
+              const fhnum2 = $('#css_transfert_allocataire_employeur_destination_id').val();
+
+              // Load both source and destination agencies in parallel
+              const sourcePromise = fhnum ? load_agency(fhnum, '#css_transfert_allocataire_agence_source_id') : reset_field('#css_transfert_allocataire_agence_source_id');
+              const destinationPromise = fhnum2 ? load_agency(fhnum2, '#css_transfert_allocataire_agence_destination_id') : reset_field('#css_transfert_allocataire_agence_destination_id');
+
+              // Use $.when to handle multiple AJAX calls in parallel
+              $.when(sourcePromise, destinationPromise).done(function () {
+                  // Both agency data have been loaded (if applicable)
+              });
+          }
+
+          // Reusable function to load agency data
+          function load_agency(employerId, agencyField) {
+              return $.ajax({
+                  url: "/admin/dossier_prestations/employeur/" + employerId + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data?.code_agence_css) {
+                          // Fetch agency info if code_agence_css is present
+                          $.ajax({
+                              url: "/agences/single_agence/" + data.code_agence_css + ".json",
+                              method: 'get',
+                              dataType: "json",
+                              success: function (data) {
+                                  if (data?.id) {
+                                      $(agencyField).val(data.id).removeAttr('disabled');
+                                  } else {
+                                      reset_field(agencyField);
+                                  }
+                              },
+                              error: function () {
+                                  reset_field(agencyField);
+                              }
+                          });
+                      } else {
+                          reset_field(agencyField);
+                      }
+                  },
+                  error: function () {
+                      reset_field(agencyField);
+                  }
+              });
+          }
+
+          // Helper function to reset fields and remove 'disabled' attribute
+          function reset_field(field) {
+              $(field).val('').attr('disabled', 'disabled');
+          }
+      });
+  </script>
+<% end %>
+

@@ -1,0 +1,40 @@
+<%= content_for :titre_page, 'Demandes de suspension allocataire' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Allocataire', [:admin, @allocataire], class: 'btn btn-white btn-sm' %>
+  <% if current_user.can_allocataire?%>
+    <%= link_to 'Nouvelle demande', new_admin_allocataire_extinction_allocataire_path, class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire?  %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Matricule</th>
+        <th scope="col">Date demande d'extinction</th>
+         <th scope="col">Motif extinction</th>
+        <th scope="col">Etat</th>
+        <th colspan="5"> Action</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @extinction_allocataires.each do |extinction_allocataire| %>
+        <tr>
+          <td><%= extinction_allocataire.id %></td>
+          <td><%= extinction_allocataire.numero_allocataire %></td>
+           <td><%= extinction_allocataire.created_at.strftime("%d/%m/%Y") %></td>
+          <td><%= extinction_allocataire.motif_extinction %></td>
+          <td><%= extinction_allocataire.workflow_state %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, @allocataire, extinction_allocataire], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+       <% end%>
+      </tbody>
+    </table>
+  </div>
+</div>

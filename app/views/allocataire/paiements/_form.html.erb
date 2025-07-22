@@ -1,0 +1,87 @@
+<%= bootstrap_form_for([:allocataire, @paiements], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="col-sm-6">
+      <%= f.text_field :numero_affiliation, label: 'Numéro affiliation' %>
+      <%= f.text_field :prenom, label: 'Prénom' %>
+      <%= f.text_field :nom, label: 'Nom' %>
+      <%= f.date_select :date_naissance, label: 'Date de naissance',
+                        start_year: (Date.today - 100.year).year, end_year: (Date.today - 18.year).year %>
+      <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+      <%= f.text_field :adresse_domicile, label: 'Adresse domicile' %>
+      <hr>
+      <%= f.date_select :date_cessation_activite, label: "Date de céssation d'activité",
+                        start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+      <%= f.select :type_retraite,
+                   LiquidationRetraite::TYPE_RETRAITE.keys.collect { |type_retraite| [LiquidationRetraite.human_enum_name(:type_retraite, type_retraite), type_retraite] },
+                   label: 'Type de retraite' %>
+    </div>
+
+    <div class="col-sm-6">
+      <%= f.text_field :adresse_reception_allocation, label: "Adresse de reception de l'allocation" %>
+      <%= f.select :mode_paiement,
+                   MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [LiquidationRetraite.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                   include_blank: true, label: 'Mode de paiement' %>
+      <div id="mode_paiement_virement">
+        <%= f.text_field :compte_bancaire_nom_banque, label: 'Nom de la banque' %>
+        <%= f.text_field :compte_bancaire_code_banque, label: 'Code de la banque' %>
+        <%= f.text_field :compte_bancaire_code_guichet, label: 'Code guichet du compte' %>
+        <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte' %>
+      </div>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', (@demande_liquidation.persisted? ? [:salarie, @demande_liquidation] : salarie_liquidation_retraites_path), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+          chargerInfosCompteBancaire();
+
+          $("#liquidation_retraite_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+          });
+
+          function chargerInfosCompteBancaire() {
+              var mode_paiement = $('#liquidation_retraite_mode_paiement').val();
+              elem_mode_paiement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  elem_mode_paiement.show();
+              } else {
+                  elem_mode_paiement.hide();
+              }
+          }
+
+          $('#liquidation_retraite_numero_affiliation').change(function() {
+              var numero_affiliation = $('#liquidation_retraite_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function( data ) {
+                      if(data){
+                          $("#liquidation_retraite_prenom").val(data.prenom);
+                          $("#liquidation_retraite_nom").val(data.nom);
+                      }
+                      else{
+                          $("#liquidation_retraite_prenom").val('');
+                          $("#liquidation_retraite_nom").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#liquidation_retraite_prenom").val('');
+                      $("#liquidation_retraite_nom").val('');
+                  }
+              });
+          })
+      })
+  </script>
+<% end %>

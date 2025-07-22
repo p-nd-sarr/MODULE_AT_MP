@@ -1,0 +1,74 @@
+<div class="ibox" style="margin-top:20px;">
+  <div class="ibox-title" style="background-color:rgb(240, 240, 240)">
+    <div class="ibox-tools">
+      <% if @dossier_juridique.affectation? and @dossier_juridique.is_set_manager(current_user.id) %>
+        <button type="button" class="btn btn-xs btn-success" data-toggle="modal" data-target="#actes<%= @dossier_juridique_acte.id %>">
+          <span class="fa fa-plus"></span> Ajouter Avocat / Huissier
+        </button>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="ibox-content">
+    <br>
+    <%= paginate @dossier_juridique_actes %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Type acte</th>
+        <th scope="col">Date acte</th>
+        <th scope="col">Commentaire</th>
+        <th scope="col">PV audience</th>
+        <th scope="col">PV assignation</th>
+        <th scope="col">PV décision</th>
+        <th scope="col">Options documents</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @dossier_juridique_actes.each do |dossier_juridique_acte| %>
+        <tr>
+          <td><%= DossierJuridiqueActe.human_enum_name(:type_act, dossier_juridique_acte.type_act) unless dossier_juridique_acte.type_act.nil? %></td>
+          <td><%= (dossier_juridique_acte.date_act) unless dossier_juridique_acte.date_act.nil? %></td>
+          <td><%= dossier_juridique_acte.comment unless dossier_juridique_acte.comment.nil? %></td>
+          <td>
+            <% if dossier_juridique_acte.pv_audience.attached? %>
+              <a href="<%= url_for(dossier_juridique_acte.pv_audience) %>" target="_blank">
+                <%= image_tag dossier_juridique_acte.pv_audience.preview(resize: "100x20>"), class: "m-t-xs img-responsive" %>
+              </a>
+            <% end %>
+          </td>
+          <td>
+            <% if dossier_juridique_acte.pv_assignation.attached? %>
+              <a href="<%= url_for(dossier_juridique_acte.pv_assignation) %>" target="_blank">
+                <%= image_tag dossier_juridique_acte.pv_assignation.preview(resize: "100x20>"), class: "m-t-xs img-responsive" %>
+              </a>
+            <% end %>
+          </td>
+          <td>
+            <% if dossier_juridique_acte.pv_decision.attached? %>
+              <a href="<%= url_for(dossier_juridique_acte.pv_decision) %>" target="_blank">
+                <%= image_tag dossier_juridique_acte.pv_decision.preview(resize: "100x20>"), class: "m-t-xs img-responsive" %>
+              </a>
+            <% end %>
+          </td>
+
+          <td>
+            <% if @dossier_juridique.affectation? and @dossier_juridique.is_set_manager(current_user.id) %>
+              <%= link_to 'Supprimer', admin_dossier_juridique_acte_path(dossier_juridique_acte), method: :delete, data: { confirm: 'Êtes-vous sûr de vouloir supprimer ?' }, class: 'btn-danger btn-xs' %>
+              <button type="button" class="btn btn-xs btn-outline" data-toggle="modal" data-target="#actes<%= dossier_juridique_acte.id %>">
+                <span class="fa fa-edit"></span> Modifier
+              </button>
+            <% end %>
+          </td>
+          <%= render 'admin/dossier_juridiques/actes_modal_form', :object => dossier_juridique_acte %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @dossier_juridique_actes %>
+  </div>
+</div>
+
+
+<%= render 'admin/dossier_juridiques/actes_modal_form', :object => @dossier_juridique_acte %>

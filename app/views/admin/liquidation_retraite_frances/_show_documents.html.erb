@@ -1,0 +1,29 @@
+<ul class="text-danger">
+  <% if @demande_liquidation.documents.where(type_document: [:cni, :attestation_travail, :certificat_mariage, :passeport, :carte_consulaire]).empty? %>
+    <li>Veuillez ajouter une copie du CNI ou passeport ou carte consulaire</li>
+  <% end %>
+
+  <% if @demande_liquidation.retraite_anticipee_invalide? and @demande_liquidation.documents.where(type_document: :certificat_mariage).empty? %>
+    <li>Veuillez ajouter une copie du Certifical mariage</li>
+  <% end %>
+
+  <% if @demande_liquidation.virement? and @demande_liquidation.documents.rib.empty? %>
+    <li>Veuillez ajouter un Relevé d'Identité Bancaire (RIB) pour les paiements par virement bancaire</li>
+  <% end %>
+</ul>
+
+<%= render 'documents/liste',
+           object: @demande_liquidation,
+           documents: @demande_liquidation.documents,
+           include_add: @demande_liquidation.creation?,
+           include_delete: @demande_liquidation.creation?,
+           type_documents: LiquidationRetraiteFrance::TYPE_DOCUMENT,
+           type_documents_obligatoires: LiquidationRetraiteFrance::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_liquidation_retraite_france_path(@demande_liquidation)
+%>
+
+<%= render 'documents/modal_form',
+           type_documents: LiquidationRetraiteFrance::TYPE_DOCUMENT,
+           document: Document.new(documentable: @demande_liquidation),
+           back_url: admin_liquidation_retraite_france_path(@demande_liquidation)
+%>

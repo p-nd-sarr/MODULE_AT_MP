@@ -1,0 +1,63 @@
+<%= content_for :titre_page, "Détails décomptes rente"  %>
+<%= content_for :titre_page_autres_details do %>
+      N° Rente : <%= @at_dossier_reversion_rente.numero_dossier%> <br/>
+      Prénom : <%=@at_dossier_reversion_rente.prenom%> <br/>
+      Nom : <%=@at_dossier_reversion_rente.nom%> <br/>
+      Date de naissance : <%=@at_dossier_reversion_rente.date_naissance.strftime("%d/%m/%Y")%> <br/>
+      Date ouverture : <%= @at_dossier_reversion_rente.created_at.strftime("%d/%m/%Y")%> <br/>
+      Etat : <%= @at_dossier_reversion_rente.etat_human%> <br/>
+      
+
+<% end %>
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_at_rente_famille_path(@at_rente_famille), class: 'btn btn-white btn-sm' %> 
+    <%= link_to "<i class='fa fa-file-pdf-o'></i> Lettre".html_safe, admin_at_dossier_reversion_rente_notification_path(@at_dossier_reversion_rente, format: :pdf), class: 'btn btn-outline btn-info btn-xs', target: :_blank %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+<div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+               <div class="tabs-container">
+            <ul class="nav nav-tabs" id='mes_navbars' style="font-size: 11px;">
+            
+           
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-1">Rentes     
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a data-toggle="tab" href="#tab-2">Documents
+                </a>
+              </li>
+           
+            </ul>
+            <div class="tab-content">
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <br>
+    
+                  <%= render 'show_rentes' %>
+                </div>
+              </div>
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                     <%= render 'show_documents' %>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

@@ -1,0 +1,366 @@
+<%= bootstrap_form_for([:admin,@reversion_veuve_salarie],  label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+
+    <div class="col-lg-12 form-group">
+      <div class="col-sm-4">
+        <%= f.text_field :numero_affiliation, required: true %>
+      </div>
+      <div class="col-sm-4">
+        <%= f.text_field :prenom, label: 'Prénom', disabled: true %>
+      </div>
+      <div class="col-sm-4">
+        <%= f.text_field :nom, label: 'Nom', disabled: true %>
+      </div>
+    </div>
+
+    <div class="col-lg-12 form-group">
+      <div class="col-sm-6">
+        <%= f.select :sexe, BaseReversionSalary::SEXE.keys.collect { |sexe| [BaseReversionSalary.human_enum_name(:sexe, sexe), sexe] }, required: true%>
+      </div>
+      <div class="col-sm-6">
+        <%= f.date_select :date_naissance, label: 'Date de naissance', class: "form-control",
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today).year, required: true %>
+      </div>
+    </div>
+
+    <div class="col-lg-12 form-group">
+      <div class="col-sm-6">
+        <%= f.date_select :date_cessation_activite, label: "Date de céssation d'activité",
+                          start_year: (Date.today - 40.year).year, end_year: (Date.today + 42.year).year, required: true %>
+      </div>
+      <div class="col-sm-6">
+        <%= f.date_select :date_deces, label: 'Date de déces',
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today).year, required: true %>
+      </div>
+    </div>
+
+    <div class="col-lg-12 form-group">
+
+      <div class="col-sm-6">
+         <%= f.text_field :nombre_enfant_eligible %>
+      </div>
+
+      <div class="col-sm-6">
+        <%= f.text_field :nombre_epouses_eligible %>
+      </div>
+
+    </div>
+    <%# Demandes reversions veuves/orphelins %>
+    <div class="col-lg-12 form-group">
+      <div class="row">
+        <div class="col-lg-12">
+         <h2> Demandeurs de reversion</h2>
+          <div class="panel-body">
+            <div class="panel-group" id="accordion">
+
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#conjoint">
+                      <span class="fa fa-users"></span> Demandeurs reversions veuves
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="conjoint" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <div class="content clearfix" id="list_conjoint">
+                      <div class="col-lg-12">
+                        <div class="row">
+                          <div class="col-sm-12 table-responsive">
+                            <% if @reversion_veuve_salarie.numero_affiliation.nil? %>
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Prénom</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Date de naissance</th>
+                                    <th scope="col">Date de mariage</th>
+                                    <th scope="col">Demande reversion</th>
+                                  
+                                  </tr>
+                                </thead>
+                                  <tbody id="t_body_conjoint">
+                                  </tbody>
+                              </table>
+                            <% end %>
+
+                            <% unless @conjoints.nil? %>
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Prénom</th>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Date de naissance</th>
+                                    <th scope="col">Date de mariage</th>
+                                    <th scope="col">Demande reversion</th>
+                                
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <% @conjoints.each do |conjoint| %>
+                                    <tr>
+                                      <td><%= conjoint.prenom %></td>
+                                      <td><%= conjoint.nom %></td>
+                                      <td><%= l conjoint.date_naissance %></td>
+                                      <td><%= l conjoint.date_mariage %></td>
+                                      <td>
+                                        <%= check_box_tag 'conjoints_id[]', conjoint.id,  @reversion_veuve_salarie.conjoint_checked(conjoint.id) %>
+                                      </td>
+                                    </tr>
+                                  <% end %>
+                                </tbody>
+                              </table>
+                            <% end %>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>  <!-- End panel default conjoint -->
+
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#enfant">
+                      <span class="fa fa-users"></span> Demandeurs reversion orphelins
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="enfant" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <div class="row">
+                      <div class="col-sm-12 table-responsive">
+                         <% if @reversion_veuve_salarie.numero_affiliation.nil? %>
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Date de naissance</th>
+                                <th scope="col">Demande Reversion</th>
+                              </tr>
+                            </thead>
+                            <tbody id="t_body_enfant">
+                            </tbody>
+                          </table>
+                        <% end %>
+
+                        <% unless @enfants.nil? %>
+                          <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Date de naissance</th>
+                                <th scope="col">Prenom & Nom conjoint(e) </th>
+                                <th scope="col">Demande Reversion</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <% @enfants.each do |enfant| %>
+                                  <tr>
+                                    <td><%= enfant.prenom %></td>
+                                    <td><%= enfant.nom %></td>
+                                    <td><%= l enfant.date_naissance %></td>
+                                    <td><%= enfant.naturel? ? "enfant naturel" : enfant.conjoint.full_name %></span></td>
+                                    <td>
+                                      <%= check_box_tag 'enfants_id[]', enfant.id, @reversion_veuve_salarie.enfant_checked(enfant.id) %>
+                                    </td>
+                                  </tr>
+                                <% end %>
+                            </tbody>
+                          </table>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- End panel default enfant -->
+
+            </div>
+          </div>
+        </div> <!-- End col -->
+      </div> <!-- End row -->
+    </div>
+
+   
+    <%# Documents à déposer %>
+    <div class="col-lg-12 form-group">
+      <div class="row">
+        <div class="col-lg-12">
+         <h2> Documents à déposer</h2>
+          <div class="panel-body">
+            <div class="panel-group" id="accordion">
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#doc_obligatoires">
+                      <span class="fa fa-folder"></span> Documents obligatoires
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="doc_obligatoires" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "CNI" %> CNI <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Formulaire de la demande" %> Formulaire de la demande <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Certificat de décès" %> Certificat de travail <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Justificatifs de carrières du défunt" %> Justificatifs de carrières du défunt <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Certificat d'emploi et de salaire" %> Certificat d'emploi et de salaire <br>
+                    <%= check_box_tag "documents_deposes_obligatoires[]", "Contrat de travail" %> Contrat de travail <br>
+                  </div>
+                </div>
+              </div> <!-- End panel default conjoint -->
+
+              <div class="panel panel-default" style="padding: 10px">
+                <div class="panel-heading">
+                  <h5 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#autres_doc">
+                      <span class="fa fa-folder"></span> Autres documents
+                    </a>
+                  </h5>
+                </div>
+                <div class="panel-collapse collapse" id="autres_doc" style="padding-top: 20px">
+                  <div class="full-height-scroll">
+                    <div class= "row">
+                      <div class="col-md-6">
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Extrait de naissance de moins de 3 mois" %> Extrait de naissance de moins de 3 mois <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Passeport légalisé" %> Passeport légalisé <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Carte consulaire" %> Carte consulaire <br>
+                        <%= check_box_tag "documents_deposes_facultatifs[]", "Contre expertise" %> Contre expertise <br>
+                      </div>
+                      <div class="col-md-6">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div> <!-- End panel default enfant -->
+            </div>
+          </div>
+        </div> <!-- End col -->
+      </div> <!-- End row -->
+    </div>
+
+   
+    <div class="col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', admin_base_reversion_salaries_path, class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+    $(document).ready(function () {
+        chargerInfosParticipant();
+
+        $('#base_reversion_salary_numero_affiliation').change(function () {
+            chargerInfosParticipant();
+        })
+
+        function chargerInfosParticipant() {
+            let numero_affiliation = $('#base_reversion_salary_numero_affiliation').val();
+            $.ajax({
+                url: "/admin/salaries/" + numero_affiliation + ".json",
+                method: 'get',
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        $("#base_reversion_salary_prenom").val(data.prenom);
+                        $("#base_reversion_salary_nom").val(data.nom);
+                    } else {
+                        $("#base_reversion_salary_prenom").val('');
+                        $("#base_reversion_salary_nom").val('');
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $("#base_reversion_salary_prenom").val('');
+                    $("#base_reversion_salary_nom").val('');
+                }
+            });
+
+            $.ajax({
+                url: "/admin/conjoints/listconjoint/" + numero_affiliation + ".json",
+                method: 'get',
+                dataType: "json",
+
+                success: function( data ) {
+                    if(data){
+                        nombre_conjoint = data.length
+                        if (data.length >= 1){
+                          console.log("OK")
+                          $('#list_conjoint').show();
+                        }else{
+                          console.log("PASOK")
+                            $('#list_conjoint').hide();
+                        }
+                        html = ' ';
+                        $.each(data, function (key, conjoint) {
+                            html += '<tr></tr>';
+                            html += '<td>' + conjoint.prenom + '</td>';
+                            html += '<td>' + conjoint.nom + '</td>';
+                            html += '<td>' + conjoint.date_naissance + '</td>';
+                            html += '<td>' + conjoint.date_mariage + '</td>';
+                            
+                            html += '<td> <input class="form-check-input" type="checkbox" value='+conjoint.id+' name="conjoints_id[]"> </td>';
+                            
+                        });
+                        $("#t_body_conjoint").html(html);
+                    }
+                    else{
+                      $('#list_conjoint').hide();
+                      
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log('ERROR')
+                    $('#list_conjoint').hide();
+                }
+            });
+
+            $.ajax({
+                url: "/admin/enfants/listenfant/" + numero_affiliation + ".json",
+                method: 'get',
+                dataType: "json",
+                success: function (data) {
+                    if (data) {
+                        console.log(data);
+                        if (data.length >= 1) {
+                            $('#list_enfant_salarie').show();
+                        } else {
+                            $('#list_enfant_salarie').hide();
+                        }
+                        html = ' ';
+                        $.each(data, function (key, enfant) {
+                            html += '<tr></tr>';
+                            html += '<td>' + enfant.prenom + '</td>';
+                            html += '<td>' + enfant.nom + '</td>';
+                            html += '<td>' + enfant.date_naissance + '</td>';
+                          
+                            
+                            html += '<td> <input class="form-check-input" type="checkbox" value='+enfant.id+' name="enfants_id[]"> </td>';
+                        });
+                        $("#t_body_enfant").html(html);
+
+                    } else {
+                        console.log('data not found');
+                        ('#list_enfant_salarie').hide();
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log('ERROR')
+                    $('#list_enfant_salarie').hide();
+                }
+            });
+          
+        }
+    })
+  </script>
+<% end %>
+

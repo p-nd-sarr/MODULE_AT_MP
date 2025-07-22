@@ -1,0 +1,12 @@
+<%= content_for :titre_page, "Edition Demande Prestation Exterieure" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_prestation_exterieure_path(@prestation_exterieure), class: 'btn btn-white btn-xs' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'form' %>
+  </div>
+</div>
+

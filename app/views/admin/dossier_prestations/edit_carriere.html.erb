@@ -1,0 +1,177 @@
+<%= content_for :titre_page, "Modification temps de présence" %>
+
+<div class="form-group row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox-content">
+        <%= bootstrap_form_for(@carriere, url: admin_dossier_prestation_update_document_tdp_path(@dossier_prestation, @carriere), label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <div class="modal-body">
+            <div class="row">
+              <%= f.alert_message '' %>
+              <div class="col-sm-6"></div>
+              <div class="col-sm-6">
+                <%= f.select :trimestre, CarriereDossierPrestation::TRIMESTRE.keys.collect { |trimestre|
+                  [CarriereDossierPrestation.human_enum_name(:trimestre, trimestre), trimestre] },
+                             label: 'Trimestre' %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.text_field :num_employeur, label: "Numéro Employeur premier mois"%>
+              </div>
+              <div class="col-sm-6">
+                <%= f.text_field :raison_sociale, readonly: true %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.number_field :premier_mois, min: 0, id: 'premier_mois'%>
+              </div>
+              <div class="col-sm-12" id="justifier_mois1">
+                <div class="col-sm-6">
+                  <%= f.check_box :est_justifier, value: "1", checked: @carriere.est_justifier, unchecked:false, label: ' est justifier?', style: "margin-top:30px;" %>
+                </div>
+                <div class="col-sm-6">
+                  <%= f.select :motif_mois1, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement'], prompt: "Choisir motif", label: "Motif d'absence"%>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <%= f.text_field :num_employeur_mois_2, label: "Numéro Employeur deuxième mois"%>
+              </div>
+              <div class="col-sm-6">
+                <%= f.text_field :raison_sociale_employeur_mois_2, readonly: true %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.number_field :deuxiem_mois, min: 0, label: 'Deuxième mois', id: 'deuxiem_mois'%>
+              </div>
+              <div class="col-sm-12" id="justifier_mois2">
+                <div class="col-sm-6">
+                  <%= f.check_box :est_justifier_mois2, value: "1", checked: @carriere.est_justifier_mois2, unchecked:false, label: ' est justifier?', style: "margin-top:30px;" %>
+                </div>
+                <div class="col-sm-6">
+                  <%= f.select :motif_mois2, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement'], prompt: "Choisir motif", label: "Motif d'absence"%>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <%= f.text_field :num_employeur_mois_3, label: "Numéro Employeur troisième mois"  %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.text_field :raison_sociale_employeur_mois_3, readonly: true %>
+              </div>
+              <div class="col-sm-6">
+                <%= f.number_field :troisiem_mois, min: 0, label: 'Troisième mois', id: 'troisiem_mois' %>
+              </div>
+              <div class="col-sm-12" id="justifier_mois3">
+                <div class="col-sm-6">
+                  <%= f.check_box :est_justifier_mois3, value: "1", checked: @carriere.est_justifier_mois3, unchecked:false, label: ' est justifier?', style: "margin-top:30px;" %>
+                </div>
+                <div class="col-sm-6">
+                  <%= f.select :motif_mois3, ['Congé payé', 'ATMP', 'Arrêt maladie de moins de 6 mois', 'Congé de maternité', 'Fin de contrat', 'Retraite', 'Licenciement'], prompt: "Choisir motif", label: "Motif d'absence"%>
+                </div>
+              </div>
+              <div class="col-sm-6" style="height:75px;">
+                <%#= f.check_box :infos_jour, value: "1", checked: true, label: ' Présence saisie en jours', style: "margin-top:30px;" %>
+                <%= f.select :infos_jour, [['Jour', true], ['Heure', false]], label: "Présence saisie en jours ?"%>
+              </div>
+
+              <div class="col-sm-6">
+                <h4 style="font-weight: bold;">Document *</h4>
+                <div class="btn-file">
+                  <label class="no-text">
+                    <%= f.file_field :document, hide_label: true, label: '.',
+                                     required: true, id: 'label-ext' %>
+                    <div class="btn btn-success" style="margin-top:-20px; margin-left: 1px;">
+                      <span class="fa fa-upload"></span> Choisir un fichier
+                    </div>
+                  </label>
+                  <small id="doc-name"></small>
+
+                </div>
+
+              </div> <!--modal body-->
+
+              <!--            <div class="modal-footer form-group">-->
+              <!--              <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>-->
+              <%#= f.button 'Enregistrer', class: 'btn btn-primary' %>
+              <!--            </div>-->
+
+              <div class="col-sm-6" style="padding-top:9px">
+                <h4>Année de présence</h4>
+                <%= date_select('annee', 'presence', discard_day: true, discard_month: true, required: true,
+                                start_year: (Date.today - 5.year).year, end_year: Date.today.year, 'include_blank': true) %>
+              </div>
+
+              <div class="col-sm-12" style="padding-top:19px">
+                <%= f.date_select :date_document, label: "Fait le ",
+                                  start_year: (Date.today - 1.year).year, end_year: (Date.today + 1.year).year %>
+              </div>
+            </div>
+          </div> <!--modal body--><!--modal body-->
+          <div class="modal-footer form-group">
+            <%= link_to ' Annuler', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-danger btn-sm ' %>
+            <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          load_employeur();
+          $('#est_justifier').hide();
+          check_carriere();
+          var input = document.getElementById('label-ext');
+          var infoArea = document.getElementById('doc-name');
+          input.addEventListener('change', showFileName);
+
+          function showFileName(event) {
+              var input = event.srcElement;
+              var fileName = input.files[0].name;
+              infoArea.textContent = fileName;
+          }
+
+          $('#carriere_dossier_prestation_premier_mois,#carriere_dossier_prestation_deuxiem_mois,#carriere_dossier_prestation_troisiem_mois,#carriere_dossier_prestation_infos_jour').change(function (){
+              check_carriere();
+          })
+
+          $('#carriere_dossier_prestation_num_employeur').change(function () {
+              load_employeur();
+          });
+
+      });
+
+      function check_carriere(){
+          if( $('#carriere_dossier_prestation_infos_jour').val() === "true" ){
+              if (($('#carriere_dossier_prestation_premier_mois').val() < 22 || $('#carriere_dossier_prestation_deuxiem_mois').val() < 22 || $('#carriere_dossier_prestation_troisiem_mois').val() < 22) ){
+                  $('#est_justifier').show()
+              }else {
+                  $('#est_justifier').hide()
+              }
+          }else if( $('#carriere_dossier_prestation_infos_jour').val() === "false" ){
+              if (($('#carriere_dossier_prestation_premier_mois').val() < 120 || $('#carriere_dossier_prestation_deuxiem_mois').val() < 120 || $('#carriere_dossier_prestation_troisiem_mois').val() < 120) ){
+                  $('#est_justifier').show()
+              }else {
+                  $('#est_justifier').hide()
+              }
+          }
+      }
+
+          function load_employeur(){
+              const fhnum = $('#carriere_dossier_prestation_num_employeur').val();
+              $.ajax({
+                  url: "/admin/dossier_prestations/employeur/" + fhnum + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#carriere_dossier_prestation_raison_sociale").val(data.fhrsoc);
+                      } else {
+                          $("#carriere_dossier_prestation_raison_sociale").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#carriere_dossier_prestation_raison_sociale").val('');
+                  }
+              });
+          }
+  </script>
+<% end %>

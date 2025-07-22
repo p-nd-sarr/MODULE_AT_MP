@@ -1,0 +1,35 @@
+<%= content_for :titre_page, "Détails admin_jour_ouvrable_annuel" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_jour_ouvrable_annuels_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_jour_ouvrable_annuel_path(@admin_jour_ouvrable_annuel), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_jour_ouvrable_annuel', new_admin_jour_ouvrable_annuel_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Mois:</strong>
+                  <%= @admin_jour_ouvrable_annuel.mois %>
+                </p>
+
+                            <p>
+                  <strong>Mois en chiffre:</strong>
+                  <%= @admin_jour_ouvrable_annuel.mois_en_chiffre %>
+                </p>
+
+                            <p>
+                  <strong>Nombre jour ouvrable:</strong>
+                  <%= @admin_jour_ouvrable_annuel.nombre_jour_ouvrable %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

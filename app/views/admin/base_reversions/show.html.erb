@@ -1,0 +1,130 @@
+<%= content_for :titre_page, "Dossier de base de réversion" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Allocataire', [:admin, @allocataire], class: 'btn btn-white btn-sm' %>
+  <%= (link_to 'Modifier', edit_admin_allocataire_base_reversion_path(@allocataire, @base_reversion), class: 'btn btn-white btn-sm') if current_user.admin? or current_user.inspection? %>
+  <%= link_to 'Déclarer un ayant droit', new_admin_allocataire_reversion_veuve_path(@allocataire), class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Allocataire <%= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/reversion_veuves/infos_allocataire' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-8">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Informations sur le dossier de base de réversion</h5>
+        </div>
+        <div class="ibox-content">
+          <p>
+            <strong>Numero allocataire:</strong>
+            <%= @base_reversion.numero_allocataire %>
+          </p>
+
+          <p>
+            <strong>Date deces:</strong>
+            <%= l @base_reversion.date_deces %>
+          </p>
+
+          <p>
+            <strong>Nombre d'épouses éligibles:</strong>
+            <%= @base_reversion.nombre_epouses_eligible %>
+          </p>
+
+          <p>
+            <strong>Nombre d'enfants éligibles:</strong>
+            <%= @base_reversion.nombre_enfant_eligible %>
+          </p>
+
+          <p>
+            <strong>Commentaire:</strong>
+            <%= @base_reversion.commentaire %>
+          </p>
+
+          <p>
+            <strong>Ajouté par:</strong>
+            <%= @base_reversion.traite_par.full_name %> (<%= @base_reversion.traite_par.email %>)
+          </p>
+          <br>
+          <p>
+            <b><%= @base_reversion.total_parts %> % des points de base sont reversés</b>
+          </p>
+        </div>
+      </div>
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Tableau récapitulatif des points</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'admin/base_reversions/show_tableau_recapitulatif_points' %>
+        </div>
+      </div>
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Dossiers de réversion</h5>
+        </div>
+        <div class="ibox-content">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Type</th>
+              <th scope="col">Éligible</th>
+              <th scope="col">Peut être éligible</th>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Part</th>
+               <th scope="col">Doc</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @allocataire.reversion_veuves.each do |reversion_veuve| %>
+              <tr>
+                <td><%= reversion_veuve.type_ayant_droit_human %></td>
+                <td><%= state_yes_no reversion_veuve.eligible %></td>
+                <td><%= state_yes_no reversion_veuve.peut_etre_eligible? %></td>
+                <td><%= reversion_veuve.prenom %></td>
+                <td><%= reversion_veuve.nom %></td>
+                <td><%= l reversion_veuve.date_naissance %></td>
+                <td><%= reversion_veuve.part %> %</td>
+                <td>
+                  <%= link_to 'lien doc', admin_conjoint_path(reversion_veuve.conjoint), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' if reversion_veuve.veuve? %>
+                   <%= link_to 'lien doc', admin_enfant_path(reversion_veuve.enfant), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' if reversion_veuve.orphelin? %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin, @allocataire, reversion_veuve], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'modifier', edit_admin_allocataire_reversion_veuve_path(@allocataire, reversion_veuve), class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Documents</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'documents' %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

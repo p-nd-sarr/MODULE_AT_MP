@@ -1,0 +1,2 @@
+json.extract! demande_liquidation, :id, :numero_dossier, :numero_affiliation, :prenom, :nom, :date_naissance, :lieu_naissance, :adresse_reception_allocation, :adresse_domicile, :mode_paiement, :compte_bancaire_nom_banque, :compte_bancaire_code_banque, :compte_bancaire_code_guichet, :compte_bancaire_numero_compte, :etat, :created_at, :updated_at
+json.url demande_liquidation_url(demande_liquidation, format: :json)

@@ -1,0 +1,18 @@
+<table class="table table-bordered table-condensed table-hover">
+  <tr>
+    <td>Id</td>
+    <td>Utilisateur</td>
+    <td>Date</td>
+    <td>Origine</td>
+    <td>Destination</td>
+  </tr>
+  <% @revision_pension.workflow_histories.order(created_at: :desc).each do |workflow| %>
+    <tr>
+      <td><%= workflow.id %></td>
+      <td><%= workflow.user.try(:full_name) %></td>
+      <td><%= workflow.created_at.strftime("%d/%m/%Y à %H:%M") %></td>
+      <td><%= workflow.from %></td>
+      <td><%= workflow.to %></td>
+    </tr>
+  <% end %>
+</table>

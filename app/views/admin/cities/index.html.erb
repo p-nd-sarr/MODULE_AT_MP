@@ -1,0 +1,40 @@
+<%= content_for :titre_page, 'Admin cities' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_city_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Description</th>
+        <th scope="col">Pays</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_cities.each do |admin_city| %>
+        <tr>
+          <td><%= admin_city.description %></td>
+          <td>
+            <% @pays.each do |pays| %>
+              <% if pays.id == admin_city.admin_country_id %>
+                <%= pays.description %>
+              <% end %>
+            <% end %>
+            </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_city_path(admin_city), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_city, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

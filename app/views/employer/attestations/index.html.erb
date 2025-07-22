@@ -1,0 +1,72 @@
+<%= content_for :titre_page, "Mes Attestations" %>
+
+<%= content_for :actions_page do %>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+    Demander attestation
+  </button>
+<% end %>
+
+<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-file-word modal-icon"></i>
+        <h4 class="modal-title">Demander une attestation</h4>
+      </div>
+      <div class="modal-body">
+
+        <%= bootstrap_form_for(@attestation, url: employer_attestations_path(@attestation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message "Please fix the errors below." %>
+
+          <%= f.text_field :titre, label: 'Mettre une description', required: true %>
+
+          <div class="hr-line-dashed"></div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <%= f.button 'Valider', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+
+    </div>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+
+  <div class="hr-line-dashed"></div>
+
+  <h2>Attestations</h2>
+
+  <table class="table table-bordered table-condensed table-hover">
+    <tr>
+      <td>Titre</td>
+      <td>url</td>
+      <td>Statut</td>
+      <td>Details</td>
+    </tr>
+
+    <% @attestations.each do |attestation| %>
+      <tr>
+        <td><%= attestation.titre %></td>
+        <td><%= attestation.url %></td>
+        <td><%= attestation.etat %></td>
+        <td><%= link_to "voir details", employer_attestation_path(attestation.id), class: 'btn btn-outline btn-primary btn-xs' %></td>
+      </tr>
+    <% end %>
+  </table>
+  <%= paginate @attestations %>
+
+  <div class="hr-line-dashed" style="background: #1ab394"></div>
+
+</div>
+
+<script type="text/javascript" charset="utf-8">
+
+    $(document).ready(function(){
+
+    })
+
+</script>

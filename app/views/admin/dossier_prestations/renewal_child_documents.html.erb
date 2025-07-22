@@ -1,0 +1,52 @@
+<%= content_for :titre_page, "Documents à renouveler de l'enfant : [#{@enfant.full_name}]" %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_prestation.nil? %>
+    Allocataire : <%= @dossier_prestation.full_name %> <br>
+  <% end %> <br>
+  <%= link_to 'Historique renouvellement documents', admin_dossier_prestation_renewal_documents_historic_path(@dossier_prestation),
+              class: 'btn btn-outline btn-primary btn-sm' %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_dossier_prestation_path(@dossier_prestation), class: 'btn btn-white btn-sm' unless @dossier_prestation.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <% if @enfant.date_naissance < 14.years.ago %>
+        <%= render 'documents/liste',
+                   object: @enfant,
+                   documents: @enfant.get_expired_documents,
+                   include_add: @enfant,
+                   include_delete: false,
+                   type_documents: Enfant::TYPE_DOCUMENT,
+                   type_documents_obligatoires: Enfant::TYPE_DOCUMENT_OBLIGATOIRE,
+                   back_url: admin_dossier_prestation_renewal_child_documents_path(@dossier_prestation, @enfant)
+        %>
+        <%= render 'documents/modal_form',
+                   type_documents: @enfant.documents.length == 0 ? Enfant::TYPE_DOCUMENT : Enfant::TYPE_DOCUMENT.select { |key, value| @enfant.get_expired_documents.pluck(:type_document).include?(key.to_s) or @enfant.document_not_added(value) },
+                   document: Document.new(documentable: @enfant),
+                   back_url: admin_dossier_prestation_renewal_child_documents_path(@dossier_prestation, @enfant)
+        %>
+      <% elsif @enfant.date_naissance > 14.years.ago %>
+        <%= render 'documents/liste',
+                   object: @enfant,
+                   documents: @enfant.get_expired_documents,
+                   include_add: @enfant,
+                   include_delete: false,
+                   type_documents: Enfant::TYPE_DOCUMENT_1,
+                   type_documents_obligatoires: Enfant::TYPE_DOCUMENT_OBLIGATOIRE,
+                   back_url: admin_dossier_prestation_renewal_child_documents_path(@dossier_prestation, @enfant)
+        %>
+        <%= render 'documents/modal_form',
+                   type_documents: @enfant.documents.length == 0 ? Enfant::TYPE_DOCUMENT_1 : Enfant::TYPE_DOCUMENT_1.select { |key, value| @enfant.get_expired_documents.pluck(:type_document).include?(key.to_s) or @enfant.document_not_added(value) },
+                   document: Document.new(documentable: @enfant),
+                   back_url: admin_dossier_prestation_renewal_child_documents_path(@dossier_prestation, @enfant)
+        %>
+      <% end %>
+
+    </div>
+  </div>
+</div>

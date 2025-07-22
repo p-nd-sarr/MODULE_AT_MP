@@ -1,0 +1,31 @@
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-lg-10">
+    <h2>Modifier la déclaration d'accident de travail</h2>
+    <ol class="breadcrumb">
+      <li>
+        <%= link_to 'Accueil', admin_root_path %>
+      </li>
+      <li>
+        <%= link_to 'Accidents de Travail - Origine GED', admin_arret_travail_geds_path %>
+      </li>
+      <li class="active">
+        <strong>Modifier</strong>
+      </li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Formulaire de modification</h5>
+        </div>
+        <div class="ibox-content">
+          <%= render 'form', arret_travail_ged: @arret_travail_ged %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

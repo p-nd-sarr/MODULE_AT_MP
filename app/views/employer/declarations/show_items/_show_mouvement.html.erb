@@ -1,0 +1,172 @@
+<% unless @declaration.mouvement_effectif_valide? %>
+
+  <div class="row">
+  <div class="col-lg-4">
+    <div class="form-group row">
+      <div class="col-sm-12">
+
+        <%= link_to "Je valide les informations sur les mouvements", employer_declaration_valider_mouvement_path(@declaration), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-w-m btn-primary', id: 'valider' %>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <% end %>
+
+<div class="row" id="declaration_id" style="padding-top:20px" >
+
+  <div class="col-lg-4">
+    <div class="ibox volet3" style="text-align:center">
+      <div class="ibox-title text-success">
+        <h5>Validation des recrutements<br> et des sorties</h5>
+      </div>
+      <div class="ibox-content float-e-margins">
+        <p class="font-bold">
+          Avez-vous eu des recrutements ? <br> (non encore renseignés)
+        </p>
+
+        <% unless @declaration.mouvement_effectif_valide? %>
+      <p id="question1" style="margin-top:20px">
+          <button id="question11" type="button" class="btn btn-w-m btn-default">NON</button>
+          <%= link_to "OUI", employer_effectifs_path, class: 'btn btn-w-m btn-primary' %>
+        </p>
+          <% end %>
+        <p id="reponse1">
+          <button class="btn btn-primary dim" type="button"><i class="fa fa-check"></i> NON</button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="ibox volet3" style="text-align:center">
+      <div class="ibox-title text-success">
+        <h5>Validation des recrutements <br> et des sorties</h5>
+      </div>
+      <div class="ibox-content float-e-margins">
+        <p class="font-bold">
+          Avez-vous eu des sorties d'effectif ?<br>(non encore renseignés)
+        </p>
+
+        <% unless @declaration.mouvement_effectif_valide? %>
+      <p id="question2" style="margin-top:20px">
+          <button id="question21" type="button" class="btn btn-w-m btn-default">NON</button>
+          <%= link_to "OUI", employer_effectifs_path, class: 'btn btn-w-m btn-primary' %>
+        </p>
+          <% end %>
+        <p id="reponse2">
+          <button class="btn btn-primary dim" type="button"><i class="fa fa-check"></i> NON</button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="ibox volet3" style="text-align:center">
+      <div class="ibox-title text-success">
+        <h5>Validation des changements de <br> positions et de salaires</h5>
+      </div>
+      <div class="ibox-content float-e-margins" style="text-align:center">
+        <p class="font-bold">
+          Avez-vous eu changements de salaire ?<br> (non encore renseignés)
+        </p>
+
+        <% unless @declaration.mouvement_effectif_valide? %>
+          <p id="question3" style="margin-top:20px">
+            <button id="question31" type="button" class="btn btn-w-m btn-default">NON</button>
+            <%= link_to "OUI", employer_effectifs_path, class: 'btn btn-w-m btn-primary' %>
+          </p>
+        <%end %>
+        <p id="reponse3">
+          <button class="btn btn-primary dim" type="button"><i class="fa fa-check"></i> NON</button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% unless @declaration.mouvement_effectif_valide?%>
+<script type="text/javascript" charset="utf-8">
+    $(document).ready(function(){
+
+        $('#reponse1').hide();
+        $('#reponse2').hide();
+        $('#reponse3').hide();
+        $('#valider').hide();
+        $('#soumettre').hide();
+
+       $("div.progress").html("<div class=\"progress-bar progress-bar-striped progress-bar-animated progress-bar-primary\" style=\"width: 0%\" role=\"progressbar\" aria-valuenow=\"75\" aria-valuemin=\"0\" aria-valuemax=\"100\">Progression : 0%</div>");
+
+        var p1= false;
+        var p2 = false;
+        var p3 = false;
+
+        var s1= false;
+        var s2 = false;
+        var s3 = false;
+
+        $('#question11').click(function(){
+
+            console.log('---> immatriculation_departement');
+            $('#reponse1').show();
+            $('#question1').hide();
+            p1=true;
+
+            if(p1 && p2 && p3){
+                $('#valider').show();
+
+            }
+
+        });
+
+        $('#question21').click(function(){
+
+            console.log('---> immatriculation_departement');
+            $('#reponse2').show();
+            $('#question2').hide();
+            p2=true;
+
+            if(p1 && p2 && p3){
+                $('#valider').show();
+            }
+        });
+
+        $('#question31').click(function(){
+
+            console.log('---> immatriculation_departement');
+            $('#reponse3').show();
+            $('#question3').hide();
+            p3=true;
+            if(p1 && p2 && p3){
+                $('#valider').show();
+
+            }
+
+        });
+
+        $('#valider').click(function(){
+
+            console.log('---> valider declarations');
+
+            $('#mouvement_valide').hide();
+            $('#valider').hide();
+
+            s1=true;
+            if(s1 && s2 && s3){
+                $('#soumettre').show();
+
+            }
+
+            $("div.progress").html("<div class=\"progress-bar progress-bar-striped progress-bar-animated progress-bar-primary\" style=\"width: 30%\" role=\"progressbar\" aria-valuenow=\"75\" aria-valuemin=\"0\" aria-valuemax=\"100\">Progression : 30%</div>");
+
+
+        });
+
+
+    })
+</script>
+
+<% end %>

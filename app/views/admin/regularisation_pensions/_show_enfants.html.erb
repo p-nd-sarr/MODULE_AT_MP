@@ -1,0 +1,37 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Nom salarie</th>
+    <th scope="col">Prénom salarié</th>
+    <th scope="col">Nom complet conjoint</th>
+    <th scope="col">Date fin prise en charge</th>
+    <th colspan="1"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @allocataire.enfants_pas_en_charge.each do |enfant| %>
+    <tr>
+      <td><%= enfant.nom %></td>
+      <td><%= enfant.prenom %></td>
+      <td><%= l enfant.date_naissance %></td>
+      <td><%= enfant.nom_salarie %></td>
+      <td><%= enfant.prenom_salarie %></td>
+      <% if enfant.conjoint_id %>
+        <td><%= enfant.conjoint.full_name %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <td><%= l enfant.date_fin_mineur %></td>
+
+         <td style="width: 75px">
+          <%= (link_to 'prendre en charge', admin_allocataire_regularisation_pension_prendre_en_charge_path(@allocataire,@regularisation_pension, enfant_id: enfant.id), class: 'btn btn-outline btn-primary btn-xs')  %>
+
+        </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

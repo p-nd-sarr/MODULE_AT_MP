@@ -1,0 +1,46 @@
+<%= content_for :titre_page, "Liste des pensions suspendues du  [#{ @echeance_paiement.periode_variation_debut.strftime("%d/%m/%Y")} - #{@echeance_paiement.periode_variation_fin.strftime("%d/%m/%Y")}]" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_paiement_path(@echeance_paiement), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/allocataires/search' %>
+
+    <br>
+
+    <%= paginate @allocataires %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Catégorie</th>
+        <th scope="col">Etat</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @allocataires.each do |allocataire| %>
+        <tr>
+          <td><%= allocataire.numero_allocataire %></td>
+          <td><%= allocataire.prenom %></td>
+          <td><%= allocataire.nom %></td>
+          <td><%= allocataire.categorie %></td>
+
+          <td><%= allocataire.etat_human %></td>
+          <td style="width: 75px">
+            <%= link_to 'Détails', admin_allocataire_path(allocataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @allocataires %>
+  </div>
+</div>

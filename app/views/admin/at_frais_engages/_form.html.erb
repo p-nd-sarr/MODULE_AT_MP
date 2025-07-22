@@ -1,0 +1,20 @@
+        <%= bootstrap_form_for([:admin, @arret_travail, @at_frais_engage], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <%#= bootstrap_form_for([:admin, @arret_travail, @at_frais_engage], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>           
+            <%=f.hidden_field :arret_travail_id, value: @arret_travail.id%>
+            <%#= f.text_field :prenom %>
+            <%#= f.text_field :identification %>
+            <%= f.number_field :montant %>
+
+            <%#= f.text_field :nature %>
+            <%#= f.select :type_frais, AtFraisEngage::TYPE_FRAIS.keys.collect{|tc| [tc, tc]}, label: 'Type Frais' %>  
+            <%= f.select :type_frais, AtFraisEngage::TYPE_FRAIS.keys.collect { |item| [AtFraisEngage.human_enum_name(:type_frais, item), item] }, label: 'Type de frais' %> 
+            <%= f.select :rembourse_a_qui, AtFraisEngage::REMBOURSE_A_QUI.keys.collect { |item| [item, item] }, label: 'Bénéficiaire' %> 
+            <%= f.check_box :remboursement_tiers %>
+            <div class="form-group row">
+                <div class="col-sm-4 col-sm-offset-4">
+                   <%= link_to 'Annuler', (@arret_travail.persisted? ? [:admin, @arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                  <%= f.button 'Sauvegarder', class: 'btn btn-primary' %>
+                </div>
+            </div>
+        <% end %>

@@ -1,0 +1,113 @@
+<% if @reversion_veuve_salarie.recap_point_valide?  %>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col"></th>
+      <th scope="col">Régime Général</th>
+      <th scope="col">Régime Cadre</th>
+    </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+          <td>Points de cotisation</td>
+          <td><%= @reversion_veuve_salarie.calcul_points_regime_general %></td>
+          <td><%= @reversion_veuve_salarie.calcul_points_regime_cadre %></td>
+        </tr>
+         <tr>
+          <td>Points gratuits</td>
+          <td>0</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Points de base</td>
+          <td><%= @dossier_reversion_salarie.calcul_points_base_rg %></td>
+          <td><%= @dossier_reversion_salarie.calcul_points_base_rc %></td>
+        </tr>
+      <% if @dossier_reversion_salarie.veuve?%>
+        <tr>
+          <td>Points de minoration</td>
+          <td>0</td>
+          <td>0</td>
+          
+        </tr>
+        <tr>
+          <td>Points de majoration</td>
+          <td><%= @dossier_reversion_salarie.calcul_points_majoration_rg %></td>
+          <td><%= @dossier_reversion_salarie.calcul_points_majoration_rc %></td>
+        </tr>
+      <% end %>
+        <tr>
+          <td>Points à servir</td>
+          <td><%= @dossier_reversion_salarie.calcul_points_servis_rg %></td>
+          <td><%= @dossier_reversion_salarie.calcul_points_servis_rc %></td>
+        </tr> 
+    </tbody>
+  </table>
+
+  <h3>
+  <% if @dossier_reversion_salarie.versement_mensuel? %>
+    Pension mensuelle :
+  <% else %>
+    Versement unique :
+  <% end %>
+  <%= format_cfa @dossier_reversion_salarie.calcul_allocation %>
+  </h3>
+  <h3>
+    Date d'entrée en jouissance : <%= @dossier_reversion_salarie.calcul_date_jouissance.try(:strftime, "%d/%m/%Y") %>
+  </h3>
+  <% if @dossier_reversion_salarie.versement_mensuel? %>
+    <h3>
+      Montant Rappel Total: <%= format_cfa @dossier_reversion_salarie.calcul_montant_rappel %>
+    </h3>
+  <% end %>
+  <br>
+  <h5 class="text-info">
+    Pourcentage de majoration : <%= @dossier_reversion_salarie.taux_majoration %>%
+  </h5>
+
+
+
+  <% unless @dossier_reversion_salaries.nil?%>
+    <div class="ibox">
+      <div class="ibox-title">
+        <h5>Dossiers de réversion</h5>
+      </div>
+      <div class="ibox-content">
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+            <tr>
+              <th scope="col">Type</th>
+              <th scope="col">Éligible</th>
+              <th scope="col">Peut être éligible</th>
+              <th scope="col">Prénom</th>
+              <th scope="col">Nom</th>
+              <th scope="col">Date naissance</th>
+              <th scope="col">Part</th>
+              <th scope="col">Etat</th>
+              <th colspan="2"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @dossier_reversion_salaries.each do |base_reversion_salarie| %>
+              <tr>
+                <td><%= base_reversion_salarie.type_ayant_droit %></td>
+                <td><%= state_yes_no base_reversion_salarie.eligible %></td>
+                <td><%= state_yes_no base_reversion_salarie.peut_etre_eligible? %></td>
+                <td><%= base_reversion_salarie.prenom %></td>
+                <td><%= base_reversion_salarie.nom %></td>
+                <td><%= l base_reversion_salarie.date_naissance %></td>
+                <td><%= base_reversion_salarie.part %> %</td>
+                <td><%= base_reversion_salarie.etat %> </td>
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:admin,base_reversion_salarie], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+       
+      </div>
+    </div>
+  <% end %>
+<% end %>

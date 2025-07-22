@@ -1,0 +1,44 @@
+<%= search_form_for @q, url: request.path do |f| %>
+  <div class="row">
+    <div class="col-sm-3">
+      <%= f.label :numero_affiliation_cont, 'Numéro Affiliation' %>
+      <%= f.search_field :numero_affiliation_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :num_dossier_cont, 'Numéro Sinistre' %>
+      <%= f.search_field :num_dossier_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :prenom_salarie_cont, 'Prénom' %>
+      <%= f.search_field :prenom_salarie_cont, class: 'form-control' %>
+    </div>
+
+    <div class="col-sm-3">
+      <%= f.label :nom_salarie_cont, 'Nom' %>
+      <%= f.search_field :nom_salarie_cont, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row">
+ 
+ 
+    <div class="col-sm-3">
+      <%= f.label :nin_salarie_cont, 'NIN' %>
+      <%= f.search_field :nin_salarie_cont, class: 'form-control' %>
+    </div>
+    <div class="col-sm-3">
+      <%= f.label :etat_eq, 'État' %>
+      <%= f.select :etat_eq, ArretTravail.etats.to_a.map { |w| [ArretTravail.human_enum_name(:etat, w[0]), w[1]] },
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+    <div class="col-sm-3">
+      <%= f.label :admin_agence_id_eq, 'Agence' %>
+      <%= f.collection_select :admin_agence_id_eq, Admin::Agence.css.order(:description_prest), :id, :description_prest,
+                   { :include_blank => true }, class: 'form-control' %>
+    </div>
+  </div>
+  <div class="hr-line-dashed"></div>
+
+  <%= f.submit class: 'btn btn-primary' %>
+<% end %>

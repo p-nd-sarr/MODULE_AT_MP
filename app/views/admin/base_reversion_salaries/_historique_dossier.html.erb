@@ -1,0 +1,106 @@
+<div class="row animated fadeInRight">
+    <div class="col-lg-12">
+        <div class="ibox ">
+            <div class="ibox-content" id="ibox-content">
+                <div id="vertical-timeline" class="vertical-container dark-timeline">
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon red-bg">
+                            <i class="fa fa-folder"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Ouverture et Instruction</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <h5><strong class="text-navy">OUVERT PAR:</strong><br> <%= @demande_liquidation.ajoute_par.full_name %></h5>
+                                        <h5><strong class="text-navy">DATE D'OUVERTURE:</strong><br> <%= @demande_liquidation.created_at.strftime("%d/%m/%Y") %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.traite_par.nil? %>" >SOUMIS A L'INSTRUCTION PAR:</strong><br> <%= @demande_liquidation.traite_par.full_name unless @demande_liquidation.traite_par.nil?%></h5>
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.date_soumission.nil? %>" >DATE DE SOUMISSION:</strong><br> <%= (@demande_liquidation.date_soumission.strftime("%d/%m/%Y")) unless @demande_liquidation.date_soumission.nil? %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.instruit_par.nil? %>" >INSTRUIT PAR:</strong><br> <%= (@demande_liquidation.instruit_par.full_name) unless @demande_liquidation.instruit_par.nil? %></h5>
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.instruit_le.nil? %>" >DATE D'INSTRUCTION:</strong><br> <%= (@demande_liquidation.instruit_le.strftime("%d/%m/%Y")) unless @demande_liquidation.instruit_le.nil? %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon blue-bg">
+                            <i class="fa fa-file-text"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Affectation et Traitement du dossier</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.affecter_salarie.nil? %>" >AFFECTE A GESTIONNAIRE COTISATION:</strong><br> <%= @demande_liquidation.affecter_salarie.full_name unless @demande_liquidation.affecter_salarie.nil? %></h5>
+                                        <h5><strong>PAR LE CHEF DE SERVICE COTISATION:</strong><br> </h5>
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.affectation_salarie_date.nil? %>" >DATE D'AFFECTATION:</strong><br> <%= (@demande_liquidation.affectation_salarie_date.strftime("%d/%m/%Y")) unless @demande_liquidation.affectation_salarie_date.nil? %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.affecter_allocataire.nil? %>">AFFECTE A GESTIONNAIRE ALLOCATION:</strong><br> <%= @demande_liquidation.affecter_allocataire.full_name unless @demande_liquidation.affecter_allocataire.nil?%></h5>
+                                        <h5><strong>PAR LE CHEF DE SECTION LIQUIDATION:</strong><br></h5>
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.affectation_allocataire_date.nil? %>">DATE D'AFFECTATION:</strong><br> <%= (@demande_liquidation.affectation_allocataire_date.strftime("%d/%m/%Y")) unless @demande_liquidation.affectation_allocataire_date.nil? %></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210);">
+                                        <h5><strong>SOUMISSION VALIDATION CARRIERE PAR:</strong><br></h5>
+                                        <h5><strong>DATE DE SOUMISSION VALIDATION CARRIERE:</strong><br></h5>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <hr>
+                                    <div class="col-lg-4">
+                                        <h5><strong>VALIDATION CARRIERE PAR CHEF DE SERVICE COTISATION:</strong><br> </h5>
+                                        <h5><strong>DATE DE VALIDATION CARRIERE:</strong><br></h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong>SOUMISSION VALIDATION FICHE DE LIQUIDATION PAR:</strong><br></h5>
+                                        <h5><strong>DATE DE SOUMISSION VALIDATION FICHE DE LIQUIDATION: </strong><br> </h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong>VALIDATION FICHE DE LIQUIDATION PAR CHEF DE SECTION LIQUIDATION:</strong><br> </h5>
+                                        <h5><strong>DATE DE VALIDATION FICHE DE LIQUIDATION: </strong><br> </h5>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                <hr>    
+                                    <div class="col-lg-4">
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.valider_par.nil? %>">VALIDATION DOSSIER PAR CHEF DE SERVICE ALLOCATION:</strong><br> <%= @demande_liquidation.valider_par.full_name unless @demande_liquidation.valider_par.nil? %></h5>
+                                        <h5><strong class="<%='text-navy' unless @demande_liquidation.valider_le.nil? %>">DATE DE VALIDATION: </strong><br> <%= @demande_liquidation.valider_le.strftime("%d/%m/%Y") unless @demande_liquidation.valider_le.nil? %></h5>
+                                    </div>
+                                
+                                </div>
+                            </div>     
+                        </div>
+                    </div>
+                    <div class="vertical-timeline-block">
+                        <div class="vertical-timeline-icon yellow-bg">
+                            <i class="fa fa-briefcase"></i>
+                        </div>
+                        <div class="vertical-timeline-content">
+                            <h2>Gestion Allocataire</h2>
+                            <hr>
+                            <div class='row'>
+                                <div class="col-lg-12">
+                                    <div class="col-lg-4">
+                                        <h5><strong>VALIDATION ALLOCATAIRE PAR CHEF DE SERVICE ALLOCATION:</strong><br></h5>
+                                        <h5><strong>DATE DE VALIDATION:</strong><br> </h5>
+                                    </div>
+                                    <div class="col-lg-4" style="border-left:1px solid rgb(210, 210, 210)">
+                                        <h5><strong>ACTIVATION ALLOCATAIRE PAR DIRECTEUR DES PRESTATION:</strong><br> </h5>
+                                        <h5><strong>DATE D'ACTIVATION':</strong><br> </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

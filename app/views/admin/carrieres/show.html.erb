@@ -1,0 +1,66 @@
+<%= content_for :titre_page, "Détails carriere" %>
+
+<%= content_for :actions_page do %>
+  <% unless @carriere.liquidation_retraite.nil? %>
+    <%= link_to 'Retour', admin_liquidation_retraite_path(params[:liquidation_retraite_id]), class: 'btn btn-white btn-sm' %>
+  <% end %>
+
+  <% unless @carriere.base_reversion_salary.nil? %>
+    <%= link_to 'Retour', admin_base_reversion_salary_path(params[:base_reversion_salary_id]), class: 'btn btn-white btn-sm' %>
+  <% end %>
+<% end %>
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <div class="row">
+              <div class="col-md-6 pull-center">
+                <p>
+                  <strong>Exercice:</strong>
+                  <%= @carriere.exercice %>
+                </p>
+                <p>
+                  <strong>Periode:</strong>
+                  <%= l @carriere.date_entree %> - <%= l @carriere.date_sortie %>
+                </p>
+                <p>
+                  <strong>Salaire1:</strong>
+                  <%= @carriere.salaire1 %>
+                </p>
+
+                <p>
+                  <strong>Salaire:</strong>
+                  <%= @carriere.salaire %>
+                </p>
+              </div>
+              <div class="col-md-6 pull-right">
+
+                <p>
+                  <strong>Employeur:</strong>
+                  <%= @carriere.raison_sociale %>
+                </p>
+
+
+                <p>
+                  <strong>Salaire2:</strong>
+                  <%= @carriere.salaire2 %>
+                </p>
+                <p>
+                  <strong>Etat:</strong>
+                  <%= @carriere.etat %>
+                </p>
+                <p>
+                  <strong>Motif rejet:</strong>
+                  <%= @carriere.motif_rejet %>
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

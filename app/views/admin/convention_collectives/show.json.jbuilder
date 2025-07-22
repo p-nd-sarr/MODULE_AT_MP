@@ -1,0 +1,1 @@
+json.partial! "admin_convention_collectives/admin_convention_collective", admin_convention_collective: @admin_convention_collective

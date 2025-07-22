@@ -1,0 +1,209 @@
+<%= content_for :titre_page, "Détails de avis à tiers [#{ DossierPrestationAvisTier.human_enum_name(:etat, @dossier_prestation_avis_tier.etat)}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_dossier_prestation_dossier_prestation_avis_tiers_path(@dossier_prestation), 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+  <% if @dossier_prestation_avis_tier.creation? and current_user.gestionnaire_compte_allocataire? %>
+    <%= link_to 'Editer', edit_admin_dossier_prestation_dossier_prestation_avis_tier_path(@dossier_prestation, @dossier_prestation_avis_tier), 'data-turbolinks': false, class: 'btn btn-white btn-sm' %>
+    <%= (link_to 'Soumettre avis à tiers', admin_dossier_prestation_dossier_prestation_avis_tier_soumettre_path(@dossier_prestation, @dossier_prestation_avis_tier), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+  <% end %>
+
+  <% if @dossier_prestation_avis_tier.soumis? and current_user.chef_agence? %>
+    <%= (link_to 'Valider', admin_dossier_prestation_dossier_prestation_avis_tier_valider_path(@dossier_prestation, @dossier_prestation_avis_tier), 'data-turbolinks': false, 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') %>
+    <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#motif">Retourner Avis à
+      tiers
+    </button>
+    <%= render 'modal_retour' %>
+  <% end %>
+
+  <% if current_user.comptable? and @dossier_prestation_avis_tier.attente_paiement? and (@dossier_prestation.valide? or @dossier_prestation.suspendu?) %>
+    <button type="button" class="btn btn-primary  btn-xs" data-toggle="modal" data-target="#PaiementModal" id="soumettre_id">Valider
+      Paiement
+    </button>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+    <div class="col-sm-4">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>DP
+              <%= link_to @dossier_prestation.num_affiliation, [:admin, @dossier_prestation] %></h5> &nbsp;
+            <% unless @dossier_prestation.conjoint.nil? %>
+              <strong class="badge"> (avec <%= @dossier_prestation.conjoint.full_name %>)</strong>
+            <% end %>
+          </div>
+          <div class="ibox-content">
+            <%= render 'admin/dossier_prestation_avis_tiers/info_dossier' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Historique</h5>
+          </div>
+          <div class="ibox-content">
+            <% unless @dossier_prestation_avis_tier.ajoute_par.nil? %>
+              <h5><strong class="text-navy">Crée Par</strong>
+                : <%= (@dossier_prestation_avis_tier.ajoute_par.try(:full_name)) unless @dossier_prestation_avis_tier.ajoute_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de création</strong>
+                : <%= (@dossier_prestation_avis_tier.created_at.strftime("%d/%m/%Y")) unless @dossier_prestation_avis_tier.created_at.nil? %>
+              </h5>
+              <hr>
+            <% end %>
+            <% unless @dossier_prestation_avis_tier.soumis_par.nil? %>
+              <h5><strong class="text-navy">Soumis Par</strong>
+                : <%= (@dossier_prestation_avis_tier.soumis_par.try(:full_name)) unless @dossier_prestation_avis_tier.soumis_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de soumission</strong>
+                : <%= (@dossier_prestation_avis_tier.date_soumission.strftime("%d/%m/%Y")) unless @dossier_prestation_avis_tier.date_soumission.nil? %>
+              </h5>
+              <hr>
+            <% end %>
+            <% unless @dossier_prestation_avis_tier.valide_par.nil? %>
+              <h5><strong class="text-navy">Validé Par</strong>
+                : <%= (@dossier_prestation_avis_tier.valide_par.try(:full_name)) unless @dossier_prestation_avis_tier.valide_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date de validation</strong>
+                : <%= (@dossier_prestation_avis_tier.date_validation.strftime("%d/%m/%Y")) unless @dossier_prestation_avis_tier.date_validation.nil? %>
+              </h5>
+              <hr>
+            <% end %>
+            <% unless @dossier_prestation_avis_tier.retourne_par.nil? %>
+              <h5><strong class="text-navy">Retourné Par</strong>
+                : <%= (@dossier_prestation_avis_tier.retourne_par.try(:full_name)) unless @dossier_prestation_avis_tier.retourne_par.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Date retour</strong>
+                : <%= (@dossier_prestation_avis_tier.date_retour.strftime("%d/%m/%Y")) unless @dossier_prestation_avis_tier.date_retour.nil? %>
+              </h5>
+              <h5><strong class="text-navy">Motif retour</strong>
+                : <%= (@dossier_prestation_avis_tier.motif_retour) unless @dossier_prestation_avis_tier.motif_retour.nil? %>
+              </h5>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-sm-8">
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Informations sur la
+              demande <%= @dossier_prestation_avis_tier.motif_retour.nil? ? '' : '(Retourné)' %> </h5>
+            <% if @dossier_prestation_avis_tier.creation? and !@dossier_prestation_avis_tier.retourne_par.nil? %>
+              <button type="button" style="margin-left: 5px;" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#motif">Voir
+                motif
+              </button>
+              <%= render 'modal_retour' %>
+            <% end %>
+          </div>
+          <div class="ibox-content">
+            <p>
+              <strong>Type avis :</strong>
+              <%= DossierPrestationAvisTier.human_enum_name(:type_avis, @dossier_prestation_avis_tier.type_avis) %>
+            </p>
+            <p>
+              <strong>Nature avis :</strong>
+              <%= DossierPrestationAvisTier.human_enum_name(:nature_avis, @dossier_prestation_avis_tier.nature_avis) unless @dossier_prestation_avis_tier.nature_avis.nil? %>
+            </p>
+            <p>
+              <strong>Montant Total :</strong>
+              <%= format_cfa @dossier_prestation_avis_tier.montant_avis %>
+            </p>
+            <% if @dossier_prestation_avis_tier.trop_percu? %>
+              <p>
+                <strong>Montant échéance :</strong>
+                <%= format_cfa @dossier_prestation_avis_tier.montant_echeance unless @dossier_prestation_avis_tier.montant_echeance.nil? %>
+              </p>
+            <% end %>
+            <% if @dossier_prestation_avis_tier.af? %>
+              <p>
+                <strong>Trimestre :</strong>
+                <%= DossierPrestationAvisTier.human_enum_name(:trimestre, @dossier_prestation_avis_tier.trimestre) unless @dossier_prestation_avis_tier.trimestre.nil? %>
+              </p>
+              <p>
+                <strong>Année :</strong>
+                <%= @dossier_prestation_avis_tier.annee unless @dossier_prestation_avis_tier.annee.nil? %>
+              </p>
+            <% end %>
+            <% if @dossier_prestation_avis_tier.pre? %>
+              <p>
+                <strong>Volet :</strong>
+                <%= DossierPrestationAvisTier.human_enum_name(:volet_pre, @dossier_prestation_avis_tier.volet_pre) unless @dossier_prestation_avis_tier.volet_pre.nil? %>
+              </p>
+              <p>
+                <strong>Conjoint :</strong>
+                <%= Conjoint.find(@dossier_prestation_avis_tier.conjoint_id).full_name unless @dossier_prestation_avis_tier.conjoint_id.nil? %>
+              </p>
+            <% end %>
+            <% if @dossier_prestation_avis_tier.post? %>
+              <p>
+                <strong>Volet :</strong>
+                <%= DossierPrestationAvisTier.human_enum_name(:volet_post, @dossier_prestation_avis_tier.volet_post) unless @dossier_prestation_avis_tier.volet_post.nil? %>
+              </p>
+              <p>
+                <strong>Enfant :</strong>
+                <%= Enfant.find(@dossier_prestation_avis_tier.enfant_id).full_name unless @dossier_prestation_avis_tier.enfant_id.nil? %>
+              </p>
+            <% end %>
+            <p>
+              <strong>Numéro liquidation :</strong>
+              <%= @dossier_prestation_avis_tier.numero_liquidation %>
+            </p>
+            <p>
+              <strong>Date liquidation :</strong>
+              <%= l @dossier_prestation_avis_tier.date_liquidation unless @dossier_prestation_avis_tier.date_liquidation.nil? %>
+            </p>
+            <p>
+              <strong>Statut :</strong>
+              <%= @dossier_prestation_avis_tier.status_human %>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-12">
+        <div class="ibox">
+          <div class="ibox-title">
+            <h5>Liste des opérations appliquées </h5>
+          </div>
+          <div class="ibox-content">
+            <table class="table table-bordered table-condensed table-hover">
+              <thead>
+              <tr>
+                <th scope="col">N°</th>
+                <th scope="col">Ordre de paiement</th>
+                <th scope="col">Montant</th>
+                <th scope="col">Effectué par</th>
+                <th colspan="2"></th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <% @dossier_prestation_avis_tier.ligne_pf_avis_tier_transactions.each_with_index do |li, i| %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= li.ordre_paiement.numero %></td>
+                  <td><%= li.montant %></td>
+                  <td><%= li.ajoute_par.full_name %></td>
+                </tr>
+              <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'valider_paiement' %>

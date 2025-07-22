@@ -1,0 +1,1 @@
+json.partial! "css_transfert_allocataires/css_transfert_allocataire", css_transfert_allocataire: @css_transfert_allocataire

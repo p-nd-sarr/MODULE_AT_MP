@@ -1,0 +1,94 @@
+<%= content_for :titre_page, "Détails Parcours Dossier Prestation " %>
+
+<%= content_for :titre_page_autres_details do %>
+  <% unless @dossier_prestation.nil? %>
+    Allocataire : <%= @dossier_prestation.full_name %> <br>
+  <% end %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Dossier de l’allocataire', admin_dossier_prestation_dossier_prestation_historics_path(@dossier_prestation), class: 'btn btn-white btn-sm' unless @dossier_prestation.nil? %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Raison Sociale Employeur:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @pf_historic.psrm_employeur.fhrsoc unless @pf_historic.psrm_employeur.nil? %> </dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Numéro Employeur:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @pf_historic.psrm_employeur.fhnum unless @pf_historic.psrm_employeur.nil? %> </dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Emploi actuel ? :</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= state_yes_no @pf_historic.is_current? unless @pf_historic.is_current.nil? %> </dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Date d"embauche:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= l @pf_historic.date_embauche unless @pf_historic.date_embauche.nil? %> </dd>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Date d"enregistrement:</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= l @pf_historic.created_at unless @pf_historic.created_at.nil? %> </dd>
+          </div>
+        </d1>
+
+      </div>
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Nombre de trimestre :</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @dossier_prestation.get_all_carrier(@pf_historic.employeur_matric).count unless @pf_historic.psrm_employeur.nil? %> </dd>
+          </div>
+        </d1>
+      </div>
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Nombre d'allocations familiales :</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= @dossier_prestation.get_all_allocations(@pf_historic.employeur_matric) unless @pf_historic.psrm_employeur.nil? %> </dd>
+          </div>
+        </d1>
+      </div>
+
+      <div class="col-lg-6">
+        <d1 class="row mb-0">
+          <div class="col-sm-6 text-sm-right" style="text-align: right;">
+            <dt><span class="fa fa-arrow-right"></span> Montant total d'allocations familiales :</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+            <dd class="mb-1"><%= format_cfa @dossier_prestation.get_all_allocations_amount(@pf_historic.employeur_matric) unless @pf_historic.psrm_employeur.nil? %> </dd>
+          </div>
+        </d1>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>

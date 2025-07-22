@@ -1,0 +1,46 @@
+<%= content_for :titre_page do %>
+  Détails échéance caisse : #<%= @echeance.id %> <br>
+  Période : <%= l @echeance.periode_debut %> - <%= l @echeance.periode_fin %> <br>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_echeance_caisse_path(@echeance), class: 'btn btn-white btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Agence</th>
+        <th scope="col">Code Prestation</th>
+        <th scope="col">Code PSRM</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @agences.each do |agence| %>
+        <tr>
+          <td><%= agence.description_ebs %></td>
+          <td><%= agence.code_prest %></td>
+          <td><%= agence.code_psrm %></td>
+          <td style="width: 75px">
+            <%= link_to 'bordereau', @echeance.bordereau_download_agence_link(agence.code_psrm), target: '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @autre %>
+        <tr>
+          <td>INCONNU</td>
+          <td>XX</td>
+          <td>XX</td>
+          <td style="width: 75px">
+            <%= link_to 'bordereau', @echeance.bordereau_download_agence_link, target: '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

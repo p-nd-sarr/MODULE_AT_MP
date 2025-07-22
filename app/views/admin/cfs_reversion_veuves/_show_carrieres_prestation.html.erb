@@ -1,0 +1,122 @@
+<%# if @cfs_reversion_veuve.resident_fr? %>
+
+
+  <% if (@cfs_reversion_veuve.carrieres_prestation.traite.size < @cfs_reversion_veuve.carrieres_prestation.size) and @cfs_reversion_veuve.affecter_salarie == current_user %>
+    <%= link_to "Je valide toutes les carrières", admin_cfs_reversion_veuve_valider_all_carrieres_path(@cfs_reversion_veuve), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+    <hr>
+  <% end %>
+    <% if @cfs_reversion_veuve.carrieres_prestation.size > 0 %>
+    <div class="row" style="margin-left: 20%;">
+      <div class="col-sm-8">
+        <h2 style="text-align: center"><strong> AU SÉNÉGAL </strong></h2>
+        <hr>
+      </div>
+    </div>
+  <% end %>
+  <h3>Régime Général</h3>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Exercice</th>
+      <th scope="col">Employeur</th>
+      <th scope="col">Période</th>
+      <th scope="col">Salaire 1</th>
+      <th scope="col">Salaire 2</th>
+      <th scope="col">Salaire Réel</th>
+      <th scope="col">Points</th>
+      <th scope="col">Etat</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @cfs_reversion_veuve.carrieres_prestation.regime_general.each do |carriere| %>
+      <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+        <td><%= carriere.exercice %></td>
+        <td><%= carriere.ref_employeur %></td>
+        <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+        <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+        <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+        <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+        <td align="right"><%= carriere.points %></td>
+        <td align="right"><%= carriere.etat %></td>
+        <% if @cfs_reversion_veuve.affecter_salarie == current_user %>
+
+          <td width="75px">
+            <%= (link_to 'valider', admin_cfs_reversion_veuve_valider_ligne_carriere_path(@cfs_reversion_veuve, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or carriere.rejete? %>
+          </td>
+
+          <td width="75px">
+            <%= (link_to 'rejeté', admin_cfs_reversion_veuve_rejeter_ligne_carriere_path(@cfs_reversion_veuve, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or carriere.rejete? %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <h3>Régime Cadre</h3>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Exercice</th>
+      <th scope="col">Employeur</th>
+      <th scope="col">Période</th>
+      <th scope="col">Salaire 1</th>
+      <th scope="col">Salaire 2</th>
+      <th scope="col">Salaire Réel</th>
+      <th scope="col">Points</th>
+      <th scope="col">Etat</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @cfs_reversion_veuve.carrieres_prestation.regime_cadre.each do |carriere| %>
+      <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+        <td><%= carriere.exercice %></td>
+        <td><%= carriere.ref_employeur %></td>
+        <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+        <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+        <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+        <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+        <!--      <td align="right"><%#= carriere.points %></td>-->
+        <td align="right"><%= carriere.points %></td>
+        <td align="right"><%= carriere.etat %></td>
+
+        <% if @cfs_reversion_veuve.affecter_salarie == current_user %>
+          <td width="75px">
+            <%= (link_to 'valider', admin_cfs_reversion_veuve_valider_ligne_carriere_path(@cfs_reversion_veuve, carriere_id: carriere.id), class: 'btn btn-outline btn-primary btn-xs') unless carriere.valide? or carriere.rejete? %>
+          </td>
+          <td width="75px">
+            <%= (link_to 'rejeté', admin_cfs_reversion_veuve_rejeter_ligne_carriere_path(@cfs_reversion_veuve, carriere_id: carriere.id), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or carriere.rejete? %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <% if @cfs_reversion_veuve.carrieres_prestation.size > 0 %>
+    <div class="row" style="margin-left: 20%;">
+      <div class="col-sm-8">
+        <hr>
+        <div class="panel panel-info">
+          <div class="panel-body">
+            <div class="table-responsive" style="margin-top: 5px">
+              <h5>
+                <strong>Date à laquelle le demandeur a cessé toute activité salariée :</strong> &nbsp;
+                <%#= l @cfs_reversion_veuve.participant.date_fin_derniere_embauche %>
+                <%= l @cfs_reversion_veuve.date_cess_act_sn %>
+              </h5>
+              <br>
+              <h5>
+                <strong>Nombre d'années de salariat :</strong> &nbsp;
+                <%= @cfs_reversion_veuve.participant.nombre_annee_cotisation unless @cfs_reversion_veuve.participant.nil?%>
+
+              </h5>
+            </div>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+  <% end %>
+<%# end %>

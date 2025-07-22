@@ -1,0 +1,49 @@
+<div class="row">
+  <div class="col-sm-6">
+    <h3>Par catégorie</h3>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Catégorie</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Montant (F.CFA)</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% Allocataire::TYPE_CATEGORIE.each do |categorie, numero| %>
+        <tr>
+          <td><%= Allocataire.human_enum_name(:categorie, categorie) %></td>
+          <td align="right"><%= format_entier @echeance_paiement.allocataires.where(categorie: numero).distinct.count(:numero_allocataire) %></td>
+          <td align="right"><%= format_cfa @echeance_paiement.compta_transactions.
+            joins('INNER JOIN (select distinct "numero_allocataire", "categorie" from "allocataires") "allocataires" ON "allocataires"."numero_allocataire" = "compta_transactions"."numero_allocataire"').
+            where(allocataires: {categorie: numero}).sum(:montant), false %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="col-sm-6">
+    <h3>Par mode de paiement</h3>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Mode de paiement</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Montant (F.CFA)</th>
+      </tr>
+      </thead>
+
+      <% MODE_PAIEMENT.each do |mode_paiement, numero| %>
+        <tr>
+          <td><%= ComptaTransaction.human_enum_name(:mode_paiement, mode_paiement) %></td>
+          <td align="right"><%= format_entier @echeance_paiement.compta_transactions.where(mode_paiement: numero).distinct.count(:numero_allocataire) %></td>
+          <td align="right"><%= format_cfa @echeance_paiement.compta_transactions.where(mode_paiement: numero).sum(:montant), false %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,71 @@
+<div class="section-conjoint">
+  <div class="row text-center" style="padding: 20px; margin-bottom: 20px">
+    <div class=" panel-footer" style="margin-bottom: 20px">
+      <h4 style="font-weight: bold; margin-bottom: 15px">Liste des documents fournis par l'allocataire</h4>
+    </div>
+    <% @conjoints.each do |conjoint| %>
+      <div class="caf-conjoint-info" style=" margin-bottom: 20px">
+        <div class="row text-center" style="padding-top:10px; margin-bottom: 10px;">
+          <h3 style="font-weight: bold;">Conjoint <%= conjoint.prenom %> <%= conjoint.nom %> </h3>
+          <div class="col-lg-4 col-lg-offset-2 ">
+            <div class="contact-box piece-card" style="min-height: 180px">
+              <% if conjoint.certificat_mariage.attached? %>
+                <p>
+                  <strong>Certificat de mariage :</strong>
+                  <%= link_to image_tag('missing_logo.png', size: "150x150>", class: "m-t-xs img-responsive"), conjoint.certificat_mariage, target: :_blank %>
+                  <%#= link_to image_tag(conjoint.certificat_mariage.preview(resize: "150x150>"), class: "m-t-xs img-responsive"), conjoint.certificat_mariage, target: :_blank %>
+                </p>
+              <% else %>
+                <h4 style="font-weight: bold;"> Ancune certificat de mariage enregistré </h4>
+              <% end %>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="contact-box piece-card" style="min-height: 180px">
+              <% if conjoint.extrait_naissance.attached? %>
+                <p>
+                  <strong>Extrait de naissance :</strong>
+                  <%= link_to image_tag('missing_logo.png', size: "150x150>", class: "m-t-xs img-responsive"), conjoint.extrait_naissance, target: :_blank %>
+                  <%#= link_to image_tag(conjoint.extrait_naissance.preview(resize: "150x150>"), class: "m-t-xs img-responsive"), conjoint.extrait_naissance, target: :_blank %>
+                </p>
+              <% else %>
+                <h4 style="font-weight: bold;"> Ancune pièce d'identité enregistré </h4>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <div class="row text-center" style="margin-bottom: 10px;">
+          <div class="ibox ">
+            <div class="ibox-title">
+              <h5>Liste des enfants de <%= conjoint.prenom %> <%= conjoint.nom %></h5>
+            </div>
+            <div class="ibox-content">
+              <% @enfants.each do |enfant| %>
+                <% if conjoint.id == enfant.conjoint_id %>
+                  <div class="caf-enfant-info" style=" margin-bottom: 20px">
+                    <h4 style="font-weight: bold;">Enfant <%= enfant.prenom %> <%= enfant.nom %> </h4>
+                    <div class="row text-center" style="margin-bottom: 10px;">
+                      <div class="col-lg-4">
+                        <div class="contact-box piece-card" style="min-height: 180px">
+                          <% if enfant.extrait_naissance.attached? %>
+                            <%= Enfant.human_enum_name(:type_piece, enfant.type_piece) unless enfant.type_piece.nil? %>
+                            <%= link_to image_tag('missing_logo.png', size: "175x175>", class: "m-t-xs img-responsive"), enfant.extrait_naissance, target: :_blank %>
+                            <%#= link_to image_tag(enfant.extrait_naissance.preview(resize: "175x175>"), class: "m-t-xs img-responsive"), enfant.extrait_naissance, target: :_blank %>
+                          <% else %>
+                            <h4 style="font-weight: bold;"> Ancune pièce d'identité enregistré </h4>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hr-line-dashed"></div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hr-line-section"></div>
+    <% end %>
+  </div>
+</div>

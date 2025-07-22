@@ -1,0 +1,103 @@
+
+<table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+        <th scope="col">N° ordre </th>
+        <th scope="col">numéro allocataire</th>
+        <th scope="col">Prénom et Nom</th>
+        <th scope="col">Exercice</th>
+         <th scope="col">Période</th>
+        <th scope="col">Numéro période</th>
+        <th scope="col">Opération</th>
+        <th scope="col">Dossier type</th>
+        <th scope="col">Montant</th>
+        <th scope="col">Status</th>
+        <th colspan="2"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @ordre_paiements.each do |ordre_paiement| %>
+        <tr>
+            <td><%= ordre_paiement.numero_format %></td>
+            <td><%= ordre_paiement.numero_allocataire %></td>
+
+            <td>
+                <%= ordre_paiement.allocataire.try(:prenom) %> <%= ordre_paiement.allocataire.try(:nom) %>
+            </td>
+
+            <td>
+                <% unless ordre_paiement.echeance_paiement.nil?%>
+                    <%= ordre_paiement.echeance_paiement.try(:annee) %>
+                <% end%>
+            </td>
+
+            <td>
+                <% unless ordre_paiement.echeance_paiement.nil?%>
+                    <%= ordre_paiement.echeance_paiement.try(:periode) %>
+                <% end %>
+            </td>
+
+            <td>
+                <% unless ordre_paiement.echeance_paiement.nil?%>
+                    <%= ordre_paiement.echeance_paiement.try(:numero_periode) %>
+                <% end %>
+            </td>
+
+            <td>
+               <% unless ordre_paiement.compta_transactions.nil?%>
+                    <% ordre_paiement.compta_transactions.each do |compta_transaction| %>
+                    <%= compta_transaction.code_operation %> <br>
+                    <% end %>
+                <% end %>
+            </td>
+
+            <td><%= ordre_paiement.dossier_type %></td>
+            <td align="right"><%= format_cfa ordre_paiement.montant, false %></td>
+            <td><%= ordre_paiement.statut %></td>
+
+            <td style="width: 75px">
+                <% if ordre_paiement.paye? and current_user.agent_dfc?%>
+                    <button type="button" class="btn btn-outline btn-success btn-xs" data-toggle="modal" data-target="#modal-<%= ordre_paiement.id %>">Marquer impayé
+                    </button>
+                    <!-- Motif Impaye -->
+                    <div class="modal inmodal" id="modal-<%= ordre_paiement.id %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+                        <div class="modal-dialog">
+                            <div class="modal-content animated bounceInRight">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">
+                                <span aria-hidden="true">x</span>
+                                <span class="sr-only">Close</span>
+                                </button>
+                                <h5 class="modal-title">N° ordre <%= ordre_paiement.numero %></h5>
+                            </div>
+                            <%= bootstrap_form_for(ordre_paiement, url: admin_ordre_paiement_marquer_impaye_path(ordre_paiement)) do |f| %>
+                                <div class="modal-body">
+                                <%= f.text_area :motif_impaye %>
+                                </div>
+
+                                <div class="modal-footer form-group">
+                                <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+                                <%= f.button 'Enregister', class: 'btn btn-primary' %>
+                                </div>
+                            <% end %>
+                            </div>
+                        </div>
+                    </div>
+                <% end %>
+                <% if ordre_paiement.marque_impaye? and current_user.chef_service_dfc?%>
+                    <%= (link_to 'Rendre impayé', admin_ordre_paiement_rendre_impaye_path(ordre_paiement), class: 'btn btn-outline btn-success btn-xs') %>
+                <% end %>
+
+                  <% if ordre_paiement.marque_impaye?%>
+                    <%= (link_to 'Annuler impayé', admin_ordre_paiement_annuler_impaye_path(ordre_paiement), class: 'btn btn-outline btn-danger btn-xs') %>
+                  <% end %>
+            </td>
+
+            <td>
+              <%= (link_to 'Details', admin_ordre_paiement_path(ordre_paiement), class: 'btn btn-outline btn-primary btn-xs') %>
+            </td>
+        </tr>
+    <% end %>
+    </tbody>
+</table>

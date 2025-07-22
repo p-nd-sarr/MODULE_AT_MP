@@ -1,0 +1,111 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+<!--    <th scope="col">Nom salarie</th>-->
+<!--    <th scope="col">Prénom salarié</th>-->
+    <th scope="col"> Origine</th>
+<!--    <th scope="col">Nom complet enfant</th>-->
+<!--    <th scope="col">Date fin prise en charge</th>-->
+    <th scope="col">Liens</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <%# @demande_liquidation.enfants_majoration.each do |enfant| %>
+  <% @demande_liquidation.enfants.each do |enfant| %>
+    <tr>
+      <td><%= enfant.nom %></td>
+      <td><%= enfant.prenom %></td>
+      <td><%= l enfant.date_naissance %></td>
+<!--      <td><%#= enfant.nom_salarie %></td>-->
+<!--      <td><%#= enfant.prenom_salarie %></td>-->
+      <td><%= enfant.origine_enfant %></td>
+      <%# if enfant.enfant_id %>
+<!--        <td><%#= enfant.enfant.full_name %></td>-->
+      <%# else %>
+<!--        <td></td>-->
+      <%# end %>
+<!--      <td><%#= l enfant.date_fin_mineur %></td>-->
+
+      <td style="width: 75px">
+        <%= link_to 'lien vers les documents', admin_enfant_path(enfant), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+
+    </tr>
+  <% end %>
+
+
+  <% @cfs_enfants.each do |enfant| %>
+        <tr style="background-color: lavender">
+      <td><%= enfant.nom %></td>
+      <td><%= enfant.prenom %></td>
+      <td><%= l enfant.date_naissance %></td>
+<!--      <td> -</td>-->
+<!--      <td> -</td>-->
+      <td><%= CfsEnfant.human_enum_name(:filiation, enfant.filiation) %></td>
+<!--      <td> -</td>-->
+<!--      <td> - </td>-->
+      <td style="width: 75px">
+        <%= link_to 'supprimer', admin_liquidation_retraite_france_destroy_cfs_enfant_path(@demande_liquidation, enfant.id),
+                    method: :delete, data: { confirm: 'En êtes vous sûr?' },
+                    class: 'btn btn-outline btn-danger btn-xs' unless @demande_liquidation.epouses_valide? and @demande_liquidation.enfants_valide? %>
+        <button class="btn btn-outline btn-primary btn-xs" data-toggle="modal" data-target="#enfant_details">
+          détails
+        </button>
+      </td>
+    </tr>
+
+
+    <div class="modal inmodal" id="enfant_details" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+
+        <div class="modal-content animated fadeIn">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">x</span>
+              <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title">Détails enfant</h4>
+          </div>
+          <div class="modal-body">
+
+            <p>
+              <strong>Prénom : </strong>
+              <%= enfant.prenom %>
+            </p>
+            <p>
+              <strong>Nom : </strong>
+              <%= enfant.nom %>
+            </p>
+            <p>
+              <strong>Date de naissance : </strong>
+              <%= enfant.date_naissance %>
+            </p>
+            <% unless enfant.lieu_naissance %>
+              <p>
+                <strong>Lieu de naissance : </strong>
+                <%= enfant.lieu_naissance %>
+              </p>
+            <% end %>
+            <p>
+              <strong>Filiation : </strong>
+              <%= CfsEnfant.human_enum_name(:filiation, enfant.filiation) %>
+            </p>
+
+            <% if enfant.situation? %>
+              <p>
+                <strong>Date du décès : </strong>
+                <%= enfant.date_deces %>
+              </p>
+            <% end %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  <% end %>
+  </tbody>
+</table>

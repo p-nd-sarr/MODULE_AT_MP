@@ -1,0 +1,190 @@
+<%= content_for :titre_page, "Mes Effectifs" %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_employer_effectif_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+
+    <div class="col-lg-4">
+      <div class="ibox volet1">
+        <div class="ibox-title text-success">
+          <h3>Total effectif</h3>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins"><%= @total_effectif.size %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox volet2">
+        <div class="ibox-title text-success">
+          <h3>Total Départ <span class="label label-warning" style="float:right"><%= @effectifs.size==0 ? 0 : @effectifs_retrait.size * 100 / @effectifs.size %>%</span></h3>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins"><%=  @effectifs_retrait.size %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox volet3">
+        <div class="ibox-title text-success">
+          <h3>Total actif <span class="label label-primary" style="float:right"><%= @effectifs.size==0 ? 0 : @effectifs_actif.size * 100 / @effectifs.size %>%</span></h3>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins"><%=  @effectifs_actif.size %></h1>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!--<div class="row">
+
+  <div class="col-sm-6">
+    <h4>Ajouter des salariés par chargement de fichier</h4>
+    <%#= form_tag import_employer_effectifs_path(@immatriculation), multipart: true do %>
+      <%#= file_field_tag :file, label: 'Choisir fichier', class: '' %>
+      <%#= submit_tag "Importer fichier salarié",  class: 'btn btn-primary'  %>
+    <% #end %>
+
+    <div class="hr-line-dashed"></div>
+  </div>
+    
+</div> -->
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5> </h5>
+          <div class="ibox-tools">
+            <div class="btn-group">
+              <button data-toggle="dropdown" class="btn btn-success btn-sm dropdown-toggle" aria-expanded="false">
+                <span class="fa fa-plus"></span> AJOUTER SALARIE
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                   <%= link_to 'Renseigner le formulaire', new_employer_effectif_path, id:"dd_hover" %>   
+                </li>
+                <li>
+                   <a data-toggle="modal" data-target="#ajoutSalarie" id="dd_hover">Ajouter salariés par chargement de fichier</a>   
+                </li>
+              </ul>
+            </div> 
+          </div>
+        </div>
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12">
+              <%= search_form_for @q, url: employer_effectifs_path do |f| %>
+                <div class="input-group col-lg-12">
+                  <div class="col-lg-10">
+                    <%= f.search_field :prenom_or_nom_or_numero_piece_cont, class: "form-control form-control-sm", placeholder: "Entrer le nom ou prénom ou numéro pièce d'un salarié", style: "width:100%; position: relative; z-index: 1" %>
+                  </div>
+                  <div class="input-group-append col-lg-2" style="padding-left: 0px;">
+                    <%= f.submit "Chercher salarié", :class => "btn btn-outline btn-primary", :style => "height:34px" %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            <div class="col-lg-12">
+              <% if @effectifs.count.zero?%>
+                <h2 style="text-align:center; margin-top:50px">Pas d'effectif !!!</h2>
+              <% else %>
+                <table class="footable table table-stripped table-hover" data-page-size="8" data-filter="#filter" style="margin-top: 20px;">
+                  <thead>
+                    <tr>
+                      <th scope="col">Nom</th>
+                      <th scope="col">Prénom</th>
+                      <th scope="col">Date de naissance</th>
+                      <th scope="col">Type pièce</th>
+                      <th scope="col">NIN</th>
+                      <th scope="col">Actif?</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <% @effectifs.each do |salarie| %>
+                      <tr>
+                        <td><%= salarie.nom %></td>
+                        <td><%= salarie.prenom %></td>
+                        <td><%= salarie.date_naissance %></td>
+                        <td><%= SalarieImmatriculation.human_enum_name(:type_piece, salarie.type_piece) %></td>
+                        <td><%= salarie.numero_piece %></td>
+                        <td><%= salarie.etat == 'actif' ? "OUI" : "NON" %></td>
+                        <td>
+                          <% if salarie.etat != 'retrait' %>
+                            <%= link_to 'Retirer',  employer_effectif_path(salarie), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                    </tbody>
+                  </table>
+                  <%= paginate @effectifs %>
+              <% end %>
+            </div>
+          </div>
+        </div> <!-- end ibox-content -->
+       </div> <!-- end ibox -->
+    </div> <!-- end col -->
+  </div> <!-- end row -->
+</div> <!-- end wrapper-content -->
+
+<div class="modal inmodal" id="ajoutSalarie" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog">
+                                
+  <div class="modal-content animated fadeIn">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true">x</span>
+        <span class="sr-only">Close</span>
+      </button>
+      <h4 class="modal-title">Ajouter salarié par chargement de fichier</h4>
+    </div>
+    <%= form_tag import_employer_effectifs_path(@immatriculation), multipart: true do %>
+      <div class="modal-body" style="height:150px">
+        <div class="col-sm-4 col-lg-offset-4">
+          <div class="btn-file">
+            <label>
+              <%= file_field_tag :file, hide_label:true, label: '.', class: '', id:'label_file' %>
+              <div class="btn btn-success" style="margin-top: 0px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+        </div>
+        <div class="col-lg-12" style="text-align:center">
+          <h4 id="file_name" class="text-success">Aucun fichier choisi</h4>
+        </div>
+      </div>     
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= submit_tag "Importer fichier salarié",  class: 'btn btn-primary'  %>                                    
+      </div>
+      <% end %>
+    </div>                               
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  $(document).ready(function () {
+      var input = document.getElementById('label_file');
+      var infoArea = document.getElementById('file_name');
+      input.addEventListener('change', showFileName);
+
+      function showFileName(event) {
+          var input = event.srcElement;
+          var fileName = input.files[0].name;
+          infoArea.textContent = fileName;
+      }
+  })
+</script>

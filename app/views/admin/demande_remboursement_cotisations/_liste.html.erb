@@ -1,0 +1,45 @@
+<%= paginate @demande_remboursements %>
+
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">N° dossier</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Adresse domicile</th>
+    <th scope="col">Mode de paiement</th>
+    <th scope="col">Etat</th>
+    <th colspan="2"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @demande_remboursements.each do |demande_remboursement| %>
+    <tr>
+      <td>
+        <%if demande_remboursement.num_dossier.nil? %>
+          <%= demande_remboursement.numero_affiliation %>
+          <%else%>
+          <%= demande_remboursement.num_dossier %>
+        <%end%>
+      </td>
+      <td><%= demande_remboursement.prenom %></td>
+      <td><%= demande_remboursement.nom %></td>
+      <td><%= l demande_remboursement.date_naissance %></td>
+      <td><%= demande_remboursement.adresse_domicile %></td>
+      <td><%= demande_remboursement.mode_paiement_human %></td>
+      <td><%= demande_remboursement.workflow_state %></td>
+
+      <td style="width: 75px">
+        <%= (link_to 'Details', admin_demande_remboursement_cotisation_path(demande_remboursement), class: 'btn btn-outline btn-primary btn-xs') %>
+      </td>
+
+      <% if demande_remboursement.date_soumission? %>
+        <td> <%= link_to 'Récépissé', admin_demande_remboursement_cotisation_show_facture_remboursement_path(demande_remboursement.id, format: :pdf), class: "btn btn-outline btn-success btn-xs my-2 my-sm-0", target:'_blank'%></td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @demande_remboursements %>

@@ -1,0 +1,219 @@
+<%= content_for :titre_page, "Détails de l'échéance de paiement [#{ @echeance_paiement.workflow_state}]" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_echeance_paiements_path, class: 'btn btn-white btn-sm' %>
+
+  <% if @echeance_paiement.creation? and @echeance_paiement.liquider_par.nil? %>
+    <%= (link_to 'Valider Liquidation', admin_echeance_paiement_valider_liquidation_path(@echeance_paiement), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_liquidation? %>
+  <% end %>
+
+  <% if @echeance_paiement.creation? and @echeance_paiement.instruit_par.nil? %>
+    <%= (link_to 'Valider Instruction', admin_echeance_paiement_valider_instruction_path(@echeance_paiement), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_section_instruction? %>
+  <% end %>
+
+  <% if @echeance_paiement.valider_chef_section? %>
+    <%= (link_to 'Valider Chef de Service', admin_echeance_paiement_valider_service_path(@echeance_paiement), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.chef_service_allocation? %>
+  <% end %>
+
+  <% if @echeance_paiement.valider_chef_service? %>
+    <%= (link_to 'Valider Directeur', admin_echeance_paiement_valider_directeur_path(@echeance_paiement), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm') if current_user.directeur_prestation? %>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-sm-12" style="margin-left: 16%">
+      <div class="progressbar-wrapper">
+        <ul class="progressbar">
+          <li class="<%= ("active") if @echeance_paiement.current_state >= :creation %>">Création</li>
+          <li class="<%= ("active") if @echeance_paiement.current_state >= :valider_chef_section %>">Validation Chef
+            Sections
+          </li>
+          <li class="<%= ("active") if @echeance_paiement.current_state >= :valider_chef_service %>">Validation Chef de
+            Service
+          </li>
+          <li class="<%= ("active") if @echeance_paiement.current_state >= :valider_directeur %>">Validation Directeur
+          </li>
+
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h3>
+            <b>Montant Total à payer : </b> <%= format_cfa @echeance_paiement.montant_total %>
+          </h3>
+          <p>
+            <b>Etat : </b> <%= @echeance_paiement.workflow_state %>
+            |
+            <b>Date génération : </b> <%= l @echeance_paiement.created_at %>
+            |
+            <b>Période de paiement
+              : </b> <%= "#{ @echeance_paiement.periode_debut.strftime("%d/%m/%Y")} au #{@echeance_paiement.periode_fin.strftime("%d/%m/%Y")}" %>
+            |
+            <b>Période variation
+              : </b> <%= "#{ @echeance_paiement.periode_variation_debut.strftime("%d/%m/%Y")} au #{@echeance_paiement.periode_variation_fin.strftime("%d/%m/%Y")}" %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+
+    <div class="col-sm-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+
+            <ul class="nav nav-tabs">
+              <!--                <span class="pull-right small text-muted">1406 Elements</span>-->
+              <li class="active">
+                <a data-toggle="tab" href="#tab-1"><i class="fa fa-folder"></i>Variations du mois
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless true %>
+                </a>
+              </li>
+              <li class="<%= @active_representant %>">
+                <a data-toggle="tab" href="#tab-2"><i class="fa fa-folder"></i>Suivi des avances
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless true %>
+                </a>
+              </li>
+              <li class="<%= @active_document %>">
+                <a data-toggle="tab" href="#tab-4"><i class="fa fa-folder"></i>Echéance
+                  <%= '<span class="label label-warning">à valider</span>'.html_safe unless true %>
+                </a>
+              </li>
+              <li>
+                <a data-toggle="tab" href="#tab-comptage"><i class="fa fa-folder"></i>Comptage
+                </a>
+              </li>
+            </ul>
+
+            <div class="tab-content">
+
+              <div id="tab-1" class="tab-pane active">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_variations' %>
+                </div>
+              </div>
+
+              <div id="tab-2" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_suivi_avances' %>
+                </div>
+              </div>
+
+              <div id="tab-4" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <%= render 'show_echeances' %>
+                </div>
+              </div>
+
+              <div id="tab-comptage" class="tab-pane">
+                <div class="full-height-scroll">
+                  <br>
+                  <% cache @echeance_paiement do %>
+                    <%= render 'show_comptage' %>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+    .progressbar-wrapper {
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        padding-left: 12%;
+    }
+
+    .progressbar li {
+        list-style-type: none;
+        width: 10%;
+        float: left;
+        font-size: 10px;
+        position: relative;
+        text-align: center;
+        text-transform: uppercase;
+        color: #7d7d7d;
+    }
+
+    .progressbar li:before {
+        width: 60px;
+        height: 60px;
+        content: "";
+        line-height: 60px;
+        border: 2px solid #7d7d7d;
+        display: block;
+        text-align: center;
+        margin: 0 auto 3px auto;
+        border-radius: 50%;
+        position: relative;
+        z-index: 2;
+        background-color: #fff;
+    }
+
+    .progressbar li:after {
+        width: 100%;
+        height: 2px;
+        content: '';
+        position: absolute;
+        background-color: #7d7d7d;
+        top: 30px;
+        left: -50%;
+        z-index: 0;
+    }
+
+    .progressbar li:first-child:after {
+        content: none;
+    }
+
+    .progressbar li.active {
+        color: #000;
+        font-weight: normal;
+    }
+
+    .progressbar li.active:before {
+        border-color: #1ab394;
+        background: #1ab394;
+    }
+
+    .progressbar li.active + li:after {
+        background-color: #1ab394;
+    }
+
+    .progressbar li.active:before {
+        background: #1ab394;
+        background-size: 60%;
+    }
+
+    .progressbar li::before {
+        background: #fff;
+        background-size: 60%;
+    }
+
+    .progressbar {
+        counter-reset: step;
+    }
+
+    .progressbar li:before {
+        content: counter(step);
+        counter-increment: step;
+    }
+</style>

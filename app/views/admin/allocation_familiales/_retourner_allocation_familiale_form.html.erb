@@ -1,0 +1,45 @@
+<div class="modal inmodal" id="RetournerAllocationFamilialeModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-arrow-left modal-icon btn-white"></i>
+        <h4 class="modal-title">
+          <% if object.motif_retour.nil? or object.motif_retour.empty? %>
+            Retourner allocation familiale
+          <% else %>
+            Voir motif de retour
+          <% end %>
+        </h4>
+
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <% if (object.soumis? and current_user.chef_agence?) or (object.valide? and current_user.comptable? and not object.paiement?) %>
+            <%= bootstrap_form_for(object, url: admin_dossier_prestation_allocation_familiale_retourner_path(@dossier_prestation, object), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+              <%= f.text_area :motif_retour, label: 'Motif retour' %>
+              <div class="form-group row">
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+                  <%= f.button 'Enregistrer', class: 'btn btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+          <% unless object.motif_retour.nil? or object.motif_retour.empty? %>
+            <h3>
+              Motif retour : <%= object.motif_retour unless object.motif_retour.nil? %>
+            </h3>
+            <h4>Retourné par : <%= object.retourne_par.full_name unless object.retourne_par.nil? %> </h4>
+            <h4>Retourné le : <%= l object.date_retour unless object.date_retour.nil? %> </h4>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

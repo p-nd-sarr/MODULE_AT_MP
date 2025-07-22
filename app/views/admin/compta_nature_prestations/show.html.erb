@@ -1,0 +1,40 @@
+<%= content_for :titre_page, "Détails admin_compta_nature_prestation" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_compta_nature_prestations_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_compta_nature_prestation_path(@admin_compta_nature_prestation), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_compta_nature_prestation', new_admin_compta_nature_prestation_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_compta_nature_prestation.code %>
+                </p>
+
+                            <p>
+                  <strong>Libelle:</strong>
+                  <%= @admin_compta_nature_prestation.libelle %>
+                </p>
+
+                            <p>
+                  <strong>Entite:</strong>
+                  <%= @admin_compta_nature_prestation.entite %>
+                </p>
+
+                            <p>
+                  <strong>Branche:</strong>
+                  <%= @admin_compta_nature_prestation.branche %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

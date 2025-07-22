@@ -1,0 +1,19 @@
+<%= bootstrap_form_for(@admin_compta_nature_prestation, layout: :horizontal) do |f| %>
+  <%= f.text_field :code %>
+  <%= f.text_field :libelle %>
+  <%= f.select :entite,
+               Admin::ComptaNaturePrestation::ENTITE.keys.collect { |e| [e, e] },
+               label: "Entité" , required: true%>
+  <%= f.select :branche,
+               Admin::ComptaNaturePrestation::BRANCHE.keys.collect { |e| [e, e] },
+               label: "Branche" , required: true%>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', admin_compta_nature_prestations_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

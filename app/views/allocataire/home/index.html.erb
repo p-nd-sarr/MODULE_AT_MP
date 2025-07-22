@@ -1,0 +1,209 @@
+<%= content_for :titre_page, 'Espace Allocataire' %>
+
+<div class="wrapper wrapper-content animated fadeIn">
+  <div class="row m-b-lg m-t-lg">
+    <div class="col-md-6">
+      <div class="profile-image">
+        <img src="images/person.png" class="rounded-circle circle-border m-b-md" alt="profil">
+      </div>
+      <div class="profile-info">
+        <div class="">
+          <div>
+            <h2 class="no-margins" style="vertical-align: inherit;">
+              <%= @allocataire.try(:prenom)%> <%= @allocataire.try(:nom)%>
+            </h2>
+            <h4 style="vertical-align: inherit;">Numéro allocataire: <strong class="text-navy"> <%=@current_user.numero_salarie %></strong></h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <table class="table small m-b-xs">
+        <tbody>
+          <tr>
+            <td>
+              <strong style="vertical-align: inherit;">Date de naissance: <span class="text-success"><%= @allocataire.try(:date_naissance)%></span></strong>
+            </td>
+            <td>
+              <strong style="vertical-align: inherit;">Adresse domicile: <span class="text-success"><%= @allocataire.try(:adresse_rue)%></span> </strong>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong style="vertical-align: inherit;">Ville: <span class="text-success"><%= @allocataire.try(:adresse_ville)%></span></strong>
+            </td>
+            <td>
+              <strong style="vertical-align: inherit;">Téléphone: <span class="text-success"> <%= @allocataire.try(:telephone)%></span> </strong>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong style="vertical-align: inherit;">Etat: <span class="text-success"><%= @allocataire.try(:etat)%></span></strong>
+            </td>
+            <td>
+              <strong style="vertical-align: inherit;">Mode de paiement: <span class="text-success"> <%= @allocataire.try(:mode_paiement)%></span> </strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> <!-- end row -->
+
+  <div class="row">
+    <div class="col-lg-12" style="margin-bottom:10px; margin-top:10px">
+      <h2> <strong>MES DEMANDES DE SERVICES</strong></h2>
+    </div>
+    <div class="col-lg-3">
+        <%= link_to allocataire_update_grappe_familiales_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Grappe familiale</h5><span class="label label-success"><%=@allocataire.update_grappe_familiales.count %></span>
+            </div>
+            <div class="ibox-content">             
+              <div>
+                <p>Créations<span class="label label-info" style="float:right">0</span></p>
+               
+                <p>Validées<span class="label label-primary" style="float:right">0</span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right">0</span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+    </div>
+
+    <div class="col-lg-3">
+        <%= link_to  allocataire_modifier_mode_paiements_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Mode de paiement</h5> <span class="label label-success"><%=@allocataire.modifier_mode_paiements.count %> </span>
+            </div>
+            <div class="ibox-content">
+              <div>
+               <p>Créations<span class="label label-info" style="float:right"><%=@allocataire.modifier_mode_paiements.creation.count %></span></p>
+                <p>Validées<span class="label label-primary" style="float:right"><%=@allocataire.modifier_mode_paiements.with_dossier_valide_state.size %></span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right"><%=@allocataire.modifier_mode_paiements.with_dossier_rejete_state.size %></span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+    </div>
+
+    <div class="col-lg-3">
+        <%= link_to allocataire_modifier_adresses_path  do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Modification d’adresse</h5> <span class="label label-success"><%=@allocataire.modifier_adresses.count %></span>
+            </div>
+            <div class="ibox-content">
+              <div>
+                <p>Créations<span class="label label-info" style="float:right"><%=@allocataire.modifier_adresses.creation.count %></span></p>
+                <p>Validées<span class="label label-primary" style="float:right"><%=@allocataire.modifier_adresses.with_dossier_valide_state.size %></span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right"><%=@allocataire.modifier_adresses.with_dossier_rejete_state.size %></span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+    </div>
+
+    <div class="col-lg-3">
+        <%= link_to allocataire_regularisation_pensions_path do %>
+          <div class="ibox option_menu" style="box-shadow: 2px 2px 4px #1ab394;">
+            <div class="ibox-title">
+              <h5>Régularisation de pension</h5><span class="label label-success"><%=@allocataire.regularisation_pensions.count %></span>
+            </div>
+            <div class="ibox-content">
+              <div>
+                <p>Créations<span class="label label-info" style="float:right"><%=@allocataire.regularisation_pensions.creation.count %></span></p>
+                <p>Validées<span class="label label-primary" style="float:right"><%=@allocataire.regularisation_pensions.with_dossier_valide_state.size %></span></p>
+                <p>Rejetées<span class="label label-danger" style="float:right"><%=@allocataire.regularisation_pensions.with_dossier_rejete_state.size %></span></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+    </div>
+  </div> <!-- end row -->
+</div> <!-- end wrapper -->
+
+<!--
+
+
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <h5 class="text-warning" style="font-family: Georgia;">
+              N° Dossier : <%=@current_user.numero_salarie %>
+            </h5>
+            <div>
+              <ul class="nav nav-tabs">
+                
+                <li class="active"><a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Etat Civil
+
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2"><i class="fa fa-users"></i>Conjoints
+
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-3"><i class="fa fa-calendar"></i>Enfants
+
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-4"><i class="fa fa-briefcase"></i>Carrière
+
+                </a></li>
+                <li class=""><a data-toggle="tab" href="#tab-5"><i class="fa fa-folder"></i>Documents
+                </a></li>
+
+
+              </ul>
+              <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'etat_civil' %>
+                 
+
+                  </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'show_epouses' %>
+
+                  </div>
+                </div>
+
+                <div id="tab-3" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'show_enfants' %>
+
+                  </div>
+                </div>
+                <div id="tab-4" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'show_carrieres' %>
+
+                  </div>
+                </div>
+                <div id="tab-5" class="tab-pane">
+                  <div class="full-height-scroll">
+                    <br>
+
+                    <%= render 'show_documents' %>
+                  </div>
+                </div>
+               
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</div> -->

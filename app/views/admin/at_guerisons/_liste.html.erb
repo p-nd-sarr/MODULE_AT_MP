@@ -1,0 +1,34 @@
+<%= paginate @at_guerisons %>
+
+<table class="table table-striped" style="margin-top: 20px">
+  <thead>
+  <tr>
+    <th scope="col">#</th>
+    <th scope="col">Numéro dossier</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Nom</th>
+    <th scope="col">Date de guérison</th>
+    <th scope="col">Etat</th>
+    <th colspan="3">Actions </th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @at_guerisons.each do |at_guerison| %>
+      <tr>
+        <td><%=at_guerison.id%></td>
+        <td><%=at_guerison.arret_travail.num_dossier%></td>
+        <td><%=at_guerison.arret_travail.prenom_salarie%></td>
+        <td><%=at_guerison.arret_travail.nom_salarie%></td>
+        <td><%=at_guerison.date_ouverture_guerison %></td>
+        <td><%=at_guerison.workflow_state%> 
+      
+        </td>
+        <td style="width: 75px">
+         <%= link_to 'détails', [:admin, at_guerison.arret_travail, at_guerison], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= paginate @at_guerisons %>

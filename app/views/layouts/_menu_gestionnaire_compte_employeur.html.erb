@@ -1,0 +1,17 @@
+<li class="<%= 'active' if is_active_controller('admin/utilisateurs') %>">
+  <%= link_to admin_users_path do %>
+    <i class="fa fa-users"></i> <span class="nav-label">Compte des employeurs</span>
+  <% end %>
+</li>
+
+<li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Employeurs</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/employeurs') %>">
+    <li class="<%= 'active' if is_active_controller('admin/employeurs') %>">
+      <%= link_to 'Liste des employeurs', admin_all_employeur_path %>
+    </li>
+<!--    <li class="<%#= 'active' if is_active_controller('admin/employeurs') %>">-->
+      <%#= link_to 'Liste', admin_employeurs_path %>
+<!--    </li>-->
+  </ul>
+</li>

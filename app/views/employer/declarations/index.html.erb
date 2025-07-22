@@ -1,0 +1,150 @@
+<%= content_for :titre_page do %>
+  <h2>Mes Déclarations - <span>ninea : <%= current_user.ninea %></span></h2>
+
+<% end %>
+
+<br/>
+
+<div class="row">
+
+  <%= link_to new_employer_declaration_path do %>
+    <div class="col-lg-2 col-lg-offset-5">
+      <div class="widget style1 navy-bg" style="text-align:center">
+        <div class="row vertical-align">
+          <div class="col-lg-12">
+            <i class="fa fa-id-card fa-3x"></i>
+          </div>
+          <div class="col-lg-12" style="text-align: center">
+            <h5> Faire sa déclaration <br>unique IPRES/CSS </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- <%= link_to employer_declarations_path do %>
+    <div class="col-lg-2">
+      <div class="widget style1 navy-bg" style="text-align:center">
+        <div class="row vertical-align">
+          <div class="col-lg-12">
+            <i class="fa fa-folder-open fa-3x"></i>
+          </div>
+          <div class="col-lg-12" style="text-align: center">
+            <h5> Régulariser une <br> déclaration IPRES</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <% end %>
+
+  <%= link_to employer_effectifs_path do %>
+    <div class="col-lg-2">
+      <div class="widget style1 navy-bg" style="text-align:center">
+        <div class="row vertical-align">
+          <div class="col-lg-12">
+            <i class="fa fa-users fa-3x"></i>
+          </div>
+          <div class="col-lg-12" style="text-align: center">
+            <h5> Régulariser une <br> déclaration CSS </h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %> -->
+
+</div>
+
+<div class="wrapper wrapper-content">
+
+
+  <div class="row" id="declaration_id">
+
+    <div class="col-lg-12">
+        <div class="ibox ">
+        <div class="ibox-title">
+            <h3><span class="fa fa-history"></span> Historiques des déclarations </h3>
+            <div class="ibox-tools">
+            </div>
+        </div>
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-sm-12 m-b-xs">
+                    <div data-toggle="buttons" class="btn-group btn-group-toggle">
+                        <label class="btn btn-white active" style="outline: none; font-size:12px" data-toggle="pill" href="#unique"> <input type="radio" id="option1" name="options">Déclarations uniques IPRES-CSS</label>
+                        <label class="btn btn-white" style="outline: none; font-size:12px" data-toggle="pill" href="#spI"> <input type="radio" id="option2" name="options"> Déclarations spécifiques IPRES (jusqu'au 31 Décembre 2020) </label>
+                        <label class="btn btn-white" style="outline: none; font-size:12px" data-toggle="pill" href="#spC"> <input type="radio" id="option3" name="options"> Déclarations spécifiques CSS (jusqu'au 31 Décembre 2020) </label>
+                    </div>
+                </div>
+                <div class="col-lg-12 tab-content" style="margin-bottom: 60px; margin-top: 30px">
+                  <div id="unique" class="tab-pane fade in active">
+                      <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+                        <tr>
+                          <td>Periode</td>
+                          <td>Effectif</td>
+                          <td>Montant total</td>
+                          <td>Montant PF</td>
+                          <td>Montant AT</td>
+                          <td>Montant RG</td>
+                          <td>Montant RCC</td>
+                          <td>Total</td>
+                          <td>Voir</td>
+
+                        </tr>
+
+                        <% @declarations.each do |declaration| %>
+                          <tr>
+                            <td><%= declaration.periode %></td>
+                            <td><%= declaration.effectif %></td>
+                            <td><%= declaration.montant_total %></td>
+                            <td><%= declaration.montant_pf %></td>
+                            <td><%= declaration.montant_at %></td>
+                            <td><%= declaration.montant_rg %></td>
+                            <td><%= declaration.montant_rcc %></td>
+                            <td><%= declaration.montant_total %></td>
+                            <td><%= link_to "Details", employer_declaration_path(declaration) %></td>
+                          </tr>
+                        <% end %>
+                      </table>
+                  </div>
+                  <div id="spI" class="tab-pane fade in">
+                    <table class="table table-striped table-bordered table-hover dataTables-example dataTable">
+                      <tr>
+                        <td>Numéro Ipres</td>
+                        <td>Période</td>
+                        <td>Régime</td>
+                        <td>Etat</td>
+                        <td>Details</td>
+                      </tr>
+
+                      <% @historique_ipres_declarations.each do |declaration| %>
+                        <tr>
+                          <td><%= declaration.numero_ipres %></td>
+                          <td><%= declaration.exercice %></td>
+                          <td><%= declaration.regime == "1" ? "GENERAL" : "CADRE" %></td>
+                          <td><%= MissingDeclaration.human_enum_name(:etat, declaration.etat) %></td>
+                          <td>
+                            <% if declaration.valide? %>
+                              <%= link_to 'Détails', employer_declaration_ligne_declarations_path(declaration), class: 'btn btn-outline btn-primary btn-xs' %>
+                            <% else %>
+                              <%= link_to 'Faire sa déclaration', employer_declaration_ligne_declarations_path(declaration), class: 'btn btn-outline btn-primary btn-xs' %>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </table>
+                  </div>
+
+                  <div id="spC" class="tab-pane fade in">
+                    
+                  </div>
+
+                </div>
+            </div>
+            
+            </div>
+
+        </div>
+  </div>
+</div>
+</div>

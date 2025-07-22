@@ -1,0 +1,137 @@
+<%= content_for :titre_page, "Mes factures" %>
+
+<%= content_for :actions_page do %>
+<!--
+  <%#= link_to 'Faire un paiement', new_employer_paiement_path, class: 'btn btn-primary btn-sm' %>
+-->
+<% end %>
+<style type="text/css">
+  .nav-tabs li.active{
+    color: #495057;
+    background-color: #fff;
+  }
+</style>
+
+<div class="wrapper wrapper-content animated fadeIn">
+  <div class="row" style="min-height: 300px; margin-top:30px">
+    <div class="col-lg-12">
+
+      <div class="tabs-container">
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="active">
+            <a class="nav-link" data-toggle="tab" href="#tab-1">
+              <h2 style="vertical-align: inherit;">Factures impayées</h2>           
+            </a>
+          </li>
+          <li class="">
+            <a class="nav-link" data-toggle="tab" href="#tab-2">
+              <h2 style="vertical-align: inherit;">Factures soldées </h2>           
+            </a>
+          </li>
+        </ul>
+        <div class="tab-content">
+
+          <div role="tabpanel" id="tab-1" class="tab-pane active">
+            <div class="panel-body" style="background-color:#fff; height:300px">
+              <table class="table table-bordered table-hover" id="factures_id" style="margin-top:20px;">
+                <thead>
+                  <th scope="col">
+                    <td>Référence</td>
+                    <td>Période</td>
+                    <td>Montant</td>
+                    <td>Solde</td>
+                    <td>Statut</td>
+                    <td>Date paiement</td>
+                    <td>Détails</td>
+                  </th>
+                </thead>
+                <tbody>
+
+                <% @factures_open.each do |facture| %>
+                  <tr>
+                    <td><%= facture.reference_facture %></td>
+                    <td><%= facture.periode %></td>
+                    <td><%= facture.montant.round(-1) %></td>
+                    <td><%= facture.solde.round(-1) %></td>
+                    <td><%= Facture.human_enum_name(:statut, facture.statut) %></td>
+                    <td><%= facture.date_paiement %></td>
+                    <td><%= link_to "voir details", employer_facture_path(facture.id), class: 'btn btn-outline btn-primary btn-xs' %>
+                    </td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @factures_open %>
+            </div>
+          </div>
+
+          <div role="tabpanel" id="tab-2" class="tab-pane">
+            <div class="panel-body" style="background-color:#fff; position:relative; height:300px">
+              <table class="table table-bordered table-condensed table-hover" style="margin-top:20px;">
+                <thead>
+                  <th scope="col">
+                    <td>Référence</td>
+                    <td>Période</td>
+                    <td>Montant</td>
+                    <td>Solde</td>
+                    <td>Statut</td>
+                    <td>Date paiement</td>
+                  </th>
+                </thead>
+                <tbody>
+                <% @factures_close.each do |facture| %>
+                  <tr>
+                    <td><%= facture.reference_facture %></td>
+                    <td><%= facture.periode %></td>
+                    <td><%= facture.montant %></td>
+                    <td><%= facture.solde %></td>
+                    <td><%= Facture.human_enum_name(:statut, facture.statut) %></td>
+                    <td><%= facture.date_paiement %></td>
+                  </tr>
+                <% end %>
+                </tbody>
+              </table>
+              <%= paginate @factures_close %>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div> <!-- end col-lg-12 -->
+  </div> <!-- end row -->
+</div> <!-- end wrapper -->
+
+
+
+<script type="text/javascript" charset="utf-8">
+
+    $(document).ready(function(){
+
+        var pickedup;
+
+        var factures = [];
+
+        $( "#factures_id tr" ).on( "click", function( event ) {
+
+            var reference = $(this).find("td").eq(1).html();
+            console.log($(this).find("td").eq(0).html());
+            console.log($(this).find("td").eq(1).html());
+            console.log($(this).find("td").eq(3).html());
+
+            // get back to where it was before if it was selected :
+
+
+            if(factures.indexOf(reference) <= -1){
+
+            }
+
+            factures.push(reference);
+            // $( this ).css( "background-color", "red" );
+            pickedup = $( this );
+
+        });
+
+    })
+
+</script>

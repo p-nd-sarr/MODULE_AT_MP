@@ -1,0 +1,40 @@
+<%= content_for :titre_page, 'Demandes de suspension allocataire' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Allocataire', [:admin, @allocataire], class: 'btn btn-white btn-sm' %>
+  <% if current_user.can_allocataire? and @allocataire.actif?%>
+    <%= link_to 'Nouvelle demande', new_admin_allocataire_suspension_allocataire_path, class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire?  %>
+  <% end %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Matricule</th>
+        <th scope="col">Date demande de suspension</th>
+         <th scope="col">Motif de suspension</th>
+        <th scope="col">Etat</th>
+        <th colspan="5"> Action</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @suspension_allocataires.each do |suspension_allocataire| %>
+        <tr>
+          <td><%= suspension_allocataire.id %></td>
+          <td><%= suspension_allocataire.numero_allocataire %></td>
+           <td><%= suspension_allocataire.created_at.strftime("%d/%m/%Y") %></td>
+          <td><%= suspension_allocataire.motif_suspension %></td>
+          <td><%= suspension_allocataire.workflow_state %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, @allocataire, suspension_allocataire], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+       <% end%>
+      </tbody>
+    </table>
+  </div>
+</div>

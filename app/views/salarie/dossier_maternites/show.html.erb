@@ -1,0 +1,250 @@
+<%= content_for :titre_page, "Dossier d'Indemnités de Congés de Maternité" %>
+
+<%= content_for :titre_page_autres_details do %>
+  Date début grossesse (approximative) : <%= l @dossier_maternite.debut_grossesse %> <br>
+  Etat du dossier : <%= "#{DossierMaternite.human_enum_name(:etat, @dossier_maternite.etat)}" %>
+<% end %>
+
+<% if @dossier_maternite.delai_stage.nil? or @dossier_maternite.delai_stage < 90 %>
+  <% test = false %>
+<% else %>
+  <% test = true %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_dossier_maternites_path, class: 'btn btn-white btn-sm' %>
+    <%if current_user.chef_agence? %>
+      <%if @dossier_maternite.affectation_controleur.nil? %>
+        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#affecter-one-modal" id="affecter_allocataire_id">
+          Demander Rapport
+        </button>
+        <%= (link_to 'Valider', admin_dossier_maternite_valider_path(@dossier_maternite), class: 'btn btn-primary btn-sm') unless (@dossier_maternite.valide? or @dossier_maternite.rejete?) %>
+        <%= (link_to 'Rejeter', admin_dossier_maternite_rejeter_path(@dossier_maternite), class: 'btn btn-danger btn-sm') unless @dossier_maternite.rejete? %>
+      <%else %>
+        <%unless @dossier_maternite.date_rapport.nil? %>
+        <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#RapportModal" id="soumettre_id">
+          Visualiser Rapport
+        </button>
+        <%= (link_to 'Valider', admin_dossier_maternite_valider_path(@dossier_maternite), class: 'btn btn-primary btn-sm') unless (@dossier_maternite.valide? or @dossier_maternite.rejete?) %>
+        <%= (link_to 'Rejeter', admin_dossier_maternite_rejeter_path(@dossier_maternite), class: 'btn btn-danger btn-sm') unless @dossier_maternite.rejete? %>
+      <%end %>
+      <%end %>
+    <% elsif @dossier_maternite.affecter_controleur == current_user %>
+      <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#RapportModal" id="soumettre_id">
+        <%if @dossier_maternite.date_rapport.nil? %>
+          Rapport De Controle
+        <%else %>
+          Visualiser Rapport De Controle
+        <%end %>
+      </button>
+    <%end %>
+
+  <% if test == true %>
+    <%= link_to 'Indemnités', salarie_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite),
+                class: 'btn btn-outline btn-primary btn-sm' %>
+  <% end %>
+
+  <%# if current_user.comptable? %>
+    <%# if @dossier_maternite.attente_paiement? %>
+<!--      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#PaiementModal" id="soumettre_id">-->
+<!--        Valider Paiement-->
+<!--      </button>-->
+    <%# end %>
+  <%# end %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="row">
+            <div class="col-lg-12" style="margin-bottom: 25px">
+              <% if @dossier_maternite.valide? and ( current_user.chef_agence? or  current_user.gestionnaire_compte_allocataire? ) %>
+                <%= (link_to 'Prolongation', admin_dossier_maternites_path, class: 'btn btn-outline btn-primary btn-sm') if @dossier_maternite.indemnite_conges_maternites.any? {|i| i.prolongation == true} %>
+                <%= link_to 'Convocation', admin_dossier_maternites_path, class: 'btn btn-outline btn-success btn-sm' %>
+                <%= link_to 'Régularisation', admin_dossier_maternites_path, class: 'btn btn-outline btn-info btn-sm' %>
+                <%= link_to 'Suspension', admin_dossier_maternites_path, class: 'btn btn-outline btn-warning btn-sm' %>
+                <%= link_to 'Clotûre', admin_dossier_maternites_path, class: 'btn btn-outline btn-danger btn-sm' %>
+              <% end %>
+            </div>
+            <div class="wrapper wrapper-content">
+              <h5 class="text-warning" style="font-family: Georgia;">
+                N° Dossier : <%= @dossier_maternite.num_dossier %>
+                <% if @dossier_maternite.rejete? %>
+                  <br><br>
+                  <span class="text-danger"> Motif Rejet : <%= @dossier_maternite.motif_rejet %> </span>
+                <% end %>
+
+                <% if test == false %>
+                  <br><br>
+                  <span class="text-danger"> Le délai de stage ne permet pas la soumission et l'accés aux indemnités </span>
+                <% end %>
+
+                <% if @dossier_maternite.decedee?%>
+                  <br><br>
+                  <span class="text-danger"> Salariée décédée, le <%= l (@dossier_maternite.date_deces) %> </span>
+                <% end %>
+
+                <% unless @dossier_maternite.affectation_controleur.nil? %>
+                <% unless @dossier_maternite.affecter_controleur == current_user %>
+                  <%if @dossier_maternite.date_rapport_joint.nil? %>
+                    <br><br>
+                    <span class="text-danger"> La demande du rapport de controle est affectée au controleur  </span>
+                    <%if current_user.chef_agence? %>
+                      <%= @dossier_maternite.affecter_controleur.full_name %>
+                    <% end %>
+                  <%else %>
+                    <br><br>
+                    <span class="text-danger"> Rapport de controle soumis  </span>
+                    <%if current_user.chef_agence? %>
+                      <span class="text-danger"> par </span> <%= @dossier_maternite.affecter_controleur.full_name %>
+                    <% end %>
+                    <% end %>
+                <% end %>
+                <% end %>
+              </h5>
+
+              <% if @dossier_maternite.creation? %>
+                <% if @dossier_maternite.pret_pour_soumission? %>
+                  <% unless (@dossier_maternite.indemnite_conges_maternites.nil? or @dossier_maternite.indemnite_conges_maternites.empty?) %>
+                    <p class="text-info">
+                      Votre dossier est prêt pour soumission
+                    </p>
+                  <% end %>
+                <% else %>
+                  <p class="text-warning">
+                    Merci de valider les informations sur les différents onglets pour pouvoir soumettre le dossier
+                  </p>
+                <% end %>
+              <% end %>
+
+              <div>
+                <ul class="nav nav-tabs" style="font-size:12px">
+                  <li class="active tab-link-top">
+                    <a data-toggle="tab" href="#tab-1"><i class="fa fa-user"></i>Infos Générales Dossier
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_maternite.etat_civil_demandeur_valid? %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_maternite.etat_civil_demandeur_valid? %>
+                    </a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-2"><i class="fa fa-briefcase"></i>Carrière
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_maternite.carriere_valid? %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_maternite.carriere_valid? %>
+                    </a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-3"><i class="fa fa-folder"></i>Documents
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_maternite.document_valid? %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_maternite.document_valid? %>
+                    </a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-4"><i class="fa fa-money"></i> Éléments de salaire
+                      <%= '<span class="label label-warning">à valider</span>'.html_safe unless @dossier_maternite.salaire_valid? %>
+                      <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @dossier_maternite.salaire_valid? %>
+                    </a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-5"><i class="fa fa-file"></i>Indemnités</a>
+                  </li>
+                  <li class="tab-link-top">
+                    <a data-toggle="tab" href="#tab-6"><i class="fa fa-money"></i>Paiements</a>
+                  </li>
+                </ul>
+                <div class="tab-content">
+                  <div id="tab-1" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_maternite.etat_civil_demandeur_valid %>
+                        <%= link_to "Je valide les informations sur l'état civil", admin_dossier_maternite_valider_etat_civil_demandeur_path(@dossier_maternite), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                      <% end %>
+                      <%= render 'show_etat_civil' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-2" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_maternite.carriere_valid? %>
+                        <%= link_to "Je valide les informations sur ma carrière", admin_dossier_maternite_valider_carriere_path(@dossier_maternite), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_carrieres' %>
+                    </div>
+                  </div>
+                  <div id="tab-3" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_maternite.document_valid %>
+                        <%= link_to "Je valide tous les documents", admin_dossier_maternite_valider_documents_path(@dossier_maternite), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_documents' %>
+                    </div>
+                  </div>
+                  <div id="tab-4" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <% unless @dossier_maternite.salaire_valid? %>
+                        <%= link_to "Je valide le salaire de référence", admin_dossier_maternite_valider_salaire_path(@dossier_maternite), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+                        <hr>
+                      <% end %>
+                      <%= render 'show_indemnites' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-5" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'show_icms' %>
+                    </div>
+                  </div>
+
+                  <div id="tab-6" class="tab-pane tab-pane-section">
+                    <div class="full-height-scroll">
+                      <br>
+                      <%= render 'paiements_prestation' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'rapport_controle' %>
+<%#= render 'valider_paiement' %>
+
+<% unless @controleurs.nil? %>
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@dossier_maternite, url: admin_dossier_maternite_affecter_controleur_path(@dossier_maternite), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Affectation la demande : <%= @dossier_maternite.num_affiliation %> </h4>
+            <small class="font-bold">Choisir le controleur</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_controleur, @controleurs, :id, :full_name, label: 'Choisir controleur', required: true %>
+            <%= f.text_area :commentaire_affectation_controleur, label: 'Commentaire' %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter la Demande</button>
+
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

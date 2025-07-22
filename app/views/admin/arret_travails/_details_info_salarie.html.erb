@@ -1,0 +1,235 @@
+<div class="row" style="margin-top: 20px;">
+
+  <div class="col-lg-12">
+    <div class="m-b-md">
+      <div class="col-lg-12" style="text-align: right;">
+        <% unless  @demande_arret_travail.info_salarie_valid?%>
+          <%if  @demande_arret_travail.meme_agence?(current_user) && @demande_arret_travail.can_update?(current_user) %>
+            <%= link_to ' Modifier', edit_admin_arret_travail_path(@demande_arret_travail), class:"btn btn-outline btn-white fa fa-edit"  %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+
+  <div class="col-lg-6">
+  <% unless (@demande_arret_travail.numero_affiliation.nil? || @demande_arret_travail.numero_affiliation.empty?) %>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>Numéro affiliation: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%=@demande_arret_travail.try(:numero_affiliation) %></dd>
+      </div>
+    </d1>
+  <% end %>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt>N° Sinistre: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%=@demande_arret_travail.num_dossier%></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Prénom & nom:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @demande_arret_travail.prenom_salarie %> <%= @demande_arret_travail.nom_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Adresse domiciliaire:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.adresse %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Téléphone:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.telephone %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Prénom & nom du déclarant:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @demande_arret_travail.prenom_declarant %> <%= @demande_arret_travail.nom_declarant %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date déclaration:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @demande_arret_travail.date_declaration.strftime("%d-%m-%Y") unless @demande_arret_travail.date_declaration.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date de réception:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @demande_arret_travail.date_reception.strftime("%d-%m-%Y") unless @demande_arret_travail.date_reception.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Salaire maintenu:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= state_yes_no @demande_arret_travail.is_subrogation? %></dd>
+      </div>
+    </d1>
+    <% if @demande_arret_travail.est_journalier? %>
+    
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dd class="mb-1"><span class="label label-info"> <strong> JOURNALIER</strong></span></dd>
+      </div>
+    </d1>
+  <% end %>
+  
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Situation matrimoniale:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.situation_matrimoniale_salarie %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Taux IPP antérieure :</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.infirmite_anterieure_accident ? 'OUI' : 'NON'%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.date_de_naissance_salarie.strftime("%d-%m-%Y") unless @demande_arret_travail.date_de_naissance_salarie.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>NIN:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.nin_salarie unless @demande_arret_travail.nin_salarie.nil? %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Lieu de naissance:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.lieu_de_naissance %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date accident:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.date_accident.strftime("%d-%m-%Y") %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Qualité déclarant:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.declarant %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date de saisie:</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1 text-navy"><%= @demande_arret_travail.created_at %></dd>
+      </div>
+    </d1>
+
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          setCheckBoxVal("#arret_travail_infirmite_anterieure_accident");
+          //checkTauxInfirmite();
+          checkJournalier();
+    $('#arret_travail_infirmite_anterieure_accident').change(function() {
+      
+      //checkTauxInfirmite();
+         
+    });
+
+$( "#arret_travail_type_de_contrat_travail_salarie" ).on('change', function() {
+  
+
+      checkJournalier();
+         
+      });
+      
+      function checkJournalier() {
+        var journalier = $( "#arret_travail_type_de_contrat_travail_salarie" ).val();
+        console.log(journalier);
+        var elem4= $('#bloc_journalier');
+        var elem5 =$('#bloc_autre');
+        if (journalier == "journalier"){
+          elem4.show();
+          elem5.hide();
+        }else {
+          elem4.hide();
+          elem5.show();
+        }
+      }
+
+
+    /*  function checkTauxInfirmite() {
+        var check_est_ipp=document.getElementById("arret_travail_infirmite_anterieure_accident");
+         var elem4= $('#taux_infirmite');
+         if (check_est_ipp.checked == true) {
+          elem4.show();
+         }
+         else{ 
+          $("#arret_travail_taux_infirmite_anterieure_accident").val('');
+           elem4.hide();
+         }
+      } */
+
+       function setCheckBoxVal(tagNameId) {
+        var option = $(tagNameId).attr('option');
+        console.log("tagNameId")
+        console.log(tagNameId)
+        console.log(option)
+        if (option == 'true') {
+          $(tagNameId).prop( "checked", true );
+        } else{
+          $(tagNameId).prop( "checked", false );
+        }    
+      }
+  })
+</script>
+<% end %>

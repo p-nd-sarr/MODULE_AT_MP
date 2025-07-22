@@ -1,0 +1,19 @@
+<%= bootstrap_form_for(@tracking, layout: :horizontal) do |f| %>
+    <%= f.text_field :user %>
+    <%= f.text_field :type_requete %>
+    <%= f.text_field :path %>
+    <%= f.text_field :path_source %>
+    <%= f.text_field :ip %>
+    <%= f.text_field :controller %>
+    <%= f.text_field :action %>
+    <%= f.text_field :contenu %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', trackings_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

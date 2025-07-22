@@ -1,0 +1,85 @@
+<%= bootstrap_form_for([:employer, @immatriculation], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <div class="col-sm-10 col-sm-offset-1">
+  
+    <div class="panel panel-primary" style="padding: 10px">
+      <div class="panel-heading">
+        <h5 class="panel-title">
+          <a data-toggle="collapse" href="#effectifs">
+            <span class="fa fa-users"></span> Informations effectifs
+          </a>
+        </h5>
+      </div>
+      <div class="panel-collapse collapse in" id="effectifs" style="padding-top: 20px">
+        <div class="full-height-scroll row" style="padding:20px">
+          <br>
+          <div class="col-lg-6">
+            <%= f.number_field :effectif_employe, label: 'Nombre salarié', help: "Effectif global de l'entreprise" , required: true %>
+          </div>
+          <div class="col-lg-6">
+            <%= f.date_select :embauche_employer, label: "Date embauche 1er employé",
+                              start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+          </div>
+          <div class="col-lg-12"></div>
+          <div class="col-lg-6"> 
+            <%= f.number_field :effectif_cadre, label: 'Nombre salarié cadre', help: "Effectif du nombre de cadre " , required: true %>
+          </div>
+          <div class="col-lg-6"> 
+            <%= f.date_select :embauche_cadre, label: "Date embauche 1er cadre",
+                              start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+          </div>
+        </div>
+      </div>
+    </div> <!-- End panel -->  
+  
+  </div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4" id="submit_effectifs">
+      <%= f.button 'Enregistrer', class: 'btn btn-primary block full-width m-b' %>
+    </div>
+    <div class="col-sm-10 col-sm-offset-1" id="submit_effectifs_label">
+        <h4 style="color: #cc5965">Le nombre de cadre doit être inférieur ou égale à l'éffectif global</h4>
+    </div>
+  </div>
+<% end %>
+
+
+
+<script type="application/javascript">
+    $(document).ready(function(){
+
+        $("#submit_effectifs").hide();
+        $("#submit_effectifs_label").show();
+
+        $("#immatriculation_effectif_cadre").on("input", function() {
+            var employe = $("#immatriculation_effectif_employe").val();
+            var cadre = $("#immatriculation_effectif_cadre").val();
+
+            console.log( (employe - cadre) >0);
+            if( employe> 0 && (employe - cadre) >= 0){
+                $("#submit_effectifs").show();
+                $("#submit_effectifs_label").hide();
+            }else{
+                $("#submit_effectifs").hide();
+                $("#submit_effectifs_label").show();
+            }
+
+        });
+
+        $("#immatriculation_effectif_employe").on("input", function() {
+            var employe = $("#immatriculation_effectif_employe").val();
+            var cadre = $("#immatriculation_effectif_cadre").val();
+            console.log((employe - cadre) >0);
+
+            if(employe> 0 && (employe - cadre) >= 0){
+                $("#submit_effectifs").show();
+                $("#submit_effectifs_label").hide();
+            }else{
+                $("#submit_effectifs").hide();
+                $("#submit_effectifs_label").show();
+            }
+
+        });
+
+    });
+</script>

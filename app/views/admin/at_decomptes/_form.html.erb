@@ -1,0 +1,17 @@
+        <%= bootstrap_form_for([:admin, @arret_travail, @at_decompte], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <%#= bootstrap_form_for([:admin, @arret_travail, @at_frais_engage], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Please fix the errors below." %>           
+            <%=f.hidden_field :arret_travail_id, value: @arret_travail.id%>
+             <div class="col-lg-10">
+                <%= f.date_select :date_debut, label: "Date arret" %>
+             </div>
+             <div class="col-lg-4">
+                <%=f.number_field :nombre_jour, label: "Nombre de jours"%>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-4 col-sm-offset-4">
+                   <%= link_to 'Annuler', (@arret_travail.persisted? ? [:admin, @arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                  <%= f.button 'Mise à jour', class: 'btn btn-primary' %>
+                </div>
+            </div>
+        <% end %>

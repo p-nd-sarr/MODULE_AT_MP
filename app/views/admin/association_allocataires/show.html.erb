@@ -1,0 +1,25 @@
+<%= content_for :titre_page, "Détails admin_association_allocataire" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_association_allocataires_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_association_allocataire_path(@admin_association_allocataire), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_association_allocataire', new_admin_association_allocataire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Name:</strong>
+                  <%= @admin_association_allocataire.name %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

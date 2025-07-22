@@ -1,0 +1,26 @@
+<%= bootstrap_form_for(@montant_mensualite_volet, layout: :horizontal) do |f| %>
+
+  <div class="ibox-content">
+    <div class="row">
+      <div class="col-sm-8 b-r">
+        <%= f.select :num_volet,
+                     Admin::MontantMensualiteVolet::NUM_VOLET.keys.collect{ |num_volet|
+                       [Admin::MontantMensualiteVolet.human_enum_name(:num_volet, num_volet), num_volet] },
+                     label: 'N° Volet' %>
+        <%= f.text_field :montant %>
+        <%= f.date_select :date_changement, label: "Date",
+                          start_year: (Date.today - 65.year).year, end_year: (Date.today).year  %>
+
+
+      </div>
+    </div>
+  </div>
+    <div class="hr-line-dashed"></div>
+
+    <div class="form-group row">
+      <div class="col-sm-4 col-sm-offset-2">
+        <%= link_to 'Annuler', admin_montant_mensualite_volets_path, class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary' %>
+      </div>
+    </div>
+<% end %>

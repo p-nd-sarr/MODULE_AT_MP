@@ -1,0 +1,193 @@
+<%= bootstrap_form_for([:admin, @cfs_reversion_veuve], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="col-sm-6">
+      <%= f.text_field :numero_securite_sociale_veuve, label: 'N° Sécu Social' %>
+
+      <%= f.text_field :numero_piece, label: 'N° Piéce Identification' %>
+      <%= f.text_field :prenom, label: 'Prénom' %>
+      <%= f.text_field :nom, label: 'Nom' %>
+      <%= f.text_field :nom_jeune_fille, label: 'Nom de jeune fille' %>
+      <%= f.date_select :date_naissance, label: 'Date de naissance',
+                        start_year: (Date.today - 100.year).year, end_year: (Date.today - 18.year).year %>
+      <%= f.text_field :lieu_naissance, label: 'Lieu de naissance' %>
+
+      <%= f.text_field :prenom_pere, label: 'Prénom du père' %>
+      <%= f.text_field :nom_pere, label: 'Nom du père' %>
+      <%= f.text_field :prenom_mere, label: 'Prénom de la mère' %>
+      <%= f.text_field :nom_mere, label: 'Nom de la mère' %>
+      <%= f.collection_select :nationalite_id, Admin::Country.all.order(:description), :id, :description, include_blank: true, label: 'Nationalite', tag: 'Nationalite', required: true %>
+      <%= f.text_field :adresse_residence, label: 'Adresse de résidence' %>
+      <%= f.text_field :adresse_postale, label: 'Adresse Postale' %>
+      <%= f.email_field :email, label: 'Email' %>
+
+      <%= f.select :situation_familiale, CfsReversionVeuve::SITUATION_FAMILIALE.keys.collect { |situation_fam|
+        [CfsReversionVeuve.human_enum_name(:situation_familiale, situation_fam), situation_fam] }, label: 'Situation de famille actuelle' %>
+      <div id="mariass" hidden="true">
+        <%= f.date_select :date_situation_fam, label: 'Date du mariage',
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today - 18.year).year %>
+      </div>
+      <div id="lenene" hidden="true">
+        <%= f.date_select :date_situation_fam, label: 'Date situation familiale',
+                          start_year: (Date.today - 100.year).year, end_year: (Date.today).year %>
+      </div>
+
+      <hr>
+      <%= f.select :mode_paiement,
+                   MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [CfsReversionVeuve.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                   include_blank: true, label: 'Mode de paiement' %>
+      <div id="mode_paiement_virement">
+        <%= f.text_field :compte_bancaire_nom_banque, label: 'Nom de la banque' %>
+        <%= f.text_field :compte_bancaire_code_banque, label: 'Code de la banque' %>
+        <%= f.text_field :compte_bancaire_code_guichet, label: 'Code guichet du compte' %>
+        <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte' %>
+      </div>
+      <%= f.date_select :date_ouverture_dossier, label: 'Date ouverture Etablissement dossier',
+                        start_year: (Date.today - 10.year).year, end_year: (Date.today).year %>
+    </div>
+
+    <div class="col-sm-6">
+      <%= f.select :sens_convention, CfsReversionVeuve::SENS_CONVENTION.keys.collect { |sens_convention|
+        [CfsReversionVeuve.human_enum_name(:sens_convention, sens_convention), sens_convention] }, include_blank: true, label: 'Sens convention' %>
+      <%= f.text_field :numero_affiliation, label: 'N° affiliation Défunt' %>
+      <%= f.text_field :nom_defunt, label: 'Prénom Défunt' %>
+      <%= f.text_field :prenom_defunt, label: 'Nom Défunt' %>
+      <div>
+        <%= f.text_field :num_immatric_ipres, label: 'N° Immatriculation IPRES' %>
+        <%= f.date_select :date_cess_act_sn, label: "Date Céssation Activité au Sénégal",
+                          start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+        <%= f.number_field :total_an_carr_sn, label: "Total années salariat" %>
+      </div>
+      <div>
+        <%= f.text_field :num_immatric_cfs, label: 'N° Immatriculation en France' %>
+        <%= f.date_select :date_cess_act_fr, label: "Date Céssation Activité en France",
+                          start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+
+        <%= f.number_field :total_an_carr_fr, label: "Total Années Salariat" %>
+
+      </div>
+      <hr>
+      <%= f.select :nature, CfsReversionVeuve::TYPE_DEMANDE.keys.collect { |nature|
+        [CfsReversionVeuve.human_enum_name(:nature, nature), nature] }, label: 'Nature avantage vieillesse' %>
+      <hr>
+      <%= f.check_box :inapte, label: "Est-il inapte au travail ?" %>
+      <div id="infos_inapte" hidden="true">
+        <%= f.date_select :date_depart_inapt, label: 'Départ inaptitude',
+                          start_year: (Date.today - 42.year).year, end_year: (Date.today).year %>
+        <%= f.date_select :date_decision_inapt, label: 'Décision inatitude',
+                          start_year: (Date.today - 42.year).year, end_year: (Date.today).year %>
+
+        <%= f.check_box :titulaire_pens_invalidite, label: "Est-il titulaire d'une pension d'invalidité ?" %>
+        <%= f.check_box :titre_reg_gl, label: "Au titre du régime général" %>
+        <%= f.check_box :titre_reg_agric, label: "Au titre du régime agricole" %>
+        <%= f.check_box :titre_reg_minier, label: "Au titre du régime minier" %>
+        <%= f.check_box :titre_reg_special, label: "Au titre du régime spécial" %>
+        <div id="infos_institution_deb" hidden="true">
+          <%= f.text_field :institution_reg_spec, label: "Institution débitrice" %>
+        </div>
+        <%= f.text_field :num_pension_inapt, label: "N° Pension" %>
+      </div>
+      <%#= f.text_field :adresse_reception_allocation, label: "Adresse de réception allocation" %>
+    </div>
+  </div>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-2">
+      <%= link_to 'Annuler', (@cfs_reversion_veuve.persisted? ? [:admin, @cfs_reversion_veuve] : admin_cfs_reversion_veuves_path), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          chargerInfosCompteBancaire();
+          chargerInfosInapte();
+          chargerInfosInstitution_deb();
+          chargerInfosDateMariass();
+
+          $("#cfs_reversion_veuve_mode_paiement").change(function () {
+              chargerInfosCompteBancaire()
+          });
+          $("#cfs_reversion_veuve_inapte").change(function () {
+              chargerInfosInapte()
+          });
+          $("#cfs_reversion_veuve_titre_reg_special").change(function () {
+              chargerInfosInstitution_deb()
+          });
+          $("#cfs_reversion_veuve_situation_familiale").change(function () {
+              chargerInfosDateMariass()
+          });
+
+          function chargerInfosDateMariass() {
+              var sens_convention = $('#cfs_reversion_veuve_situation_familiale').val();
+              elem_mode_mar = $('#mariass')
+              if (sens_convention === 'marie') {
+                  elem_mode_mar.show();
+              } else {
+                  elem_mode_mar.hide();
+              }
+              elem_mode_len = $('#lenene')
+              if (sens_convention === 'veuf') {
+                  elem_mode_len.show();
+              } else {
+                  elem_mode_len.hide();
+              }
+          }
+
+          function chargerInfosCompteBancaire() {
+              var mode_paiement = $('#cfs_reversion_veuve_mode_paiement').val();
+              elem_mode_paiement = $('#mode_paiement_virement')
+              if (mode_paiement === 'virement') {
+                  elem_mode_paiement.show();
+              } else {
+                  elem_mode_paiement.hide();
+              }
+          }
+
+          function chargerInfosInapte() {
+              elem_infos_inapte = $('#infos_inapte')
+              if (cfs_reversion_veuve_inapte.checked == true) {
+                  elem_infos_inapte.show();
+              } else {
+                  elem_infos_inapte.hide();
+              }
+          }
+
+          function chargerInfosInstitution_deb() {
+              elem_infos_institution_deb = $('#infos_institution_deb')
+              if (cfs_reversion_veuve_titre_reg_special.checked == true) {
+                  elem_infos_institution_deb.show();
+              } else {
+                  elem_infos_institution_deb.hide();
+              }
+          }
+
+          $('#cfs_reversion_veuve_numero_affiliation').change(function () {
+              var numero_affiliation = $('#cfs_reversion_veuve_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function (data) {
+                      if (data) {
+                          $("#cfs_reversion_veuve_prenom_defunt").val(data.prenom);
+                          $("#cfs_reversion_veuve_nom_defunt").val(data.nom);
+                          $("#cfs_reversion_veuve_num_immatric_ipres").val(numero_affiliation);
+                      } else {
+                          $("#cfs_reversion_veuve_prenom_defunt").val('');
+                          $("#cfs_reversion_veuve_nom_defunt").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#cfs_reversion_veuve_prenom_defunt").val('');
+                      $("#cfs_reversion_veuve_nom_defunt").val('');
+                  }
+              });
+          })
+      })
+  </script>
+<% end %>

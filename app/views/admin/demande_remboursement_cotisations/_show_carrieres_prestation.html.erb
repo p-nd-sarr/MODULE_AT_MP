@@ -1,0 +1,158 @@
+<style type="text/css">
+  label[title="required"] {
+    display: none;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+<ul class="text-danger">
+  <% if @demande_remboursement_cotisation.instruit? and  @demande_remboursement_cotisation.affecter_salarie==current_user %>
+    <li>Veuillez soumettre les lignes de carriere à rembourser qui sont dans cette periode <%= @demande_remboursement_cotisation.periode_remboursement%> </li>
+  <% end %>
+</ul>
+
+<% if (@demande_remboursement_cotisation.carrieres_prestation.carrieres_en_attente.size > 0) and @demande_remboursement_cotisation.affecter_salarie == current_user %>
+  <%= link_to "Je soumets toutes les carrières", admin_demande_remboursement_cotisation_soumettre_all_carrieres_path(@demande_remboursement_cotisation), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-primary btn-sm' %>
+  <hr>
+<% end %>
+
+<% if @demande_remboursement_cotisation.affecter_salarie == current_user %>
+   <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#create_carriere" id="create_carriere_id">
+    Integration de carrière
+  </button>
+  <hr>
+<% end %>
+
+<h3>Régime Général</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Période</th>
+    <!--    <th scope="col">Régime</th>-->
+    <th scope="col">Salaire 1</th>
+    <th scope="col">Salaire 2</th>
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Points</th>
+    <th scope="col">Etat</th>
+    
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @demande_remboursement_cotisation.carrieres_prestation.regime_general.order("date_sortie desc").each do |carriere| %>
+    <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+      <td><%= carriere.exercice %></td>
+      <td><%= carriere.ref_employeur %></td>
+      <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+      <!--      <td><%#= carriere.type_regime.code %></td>-->
+      <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+      <!--      <td align="right"><%#= carriere.points %></td>-->
+      <td align="right"><%= carriere.points %></td>
+      <td align="right"><%= carriere.etat %></td>
+      <% if @demande_remboursement_cotisation.affecter_salarie==current_user  %>
+         <td style="width: 75px">
+           <%= (link_to 'soumettre', admin_demande_remboursement_cotisation_soumettre_ligne_carriere_path(@demande_remboursement_cotisation, carriere_id: carriere.id), class: 'btn btn-outline btn-success btn-xs') unless carriere.valide? or carriere.rejete? or carriere.a_rembourse? %>
+           <%if carriere.a_rembourse? or carriere.rejete?%>
+             <%= (link_to 'Annuler', admin_demande_remboursement_cotisation_annuler_ligne_carriere_path(@demande_remboursement_cotisation, carriere_id: carriere.id), class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or carriere.rejete? or @demande_remboursement_cotisation.soumis? %>
+          <% end %>
+          <%if carriere.rejete?%>
+            <%= (link_to 'Activer', admin_demande_remboursement_cotisation_activer_ligne_carriere_path(@demande_remboursement_cotisation, carriere_id: carriere.id), class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide?  or @demande_remboursement_cotisation.soumis? %>
+          <% end %>
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<h3>Régime Cadre</h3>
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Exercice</th>
+    <th scope="col">Employeur</th>
+    <th scope="col">Période</th>
+    <!--    <th scope="col">Régime</th>-->
+    <th scope="col">Salaire 1</th>
+    <th scope="col">Salaire 2</th>
+    <th scope="col">Salaire Réel</th>
+    <th scope="col">Points</th>
+    <th scope="col">Etat</th>
+     <th colspan="3"></th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @demande_remboursement_cotisation.carrieres_prestation.regime_cadre.order("date_sortie desc").each do |carriere| %>
+    <tr class="<%= 'bg-danger' if carriere.points.zero? %>">
+      <td><%= carriere.exercice %></td>
+      <td><%= carriere.ref_employeur %></td>
+      <td> <%= l carriere.date_entree %> - <%= l carriere.date_sortie %> </td>
+      <!--      <td><%#= carriere.type_regime.code %></td>-->
+      <td align="right"><%= format_cfa(carriere.salaire1, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire2, false) %></td>
+      <td align="right"><%= format_cfa(carriere.salaire, false) %></td>
+      <!--      <td align="right"><%#= carriere.points %></td>-->
+      <td align="right"><%= carriere.points %></td>
+      <td align="right"><%= carriere.etat %></td>
+
+       <% if @demande_remboursement_cotisation.affecter_salarie==current_user  %>
+         <td style="width: 75px">
+           <%= (link_to 'soumettre', admin_demande_remboursement_cotisation_soumettre_ligne_carriere_path(@demande_remboursement_cotisation, carriere_id: carriere.id), class: 'btn btn-outline btn-success btn-xs') unless carriere.valide? or carriere.rejete? or carriere.a_rembourse? %>
+          <%if carriere.a_rembourse?%>
+            <%= (link_to 'Annuler', admin_demande_remboursement_cotisation_annuler_ligne_carriere_path(@demande_remboursement_cotisation, carriere_id: carriere.id), class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide? or carriere.rejete? or @demande_remboursement_cotisation.soumis? %>
+          <% end %>
+          <%if carriere.rejete?%>
+            <%= (link_to 'Activer', admin_demande_remboursement_cotisation_activer_ligne_carriere_path(@demande_remboursement_cotisation, carriere_id: carriere.id), class: 'btn btn-outline btn-danger btn-xs') unless carriere.valide?  or @demande_remboursement_cotisation.soumis? %>
+          <% end %>
+
+        </td>
+      <% end %>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<div class="modal inmodal" id="create_carriere" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@carriere, url: admin_demande_remboursement_cotisation_ajouter_carriere_path(@demande_remboursement_cotisation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Ajouter carrière </h4>
+        </div>
+        <div class="modal-body">
+          <%= f.text_field :ref_employeur, label: 'Numéro Employeur', class: 'form-control' %>
+
+          <%= f.collection_select :type_regime_id, Admin::TypeRegime.all, :id, :description, include_blank: true, label: 'Type Regime', tag: 'type_regime', required: true %>
+
+          <%= f.select :exercice, Date.today.year - 60..Date.today.year + 0 %>
+
+          <%= f.date_select :date_entree, label: "Date d'entrée",
+                            start_year: (Date.today - 50.year).year, end_year: Date.today.year %>
+
+          <%= f.date_select :date_sortie, label: "Date de sortie",
+                            start_year: (Date.today - 50.year).year, end_year: Date.today.year %>
+
+          <%= f.text_field :salaire1, label: 'Salaire 1', class: 'form-control' %>
+
+          <%= f.text_field :salaire2, label: 'Salaire 2', class: 'form-control' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary" id="soumettre_button_id">Ajouter</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+

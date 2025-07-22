@@ -1,0 +1,22 @@
+<div class="modal inmodal" id="retourner_activity" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <%= bootstrap_form_for(@activity, url: admin_dossier_audit_change_activity_statut_with_motif_path(@dossier_audit, @activity, object), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+      <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <i class="fa fa-laptop modal-icon"></i>
+          <h4 class="modal-title">Retourner l'activité </h4>
+          <small class="font-bold">Saisir le motif</small>
+        </div>
+        <div class="modal-body">
+          <%= f.text_area :motif_rejet, label: 'Motif' %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <button type="submit" class="btn btn-primary">Retourner</button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

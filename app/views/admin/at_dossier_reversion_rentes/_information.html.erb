@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-lg-12" style="text-align: right;">
+    <%# if @admin_reversion_veuve_salary.creation? and current_user.can_allocataire? and @admin_reversion_veuve_salary.ajoute_par == current_user %>
+        <%#= link_to ' Modifier', edit_admin_at_dossier_reversion_rente_path(@at_consolidation), class:"btn btn-outline btn-white fa fa-edit" %>
+    <%# end %>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom & nom: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @at_dossier_reversion_rente.prenom %> <%= @at_dossier_reversion_rente.nom %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Ayant droit: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @at_dossier_reversion_rente.type_ayant_droit %></dd>
+      </div>
+    </d1>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date mariage: </dt>
+      </div>
+      
+     <div class="col-sm-6 text-sm-left" style="text-align: left;">
+          <%= !@at_dossier_reversion_rente.date_mariage.nil? ? 
+            @at_dossier_reversion_rente.date_mariage.strftime("%d/%m/%Y"):
+            "pas défini"
+          %>                 
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-6">
+      <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date consolidation: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @demande_arret_travail.at_consolidation.date_consolidation %>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance: </dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= l @at_dossier_reversion_rente.date_naissance unless @at_dossier_reversion_rente.date_naissance.nil?   %></dd>
+      </div>
+    </d1>
+  </div>
+</div>

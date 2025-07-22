@@ -1,0 +1,3 @@
+= simple_form_for(@user, url: wizard_path) do |f|
+  = f.input :first_name, as: :string, label: "First Name", required:      true, placeholder:  "Enter your first name"
+  = f.input :last_name, as: :string, label: "Last Name", required: true, placeholder:  "Enter your last name"

@@ -1,0 +1,66 @@
+<%= paginate @allocataire_cnavs %>
+<table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+  <thead>
+  <tr>
+    <th scope="col">N° </th>
+    <th scope="col">Allocatairessssssss</th>
+    <th scope="col">Region</th>
+    <th scope="col">Mode</th>
+    <th scope="col">Montant liquidé</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Date liquidation </th>
+    <th scope="col">Origine</th>
+<!--    <th scope="col">Caisse Bk</th>-->
+    <th scope="col">Compte </th>
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% unless @allocataire_cnavs.nil? %>
+    <% @allocataire_cnavs.each do |allocataire_cnav| %>
+      <tr>
+        <td><%= allocataire_cnav.numero%></td>
+        <td><%= allocataire_cnav.full_name%></td>
+
+        <td><%= allocataire_cnav.admin_region_id %></td>
+        <td><%= allocataire_cnav.montant %></td>
+        <td><%= allocataire_cnav.origine %></td>
+        <td><%= allocataire_cnav.compte %></td>
+<!--        <td><%#= allocataire_cnav.caisse_bk %></td>-->
+        
+        <td>
+          <% unless allocataire_cnav.date_soumission.nil? %>
+            <%= l allocataire_cnav.date_soumission %>
+          <%end %>
+        </td>
+        <td><%= AllocataireCnav.human_enum_name(:etat, allocataire_cnav.etat) %></td>
+        <td><%= allocataire_cnav.montant %></td>
+        <td>
+          <% unless allocataire_cnav.admin_region_id.nil? %>
+            <%= allocataire_cnav.admin_region_id %>
+          <%end %>
+        </td>
+        <td>
+          <% unless allocataire_cnav.date_paiement.nil? %>
+            <%= l allocataire_cnav.date_paiement %>
+          <%end %>
+        </td>
+
+        <td style="width: 75px">
+          <%= link_to 'détails',  [:admin, allocataire_cnav.dossier_maternite, allocataire_cnav], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+        <% if allocataire_cnav.soumis? %>
+          <td style="width: 75px">
+              <%= (link_to 'valider', admin_allocataire_cnav_valider_path(allocataire_cnav), class: 'btn btn-outline btn-primary btn-xs') unless allocataire_cnav.valide?%>
+          </td>
+          <td style="width: 75px">
+              <%= (link_to 'rejeter', admin_allocataire_cnav_rejeter_path(allocataire_cnav), class: 'btn btn-outline btn-danger btn-xs') unless allocataire_cnav.rejete? %>
+          </td>
+          <%end %>
+      </tr>
+    <%end %>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @allocataire_cnavs %>

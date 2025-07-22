@@ -1,0 +1,95 @@
+<%= content_for :titre_page, 'Mise à jour de la grappe familiale' %>
+
+<div class="wrapper wrapper-content">
+
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+            <h5>Les conjoints</h5>
+        </div>
+
+          <div class="ibox-content">
+            <div class="row">
+            <% @conjoints.each do |conjoint| %>
+              <div class="col-lg-3 text-center">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="m-b-xs"><strong><%= conjoint.full_name %></strong></h3>
+                      </div>
+                      <div class="panel-body">
+                           <p>
+                              Marié le <%= l conjoint.date_mariage %> <br>
+                              Né le <%= l conjoint.date_naissance %> <br>
+                              <span class='label label-info'><%= Conjoint.human_enum_name(:etat, conjoint.etat) %></span> <br>
+                          </p>
+                      </div>
+                      <div class="panel-footer">
+                         <div class="m-t-xs btn-group">
+                            <% if conjoint.can_be_edited? %>
+                              <%= link_to 'modifier', edit_allocataire_conjoint_path(conjoint), class: 'btn btn-outline btn-primary btn-xs' %>
+                            <% end %>
+                              <% if conjoint.can_be_edited? %>
+                                <%= link_to 'supprimer', [:allocataire, conjoint], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                              <% else %>
+                                <% unless conjoint.etat=="divorce" || conjoint.etat=="deces" %>
+                                    <%= link_to 'déces',admin_conjoint_active_deces_conjoint_path(conjoint,@allocataire), class: 'btn btn-outline btn-danger btn-xs' %>
+                                    <%= link_to 'divorcé', admin_conjoint_active_divorce_path(conjoint,@allocataire), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-warning btn-xs' %>
+                                <% end %>
+                              <% end %>
+                            
+                          </div>
+                        </div>
+                  </div>
+                </div>
+             <% end %>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="ibox">
+        <div class="ibox-title">
+            <h5>Les enfants</h5>
+        </div>
+
+          <div class="ibox-content">
+            <div class="row">
+             <% @enfants.each do |enfant| %>
+              <div class="col-lg-3 text-center">
+                  <div class="panel panel-primary">
+                      <div class="panel-heading">
+                        <h3 class="m-b-xs"><strong><%= enfant.full_name %></strong></h3>
+                      </div>
+                      <div class="panel-body">
+                           <p>
+                              Né le <%= l enfant.date_naissance %> <br>
+                              Mère : <%= enfant.prenom_mere %> <%= enfant.nom_mere %> <br>
+                              Père : <%= enfant.prenom_pere %> <%= enfant.nom_pere %> <br> <br>
+                              
+                              <span class='label label-info'><%= Enfant.human_enum_name(:etat, enfant.etat) %></span> <br>
+                            </p>
+                      </div>
+                      <div class="panel-footer">
+                        <div class="m-t-xs btn-group">
+                              <% if enfant.can_be_edited? %>
+                                <%= link_to 'modifier', edit_allocataire_enfant_path(enfant), class: 'btn btn-outline btn-primary btn-xs' %>
+                                <%= link_to 'supprimer', [:allocataire, enfant], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+                              <% else %>
+                                <% unless enfant.etat=="deces" %>
+                                      <%= link_to 'déces',admin_enfant_active_deces_path(enfant,@allocataire), class: 'btn btn-outline btn-danger btn-xs' %>
+                                  <% end %>
+                              <% end %>
+                            </div>
+                        </div>
+                  </div>
+                </div>
+             <% end %>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  

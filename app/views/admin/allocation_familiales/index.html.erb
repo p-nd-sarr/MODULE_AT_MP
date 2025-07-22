@@ -1,0 +1,748 @@
+<%= content_for :titre_page do %>
+  Allocations Familiales -
+  <span style="font-size: 60%; font-family: Georgia;">
+    <%= link_to "Dossier #{@dossier_prestation.num_dossier}", admin_dossier_prestation_path(@dossier_prestation), class: 'text-info' %>
+  </span>
+<% end %>
+<%= content_for :actions_page do %>
+  <%= link_to ' Retour', admin_dossier_prestations_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+  <%#= link_to ' Ajouter', new_admin_dossier_prestation_allocation_familiale_path(@dossier_prestation), class: 'btn btn-primary btn-sm fa fa-plus' if @dossier_prestation.current_state <= :valide %>
+  <%= (link_to 'Tout Valider', admin_dossier_prestation_valider_familiales_path(@dossier_prestation), data: { confirm: 'En êtes vous sûr?' },
+               class: 'btn btn-primary btn-sm') if (@dossier_prestation.valide? or @dossier_prestation.suspendu?) and current_user.chef_agence? and not @dossier_prestation.allocation_familiales.not_from_echeance.soumis.empty? %>
+  <%#= (link_to 'Tout Rejeter', admin_dossier_prestation_rejeter_familiales_path(@dossier_prestation), data: { confirm: 'En êtes vous sûr?' },
+               class: 'btn btn-primary btn-sm') if (@dossier_prestation.valide? or @dossier_prestation.suspendu?) and current_user.chef_agence? and not @dossier_prestation.allocation_familiales.soumis.empty? %>
+
+  <% if @dossier_prestation.can_all_liquidate? %>
+    <%= link_to 'Tout liquider', admin_dossier_prestation_liquider_familiales_path(@dossier_prestation), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-primary' %>
+    <!--     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#liquiderModal" id="liquider_id">TOUT LIQUIDER</button>-->
+  <% end %>
+<% end %>
+
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-2">
+      <div class="ibox volet5">
+        <div class="ibox-title">
+          <h4>Trimestre 1</h4>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri1 = @dossier_prestation.allocation_familiales.trimestre1.valide.map(&:montant_paiement).sum(&:to_i) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet4">
+        <div class="ibox-title">
+          <h4>Trimestre 2</h4>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri2 = @dossier_prestation.allocation_familiales.trimestre2.valide.map(&:montant_paiement).sum(&:to_i) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet7">
+        <div class="ibox-title">
+          <h4>Trimestre 3</h4>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri3 = @dossier_prestation.allocation_familiales.trimestre3.valide.map(&:montant_paiement).sum(&:to_i) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2">
+      <div class="ibox volet6 ">
+        <div class="ibox-title">
+          <h4>Trimestre 4</h4>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <%= format_cfa tri4 = @dossier_prestation.allocation_familiales.trimestre4.valide.map(&:montant_paiement).sum(&:to_i) %>
+          </h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="ibox ">
+        <div class="ibox-title" style="border-bottom:1px solid #1ab394;">
+          <h3><strong class="text-navy">Total</strong></h3>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">
+            <strong><%= format_cfa triTot = tri1 + tri2 + tri3 + tri4 %></strong>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ibox-content">
+    <div class="row m-b-xs">
+      <div class="col-sm-9 m-b-xs">
+        <div data-toggle="buttons" class="btn-group btn-group-toggle">
+          <label class="btn btn-sm btn-white " data-toggle="pill" href="#tous">
+            <input type="radio" id="option1" name="options"> Tous
+          </label>
+          <label class="btn btn-sm btn-white active" data-toggle="pill" href="#echues">
+            <input type="radio" id="option1" name="options"> Échues
+          </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#non_echues">
+            <input type="radio" id="option1" name="options"> Non échues
+          </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#soumis">
+            <input type="radio" id="option1" name="options"> Soumises
+          </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#valides">
+            <input type="radio" id="option2" name="options"> validés </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#rejetes">
+            <input type="radio" id="option3" name="options"> Rejetés
+          </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#suspendus">
+            <input type="radio" id="option4" name="options"> Suspendues
+          </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#prescrit">
+            <input type="radio" id="option4" name="options"> Prescrites
+          </label>
+          <label class="btn btn-sm btn-white" data-toggle="pill" href="#eligible">
+            <input type="radio" id="option5" name="options"> Enfants éligibles
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="row m-b-lg">
+      <div class="col-sm-6 col-sm-offset-6">
+        <%= search_form_for @q, url: admin_dossier_prestation_allocation_familiales_path(params[:dossier_prestation_id]) do |f| %>
+          <div class="input-group mb-3" style="float: right;">
+            <%= f.search_field :annee_eq, class: "form-control form-control-sm", placeholder: "Année", style: "width:150px; position: relative; z-index: 1" %>
+            <%= f.search_field :trimestre_eq, class: "form-control form-control-sm", placeholder: "Trimestre", style: "width:150px; position: relative; z-index: 1" %>
+
+            <div class="input-group-append" style="float: right; position:relative; z-index: 2">
+              <%= f.submit "Go!", :class => "btn btn-sm btn-primary", :style => "height:34px" %>
+              <% unless params[:q].nil? or (params[:q][:trimestre_eq] === '' and params[:q][:annee_eq] === '') %>
+                <% unless (params[:q][:trimestre_eq].nil? and params[:q][:annee_eq].nil?) or @allocation_familiales.size == 0 %>
+                  <%= link_to 'Tout liquider', admin_dossier_prestation_liquider_familiales_by_period_path(@dossier_prestation, params[:q][:annee_eq], params[:q][:trimestre_eq]), data: { confirm: 'Voulez-vous tout liquider ?' }, class: 'btn btn-sm btn-primary', :style => "height:34px" if current_user.gestionnaire_compte_allocataire? and @dossier_prestation.has_valid_allocations?(@allocation_familiales) and not params[:q][:trimestre_eq] === '' %>
+                  <%= link_to 'Tout liquider', admin_dossier_prestation_liquider_familiales_by_year_path(@dossier_prestation, params[:q][:annee_eq]), data: { confirm: 'Voulez-vous tout liquider ?' }, class: 'btn btn-sm btn-primary', :style => "height:34px" if current_user.gestionnaire_compte_allocataire? and @dossier_prestation.has_valid_allocations?(@allocation_familiales) and params[:q][:trimestre_eq] === '' %>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        <% unless params[:q].nil? %>
+          <% if (params[:q][:trimestre_eq] != '' or params[:q][:annee_eq] != '') and @dossier_prestation.has_valid_allocations?(@allocation_familiales) %>
+            <p style="margin-top: 30px" class="badge">Cliquez sur le bouton Tout liquider pour liquider
+              (<%= @dossier_prestation.number_allocations_valid(@allocation_familiales) %>) allocation(s)
+              familiale(s). </p>
+          <% else %>
+            <p style="margin-top: 30px" class="badge">Vous n'avez aucune allocation à liquider</p>
+          <% end %>
+        <% end %>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="tab-content">
+        <div id="tous" class="tab-pane fade in">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.nil? %>
+              <% @allocation_familiales.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement unless allocation_familiale.creation? %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                  <% if allocation_familiale.creation? and @dossier_prestation.current_state < :cloturer and (allocation_familiale.echeance_caisse.nil? or (not allocation_familiale.echeance_caisse.nil? and allocation_familiale.is_from_ech_paid?)) %>
+                    <td width="90px" class="dropdown">
+                      <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                        Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <!--       <li>
+                          <%#= link_to 'Modifier', edit_admin_dossier_prestation_allocation_familiale_path(@dossier_prestation, allocation_familiale)%>
+                        </li>
+                        <li>
+                          <%#= link_to 'Supprimer', [:admin, @dossier_prestation, allocation_familiale], method: :delete, data: { confirm: 'En êtes vous sûr?' } %>
+                        </li>-->
+                        <li>
+                          <%= link_to 'Liquider', admin_dossier_prestation_allocation_familiale_soumettre_path(@dossier_prestation, allocation_familiale), class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire? and allocation_familiale.can_be_liquidate? and allocation_familiale.pret_pour_soumission? %>
+                        </li>
+                      </ul>
+                    </td>
+                  <% elsif @dossier_prestation.current_state >= :soumis and @dossier_prestation.current_state < :cloturer and current_user.chef_agence? and (allocation_familiale.echeance_caisse.nil? or (not allocation_familiale.echeance_caisse.nil? and allocation_familiale.is_from_ech_paid?)) %>
+                    <td width="90px" class="dropdown">
+                      <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                        Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <%= (link_to 'Valider', admin_dossier_prestation_allocation_familiale_valider_path(@dossier_prestation, allocation_familiale)) if allocation_familiale.soumis? %>
+                        </li>
+                        <li>
+                          <% if allocation_familiale.soumis? %>
+                            <button class="btn btn-outline btn-sm" style="padding-left: 25px" data-toggle="modal" data-target="#RejeterAllocationFamilialeModal">
+                              Rejeter
+                            </button>
+                          <% end %>
+                        </li>
+                      </ul>
+                    </td>
+                  <% end %>
+                </tr>
+                <%= render 'rejeter_allocation_familiale_form', object: allocation_familiale if allocation_familiale.soumis? %>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="echues" class="tab-pane fade in active">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.echu.nil? %>
+              <% @allocation_familiales.en_attente_liquidation.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement unless allocation_familiale.creation? %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                  <% if allocation_familiale.creation? and @dossier_prestation.current_state < :cloturer and (allocation_familiale.echeance_caisse.nil? or (not allocation_familiale.echeance_caisse.nil? and allocation_familiale.is_from_ech_paid?)) %>
+                    <td width="90px" class="dropdown">
+                      <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                        Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <%= link_to 'Liquider', admin_dossier_prestation_allocation_familiale_soumettre_path(@dossier_prestation, allocation_familiale), class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire? and allocation_familiale.can_be_liquidate? and allocation_familiale.pret_pour_soumission? and (allocation_familiale.creation? or allocation_familiale.echu?) %>
+                        </li>
+                      </ul>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="non_echues" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.non_echu.nil? %>
+              <% @allocation_familiales.non_echu.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement unless allocation_familiale.creation? %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="soumis" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.est_liquide.nil? %>
+              <% @allocation_familiales.est_liquide.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                  <% if @dossier_prestation.current_state >= :soumis and @dossier_prestation.current_state < :cloturer and current_user.chef_agence? and (allocation_familiale.echeance_caisse.nil? or (not allocation_familiale.echeance_caisse.nil? and allocation_familiale.is_from_ech_paid?)) %>
+                    <td width="90px" class="dropdown">
+                      <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                        Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <%= (link_to 'Valider', admin_dossier_prestation_allocation_familiale_valider_path(@dossier_prestation, allocation_familiale)) if allocation_familiale.soumis? %>
+                        </li>
+                        <li>
+                          <% if allocation_familiale.soumis? %>
+                            <button class="btn btn-outline btn-sm" style="padding-left: 25px" data-toggle="modal" data-target="#RejeterAllocationFamilialeModal">
+                              Rejeter
+                            </button>
+                          <% end %>
+                        </li>
+                      </ul>
+                    </td>
+                  <% end %>
+                </tr>
+                <%= render 'rejeter_allocation_familiale_form', object: allocation_familiale if allocation_familiale.soumis? %>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="valides" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.est_valide.nil? %>
+              <% @allocation_familiales.est_valide.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="rejetes" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.est_rejete.nil? %>
+              <% @allocation_familiales.est_rejete.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="suspendus" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.est_suspendu.nil? %>
+              <% @allocation_familiales.est_suspendu.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="prescrit" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Enfant</th>
+              <th scope="col">Trimestre</th>
+              <th scope="col">Année</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date de validation</th>
+              <th scope="col">Date Paiement</th>
+              <th scope="col">Numéro liquidation généré</th>
+              <th scope="col">Est repris?</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% unless @allocation_familiales.prescit.nil? %>
+              <% @allocation_familiales.prescit.each do |allocation_familiale| %>
+                <% if allocation_familiale.motif_rejet? %>
+                  <p class="text-danger">
+                    Motif retour: <%= allocation_familiale.motif_rejet %>
+                  </p>
+                <% end %>
+                <tr>
+                  <td> <%= allocation_familiale.enfant.full_name %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:trimestre, allocation_familiale.trimestre) %></td>
+                  <td><%= allocation_familiale.annee %></td>
+                  <td><%= AllocationFamiliale.human_enum_name(:etat, allocation_familiale.etat) %></td>
+                  <td><%= allocation_familiale.created_at.strftime('%d-%m-%Y') %></td>
+                  <td>
+                    <% unless allocation_familiale.date_liquidation.nil? %>
+                      <%= allocation_familiale.date_liquidation.strftime('%d-%m-%Y') %>
+                    <% end %>
+                  </td>
+                  <td><%= allocation_familiale.montant_paiement %></td>
+                  <td>
+                    <% unless allocation_familiale.date_validation.nil? %>
+                      <%= l allocation_familiale.date_validation %>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% unless allocation_familiale.date_paiement.nil? %>
+                      <%= l allocation_familiale.date_paiement %>
+                    <% end %>
+                  </td>
+                  <td> <%= allocation_familiale.numero_liquidation_generer unless allocation_familiale.numero_liquidation_generer.nil? %></td>
+                  <td> <%= state_yes_no allocation_familiale.est_repris %></td>
+                  <td style="width: 75px">
+                    <%= link_to 'Détails', [:admin, @dossier_prestation, allocation_familiale],
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                  <% if allocation_familiale.echu? and @dossier_prestation.current_state < :cloturer and (allocation_familiale.echeance_caisse.nil? or (not allocation_familiale.echeance_caisse.nil? and allocation_familiale.is_from_ech_paid?)) %>
+                    <td width="90px" class="dropdown">
+                      <button class="btn btn-success btn-xs dropdown-toggle" type="button" data-toggle="dropdown">
+                        Action <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li>
+                          <%= link_to 'Liquider', admin_dossier_prestation_allocation_familiale_soumettre_path(@dossier_prestation, allocation_familiale), class: 'btn btn-primary btn-sm' if current_user.gestionnaire_compte_allocataire? and allocation_familiale.can_be_liquidate? and allocation_familiale.pret_pour_soumission? and (allocation_familiale.creation? or allocation_familiale.echu?) %>
+                        </li>
+                      </ul>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+        <div id="eligible" class="tab-pane fade in ">
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Prénom de l'enfant</th>
+              <th scope="col">Nom de l'enfant</th>
+              <th scope="col">Date de naissance</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Nom complet de la mère:</th>
+              <th colspan="2"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% @enfantsEligibles.each do |enfant| %>
+              <tr>
+                <td><%= enfant.prenom %></td>
+                <td><%= enfant.nom %></td>
+                <td><%= l enfant.date_naissance %></td>
+                <td><%= Enfant.human_enum_name(:etat, enfant.etat) %></td>
+                <td><%= enfant.conjoint.full_name if enfant.conjoint_id? %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

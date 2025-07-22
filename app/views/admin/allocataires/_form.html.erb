@@ -1,0 +1,117 @@
+<%= bootstrap_form_for([:admin, @allocataire], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Une erreur est survenue lors de l'enregistrement" %>
+
+  <div class="row">
+    <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+      <div class="content clearfix">
+        <h3 class="text-navy" style="font-weight:bold">Informations allocataire</h3>
+        <hr>
+        <div class="row">
+          <div class="form-group" style="align-content: center">
+            <div class="col-lg-6">
+              <%= f.text_field :prenom, label: 'Prénom' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :nom, label: 'Nom' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :numero_allocataire, label: 'Numéro unique' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :ipres_ancien_matric, label: 'Ancien numéro' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.select :type_piece_identification_id, Allocataire::TYPE_DE_PIECE.keys.collect { |type_de_piece| [Allocataire.human_enum_name(:type_de_piece, type_de_piece), type_de_piece] }, label: 'Type de piéce', include_blank: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :numero_identification_nationale, label: 'Nin' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.select :situation_matrimoniale_code,
+                           Allocataire::REGIME_MAT.keys.collect { |sit_mat| [sit_mat, sit_mat] }, label: 'Situation Matrimoniale', include_blank: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.select :sexe, Allocataire::SEXE.keys.collect { |sexe| [Allocataire.human_enum_name(:sexe, sexe), sexe] }, label: 'Sexe', include_blank: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.date_field :date_naissance, label: 'Date de naissance' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.select :mode_paiement, MODE_PAIEMENT.keys.collect { |mode_paiement| [Allocataire.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] }, label: 'Mode de paiment', include_blank: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.select :etat, Allocataire::ETAT.keys.collect { |etat| [Allocataire.human_enum_name(:etat, etat), etat] }, label: 'Etat', include_blank: true %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :telephone, label: 'Téléphone' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :adresse_rue, label: 'Adresse domicile' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :adresse_ville, label: 'Ville' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <hr>
+    <div class="col-lg-12" style="margin-top: 20px" id="subrogation_oui">
+      <div class="content clearfix">
+        <h3 class="text-navy" style="font-weight:bold">Informations points</h3>
+        <hr>
+        <div class="row">
+          <div class="form-group" style="align-content: center">
+            <div class="col-lg-6">
+              <%= f.number_field :points_rg, label: 'Points cotisation RG' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :points_rc, label: 'Points cotisation RC' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :points_base_rg, label: 'Points de base RG' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :points_base_rc, label: 'Points de base RC' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :point_minoration_rg, label: 'Points minoration RG' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :point_minoration_rc, label: 'Points minoration RC' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :point_majoration_rg, label: 'Points majoration RG' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :point_majoration_rc, label: 'Points majoration RC' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :points_servis_rg, label: 'Points à servir RG' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.number_field :points_servis_rc, label: 'Points à servir RC' %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group col-lg-12">
+      <hr>
+      <div class="col-lg-4 col-lg-offset-8" style="text-align:right">
+        <%= link_to 'Annuler', (@allocataire.persisted? ? [:admin, @allocataire] : admin_allocataires_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+      })
+  </script>
+<% end %>

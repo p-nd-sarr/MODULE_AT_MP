@@ -1,0 +1,47 @@
+<%= content_for :titre_page, 'Régularisation Pointage' %>
+
+<%= content_for :actions_page do %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <div class="progress">
+      <div class="progress-bar" role="progressbar" aria-valuenow="<%= @evolution_traitement %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= @evolution_traitement %>%;">
+        <%= @evolution_traitement %>% traités
+      </div>
+    </div>
+
+    <%= paginate @regularisations %>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Date génération</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Traité le</th>
+        <th scope="col">Traité par</th>
+        <th colspan="1"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @regularisations.each do |regularisation| %>
+        <tr>
+          <td><%= regularisation.id %></td>
+          <td><%= l regularisation.created_at %></td>
+          <td><%= Enrolement::RegularisationPointage.workflow_spec.states[regularisation.workflow_state.to_sym].meta[:label] %></td>
+          <td><%= l(regularisation.traite_le) if regularisation.traite_le %></td>
+          <td><%= regularisation.traite_par.try(:full_name) %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', regularisation_admin_enrolements_path(regularisation), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @regularisations %>
+  </div>
+</div>

@@ -1,0 +1,114 @@
+<div class="row" style="margin-top: 20px;">
+  <div class="col-md-7">
+    <h3>Liste des frais engagés </h3>
+    <small><span class="label label-info">Total : <%= number_to_currency(@demande_arret_travail.total_frais_engages, unit: '') %></span>
+    </small>
+  </div>
+  <div class="col-md-5 tooltip-demo" style="text-align: right;">
+    <% if @demande_arret_travail.peut_tout_liquide_frais?(current_user) %>
+      <%= link_to 'Tout liquider', admin_arret_travail_liquidation_tous_frais_engages_path(@demande_arret_travail), 'data-turbolinks': false, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-white' %>
+    <% end %>
+    <% if @demande_arret_travail.can_add_frais?(current_user) %>
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#frais">
+        <span class="fa fa-plus"></span> Ajouter un frais
+      </button>
+    <% end %>
+    <div class="modal inmodal" id="frais" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+      <div class="modal-dialog">
+        <%= bootstrap_form_for(@at_frais_engage, url: admin_arret_travail_add_frais_engage_path(@demande_arret_travail), label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+          <%= f.alert_message "Please fix the errors below." %>
+          <div class="modal-content animated fadeIn">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">x</span>
+                  <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title">Ajouter frais engagé</h4>
+              </div>
+              <div class="modal-body">            
+                <%=hidden_field_tag :custom_page, 'information_frais_engage'%>
+                <%=f.hidden_field :arret_travail_id, value: @demande_arret_travail.id%>
+                <%#= f.text_field :prenom %>
+                <%#= f.text_field :identification %>
+                <%= f.number_field :montant %>
+                <%#= f.text_field :nature %>
+                <%#= f.select :type_frais, AtFraisEngage::TYPE_FRAIS.keys.collect{|tc| [tc, tc]}, label: 'Type Frais' %>  
+                  <%= f.select :type_frais, AtFraisEngage::TYPE_FRAIS.keys.collect { |item| [AtFraisEngage.human_enum_name(:type_frais, item), item] }, label: 'Type de frais' %> 
+                  <%= f.select :rembourse_a_qui, AtFraisEngage::REMBOURSE_A_QUI.keys.collect { |item| [item, item] }, label: 'Bénéficiaire' %> 
+                  <%#= f.check_box :remboursement_tiers %>
+              </div>
+
+              <div class="modal-footer form-group">
+                <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white' %>
+                <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12" style="margin-top: 20px;">
+      <table class="table table-bordered table-condensed table-hover" style="margin-bottom: 50px;">
+        <thead>
+          <tr style="font-size: 12px;">
+            <th scope="col">Numero</th>
+            <th scope="col">Montant frais</th>
+            <!--<th scope="col">Nature</th>-->
+            <th scope="col">Type frais</th>
+            <th scope="col">Technicien</th>
+            <th scope="col">Chef Ag/Serv</th>
+            <th scope="col">Medecin Conseil</th>
+            <th scope="col">Validation Comptable</th>
+            <th scope="col">Rembourse tiers</th>
+             <th scope="col">Etat</th>
+            <th colspan="2">Action</th>
+            
+            Actions 
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @demande_arret_travail.at_frais_engages.each do |frais| %>
+            <tr style="font-size: 12px;">
+              <td><%=frais.numero%></td>
+              <td><%=frais.montant %></td>
+              <td><%=frais.type_frais%></td>
+            
+              <td><%=frais.est_liquide? ? frais.date_liquidation : '-'%></td>
+              <td><%=frais.est_valide? ? frais.date_validation.strftime("%d/%m/%Y") : '-'%></td>
+              <td><%=frais.est_valide_medecin? ? frais.date_validation_medecin.strftime("%d/%m/%Y") : '-'%></td>
+              <td><%=frais.est_valide_comptable? ? frais.date_validation_comptable.strftime("%d/%m/%Y") : '-'%></td>
+
+              <td><%= state_yes_no frais.remboursement_tiers %></td>
+              <td><%=frais.etat%></td>
+              <td>
+              <%if frais.peut_etre_liquide?(current_user) && !frais.est_liquide?%>
+                <%= link_to 'Liquider',admin_arret_travail_at_frais_engage_liquider_path(@demande_arret_travail,frais), class:"btn btn-outline btn-success btn-xs" %>
+              <%end%>
+                <%if frais.peut_etre_valide_medecin?(current_user) && !frais.est_valide_medecin?%>
+                  <%= link_to 'Valider',admin_arret_travail_at_frais_engage_valider_medecin_path(@demande_arret_travail,frais),class: 'btn btn-outline btn-success btn-xs'%>
+                <%end%>
+                <%if frais.peut_etre_valide_liquidation?(current_user)%>
+                  <%= link_to 'valider',admin_arret_travail_at_frais_engage_valider_path(@demande_arret_travail,frais), class:"btn btn-outline btn-success btn-xs" %>
+                <%end%>
+                <%if frais.peut_etre_valide_comptable?(current_user) %>
+                  <%= link_to 'valider',admin_arret_travail_at_frais_engage_valider_comptable_path(@demande_arret_travail,frais), class:"btn btn-outline btn-success btn-xs" %>
+                <%end%>
+                <%= link_to 'Detail',admin_arret_travail_at_frais_engage_path(@demande_arret_travail,frais), class:"btn btn-outline btn-success btn-xs" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+  
+
+
+    
+
+
+   <!-- Total a payer = <%#=number_to_currency(@demande_arret_travail.total_a_payer, unit: '')%> -->

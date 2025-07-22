@@ -1,0 +1,70 @@
+
+       <%= render 'search_salarie' %>
+        <h3>Régime Général</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Matricule</th>
+            <th scope="col">Ancien num ipres</th>
+            <th scope="col">Ancien num css</th>
+            <th scope="col">Prenom et Nom</th>
+            <th scope="col">Période</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% @carrieres.sort_by(&:exercice).each do |carriere| %>
+            <% unless carriere.salaire_rg.zero? %>
+              <tr class="<%= 'bg-danger' if carriere.calcul_points_rg.zero? %>">
+                <td><%= carriere.try(:exercice) %></td>
+                <td><%= carriere.try(:matric) %></td>
+                <td><%= carriere.try(:participant).try(:ipres_ancien_matric) %></td>
+                <td><%= carriere.try(:participant).try(:css_ancien_matric) %></td>
+                <td><%= carriere.try(:prenom) %> <%= carriere.try(:nom) %></td>
+                <!--<td><%#= link_to(carriere.fhrsoc, admin_carriere_employeur_path(carriere.fhnum)) %></td> -->
+                <td> <%= l (carriere.date_debut) unless carriere.date_debut.nil? %>
+                  - <%= l (carriere.date_fin) unless carriere.date_debut.nil? %> </td>
+              </tr>
+            <% end %>
+          <% end %>
+          </tbody>
+        </table>
+
+       <h3>Régime Cadre</h3>
+       <table class="table table-bordered table-condensed table-hover">
+         <thead>
+         <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Matricule</th>
+            <th scope="col">Ancien num ipres</th>
+           <th scope="col">Ancien num css</th>
+           <th scope="col">Prenom et Nom</th>
+           <th scope="col">Période</th>
+         </tr>
+         </thead>
+
+         <tbody>
+         <% @carrieres.sort_by(&:exercice).each do |carriere| %>
+           <% unless carriere.salaire_rcc.zero? %>
+             <tr class="<%= 'bg-danger' if carriere.calcul_points_rcc.zero? %>">
+               <td><%= carriere.try(:exercice) %></td>
+               <td><%= carriere.try(:matric) %></td>
+               <td><%= carriere.try(:participant).try(:ipres_ancien_matric) %></td>
+               <td><%= carriere.try(:participant).try(:css_ancien_matric) %></td>
+               <td><%= carriere.try(:prenom) %> <%= carriere.try(:nom) %></td>
+               <!--<td><%#= link_to(carriere.fhrsoc, admin_carriere_employeur_path(carriere.fhnum)) %></td>-->
+               <td> <%= l (carriere.date_debut) unless carriere.date_debut.nil? %>
+                 - <%= l (carriere.date_fin) unless carriere.date_debut.nil? %> </td>
+             </tr>
+           <% end %>
+         <% end %>
+         </tbody>
+       </table>
+
+       <style>
+           .ibox-content.carrieres {
+               background-color: #f1f3f4;
+               color: black;
+    font-weight: bold;
+}
+</style>

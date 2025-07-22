@@ -1,0 +1,1 @@
+json.partial! "admin_demande_remboursement_cotisations/admin_demande_remboursement_cotisation", admin_demande_remboursement_cotisation: @admin_demande_remboursement_cotisation

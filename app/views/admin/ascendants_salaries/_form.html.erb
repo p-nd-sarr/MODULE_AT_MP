@@ -1,0 +1,179 @@
+<%= bootstrap_form_for([:admin, @ascendants_salary]) do |f| %>
+  <%= f.alert_message "Veuillez corriger les erreurs ci-dessous." %>
+  <div class="content clearfix">
+    <h3>Informations sur le salarié</h3>
+    <hr>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-6" >
+          <%= f.text_field :numero_affiliation, label: 'Numéro affiliation salarié' %>
+        </div>
+        <div class="col-sm-6">
+          <%= f.text_field :prenom_salarie, label: 'Prénom salarié', readonly: true %>
+        </div>
+        <div class="col-sm-6">
+          <%= f.text_field :nom_salarie, label: 'Nom salarié', readonly: true%>
+        </div>
+        <div class="col-sm-6">
+          <%= f.date_select :date_naissance_salarie, label: 'Date naissance salarie', required:true,
+                            start_year: (Date.today - 100.year).year, end_year: (Date.today - 16.year).year %>
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+
+  <div class="content clearfix">
+    <h3>Informations sur la mère</h3>
+    <hr>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.text_field :nom_mere, label: 'Nom' %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.text_field :prenom_mere, label: 'Prénom' %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.date_select :date_naissance_mere, label: "Date de naissance",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year, html_options: { onchange: 'check_date_naissance(this.id);' } %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.select :type_piece_mere,
+                       AscendantsSalarie::TYPE_PIECE_MERE.keys.collect { |type_piece_mere| [AscendantsSalarie.human_enum_name(:type_piece_mere, type_piece_mere), type_piece_mere] },
+                       label: "Type de pièce" %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.text_field :numero_piece_mere, label: 'Numéro pièce'%>
+        </div>
+       
+        <div class="col-sm-4" style="margin-top:8px;">
+          <h4 style="font-weight: bold;">Pièce d’identification *</h4>
+          <div class="btn-file">
+            <label>
+              <%= f.file_field :piece_mere, hide_label:true, label: '.',
+                               required: (not @ascendants_salary.persisted?),
+                               help: (@ascendants_salary.persisted? ? "Ne rien mettre si vous ne voulez pas modifier le type de pièce" : ''), id:'label_piece1' %>
+              <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small id="piece_name1"></small>
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+
+  <div class="content clearfix">
+    <h3>Informations sur le père</h3>
+    <hr>
+    <div class="row">
+      <div class="form-group">
+        <div class="col-sm-4" style="margin-top:15px;" >
+          <%= f.text_field :nom_pere, label: 'Nom', :onkeyup => 'verifNomPere()' %>
+          <div id="alert_nom_pere" class="alert-danger" style="border-radius: 50px; margin-bottom: 5px; margin-top: 5px;">Le salarié et le pére doivent avoir le même nom de famille</div>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.text_field :prenom_pere, label: 'Prénom' %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.date_select :date_naissance_pere, label: "Date de naissance",
+                            start_year: (Date.today - 100.year).year, end_year: Date.today.year, html_options: { onchange: 'check_date_naissance(this.id);' } %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.select :type_piece_pere,
+                       AscendantsSalarie::TYPE_PIECE_PERE.keys.collect { |type_piece_pere| [AscendantsSalarie.human_enum_name(:type_piece_pere, type_piece_pere), type_piece_pere] },
+                       label: "Type de pièce" %>
+        </div>
+        <div class="col-sm-4" style="margin-top:15px;">
+          <%= f.text_field :numero_piece_pere, label: 'Numéro pièce'%>
+        </div>
+        <div class="col-sm-4" style="margin-top:8px;">
+          <h4 style="font-weight: bold;">Pièce d’identification *</h4>
+          <div class="btn-file">
+            <label>
+              <%= f.file_field :piece_pere, hide_label:true, label: '.',
+                               required: (not @ascendants_salary.persisted?),
+                               help: (@ascendants_salary.persisted? ? "Ne rien mettre si vous ne voulez pas modifier le type de pièce" : ''), id:'label_piece2'  %>
+              <div class="btn btn-success" style="margin-top: -50px; margin-left: 1px;"><span class="fa fa-upload"></span> Choisir un fichier
+              </div>
+            </label>
+          </div>
+          <small id="piece_name2"></small>
+        </div>
+      </div>
+    </div>
+    <br>
+  </div>
+  
+  <div class="col-lg-12"><hr></div>
+
+  <div class="form-group row">
+    <div class="col-sm-3 col-sm-offset-9" style="text-align: right;">
+      <%= link_to 'Annuler', admin_ascendants_salaries_path, class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button'  %>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function(){
+        $('#alert_nom_pere').hide();
+          $('#ascendants_salarie_numero_affiliation').change(function() {
+              let numero_affiliation = $('#ascendants_salarie_numero_affiliation').val();
+              $.ajax({
+                  url: "/admin/salaries/" + numero_affiliation + ".json",
+                  method: 'get',
+                  dataType: "json",
+                  success: function( data ) {
+                      if(data){
+                          salarie = data
+                          $("#ascendants_salarie_prenom_salarie").val(data.prenom);
+                          $("#ascendants_salarie_nom_salarie").val(data.nom);
+                      }
+                      else{
+                          $("#ascendants_salarie_nom_salarie").val('');
+                          $("#ascendants_salarie_prenom_salarie").val('');
+                      }
+                  },
+                  error: function (XMLHttpRequest, textStatus, errorThrown) {
+                      $("#ascendants_salarie_nom_salarie").val('');
+                      $("#ascendants_salarie_prenom_salarie").val('');
+                  }
+              });
+
+          })
+
+      })
+
+      var input1=document.getElementById('label_piece1');
+      var infoArea1=document.getElementById('piece_name1');
+      input1.addEventListener('change', showFileNamep);
+      function showFileNamep(event){
+        var input=event.srcElement;
+        var fileName=input1.files[0].name;
+        infoArea1.textContent=fileName;
+      }
+      var input2=document.getElementById('label_piece2');
+      var infoArea2=document.getElementById('piece_name2');
+      input2.addEventListener('change', showFileNamepp);
+      function showFileNamepp(event){
+        var input=event.srcElement;
+        var fileName=input.files[0].name;
+        infoArea2.textContent=fileName;
+      }
+
+      function verifNomPere(){
+          if ($("#ascendants_salarie_nom_salarie").val().trim().toUpperCase() != $("#ascendants_salarie_nom_pere").val().trim().toUpperCase()){
+              $('#alert_nom_pere').show();
+              $('#submit_button').attr("disabled", true)
+          }
+          else{
+              $('#alert_nom_pere').hide();
+              $('#submit_button').attr("disabled", false)
+          }
+      }
+  </script>
+<% end %>

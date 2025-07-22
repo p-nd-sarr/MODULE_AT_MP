@@ -1,0 +1,194 @@
+<%= content_for :titre_page, "Dossier #{@dossier_prestation.num_dossier} <br> Allocation Prenatales".html_safe %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Déclarer une grossesse', new_salarie_dossier_prestation_grossesse_path(@dossier_prestation), class: 'btn btn-primary btn-sm' %>
+  <div class="btn-group">
+    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle" aria-expanded="false">
+      AJOUTER UNE DEMANDE
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <% for grossesse in @dossier_prestation.grossesses.valide.order('date_grossesse desc') %>
+        <% unless grossesse.volets_eligibles.empty? %>
+          <li>
+            <%= link_to "Grossesse #{l grossesse.date_grossesse}", new_salarie_dossier_prestation_allocation_prenatale_path(@dossier_prestation, grossesse_id: grossesse.id) %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-success float-right">1ier Volet</span>
+          <h6>Carnet De Grossesse</h6>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins">
+            <%= format_cfa m1 = @dossier_prestation.allocation_prenatales.volet1.valide.sum(&:montant_paiement) %>
+          </h1>
+          <div class="stat-percent font-bold text-success"><i class="fa fa-bolt"></i></div>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-info float-right">2ème Volet</span>
+          <h6>Carnet De Grossesse</h6>
+        </div>
+        <div class="ibox-content">
+          <h1 class="no-margins">
+            <%= format_cfa m2 = @dossier_prestation.allocation_prenatales.volet2.valide.sum(&:montant_paiement) %>
+          </h1>
+          <div class="stat-percent font-bold text-info"><i class="fa fa-level-up"></i></div>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-warning float-right">3ème Volet</span>
+          <h6>Carnet De Grossesse</h6>
+        </div>
+        <div class="ibox-content"><h1 class="no-margins">
+          <%= format_cfa m3 = @dossier_prestation.allocation_prenatales.volet3.valide.sum(&:montant_paiement) %>
+        </h1>
+          <div class="stat-percent font-bold text-warning"><i class="fa fa-level-up"></i></div>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="ibox ">
+        <div class="ibox-title">
+          <span class="label label-danger float-right">Totalisation</span>
+          <!--          <h5>User activity</h5>-->
+        </div>
+        <div class="ibox-content"><h1 class="no-margins">
+          <%= format_cfa mTot = m1 + m2 + m3 %>
+        </h1>
+          <div class="stat-percent font-bold text-danger"><i class="fa fa-level-down"></i></div>
+          <small>Paiement</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if @dossier_prestation.grossesses.empty? %>
+    <div class="ibox-content">
+      <div class="text-center">
+        <h1>Merci de renseigner une grossesse pour ajouter les volets</h1>
+      </div>
+    </div>
+  <% else %>
+
+    <% for grossesse in @dossier_prestation.grossesses.order('date_grossesse desc') %>
+      <div class="ibox">
+        <div class="ibox-title">
+          <h5>Allocations pour la grossesse
+            du
+            <u><%= l grossesse.date_grossesse %></u></h5>
+          <div class="ibox-tools">
+            <%= "<span class='label label-warning'>#{grossesse.etat_human}</span>".html_safe unless grossesse.valide? %>
+          </div>
+        </div>
+        <div class="ibox-content">
+          <% if grossesse.a_terme? and not grossesse.volets_eligibles.empty? %>
+            <%= link_to "Fin de grossesse : faire la déclaration du volet 3",
+                        new_salarie_dossier_prestation_allocation_prenatale_path(@dossier_prestation, grossesse_id: grossesse.id),
+                        class: 'btn btn-outline btn-primary btn-sm'
+            %>
+            <br> <br>
+          <% end %>
+          <% if grossesse.valide? %>
+            <%= link_to 'Déclarer une interruption de la grossesse',
+                        salarie_dossier_prestation_grossesse_interruption_form_path(@dossier_prestation, grossesse),
+                        class: 'btn btn-outline btn-warning btn-sm' %>
+
+                <% for volet in grossesse.volets_eligibles.keys %>
+
+                  <p class="label label-info float-right"> <%= "Ajouter #{AllocationPrenatale.human_enum_name(:volet, volet)}" %></p>
+
+                <% end %>
+
+
+                      <br><br>
+
+
+          <% end %>
+
+
+
+
+
+
+
+
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th scope="col">Volet</th>
+              <th scope="col">Etat</th>
+              <th scope="col">Date Création</th>
+              <th scope="col">Date Liquidation</th>
+              <th scope="col">Montant Liquidé</th>
+              <th scope="col">Date Paiement</th>
+              <th colspan="4"></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <% grossesse.allocation_prenatales.each do |allocation_prenatale| %>
+              <tr>
+                <td><%= allocation_prenatale.volet_human %></td>
+                <td><%= allocation_prenatale.etat_human %></td>
+                <td><%= allocation_prenatale.created_at.strftime('%d-%m-%Y') %></td>
+                <td>
+                  <% unless allocation_prenatale.date_validation.nil? %>
+                    <%= l allocation_prenatale.date_validation %>
+                  <% end %>
+                </td>
+                <td><%= allocation_prenatale.montant_paiement %></td>
+                <td>
+                  <% unless allocation_prenatale.date_paiement.nil? %>
+                    <%= l allocation_prenatale.date_paiement %>
+                  <% end %>
+                </td>
+                <td style="width: 75px">
+                  <%= link_to 'détails', [:salarie, @dossier_prestation, allocation_prenatale], class: 'btn btn-outline btn-primary btn-xs' %>
+                </td>
+                <% if allocation_prenatale.creation? %>
+                  <td style="width: 75px">
+                    <%= link_to 'modifier', edit_salarie_dossier_prestation_allocation_prenatale_path(@dossier_prestation, allocation_prenatale),
+                                class: 'btn btn-outline btn-primary btn-xs' %>
+                  </td>
+                  <td style="width: 75px">
+                    <%= (link_to 'liquider', salarie_dossier_prestation_allocation_prenatale_soumission_form_path(@dossier_prestation, allocation_prenatale),
+                                 class: 'btn btn-outline btn-success btn-xs') if allocation_prenatale.creation? %>
+                  </td>
+                  <td style="width: 75px">
+                    <%= link_to 'supprimer', [:salarie, @dossier_prestation, allocation_prenatale],
+                                method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+                  </td>
+                <% else %>
+                  <td style="width: 75px"></td>
+                  <td style="width: 75px"></td>
+                  <td style="width: 75px"></td>
+                <% end %>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <br>
+    <% end %>
+  <% end %>
+</div>

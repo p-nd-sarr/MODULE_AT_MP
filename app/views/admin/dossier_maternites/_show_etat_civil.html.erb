@@ -1,0 +1,274 @@
+<div class="row" style="margin-top:40px;">
+  <div class="col-lg-12" style="text-align:right">
+    <% if @dossier_maternite.creation? %>
+      <%= link_to ' Modifier', edit_admin_dossier_maternite_path(@dossier_maternite), class: "btn btn-white fa fa-edit" %>
+    <% end %>
+  </div>
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-arrow-right"></span> Numéro d'affiliation:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.num_affiliation unless @dossier_maternite.num_affiliation.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Prénom:</dt>
+      </div>
+      <div class="col-sm-6 text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.prenom unless @dossier_maternite.prenom.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-user"></span> Nom:</dt>
+      </div>
+      <div class="col-sm-6 text-navy" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.nom  unless @dossier_maternite.nom.nil?%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= l(@dossier_maternite.date_naissance) unless @dossier_maternite.date_naissance.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-id-badge"></span> N° identification:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.nin unless @dossier_maternite.nin.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-map-marker"></span> Lieu de naissance:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.lieu_naissance unless @dossier_maternite.lieu_naissance.nil?%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-address-card"></span> Adresse domicile:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.adresse_domicile unless @dossier_maternite.adresse_domicile.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-money"></span> Mode de paiement :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.mode_paiement_human unless @dossier_maternite.mode_paiement_human.nil?%></dd>
+      </div>
+    </d1>
+    <% if @dossier_maternite.virement? %>
+      <d1 class="row mb-0">
+        <div class="col-sm-12" style="text-align: left; font-size: 11px; color: rgb(50, 50 50);">
+          <div class="notes">
+            <p><strong style="font-style: italic;" class="text-info">Nom banque
+              :</strong> <%= @dossier_maternite.compte_bancaire_nom_banque %></p>
+            <p><strong style="font-style: italic;" class="text-info">Code SWIFT
+              :</strong> <%= @dossier_maternite.compte_bancaire_code_swift %></p>
+            <p><strong style="font-style: italic;" class="text-info">RIB :</strong> <%= @dossier_maternite.rib %></p>
+          </div>
+        </div>
+      </d1>
+    <% end %>
+  </div>
+
+  <div class="col-lg-6">
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-envelope"></span> Email:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"> <%= @dossier_maternite.email unless @dossier_maternite.email.nil? %> </dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-phone"></span> Téléphone:</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.telephone unless @dossier_maternite.telephone.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0 text-warning">
+      <div class="col-sm-6" style="text-align:right">
+        <dt><span class="fa fa-calendar"></span> Date début grossesse (approximative):</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <%= (l @dossier_maternite.debut_grossesse) unless @dossier_maternite.debut_grossesse.nil? %>
+      </div>
+    </d1>
+    <d1 class="row mb-0 text-warning">
+      <div class="col-sm-6" style="text-align:right">
+        <dt><span class="fa fa-calendar"></span> Début congés :</dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <%= (l @dossier_maternite.debut_conges) unless @dossier_maternite.debut_conges.nil? %>
+      </div>
+    </d1>
+    <% unless (@dossier_maternite.date_accouchement_reel.nil? and @dossier_maternite.date_fin_cong_reel.nil?) %>
+      <% unless @dossier_maternite.date_accouchement_reel.nil? %>
+        <d1 class="row mb-0 text-warning">
+          <div class="col-sm-6 " style="text-align:right">
+            <dt><span class="fa fa-calendar"></span> Date accouchement :</dt>
+          </div>
+          <div class="col-sm-6 " style="text-align:left">
+            <%= (l @dossier_maternite.date_accouchement_reel) %>
+          </div>
+        </d1>
+      <% end %>
+      <% unless @dossier_maternite.date_fin_cong_reel.nil? %>
+        <d1 class="row mb-0 text-warning">
+          <div class="col-sm-6 text-sm-right" style="text-align:right">
+            <dt><span class="fa fa-calendar"></span> Date reprise :</dt>
+          </div>
+          <div class="col-sm-6 text-sm-left" style="text-align: left;">
+            <%= l (@dossier_maternite.date_fin_cong_reel + 1.day) %>
+          </div>
+        </d1>
+      <% end %>
+    <% end %>
+
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-calendar"></span> Date Suspension Salaire :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1">
+          <%= (l @dossier_maternite.date_suspension_salaire) unless @dossier_maternite.date_suspension_salaire.nil? %>
+        </dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6 text-sm-right" style="text-align: right;">
+        <dt><span class="fa fa-home"></span> CSS Agence :</dt>
+      </div>
+      <div class="col-sm-6 text-sm-left" style="text-align: left;">
+        <dd class="mb-1"><%= @dossier_maternite.admin_agence.description_prest unless @dossier_maternite.admin_agence.nil? %></dd>
+      </div>
+    </d1>
+    <!--    <d1 class="row mb-0">-->
+    <!--      <div class="col-sm-6 text-sm-right" style="text-align: right;">-->
+    <!--        <dt><span class="fa fa-id-badge"></span> Date Fin Congés:</dt>-->
+    <!--      </div>-->
+    <!--      <div class="col-sm-6 text-sm-left" style="text-align: left;">-->
+    <!--        <dd class="mb-1">-->
+    <%#= (l @dossier_maternite.date_fin_cong_reel) unless @dossier_maternite.date_fin_cong_reel.nil? %>
+    <!--        </dd>-->
+    <!--      </div>-->
+    <!--    </d1>-->
+
+  </div>
+  <div class="col-lg-12">
+    <hr>
+  </div>
+
+  <div class="col-lg-12">
+
+    <div class="col-lg-4"><small class="text-success">
+      <h2>Jours reposés</h2>
+      <br>
+    </small>
+      <d1 class="row mb-0">
+        <div class="col-sm-8">
+          <dt>Avant accouchement:</dt>
+        </div>
+        <div class="col-sm-4">
+          <dd class="mb-1"><%= @dossier_maternite.repos_avant_accouchement_reel %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-8">
+          <dt></span> Aprés accouchement:</dt>
+        </div>
+        <div class="col-sm-4">
+          <dd class="mb-1"><%= @dossier_maternite.repos_apres_accouchement_reel %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-8">
+          <dt>Total jours repos:</dt>
+        </div>
+        <div class="col-sm-4">
+          <dd class="mb-1"><span class="label label-success"><%= @dossier_maternite.total_repos_reel %></span></dd>
+        </div>
+      </d1>
+    </div>
+
+    <div class="col-lg-4">
+      <small class="text-success">
+        <h2>Jours indemnisés</h2>
+        <br>
+      </small>
+      <d1 class="row mb-0">
+        <div class="col-sm-8">
+          <dt>Avant accouchement:</dt>
+        </div>
+        <div class="col-sm-4">
+          <dd class="mb-1"><%= @dossier_maternite.jr_indem_avant_accouchement %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-8">
+          <dt>Aprés accouchement:</dt>
+        </div>
+        <div class="col-sm-4">
+          <dd class="mb-1"><%= @dossier_maternite.jr_indem_apres_accouchement %></dd>
+        </div>
+      </d1>
+      <d1 class="row mb-0">
+        <div class="col-sm-8">
+          <dt>Total jours :</dt>
+        </div>
+        <div class="col-sm-4">
+          <dd class="mb-1"><span class="label label-success"><%= @dossier_maternite.total_jr_indem %></span></dd>
+        </div>
+      </d1>
+    </div>
+
+    <% if @dossier_maternite.attributaire? %>
+      <div class="col-lg-4">
+        <small class="text-success">
+          <h2>Attributaire désigné</h2>
+          <br>
+        </small>
+        <d1 class="row mb-0">
+          <div class="col-sm-4">
+            <dt>Nom :</dt>
+          </div>
+          <div class="col-sm-8">
+            <%= @dossier_maternite.nom_attributaire unless @dossier_maternite.nom_attributaire.nil? %>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4">
+            <dt>Prénom :</dt>
+          </div>
+          <div class="col-sm-8">
+            <%= @dossier_maternite.prenom_attributaire unless @dossier_maternite.prenom_attributaire.nil? %>
+          </div>
+        </d1>
+        <d1 class="row mb-0">
+          <div class="col-sm-4">
+            <dt>N° identification:</dt>
+          </div>
+          <div class="col-sm-8">
+            <%= @dossier_maternite.nin_attributaire unless @dossier_maternite.nin_attributaire.nil? %>
+          </div>
+        </d1>
+      </div>
+    <% end %>
+  </div>
+</div>
+              

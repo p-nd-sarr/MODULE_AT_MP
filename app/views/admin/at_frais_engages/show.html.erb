@@ -1,0 +1,160 @@
+<%= content_for :titre_page, "Détails Frais  [#{ AtFraisEngage.human_enum_name(:etat, @at_frais_engage.etat)}]" %>
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_arret_travail_path(@at_frais_engage.arret_travail), class: 'btn btn-white btn-sm' %>
+    <% if (current_user.technicien_at? || current_user.technicien_direction_at?)%>
+    
+    <% if @at_frais_engage.rejete?%>
+      <%= link_to 'Activer',admin_arret_travail_at_frais_engage_activer_path(@arret_travail,@at_frais_engage), class:"btn btn-success btn-sm" %>
+    <% end %>
+
+    <% if @at_frais_engage.creation?%>
+      <%=  link_to 'Modifier',edit_admin_arret_travail_at_frais_engage_path(@arret_travail,@at_frais_engage), class:"btn btn-primary btn-sm"%>
+      <%= (link_to 'Supprimer',admin_arret_travail_at_frais_engage_path(@arret_travail, @at_frais_engage), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-danger btn-sm') %>
+    <% end %>
+  <% end %>
+  <% if @at_frais_engage.can_rejete?(current_user) %>
+   <button type="button" class='btn btn-warning btn-sm' data-toggle="modal" data-target="#modal-frais">rejeter</button>
+   
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="col-sm-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                <h5>Information sur le dossier AT <%#= link_to @allocataire.numero_allocataire, [:admin, @allocataire] %></h5>
+                </div>
+                <div class="ibox-content">
+                <%= render 'admin/at_frais_engages/infos_at' %>
+                </div>
+            </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="col-sm-8">
+
+            <div class="col-sm-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Informations sur le frais engagés </h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p>
+                            <strong>Numero: </strong>
+                            <%= @at_frais_engage.numero %>
+                        </p>
+                        <p>
+                            <strong>Montant :</strong>
+                            <%= format_cfa @at_frais_engage.montant %>
+                        </p>
+
+                        <p>
+                            <strong>Type frais:</strong>
+                            <%= @at_frais_engage.type_frais %>
+                        </p>
+
+                        <p>
+                            <strong>Etat:</strong>
+                            <%= AtFraisEngage.human_enum_name(:etat, @at_frais_engage.etat) %>
+                        </p>
+
+                        <p>
+                            <strong>Motif de rejet:</strong>
+                            <%= @at_frais_engage.motif_rejet %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-12">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>Historique</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <% unless @at_frais_engage.ajoute_par.nil? %>
+                            <h5><strong class="text-navy">Ajouté Par</strong>
+                                : <%= (@at_frais_engage.ajoute_par.try(:full_name)) unless @at_frais_engage.ajoute_par.nil? %> </h5>
+                            <h5><strong class="text-navy">Date de création</strong>
+                                : <%= (@at_frais_engage.created_at.strftime("%d/%m/%Y")) unless @at_frais_engage.created_at.nil? %></h5>
+
+                        <% end %>
+                        <br>
+                        <% unless @at_frais_engage.liquide_par.nil? %>
+
+                            <h5><strong class="text-navy">Liquidé Par</strong>
+                                : <%= (@at_frais_engage.liquide_par.try(:full_name)) unless @at_frais_engage.liquide_par.nil? %> </h5>
+                            <h5><strong class="text-navy">Date de Liquidation</strong>
+                                : <%= (@at_frais_engage.date_liquidation) unless @at_frais_engage.date_liquidation.nil? %></h5>
+                        <% end %>
+
+                        <br>
+                        <% unless @at_frais_engage.validation_par.nil? %>
+
+                            <h5><strong class="text-navy">Validation Agence Par</strong>
+                                : <%= (@at_frais_engage.validation_par.try(:full_name)) unless @at_frais_engage.validation_par.nil? %> </h5>
+                            <h5><strong class="text-navy">Date de validation</strong>
+                                : <%= (@at_frais_engage.date_validation.strftime("%d/%m/%Y")) unless @at_frais_engage.date_validation.nil? %></h5>
+                        <% end %>
+
+                        
+                        <% unless @at_frais_engage.validation_medecin_conseil_par.nil? %>
+                        <br>
+                            <h5><strong class="text-navy">Validation Medecin par</strong>
+                                : <%= (@at_frais_engage.validation_medecin_conseil_par.try(:full_name)) unless @at_frais_engage.validation_medecin_conseil_par.nil? %> </h5>
+                            <h5><strong class="text-navy">Date de validation Medecin</strong>
+                                : <%= (@at_frais_engage.date_validation_medecin.strftime("%d/%m/%Y")) unless @at_frais_engage.date_validation_medecin.nil? %></h5>
+                        <% end %>
+
+                    
+                        <% unless @at_frais_engage.validation_comptable_par.nil? %>
+                            <br>
+                            <h5><strong class="text-navy">Validation Comptable par</strong>
+                                : <%= (@at_frais_engage.validation_comptable_par.try(:full_name)) unless @at_frais_engage.validation_comptable_par.nil? %> </h5>
+                            <h5><strong class="text-navy">Date de validation Comptable</strong>
+                                : <%= (@at_frais_engage.date_validation_comptable.strftime("%d/%m/%Y")) unless @at_frais_engage.date_validation_comptable.nil? %></h5>
+                        <% end %>
+
+                        <% unless @at_frais_engage.rejete_par.nil? %>
+                            <br>
+                            <h5><strong class="text-navy">Rejeté par</strong>
+                                : <%= (@at_frais_engage.rejete_par.try(:full_name)) unless @at_frais_engage.rejete_par.nil? %> </h5>
+                            <h5><strong class="text-navy">Date rejet</strong>
+                                : <%= (@at_frais_engage.date_rejet.strftime("%d/%m/%Y")) unless @at_frais_engage.date_rejet.nil? %></h5>
+                        <% end %>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal inmodal" id="modal-frais" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+    <%= bootstrap_form_for(@at_frais_engage, url: admin_arret_travail_at_frais_engage_rejeter_path(@arret_travail, @at_frais_engage), method: :patch, layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Rejet Frais : <%= @at_frais_engage.id %> </h4>
+        </div>
+        <div class="modal-body">
+            <%= f.text_area  :motif_rejet, label: 'Motif rejet', required: true %>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Rejeter </button>
+        </div>
+        </div>
+    <% end %>
+    </div>
+</div>
+

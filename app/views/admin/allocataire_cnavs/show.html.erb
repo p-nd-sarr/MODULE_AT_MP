@@ -1,0 +1,133 @@
+<%= content_for :titre_page, "Détails allocataire #{DossierCnav.human_enum_name(:type_convention, @dossier_cnav.type_convention)}" %>
+
+<%= content_for :actions_page do %>
+
+  <%= link_to 'Retour', admin_dossier_cnav_allocataire_cnavs_path(@dossier_cnav), class: 'btn btn-white btn-sm' %>
+  <% if @allocataire_cnav.creation? and current_user == @allocataire_cnav.ajoute_par %>
+    <%= link_to 'Supprimer', [:admin, @dossier_cnav, @allocataire_cnav], method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-danger btn-sm' %>
+    <%#= link_to 'Liquider', admin_dossier_cnav_allocataire_cnav_soumettre_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-primary btn-sm' %>
+  <% end %>
+  <% if @allocataire_cnav.creation? and current_user.chef_section_liquidation? %>
+    <%#= link_to 'Supprimer', [:admin, @dossier_cnav, @allocataire_cnav], method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-danger btn-sm' %>
+    <%= link_to 'Liquider', admin_dossier_cnav_allocataire_cnav_soumettre_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-primary btn-sm' %>
+  <% end %>
+  <% if @allocataire_cnav.valide_liquidation? and current_user.directeur_prestation? %>
+    <%= link_to 'Valider', admin_dossier_cnav_allocataire_cnav_valider_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-primary btn-sm' %>
+    <%= link_to 'Rejeter', admin_dossier_cnav_allocataire_cnav_rejeter_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-danger btn-sm' %>
+  <% end %>
+  <% if @allocataire_cnav.soumis? and current_user.chef_service_prest_ext? %>
+    <%= link_to 'Valider', admin_dossier_cnav_allocataire_cnav_valider_liquidation_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-primary btn-sm' %>
+    <%= link_to 'Rejeter', admin_dossier_cnav_allocataire_cnav_rejeter_liquidation_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-danger btn-sm' %>
+  <% end %>
+  <% if @allocataire_cnav.valide? and current_user.inspection? %>
+    <%= link_to 'Valider', admin_dossier_cnav_allocataire_cnav_valider_inspection_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-primary btn-sm' %>
+    <%= link_to 'Rejeter', admin_dossier_cnav_allocataire_cnav_rejeter_inspection_path(@dossier_cnav, @allocataire_cnav), class: 'btn btn-danger btn-sm' %>
+  <% end %>
+
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Echéance : </strong>
+              <% if @dossier_cnav.mois.nil? %>
+                <%= DossierCnav.human_enum_name(:trimestre, @dossier_cnav.trimestre) %> trimestre
+              <% else %>
+                <%= DossierCnav.human_enum_name(:mois, @dossier_cnav.mois)%>
+              <% end %>
+              <%= @dossier_cnav.annee %>
+            </p>
+
+            <p>
+              <strong>Date import : </strong>
+              <%= @allocataire_cnav.date_import %>
+            </p>
+
+            <p>
+              <strong>Numero : </strong>
+              <%= @allocataire_cnav.numero %>
+            </p>
+
+            <p>
+              <strong>Prenom :</strong>
+              <%= @allocataire_cnav.prenom %>
+            </p>
+
+            <p>
+              <strong>Nom :</strong>
+              <%= @allocataire_cnav.nom %>
+            </p>
+
+            <p>
+              <strong>Region :</strong>
+              <%= @allocataire_cnav.admin_region.designation unless @allocataire_cnav.admin_region.nil? %>
+            </p>
+
+            <p>
+              <strong>Montant :</strong>
+              <%=format_cfa @allocataire_cnav.montant unless @allocataire_cnav.montant.nil? %>
+            </p>
+
+            <p>
+              <strong>Origine :</strong>
+              <%= @allocataire_cnav.origine unless @allocataire_cnav.origine.nil? %>
+            </p>
+
+            <p>
+              <strong>Compte :</strong>
+              <%= @allocataire_cnav.compte unless @allocataire_cnav.compte.nil? %>
+            </p>
+
+            <% unless @allocataire_cnav.iban.nil? %>
+              <p>
+                <strong>IBAN :</strong>
+                <%= @allocataire_cnav.iban %>
+              </p>
+            <% end %>
+            <p>
+              <strong>Caisse bk :</strong>
+              <%= @allocataire_cnav.admin_banque.nom unless @allocataire_cnav.admin_banque.nil? %>
+            </p>
+
+            <% unless @allocataire_cnav.date_validation.nil? %>
+              <p>
+                <strong>Date validation :</strong>
+                <%= @allocataire_cnav.date_validation %>
+              </p>
+            <% end %>
+
+            <p>
+              <strong>Etat :</strong>
+              <%= AllocataireCnav.human_enum_name(:etat, @allocataire_cnav.etat) unless @allocataire_cnav.etat.nil? %>
+            </p>
+
+            <p>
+              <strong>Mode paiement :</strong>
+              <%#= @allocataire_cnav.mode_paiement %>
+              <%= AllocataireCnav.human_enum_name(:mode_paiement, @allocataire_cnav.mode_paiement) unless @allocataire_cnav.mode_paiement.nil? %>
+            </p>
+
+            <% unless @allocataire_cnav.numero_liquidation.nil? %>
+            <p>
+              <strong>Numero liquidation :</strong>
+              <%= @allocataire_cnav.numero_liquidation %>
+            </p>
+            <% end %>
+
+            <% unless @allocataire_cnav.date_soumission.nil? %>
+              <p>
+                <strong>Date liquidation :</strong>
+                <%= @allocataire_cnav.date_soumission %>
+              </p>
+            <% end %>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,110 @@
+<%= content_for :titre_page, 'Demandes Cartes Allocataires' %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_admin_demande_carte_allocataire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <h3>Critères de recherche</h3>
+    <br>
+    <%= search_form_for @q, url: request.path, html: { id: 'formulaire_recherche' } do |f| %>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :allocataire_numero_allocataire_cont, 'Numéro allocataire' %>
+          <%= f.search_field :allocataire_numero_allocataire_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :prenom_cont, 'Prénom' %>
+          <%= f.search_field :prenom_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :nom_cont, 'Nom' %>
+          <%= f.search_field :nom_cont, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <%= f.label :agence_enregistrement_id_eq, 'Agence enregistrement' %>
+          <%= f.collection_select :agence_enregistrement_id_eq, Admin::Agence.ipres.order(:description_prest), :id, :description_prest,
+                                  { :include_blank => true }, class: 'form-control' %>
+        </div>
+        <div class="col-sm-4">
+          <%= f.label :agence_retrait_id_eq, 'Agence de retrait' %>
+          <%= f.collection_select :agence_retrait_id_eq, Admin::Agence.ipres.order(:description_prest), :id, :description_prest,
+                                  { :include_blank => true }, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+
+      <%= f.submit 'Rechercher', class: 'btn btn-primary', id: 'action_search' %>
+      <%= f.submit 'Exporter', class: 'btn', id: 'action_export' %>
+    <% end %>
+
+    <br>
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numero document</th>
+        <th scope="col">Numero allocataire</th>
+        <th scope="col">Agence enregistrement</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Date naissance</th>
+        <th scope="col">Agence retrait</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_demande_carte_allocataires.each do |admin_demande_carte_allocataire| %>
+        <tr>
+          <td><%= admin_demande_carte_allocataire.numero_document %></td>
+          <td><%= admin_demande_carte_allocataire.allocataire.numero_allocataire %></td>
+          <td><%= admin_demande_carte_allocataire.agence_enregistrement.try(:description_prest) %></td>
+          <td><%= admin_demande_carte_allocataire.nom %></td>
+          <td><%= admin_demande_carte_allocataire.prenom %></td>
+          <td><%= admin_demande_carte_allocataire.date_naissance %></td>
+          <td><%= admin_demande_carte_allocataire.agence_retrait.try(:description_prest) %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, admin_demande_carte_allocataire], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_demande_carte_allocataire_path(admin_demande_carte_allocataire), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', [:admin, admin_demande_carte_allocataire], method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+
+    <%= paginate @admin_demande_carte_allocataires %>
+  </div>
+</div>
+
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(function () {
+          $('#action_export').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_demande_carte_allocataires_path(format: :xlsx) %>')
+          })
+          $('#action_search').click(function () {
+              $('#formulaire_recherche').attr('action', '<%= admin_demande_carte_allocataires_path %>')
+          })
+          $('#formulaire_recherche').submit(function (e) {
+              e.preventDefault(); // dont submit multiple times
+              this.submit(); // use native js submit
+
+              setTimeout(function () {
+                  $('#action_export').prop("disabled", false);
+                  $('#action_search').prop("disabled", false);
+              }, 500);
+          });
+      });
+  </script>
+<% end %>

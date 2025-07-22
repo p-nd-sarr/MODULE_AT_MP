@@ -1,0 +1,40 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+  <div class="sidebar-collapse">
+    <ul class="nav" id="side-menu">
+      <!--<li class="nav-header">-->
+      <!--<div class="dropdown profile-element">-->
+      <!--<a href="/">-->
+      <!--<span class="block m-t-xs">-->
+      <!--<strong class="font-bold">prestation<%#= image_tag 'logo.jpg', height: 40 %></strong>-->
+      <!--</span>-->
+      <!--</a>-->
+      <!--</div>-->
+      <!--<div class="logo-element">-->
+      <!--Prestation-->
+      <!--</div>-->
+      <!--</li>-->
+
+
+      <li class="nav-header">
+        <div class="dropdown profile-element">
+          <!--<img alt="image" class="rounded-circle" src="img/profile_small.jpg">-->
+          <a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">
+            <span class="block m-t-xs font-bold"><%= current_user.full_name %></span>
+            <span class="block m-t-xs font-bold"><%= ("Agence : #{current_user.admin_agence.description_prest}") if !current_user.admin_agence.nil? and  current_user.user_back_office?  %></span>
+            <span class="text-muted text-xs block"><%= current_user.type_profil.humanize %> <b class="caret"></b></span>
+          </a>
+          <ul class="dropdown-menu animated fadeInRight m-t-xs" x-placement="bottom-start" style="position: absolute; top: 35px; left: 0px; will-change: top, left;">
+            <li class="dropdown-divider"></li>
+            <li><%= link_to 'Modifier mon mot de passe'.html_safe, edit_password_path, class: 'dropdown-item' %></li>
+            <li><%= link_to 'Se déconnecter'.html_safe, destroy_user_session_path, method: :delete, class: 'dropdown-item' %></li>
+          </ul>
+        </div>
+        <div class="logo-element">
+          PRESTATION
+        </div>
+      </li>
+      <%= render 'layouts/menu' %>
+    </ul>
+
+  </div>
+</nav>

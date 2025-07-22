@@ -1,0 +1,1 @@
+json.partial! "declaration_divorce_ou_deces_conjoints/declaration_divorce_ou_deces_conjoint", declaration_divorce_ou_deces_conjoint: @declaration_divorce_ou_deces_conjoint

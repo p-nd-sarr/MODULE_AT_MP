@@ -1,0 +1,39 @@
+<%= content_for :titre_page, "Versement employeur : #{@entreprise.fhrsoc}" %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_client_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>PERIODE</h5>
+          <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>LINEAIRE ?</h5>
+          <h1 class="no-margins"><%= state_yes_no Psrm::Carriere.lineaire_employeur?(@employeur_id) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="ibox-content">
+    <%= paginate @carrieres %>
+
+    <%= render 'carrieres/liste',
+               carrieres: @carrieres,
+               show_employeur: false,
+               show_employe: true %>
+
+    <%= paginate @carrieres %>
+  </div>
+</div>

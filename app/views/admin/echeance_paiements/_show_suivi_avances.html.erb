@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-sm-12">
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_suivi_avances_path(@echeance_paiement) do %>
+        <div class="ibox" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>SUIVI DES AVANCES</h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= PretAllocataire.periode(@echeance_paiement.periode_debut, @echeance_paiement.periode_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_suivi_avances_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-lg-3">
+      <%= link_to admin_echeance_paiement_suivi_avis_path(@echeance_paiement) do %>
+        <div class="ibox" style="box-shadow: 2px 2px 4px #1ab394;">
+          <div class="ibox-title">
+            <h5>SUIVI DES AVIS A TIERS </h5>
+          </div>
+          <div class="ibox-content product-box">
+            <h2 class="no-margins"><%= AvisTier.periode(@echeance_paiement.periode_debut, @echeance_paiement.periode_fin).count %></h2>
+            <div class="stat-percent text-success font-bold">
+
+            </div>
+            <small>Total demande</small>
+            <div style="text-align:center">
+              <%= link_to ' Voir Details', admin_echeance_paiement_suivi_avis_path(@echeance_paiement), class: 'btn btn-success btn-xs fa fa-home', style: 'margin-top:15px;' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+
+  </div>
+
+</div>

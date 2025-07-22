@@ -1,0 +1,22 @@
+<%= content_for :titre_page, "Prestation exterieure / Ajouter enfant" %>
+
+<%= content_for :titre_page_autres_details do %>
+  statut dossier: <%= @prestation_exterieure.get_status? ? 'Complet' : 'Incomplet' %>
+  <br>
+
+  Salarié : <%= @prestation_exterieure.prenom unless @prestation_exterieure.nil? %> <%= @prestation_exterieure.nom unless @prestation_exterieure.nil? %>
+  <br>
+  Etat du dossier : <%= "#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}" %>
+  <br>
+  Crée le : <%= l(@prestation_exterieure.created_at) %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_prestation_exterieure_grappe_familliale_path(@prestation_exterieure), class: 'btn btn-white btn-xs' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'form_enfant' %>
+  </div>
+</div>

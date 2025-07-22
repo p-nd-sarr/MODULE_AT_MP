@@ -1,0 +1,123 @@
+<div class="ibox-content">
+  <div class="row">
+    <div class="col-sm-7 m-b-xs">
+      <div data-toggle="buttons" class="btn-group btn-group-toggle">
+        <label class="btn btn-sm btn-white" data-toggle="pill" href="#tous">
+          <input type="radio" id="option1" name="options"> Tous
+        </label>
+        <label class="btn btn-sm btn-white active" data-toggle="pill" href="#soumis">
+          <input type="radio" id="option2" name="options"> États de famille soumis </label>
+        <label class="btn btn-sm btn-white" data-toggle="pill" href="#valides">
+          <input type="radio" id="option3" name="options"> États de famille validés
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content">
+    <div id="tous" class="tab-pane fade in">
+      <%= paginate @prestation_exterieures %>
+      <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+        <thead>
+        <tr>
+          <th scope="col">N° Dossier</th>
+          <th align="center">Prénom</th>
+          <th align="center">Nom</th>
+          <th align="center">Date de naissance</th>
+          <th align="center">Lieu de naissance</th>
+          <th align="center">Etat</th>
+
+          <th colspan="3"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @prestation_exterieures.each do |prestation| %>
+          <tr>
+            <td><%= prestation.numero_dossier %></td>
+            <td><%= prestation.prenom %></td>
+            <td><%= prestation.nom %></td>
+            <td><%= prestation.date_naissance.strftime('%d/%m/%Y') %></td>
+            <td><%= prestation.lieu_naissance %></td>
+            <td><%= prestation.etat %></td>
+            <% if prestation.soumission_etat_chef_grp? %>
+              <td style="width: 75px">
+                <%= link_to 'voir état', admin_prestation_exterieure_generate_etat_path(prestation), class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @prestation_exterieures %>
+    </div>
+    <div id="soumis" class="tab-pane fade in active">
+      <%= paginate @prestation_exterieures_soumis %>
+      <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+        <thead>
+        <tr>
+          <th scope="col">N° Dossier</th>
+          <th align="center">Prénom</th>
+          <th align="center">Nom</th>
+          <th align="center">Date de naissance</th>
+          <th align="center">Lieu de naissance</th>
+          <th align="center">Etat</th>
+
+          <th colspan="3"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @prestation_exterieures_soumis.each do |prestation| %>
+          <tr>
+            <td><%= prestation.numero_dossier %></td>
+            <td><%= prestation.prenom %></td>
+            <td><%= prestation.nom %></td>
+            <td><%= prestation.date_naissance.strftime('%d/%m/%Y') %></td>
+            <td><%= prestation.lieu_naissance %></td>
+            <td><%= prestation.etat %></td>
+            <% if prestation.soumission_etat_chef_grp? %>
+              <td style="width: 75px">
+                <%= link_to 'voir état', admin_prestation_exterieure_generate_etat_path(prestation), class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @prestation_exterieures_soumis %>
+    </div>
+    <div id="valides" class="tab-pane fade in">
+      <%= paginate @prestation_exterieures_valides %>
+      <table class="table table-bordered table-condensed table-hover" style="margin-top: 20px">
+        <thead>
+        <tr>
+          <th scope="col">N° Dossier</th>
+          <th align="center">Prénom</th>
+          <th align="center">Nom</th>
+          <th align="center">Date de naissance</th>
+          <th align="center">Lieu de naissance</th>
+          <th align="center">Etat</th>
+
+          <th colspan="3"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @prestation_exterieures_valides.each do |prestation| %>
+          <tr>
+            <td><%= prestation.numero_dossier %></td>
+            <td><%= prestation.prenom %></td>
+            <td><%= prestation.nom %></td>
+            <td><%= prestation.date_naissance.strftime('%d/%m/%Y') %></td>
+            <td><%= prestation.lieu_naissance %></td>
+            <td><%= prestation.etat %></td>
+            <% if prestation.soumission_etat_chef_grp? %>
+              <td style="width: 75px">
+                <%= link_to 'voir état', admin_prestation_exterieure_generate_etat_path(prestation), class: 'btn btn-outline btn-danger btn-xs' %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @prestation_exterieures_valides %>
+    </div>
+  </div>
+</div>

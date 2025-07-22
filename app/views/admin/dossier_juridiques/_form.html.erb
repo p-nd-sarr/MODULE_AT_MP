@@ -1,0 +1,85 @@
+<%= bootstrap_form_for([:admin, @dossier_juridique], label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+  <%= f.alert_message "Please fix the errors below." %>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="col-lg-6">
+        <%= f.collection_select :admin_type_dossier_juridique_id, @admin_type_dossier_juridiques, :id, :title, include_blank: true, class: 'form-control' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :nom_dossier, label: 'Nom du dossier' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :objet_dossier, label: 'Objet du dossier' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_area :description_dossier, label: 'Description du dossier' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :parties, label: 'Parties' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :requerent, label: 'Requerent' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :defendeur, label: 'Défendeur"' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :nature_litige, label: 'Nature litige' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :etat_procedure, label: 'État procédure' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :agence_concerne, label: 'Agence concerné' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :direction_concerne, label: 'Direction concerné' %>
+      </div>
+      <div class="col-lg-6">
+        <%= f.text_field :montant_reclame, label: 'Montants réclamés', value: f.object.nom_dossier %>
+      </div>
+
+      <div id="date_contrat">
+        <div class="col-lg-6">
+          <%= f.date_field :date_debut_contrat, label: 'Date début contrat' %>
+        </div>
+        <div class="col-lg-6">
+          <%= f.date_field :date_fin_contrat, label: 'Date_fin_contrat' %>
+        </div>
+      </div>
+
+
+    </div>
+    <div class=" col-lg-12 form-group">
+      <hr>
+      <div class="col-lg-3 col-lg-offset-9" style="text-align: right;">
+        <%= link_to 'Annuler', (@dossier_juridique.persisted? ? [:admin, @dossier_juridique] : admin_dossier_juridiques_path), class: 'btn btn-white' %>
+        <%= f.button 'Valider', class: 'btn btn-primary', id: 'submit_button' %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          $('#date_contrat').hide();
+          show_contrat_section();
+
+          $('#dossier_juridique_admin_type_dossier_juridique_id').change(function () {
+              show_contrat_section();
+          });
+
+          function show_contrat_section() {
+              let input = document.getElementById('dossier_juridique_admin_type_dossier_juridique_id')
+              let input_value = input.options[input.selectedIndex].text
+
+              if (input_value === 'Contrat') {
+                  $('#date_contrat').show();
+              } else {
+                  $('#date_contrat').hide();
+              }
+          }
+      });
+  </script>
+<% end %>

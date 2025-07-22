@@ -1,0 +1,186 @@
+<%= content_for :titre_page, "Dossier De Prestation exterieure / Grappe familliale " %>
+
+<%= content_for :titre_page_autres_details do %>
+  statut dossier: <%= @prestation_exterieure.get_status? ? 'Complet' : 'Incomplet' %>
+  <br>
+
+  Salarié : <%= @prestation_exterieure.prenom unless @prestation_exterieure.nil? %> <%= @prestation_exterieure.nom unless @prestation_exterieure.nil? %>
+  <br>
+  Etat du dossier : <%= "#{PrestationExterieure.human_enum_name(:etat, @prestation_exterieure.etat)}" %>
+  <br>
+  Crée le : <%= l(@prestation_exterieure.created_at) %>
+<% end %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_prestation_exterieure_path(@prestation_exterieure), class: 'btn btn-white btn-xs' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content" style="font-size: 13px">
+    <div class="col-lg-6 col-sm-offset-6 col-md-12" style="margin-bottom: 20px">
+      <ul class="nav nav-tabs">
+        <li class="active">
+          <a class="btn btn-w-m btn-outline btn-success" data-toggle="tab" href="#sous-tab-1">
+            Conjoints</a>
+        </li>
+        <li>
+          <a class="btn btn-w-m btn-outline btn-success active-link" data-toggle="tab" href="#sous-tab-2">
+            Enfants</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="row">
+      <div class="tab-content">
+        <div id="sous-tab-1" class="tab-pane active">
+          <div class="full-height-scroll">
+            <div class="wrapper wrapper-content">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="ibox">
+                    <div class="ibox-title">
+                      <h5> Affichage de la liste des conjoints </h5>
+                      <div class="ibox-tools">
+                        <a class="collapse-link">
+                          <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                          <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                          <li><a href="#" class="dropdown-item">Config option 1</a>
+                          </li>
+                          <li><a href="#" class="dropdown-item">Config option 2</a>
+                          </li>
+                        </ul>
+                        <a class="close-link">
+                          <i class="fa fa-times"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="ibox-content">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="col-lg-12" style="text-align: right;">
+                            <%= link_to 'Ajouter conjoint', admin_prestation_exterieure_add_conjoint_path(@prestation_exterieure), class: 'btn btn-outline btn-white fa fa-plus' %>
+                          </div>
+                          <hr>
+                          <%= paginate @conjoints %>
+                          <br>
+                          <table class="footable table table-stripped table-hover" data-page-size="8" data-filter="#filter" style="margin-top: 20px;">
+                            <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Prénom & nom du conjoint</th>
+                              <th scope="col">Date de naissance</th>
+                              <th scope="col">Date du mariage</th>
+                              <th scope="col">Numéro pièceon</th>
+                              <th align="center">Etat du couple</th>
+                              <th colspan="3">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% @conjoints.each do |conjoint| %>
+                              <tr>
+                                <td></td>
+                                <td><%= conjoint.prenom %> <%= conjoint.nom %> </td>
+                                <td><%= conjoint.date_naissance.strftime('%d/%m/%Y') unless conjoint.date_naissance.nil? %></td>
+                                <td><%= conjoint.date_mariage.strftime('%d/%m/%Y') unless conjoint.date_mariage.nil? %></td>
+                                <td><%= conjoint.nin_conjoint %></td>
+                                <td><%= CafConjoint.human_enum_name(:etat_couple, conjoint.etat_couple) %></td>
+                                <td style="width: 75px">
+                                  <%= link_to 'détail', admin_prestation_exterieure_show_conjoint_path(@prestation_exterieure, conjoint.id),
+                                              class: 'btn btn-outline btn-primary btn-xs' %>
+                                </td>
+                              </tr>
+                            <% end %>
+                            </tbody>
+                          </table>
+                          <%= paginate @conjoints %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="sous-tab-2" class="tab-pane">
+          <div class="full-height-scroll">
+            <div class="wrapper wrapper-content">
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="ibox">
+                    <div class="ibox-title">
+                      <h5> Affichage de la liste des enfants </h5>
+                      <div class="ibox-tools">
+                        <a class="collapse-link">
+                          <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                          <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                          <li><a href="#" class="dropdown-item">Config option 1</a>
+                          </li>
+                          <li><a href="#" class="dropdown-item">Config option 2</a>
+                          </li>
+                        </ul>
+                        <a class="close-link">
+                          <i class="fa fa-times"></i>
+                        </a>
+                      </div>
+                    </div>
+                    <div class="ibox-content">
+                      <div class="row">
+                        <div class="col-lg-12">
+                          <div class="col-lg-12" style="text-align: right;">
+                            <%= link_to 'Ajouter enfant', admin_prestation_exterieure_add_enfant_path(@prestation_exterieure), class: 'btn btn-outline btn-white fa fa-plus' %>
+                          </div>
+                          <hr>
+                          <%= paginate @enfants %>
+                          <br>
+                          <table class="footable table table-stripped table-hover" data-page-size="8" data-filter="#filter" style="margin-top: 20px;">
+                            <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">Prénom & nom enfant</th>
+                              <th scope="col">Date de naissance</th>
+                              <th scope="col">Lieu de naissance</th>
+                              <th scope="col">Date exp document migré</th>
+                              <th scope="col">Actif?</th>
+                              <th colspan="3">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <% @enfants.each do |enfant| %>
+                              <tr>
+                                <td></td>
+                                <td><%= enfant.prenom %> <%= enfant.nom %> </td>
+                                <td><%= enfant.date_naissance.strftime('%d/%m/%Y') unless enfant.date_naissance.nil? %></td>
+                                <td><%= enfant.lieu_naissance %></td>
+                                <td><%= enfant.migrated_document_exp_date.strftime('%d/%m/%Y') unless enfant.migrated_document_exp_date.nil? %></td>
+                                <td><%= state_yes_no enfant.active? %></td>
+                                <td style="width: 75px">
+                                  <%= link_to 'détail', admin_prestation_exterieure_show_enfant_path(@prestation_exterieure, enfant.id),
+                                              class: 'btn btn-outline btn-primary btn-xs' %>
+                                </td>
+                              </tr>
+                            <% end %>
+                            </tbody>
+                          </table>
+                          <%= paginate @enfants %>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

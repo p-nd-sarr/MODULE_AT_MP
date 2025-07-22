@@ -1,0 +1,37 @@
+<%= content_for :titre_page, "Liste des dossiers avec le conjoint" %>
+
+<%# if (@dossier_prestation.conjoint.nil?) %>
+  <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th scope="col">Nom</th>
+      <th scope="col">Prénom</th>
+      <th scope="col">Date de mariage</th>
+      <th scope="col">Situation avec le salarie</th>
+      <th scope="col">Options</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @dossier_prestation.conjoints.not_deleted.not_incomplete.each do |conjoint| %>
+      <tr>
+        <td><%= conjoint.nom %></td>
+        <td><%= conjoint.prenom %></td>
+        <td><%= l conjoint.date_naissance %></td>
+        <td><%= Conjoint.human_enum_name(:etat_conjoint, conjoint.etat_conjoint) %></td>
+        <td>
+            <% unless DossierPrestation.exists?(conjoint_id: conjoint) or conjoint.deceder? %>
+              <%= (link_to 'Créer dossier de prestation', admin_dossier_prestation_create_dossier_conjoint_path(@dossier_prestation, conjoint),
+                           data: { confirm: 'En êtes vous sûr?', turbolinks: false }, id: "dd_hover", class: 'btn btn-primary btn-sm dim pull-right') if current_user.gestionnaire_compte_allocataire? or current_user.chef_agence? or current_user.comptable? %>
+            <% end %>
+
+            <% if DossierPrestation.exists?(conjoint_id: conjoint) %>
+              <%= link_to 'Voir dossier avec le conjoint', admin_dossier_prestation_path(DossierPrestation.where(conjoint_id: conjoint).pluck(:id).first), class: 'btn btn-outline btn-primary btn-xs pull-right' %>
+            <% end %>
+        </td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+<%# end %>

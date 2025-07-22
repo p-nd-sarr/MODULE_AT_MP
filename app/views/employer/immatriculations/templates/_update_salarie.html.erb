@@ -1,0 +1,366 @@
+<% @salaries.each do |salarie| %>
+  <div class="modal inmodal" id="salarie-update-modal-<%=salarie.id %>" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+                                
+  <div class="modal-content animated fadeIn">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">
+        <span aria-hidden="true">x</span>
+        <span class="sr-only">Close</span>
+      </button>
+      <h4 class="modal-title">Modifier salarié <%= "#{salarie.prenom} #{salarie.nom}" %></h4>
+    </div>
+    <div class="modal-body">
+      <div class="row" style="margin-top: 25px">
+       <div class="row" id="update_etat_civil-<%=salarie.id %>" style="margin-top:20px" >
+        <%= bootstrap_form_for([:employer, salarie], label_col: "col-sm-4", control_col: "col-sm-12") do |f| %>
+        <div class="col-lg-10 col-lg-offset-1">
+          <div class="panel-group" id="accordion2-<%=salarie.id %>">
+            <div class="panel panel-primary" style="padding: 10px">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion2-<%=salarie.id %>" href="#infoSalarie-<%=salarie.id %>">
+                    <span class="fa fa-user"></span> Informations salarié
+                    <div class="ibox-tools">
+                    <i class="fa fa-chevron-up"style="color: #fff"></i>
+                  </div>
+                  </a>
+                </h5>
+              </div>
+              <div class="panel-collapse collapse in" id="infoSalarie-<%=salarie.id %>" style="padding-top: 20px">
+                <div class="full-height-scroll row" style="padding:20px">
+                <br>
+                  <div class="col-lg-6">
+                    <%= f.text_field :nom, label: 'Nom', required: true %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :prenom, label: 'Prénom', required: true %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.select :sexe,
+                                    SalarieImmatriculation::SEXE.keys.collect { |sexe| [SalarieImmatriculation.human_enum_name(:sexe, sexe), sexe] }, label: 'Sexe', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.select :etat_civil,
+                              SalarieImmatriculation::ETAT_CIVIL.keys.collect { |etat_civil| [SalarieImmatriculation.human_enum_name(:etat_civil, etat_civil), etat_civil] }, label: 'Etat Civil', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.collection_select :pays_naissance,@pays,:id,:description, include_blank: true, label: 'Pays de Naissance', tag: 'Pays de Naissance', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :ville_naissance, label: 'Ville de naissance', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.date_select :date_naissance, label: "Date naissance",
+                                          start_year: (Date.today - 100.year).year, end_year: (Date.today - 16.year).year , required: true %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :numero_registre_naiss, label: 'Numero de registre de naissance' %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :nom_pere, label: 'Nom du père' %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :prenom_pere, label: 'Prénom du père' %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :nom_mere, label: 'Nom mère' %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :prenom_mere, label: 'Prénom de la mère' %>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- End panel default -->
+            <div class="panel panel-primary" style="padding: 10px">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#pid-<%=salarie.id %>">
+                    <span class="fa fa-id-badge"></span> Pièce d'identité
+                    <div class="ibox-tools">
+                    <i class="fa fa-chevron-up"style="color: #fff"></i>
+                  </div>
+                  </a>
+                </h5>
+              </div>
+              <div class="panel-collapse collapse" id="pid-<%=salarie.id %>" style="padding-top: 20px">
+                <div class="full-height-scroll row" style="padding:20px">
+                  <br>
+                  <div class="col-lg-6">
+                    <%= f.collection_select :nationalite, @pays ,:id,:description, label: 'Nationalite', tag: 'Nationalite', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.select :type_piece,
+                     SalarieImmatriculation::TYPE_PIECE.keys.collect { |type_piece| [SalarieImmatriculation.human_enum_name(:type_piece, type_piece), type_piece] }, label: 'Type de pièce' %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :numero_piece, label: 'Numero de pièce', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :nin, label: 'NIN', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :nin_cedeao, label: 'NIN CEDEAO' %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.date_select :date_delivrance, label: "Date délivrance",
+                                start_year: (Date.today - 10.year).year, end_year: Date.today.year , required: true %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.date_select :date_expiration, label: "Date d expiration",
+                                start_year: Date.today.year, end_year: Time.now.year + 10 , required: true %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.collection_select :pays_delivrance,Admin::Country.all.order(:description),:id,:description, label: 'Nationalite', tag: 'Nationalite', required: true  %>
+                  </div>
+                  <div class="col-lg-6">
+                    <%= f.text_field :employer_precedent, label: 'Employeur Précédent' %>
+                  </div>
+                </div>
+              </div>
+            </div> <!-- End panel default  -->
+
+            <div class="panel panel-primary" style="padding: 10px">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#lieuResidence-<%=salarie.id %>">
+                    <span class="fa fa-address-card"></span> Lieu de Résidence
+                  <div class="ibox-tools">
+                    <i class="fa fa-chevron-up"style="color: #fff"></i>
+                  </div>
+                  </a>
+                </h5>
+              </div>
+              <div class="panel-collapse collapse" id="lieuResidence-<%=salarie.id %>" style="padding-top: 20px">
+                <div class="full-height-scroll row" style="padding:20px">
+                <br>
+                <div class="col-lg-6">
+                  <%= f.collection_select :pays,@pays,:id,:description, include_blank: true, label: 'Pays', tag: 'Pays', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :region, @regions,:id,:designation, include_blank: true, label: 'Region', tag: 'region', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :departement, @departements,:id,:designation, include_blank: true, label: 'Departement', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :arondissement, @villes,:id,:designation, include_blank: true, label: 'Arrondissement', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :commune,  @communes,:id,:designation, include_blank: true, label: 'Commune', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :quartier, @quartiers,:id,:designation, include_blank: true, label: 'Quartier', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :adresse, label: 'Adresse', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :boite_postal, label: 'Boite postal' %>
+                </div>
+                </div>
+              </div>
+
+            </div> <!-- End panel default adresse structure -->
+            <div class="panel panel-primary" style="padding: 10px">
+              <div class="panel-heading">
+                <h5 class="panel-title">
+                  <a data-toggle="collapse" data-parent="#accordion2" href="#str-<%=salarie.id %>">
+                    <span class="fa fa-info"></span> Informations contractuelles
+                  <div class="ibox-tools">
+                    <i class="fa fa-chevron-up"style="color: #fff"></i>
+                  </div>
+                  </a>
+                </h5>
+              </div>
+              <div class="panel-collapse collapse" id="str-<%=salarie.id %>" style="padding-top: 20px">
+                <div class="full-height-scroll row" style="padding:20px">
+                <br>
+                <div class="col-lg-12">
+                   <%= f.text_field :type_mouvement, label: 'Type de Mouvement', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.select :nature_contrat,
+                     SalarieImmatriculation::NATURE_CONTRAT.keys.collect { |nature_contrat| [SalarieImmatriculation.human_enum_name(:nature_contrat, nature_contrat), nature_contrat] }, label: 'Nature Contrat' %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.date_select :date_debut_contrat, label: "Date Début Contrat",
+                            start_year: (Date.today - 60.year).year, end_year: Date.today.year , required: true %>
+                </div>
+                <div class="col-lg-6" id="date_fin_contrat-<%=salarie.id %>">
+                  <%= f.date_select :date_fin_contrat, label: "Date  Fin Contrat",
+                            start_year: (Date.today - 60.year).year, end_year: Time.now.year + 18 %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.collection_select :profession, @professions,:id,:description, include_blank: true, label: 'Profession', required: true %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :emploi, label: 'Emploi' %>
+                </div>
+                <div class="col-lg-6">
+                   <%= f.select :temps_travail,
+                       SalarieImmatriculation::TEMPS_TRAVAIL.keys.collect { |temps_travail| [SalarieImmatriculation .human_enum_name(:temps_travail, temps_travail), temps_travail] }, label: 'Temps de travail   ' %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.check_box :est_cadre, label: 'Employé Cadre?' %>
+                </div>  
+                <div class="col-lg-6">    
+                  <%= f.collection_select :convention_applicable, @conventions,:id,:description, include_blank: true, label: 'Convention Applicable', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                   <%= f.text_field :salaire_contractuel, label: 'Salaire Contractuel', required: true  %>
+                </div>
+                <div class="col-lg-6">
+                  <%= f.text_field :categorie, label: 'Catégorie' %>
+                </div>
+                </div>
+              </div>
+            </div> <!-- End panel default -->
+
+          </div>
+        </div>
+          <div class="form-group row" style="padding-left: 20%">
+            <div class="col-sm-4 col-sm-offset-2">
+              <button type="submit" class="btn btn-primary block full-width m-b">Enregister</button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      </div>
+    </div>
+    <div class="modal-footer"> 
+      <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>                                     
+    </div>
+    </div>                                  
+  </div>
+</div>
+
+
+<%end %>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#salarie_region').change(function () {
+
+            console.log('change region');
+            var e = document.getElementById("salarie_region");
+
+            //var strOption = e.options[e.selectedIndex].text;
+            var regionRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?region=" + regionRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_departement')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#salarie_departement').change(function () {
+
+
+            console.log('change departement');
+
+            var e = document.getElementById("salarie_departement");
+            var departementRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?departement=" + departementRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_arondissement')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#salarie_arondissement').change(function () {
+
+            console.log('change ville');
+
+
+            var e = document.getElementById("salarie_arondissement");
+            var villeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?ville=" + villeRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_commune')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+        $('#salarie_commune').change(function () {
+
+            console.log('change commune');
+
+            var e = document.getElementById("salarie_commune");
+            var communeRepresentant = e.options[e.selectedIndex].value;
+
+            $.ajax({
+                type: "GET",
+                url: "/employer/immatriculations/1/load_adresse?commune=" + communeRepresentant,
+                data: null,
+                success: function (data, textStatus, jqXHR) {
+                    // alert('ok');
+                    console.log(data);
+
+                    $('#salarie_quartier')
+                        .empty()
+                        .append(data)
+                        .prepend("<option value='' selected='selected'></option>");
+
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    // alert('error');
+                    console.log('error');
+                }
+            });
+
+        });
+
+    });
+
+</script>

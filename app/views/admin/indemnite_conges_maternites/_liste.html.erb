@@ -1,0 +1,63 @@
+<%= paginate @indemnite_conges_maternites %>
+<table class="table table-bordered table-condensed table-hover" style="font-size: 12px">
+  <thead>
+  <tr>
+    <th scope="col">N° Dossier</th>
+    <th scope="col">Allocataire</th>
+    <th scope="col">Tranche</th>
+    <th scope="col">Date dépot</th>
+    <th scope="col">Etat</th>
+    <th scope="col">Montant liquidé</th>
+    <th scope="col">Date liquidation </th>
+    <th scope="col">Date de mise paiement</th>
+    <th colspan="3"></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% unless @indemnite_conges_maternites.nil? %>
+    <% @indemnite_conges_maternites.each do |indemnite_conges_maternite| %>
+      <tr>
+        <td><%= indemnite_conges_maternite.dossier_maternite.num_dossier%></td>
+        <td><%= indemnite_conges_maternite.dossier_maternite.full_name%></td>
+        <td><%= IndemniteCongesMaternite.human_enum_name(:tranche_paiement, indemnite_conges_maternite.tranche_paiement)%></td>
+        <td>
+          <% unless indemnite_conges_maternite.date_soumission.nil? %>
+            <%= l indemnite_conges_maternite.date_soumission %>
+          <%end %>
+        </td>
+        <td>
+          <% if indemnite_conges_maternite.avant_acouchement? %>
+            <%= l(indemnite_conges_maternite.debut_conges + 30.days) %>
+          <% end %>
+        </td>
+        <td><%= IndemniteCongesMaternite.human_enum_name(:etat, indemnite_conges_maternite.etat) %></td>
+        <td><%= indemnite_conges_maternite.montant_paiement %></td>
+        <td>
+          <% unless indemnite_conges_maternite.date_validation.nil? %>
+            <%= l indemnite_conges_maternite.date_validation %>
+          <%end %>
+        </td>
+        <td>
+          <% unless indemnite_conges_maternite.date_paiement.nil? %>
+            <%= l indemnite_conges_maternite.date_paiement %>
+          <%end %>
+        </td>
+
+        <td style="width: 75px">
+          <%= link_to 'détails',  [:admin, indemnite_conges_maternite.dossier_maternite, indemnite_conges_maternite], class: 'btn btn-outline btn-primary btn-xs' %>
+        </td>
+        <% if indemnite_conges_maternite.soumis? %>
+          <td style="width: 75px">
+              <%= (link_to 'valider', admin_indemnite_conges_maternite_valider_path(indemnite_conges_maternite), class: 'btn btn-outline btn-primary btn-xs') unless indemnite_conges_maternite.valide?%>
+          </td>
+          <td style="width: 75px">
+              <%= (link_to 'rejeter', admin_indemnite_conges_maternite_rejeter_path(indemnite_conges_maternite), class: 'btn btn-outline btn-danger btn-xs') unless indemnite_conges_maternite.rejete? %>
+          </td>
+          <%end %>
+      </tr>
+    <%end %>
+  <% end %>
+  </tbody>
+</table>
+<%= paginate @indemnite_conges_maternites %>

@@ -1,0 +1,35 @@
+<div class="col-sm-8" style="padding-left: 20%">
+
+  <div class="ibox">
+    <div class="ibox-title" style="background: #1ab394; color: #fff">
+      <div class="accordion-heading" class="ibox-title" >
+        <h5>Pièce d'identité</h5>
+        <div class="ibox-tools">
+          <a class="accordion-toggle collapse-link"
+             data-toggle="collapse"
+             data-parent="#accordion2"
+             href="#collapseOne" style="background: #1ab394; color: #fff">
+            <i class="fa fa-chevron-down" style="color: #fff"></i>
+          </a>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div id="collapseOne" class="accordion-body collapse ibox-content">
+
+      <%= f.select :type_of_identity,
+                   RepresentantLegal::TYPE_PIECE.keys.collect { |type_of_identity| [RepresentantLegal.human_enum_name(:type_of_identity, type_of_identity), type_of_identity] }, label: 'Type de piece' %>
+
+      <%= f.text_field :identity_number, label: 'Numéro de piece', required: true  %>
+
+      <%= f.date_select :issued_date, label: "Date de délivrance",
+                        start_year: (Date.today - 100.year).year, end_year: Date.today.year , required: true %>
+
+      <%= f.date_select :expiry_date, label: "Date d expiration",
+                        start_year: Date.today.year, end_year: Time.now.year + 18 , required: true %>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+    <%= bootstrap_form_for(@dossier_reversion_salarie, url: admin_dossier_reversion_salary_path,  label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
+          <div class="row">
+            <div class="col-lg-12">
+              <%= f.hidden_field :conjoint_id, value:@dossier_reversion_salarie.conjoint_id if @dossier_reversion_salarie.conjoint_id %>
+              <%= f.hidden_field :enfant_id, value:@dossier_reversion_salarie.enfant_id if @dossier_reversion_salarie.enfant_id%>
+              <%= f.hidden_field :date_mariage, value:@dossier_reversion_salarie.date_mariage if @dossier_reversion_salarie.date_mariage%>
+            </div>
+            <div class="col-lg-6">
+                <%= f.text_field :prenom, required: true, readonly: true  %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :nom, required: true, readonly: true %>
+            </div>
+            <% if @dossier_reversion_salarie.orphelin?%>
+              <div class="col-lg-6">
+                <%= f.text_field :prenom_tuteur, label: "Prenom tuteur" %>
+              </div>
+              <div class="col-lg-6">
+                <%= f.text_field :nom_tuteur, label: "Nom tuteur" %>
+              </div>
+            <% end%>
+            <div class="col-lg-6">
+              <%= f.text_field :adresse, label: 'Adresse' %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :adresse_reception_allocation, label: "Adresse de réception de l'allocation" %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :email, label: "Adresse Email" %>
+            </div>
+            <div class="col-lg-6">
+              <%= f.text_field :phone, label: "Telephone" %>
+            </div>
+            <div class="col-lg-6">
+                <%= f.select :mode_paiement,
+                              MODE_PAIEMENT_CAISSE_IPRES.keys.collect { |mode_paiement| [DossierReversionSalary.human_enum_name(:mode_paiement, mode_paiement), mode_paiement] },
+                            include_blank: true, label: 'Mode de paiement' %>
+            </div>
+            <div class="col-lg-12" style="background-color: rgba(240,240,240,0.6); padding-top: 20px; padding-bottom: 20px;" id="mode_paiement_virement<%= @dossier_reversion_salarie.id %>">
+                <div class="col-lg-6">
+                  <%= f.collection_select :admin_banque_agence_id,
+                                          Admin::BanqueAgence.all, :id, :nom_complet,
+                                          label: 'Banque',
+                                          include_blank: true %>
+                </div>
+                <div class="col-lg-6">
+                    <%= f.text_field :compte_bancaire_numero_compte, label: 'Numéro du compte', maxlength: 12, minlength: 12 %>
+                    <%= f.text_field :compte_bancaire_cle_rib, label: 'Clé RIB du compte', maxlength: 2, minlength: 2 %>
+                </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <hr>
+            <div class="col-lg-4 col-lg-offset-8" style="text-align:right">
+              <%= link_to 'Annuler', admin_dossier_reversion_salary_path(@dossier_reversion_salarie), class: 'btn btn-white' %>
+              <button type="submit" class="btn btn-primary">valider</button>
+            </div>
+          </div>
+    <% end %>
+
+<% content_for :javascript do %>
+
+  <script type="text/javascript">
+  $(document).ready(function () {
+    chargerInfosCompteBancaire();
+    chargerInfosVeuve();
+    $("#dossier_reversion_salary_mode_paiement").change(function () {
+        chargerInfosCompteBancaire()
+    });
+
+    function chargerInfosCompteBancaire() {
+        let mode_paiement = $('#dossier_reversion_salary_mode_paiement').val();
+        console.log(mode_paiement);
+        let elem_mode_paiement = $('#mode_paiement_virement<%= @dossier_reversion_salarie.id %>')
+        if (mode_paiement === 'virement') {
+            elem_mode_paiement.show();
+        } else {
+            elem_mode_paiement.hide();
+        }
+    }
+
+    $("#reversion_veuve_type_ayant_droit").change(function () {
+        chargerInfosVeuve()
+    });
+
+    function chargerInfosVeuve() {
+        let type_ayant_droit = $('#reversion_veuve_type_ayant_droit').val();
+        let elem_conjoint = $('#conjoint')
+        let elem_infos_orphelin = $('#infos_orphelin')
+        if (type_ayant_droit === 'veuve') {
+            elem_conjoint.show();
+            elem_infos_orphelin.hide();
+            $('#reversion_veuve_nom_tuteur').val('')
+            $('#reversion_veuve_prenom_tuteur').val('')
+        } 
+        else {
+            elem_conjoint.hide();
+            elem_infos_orphelin.show();
+        }
+    } 
+  })
+</script>
+
+<% end %>

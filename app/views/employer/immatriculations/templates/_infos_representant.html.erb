@@ -1,0 +1,154 @@
+  <div class="col-lg-4">
+   <h2 class="text-success"><strong>Etat civil</strong></h2>
+    <hr>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Nom : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.last_name %></dd>
+      </div>
+    </d1>
+     <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Prénom : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.first_name %></dd>
+      </div>
+    </d1>
+     <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date de naissance : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.birthdate %></dd>
+      </div>
+    </d1>
+     <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Lieu de naissance : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"> <%= @representant.admin_place_of_birth.description unless  @representant.admin_place_of_birth.nil? %> </dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Nationalité: </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.admin_country.description unless @representant.admin_country.nil? %></dd>
+      </div>
+    </d1>
+
+  </div>
+
+  <div class="col-lg-4">
+    <h2 class="text-success"><strong>Pièce d'identité</strong></h2>
+    <hr>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Type de pièce d'identité : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= RepresentantLegal.human_enum_name(:type_of_identities, @representant.type_of_identity) %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Numero de pièce : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.identity_number %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date délivrance: </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.issued_date %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Date expiration: </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.expiry_date %></dd>
+      </div>
+    </d1>
+  </div>
+
+  <div class="col-lg-4">
+    <h2 class="text-success"><strong>Adresse - Siège social</strong></h2>
+    <hr>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Région : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.reprise_region.designation unless @representant.reprise_region.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Ville : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.reprise_ville.designation unless @representant.reprise_ville.nil?  %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Commune : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.reprise_commune.designation unless @representant.reprise_commune.nil?  %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Quartier : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.reprise_quartier.designation unless @representant.reprise_quartier.nil?%></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Adresse : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.address %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Pays : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.admin_country.description unless @representant.admin_country.nil? %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Email : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.email %></dd>
+      </div>
+    </d1>
+    <d1 class="row mb-0">
+      <div class="col-sm-6" style="text-align: right;">
+        <dt>Téléphone : </dt>
+      </div>
+      <div class="col-sm-6" style="text-align: left;">
+        <dd class="mb-1"><%= @representant.mobile_number %></dd>
+      </div>
+    </d1>
+  </div>
+  <div class="col-lg-12">
+    <hr>
+  </div>

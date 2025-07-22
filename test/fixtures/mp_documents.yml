@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  libelle: MyString
+  code: MyString
+  type_document: 1
+  description: MyText
+  maladie_professionnelle: one
+
+two:
+  libelle: MyString
+  code: MyString
+  type_document: 1
+  description: MyText
+  maladie_professionnelle: two

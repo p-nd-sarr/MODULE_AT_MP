@@ -1,0 +1,30 @@
+<%= content_for :titre_page, "Détails admin_site" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Retour', admin_sites_path, class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Modifier', edit_admin_site_path(@admin_site), class: 'btn btn-white btn-sm' %>
+    <%= link_to 'Ajouter admin_site', new_admin_site_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+                            <p>
+                  <strong>Code:</strong>
+                  <%= @admin_site.code %>
+                </p>
+
+                            <p>
+                  <strong>Description:</strong>
+                  <%= @admin_site.description %>
+                </p>
+
+                      </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,102 @@
+<%= content_for :titre_page, "Carrières" %>
+
+<%= content_for :actions_page do %>
+  <%#= link_to 'Ajouter', new_client_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>PERIODE D'ACTIVITE</h5>
+          <h1 class="no-margins"><%= @annee_debut %> - <%= @annee_fin %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>TOTAL POINTS</h5>
+          <h1 class="no-margins">
+            <%= format_cfa @total_points, false %>
+          </h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="ibox">
+        <div class="ibox-content">
+          <h5>LINEAIRE ?</h5>
+          <h1 class="no-margins"><%= state_yes_no Psrm::Carriere.lineaire?(current_participant.matric) %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox-content">
+        <h3>Régime Général</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Entreprise</th>
+            <th scope="col">Employé</th>
+            <th scope="col">Période</th>
+            <th scope="col">Salaire</th>
+            <th scope="col">Points</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @carrieres.each do |carriere| %>
+            <% unless carriere.salaire_rg.zero? %>
+              <tr class="<%= 'bg-danger' if carriere.calcul_points_rg.zero? %>">
+                <td><%= carriere.exercice %></td>
+                <td><%= carriere.fhrsoc %></td>
+                <td><%= carriere.participant.try(:full_name) %></td>
+                <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+                <td align="right"><%= format_cfa(carriere.salaire_rg, false) %></td>
+                <td align="right"><%= carriere.calcul_points_rg %></td>
+              </tr>
+            <% end %>
+          <% end %>
+          </tbody>
+        </table>
+
+        <h3>Régime Cadre</h3>
+        <table class="table table-bordered table-condensed table-hover">
+          <thead>
+          <tr>
+            <th scope="col">Exercice</th>
+            <th scope="col">Entreprise</th>
+            <th scope="col">Employé</th>
+            <th scope="col">Période</th>
+            <th scope="col">Salaire</th>
+            <th scope="col">Points</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <% @carrieres.each do |carriere| %>
+            <% unless carriere.salaire_rcc.zero? %>
+              <tr class="<%= 'bg-danger' if carriere.calcul_points_rcc.zero? %>">
+                <td><%= carriere.exercice %></td>
+                <td><%= carriere.fhrsoc %></td>
+                <td><%= carriere.participant.try(:full_name) %></td>
+                <td> <%= l carriere.date_debut %> - <%= l carriere.date_fin %> </td>
+                <td align="right"><%= format_cfa(carriere.salaire_rcc, false) %></td>
+                <td align="right"><%= carriere.calcul_points_rcc %></td>
+              </tr>
+            <% end %>
+          <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

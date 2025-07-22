@@ -1,0 +1,41 @@
+<%= content_for :titre_page, 'Liste des agences bancaires' %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_banque_agence_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Banque</th>
+        <th scope="col">Agence</th>
+        <th scope="col">Code Agence</th>
+        <th scope="col">Bank branch ID</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @admin_banque_agences.each do |admin_banque_agence| %>
+        <tr>
+          <td><%= link_to admin_banque_agence.admin_banque.nom, admin_banque_agence.admin_banque %></td>
+          <td><%= admin_banque_agence.nom %></td>
+          <td><%= admin_banque_agence.code %></td>
+          <td><%= admin_banque_agence.bank_branch_id %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_banque_agence, class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'modifier', edit_admin_banque_agence_path(admin_banque_agence), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <td style="width: 75px">
+            <%= link_to 'supprimer', admin_banque_agence, method: :delete, data: {confirm: 'En êtes vous sûr?'}, class: 'btn btn-outline btn-danger btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

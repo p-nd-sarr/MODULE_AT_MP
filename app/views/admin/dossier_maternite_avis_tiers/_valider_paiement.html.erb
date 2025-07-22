@@ -1,0 +1,37 @@
+<div class="modal inmodal" id="PaiementModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+        <% if @dossier_maternite_avis_tier.valide? and @dossier_maternite_avis_tier.non_paye? and @dossier_maternite_avis_tier.moins_percu? %>
+          <i class="fa fa-check modal-icon btn-primary"></i>
+          <h4 class="modal-title">
+            Valider Odre de Paiement
+          </h4>
+        <% else %>
+          <i class="fa fa-close modal-icon btn-danger"></i>
+          <h4 class="modal-title">
+            Pas de paiement à valider
+          </h4>
+        <% end %>
+
+      </div>
+      <div class="modal-body">
+        <p>
+          <strong>Type avis :</strong>
+          <%= DossierMaterniteAvisTier.human_enum_name(:type_avis, @dossier_maternite_avis_tier.type_avis) %>
+        </p>
+        <p>
+          <strong>Montant Total :</strong>
+          <%= format_cfa @dossier_maternite_avis_tier.montant_avis %>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+        <%= link_to 'Valider odre de paiement', admin_dossier_maternite_dossier_maternite_avis_tier_valider_paiement_path(@dossier_maternite, @dossier_maternite_avis_tier), 'data-turbolinks': false, class: 'btn btn-primary', id: 'valider_paiement' %>
+      </div>
+    </div>
+  </div>
+</div>

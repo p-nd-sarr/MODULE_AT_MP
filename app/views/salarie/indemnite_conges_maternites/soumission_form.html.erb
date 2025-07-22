@@ -1,0 +1,39 @@
+<%= content_for :titre_page, 'Conditions Soumission Demande' %>
+
+<div class="row">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h5>Soumission de la demande </h5>
+        </div>
+        <div class="ibox-content">
+          <%= bootstrap_form_for(@indemnite_conges_maternite,
+                                 url: salarie_dossier_maternite_indemnite_conges_maternite_soumettre_path(@dossier_maternite, @indemnite_conges_maternite),
+                                 layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+            <%= f.alert_message "Une erreur est survenue lors de la soumission." %>
+            <p>
+              En soumettant le demande j'accepte les conditions suivantes :
+            </p>
+
+            <%= f.check_box :condition_1, label: "Condition 1 : Je déclare n'avoir pas adressé pour la tranche
+              #{IndemniteCongesMaternite.human_enum_name(:tranche_paiement, @indemnite_conges_maternite.tranche_paiement)}
+              de ma grossesse débutant le #{l @dossier_maternite.debut_grossesse}
+              aucune demande d'indemnité de congés maternité à la CSS et n'avoir jamais perçu à ce titre quelque somme que ce soit." %>
+            <%= f.check_box :condition_2, label: "Condition 2 : Je certifie que les renseignements portés sur la présente demande
+              sont exacts." %>
+            
+            <div class="hr-line-dashed"></div>
+
+            <div class="form-group row">
+              <div class="col-sm-4 col-sm-offset-4">
+                <%= link_to 'Annuler', salarie_dossier_maternite_indemnite_conges_maternites_path(@dossier_maternite), class: 'btn btn-white' %>
+                <%= f.button 'Soumettre', class: 'btn btn-primary' %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

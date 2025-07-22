@@ -1,0 +1,69 @@
+<style type="text/css">
+  label[title="required"] {
+    display: none;
+  }
+
+  .invalid-feedback {
+    font-size: 0px;
+  }
+</style>
+
+
+
+<ul class="text-danger">
+  <% if !@at_rente_famille.documents.nil? and @at_rente_famille.documents.where(type_document: [:certificat_medical_consolidation]).empty? %>
+    <li>Le certificat de décès est obligatoire</li>
+  <% end %>
+</ul>
+
+
+  <div class="row" style="margin-top: 20px;">
+    <div class="col-lg-4">
+      <h2>Liste des documents</h2>
+    </div>
+    <%# unless @admin_reversion_veuve_salary.documents_valide! %>
+      <div class="col-lg-8">
+        <div class="alert alert-info alert-dismissable">
+          <button ariahidden="true" data-dismiss="alert" class="close" type="button">
+            <font style="vertical-align: inherit;">
+              <font style="vertical-align: inherit;">x</font>
+            </font>
+          </button>
+          <font style="vertical-align: inherit;">
+            <font style="vertical-align: inherit;"><span class="fa fa-info-o"></span> Veuillez renseigner des documents
+              au format PDF</font>
+          </font>
+        </div>
+      </div>
+    <%# end %>
+  </div>
+
+
+
+<% if @at_rente_famille.creation? %>
+<%= render 'documents/liste',
+           object: @at_rente_famille,
+           documents: @at_rente_famille.documents,
+           include_add: @at_rente_famille.creation?,
+           include_delete: @at_rente_famille.creation?,
+           type_documents: AtRenteFamille::TYPE_DOCUMENT,
+           type_documents_obligatoires: AtRenteFamille::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_arret_travail_at_rente_famille_path(@arret_travail,@at_rente_famille)
+%>
+
+  <%= render 'documents/modal_form',
+            type_documents: AtRenteFamille::TYPE_DOCUMENT,
+            document: Document.new(documentable: @at_rente_famille),
+             back_url: admin_arret_travail_at_rente_famille_path(@arret_travail,@at_rente_famille)
+  %>
+<% else %>
+<%= render 'documents/liste',
+           object: @at_rente_famille,
+           documents: @at_rente_famille.documents,
+           include_add: false, 
+           include_delete: false, 
+           type_documents: AtRenteFamille::TYPE_DOCUMENT,
+           type_documents_obligatoires: AtRenteFamille::TYPE_DOCUMENT_OBLIGATOIRE,
+           back_url: admin_arret_travail_at_rente_famille_path(@arret_travail,@at_rente_famille)
+%>
+<%end%>

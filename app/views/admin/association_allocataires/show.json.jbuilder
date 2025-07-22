@@ -1,0 +1,1 @@
+json.partial! "admin_association_allocataires/admin_association_allocataire", admin_association_allocataire: @admin_association_allocataire

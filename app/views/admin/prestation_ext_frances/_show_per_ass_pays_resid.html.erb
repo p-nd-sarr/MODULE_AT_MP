@@ -1,0 +1,104 @@
+<div class="row" style="margin-left: 20%;">
+  <div class="col-sm-8">
+
+    <hr>
+    <div class="panel panel-info">
+      <div class="panel-body">
+
+        <% #unless @dossier_maternite.composant_salaire_icms.empty? %>
+          <div class="table-responsive" style="margin-top: 20px">
+            <table class="table table-striped">
+              <thead class="thead-primary">
+              <tr>
+                <th scope="col">Périodes</th>
+                <th scope="col">Nbre Trimestres Assur.</th>
+                <th scope="col">Nbre Trimestres (per. équiv.)</th>
+                <th colspan="2"></th>
+              </tr>
+              </thead>
+
+              <tbody>
+              <% #@dossier_maternite.composant_salaire_icms.each do |composant_salaire_icm| %>
+                <tr>
+                  <td> Du 01/01/1995 au 31/12/2003</td>
+                  <td> 32</td>
+                  <td> 27</td>
+                  <td style="width: 75px">
+                    <%#if @dossier_maternite.creation? %>
+                      <%#= link_to "supprimer", admin_dossier_maternite_destroy_composant_path(@dossier_maternite, composant_salaire_icm.id), data: { method: :delete },  class: 'btn btn-outline btn-danger btn-xs' %>
+                    <%#end %>
+                    <button type="button" class="btn btn-outline btn-danger btn-xs">supprimer</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td> Du 01/01/2004 au 31/12/2019</td>
+                  <td> 60 </td>
+                  <td> 52</td>
+                  <td style="width: 75px">
+                    <button type="button" class="btn btn-outline btn-danger btn-xs">supprimer</button>
+                  </td>
+                </tr>
+              <% #end %>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td>Total</td>
+                <td> ... trimestres</td>
+                <td> ... trimestres</td>
+              </tr>
+              </tfoot>
+            </table>
+          </div>
+        <%#end %>
+
+        <h5>
+          <strong>Total Général :</strong> &nbsp;171 trimestres
+        </h5>
+
+      </div>
+    </div>
+
+    <hr>
+    <div class="panel panel-info">
+      <div class="panel-body">
+        <%= bootstrap_form_tag(layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+          <%= f.alert_message 'aa' %>
+          <%= f.date_select :debut, label: "Du",
+                            start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+          <%= f.date_select :debut, label: "Au",
+                            start_year: (Date.today - 10.year).year, end_year: (Date.today + 42.year).year %>
+          <%= f.number_field :montant, label:"Trimestres" %>
+          <%= f.number_field :montant, label:"Trimestres eq." %>
+          <div class="hr-line-dashed"></div>
+
+          <div class="col-sm-4 col-sm-offset-2">
+            <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+
+    <% if @prestation_ext_france.carrieres_prestation.size > 0 %>
+      <div class="row" style="margin-left: 20%;">
+        <div class="col-sm-8">
+          <hr>
+          <div class="panel panel-info">
+            <div class="panel-body">
+              <div class="table-responsive" style="margin-top: 5px">
+                <br>
+                <h5>
+                  <strong>Nombre de trimestres de salariat :</strong> &nbsp;
+                  <%= @prestation_ext_france.participant.nb_trimestre_travail %>
+
+                </h5>
+              </div>
+            </div>
+          </div>
+          <hr>
+        </div>
+      </div>
+    <% end %>
+
+  </div>
+</div>

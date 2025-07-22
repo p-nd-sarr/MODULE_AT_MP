@@ -1,0 +1,22 @@
+<%= bootstrap_form_for([:admin, @allocataire, @avis_tier], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+  <%= f.select :type_operation,
+               AvisTier::TYPE.keys.collect { |type_operation| [AvisTier.human_enum_name(:type_operation, type_operation), type_operation] }, label: 'Type Demande', required: true  %>
+
+  <%= f.number_field :montant, class:'form-control' %>
+  <%= f.number_field :nombre_echeance, class:'form-control' %>
+
+  <%= f.date_select :date_debut, label: "Date de Début",
+                    start_year: (Date.today - 100.year).year, end_year: (Date.current - 0.years).year  %>
+
+  <%= f.text_area :commentaire , class:'form-control' %>
+
+  <div class="hr-line-dashed"></div>
+
+  <div class="form-group row">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= link_to 'Annuler', (@avis_tier.persisted? ? [:admin, @allocataire, @avis_tier] : admin_allocataire_avis_tiers_path(@allocataire)), class: 'btn btn-white' %>
+      <%= f.button 'Valider', class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

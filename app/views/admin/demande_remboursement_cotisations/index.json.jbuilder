@@ -1,0 +1,1 @@
+json.array! @admin_demande_remboursement_cotisations, partial: "admin_demande_remboursement_cotisations/admin_demande_remboursement_cotisation", as: :admin_demande_remboursement_cotisation

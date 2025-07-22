@@ -1,0 +1,35 @@
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Numéro allocataire</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prenom</th>
+        <th scope="col">Type</th>
+        <th scope="col">Date demande</th>
+        <th scope="col">Etat</th>
+        <th colspan="2"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @revision_pensions.each do |revision_pension| %>
+        <tr>
+          <td><%= revision_pension.id %></td>
+          <td><%= (revision_pension.allocataire.numero_allocataire) unless revision_pension.allocataire.nil? %></td>
+          <td><%= (revision_pension.allocataire.nom) unless revision_pension.allocataire.nil? %></td>
+          <td><%= (revision_pension.allocataire.prenom) unless revision_pension.allocataire.nil? %></td>
+          <td><%= revision_pension.type_motif %></td>
+          <td><%= l revision_pension.created_at %></td>
+          <td><%= revision_pension.workflow_state %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', [:admin, revision_pension.allocataire, revision_pension], class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

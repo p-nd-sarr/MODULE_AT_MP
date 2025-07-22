@@ -1,0 +1,31 @@
+<table class="table table-bordered table-condensed table-hover">
+  <thead>
+  <tr>
+    <th scope="col">Nom</th>
+    <th scope="col">Prénom</th>
+    <th scope="col">Date de naissance</th>
+    <th scope="col">Date de mariage</th>
+    <th scope="col">NIN</th>
+    <th scope="col">Documents</th>
+    <th scope="col">Supprimé?</th>
+    <th scope="col">Incomplet?</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @salarie.conjoints.valide.each do |epouse| %>
+    <tr>
+      <td><%= epouse.nom %></td>
+      <td><%= epouse.prenom %></td>
+      <td><%= l epouse.date_naissance %></td>
+      <td><%= l epouse.date_mariage %></td>
+      <td><%= epouse.numero_piece %></td>
+      <td><%= state_yes_no epouse.deleted %></td>
+      <td><%= state_yes_no epouse.incomplete %></td>
+      <td style="width: 75px">
+        <%= link_to 'lien vers les documents', admin_conjoint_path(epouse), :target => '_blank', class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,69 @@
+<%= content_for :titre_page, 'Traitement collectif de dossiers prestations' %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= search_form_for @req, url: admin_traitement_collectifs_path do |f| %>
+
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :fhnum_cont, 'Numéro employeur' %>
+          <%= f.search_field :fhnum_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :ancien_num_ipres_cont, 'Ancien numéro IPRES' %>
+          <%= f.search_field :ancien_num_ipres_cont, class: 'form-control' %>
+        </div>
+        <div class="col-sm-3">
+          <%= f.label :ancien_num_css_cont, 'Ancien numéro CSS' %>
+          <%= f.search_field :ancien_num_css_cont, class: 'form-control' %>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-3">
+          <%= f.label :fhrsoc_cont, 'Raison sociale' %>
+          <%= f.search_field :fhrsoc_cont, class: 'form-control' %>
+        </div>
+      </div>
+
+      <div class="hr-line-dashed"></div>
+      <%= link_to "Annuler", request.path, class: "btn" %>
+      <%= f.submit class: 'btn btn-primary' %>
+    <% end %>
+    <br> <br>
+
+    <div class="none">
+      <h5>Liste des employeurs <span class="label label-warning"> <%= @req.result.count %></span></h5>
+    </div>
+    <br> <br>
+
+    <%= paginate @employeurs %>
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéeo employeur</th>
+        <th scope="col">Ancien numéro IPRES</th>
+        <th scope="col">Ancien numero CSS</th>
+        <th scope="col">Raison sociale</th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @employeurs.each do |employeur| %>
+        <tr>
+          <td><%= employeur.fhnum %></td>
+          <td><%= employeur.ancien_num_ipres %></td>
+          <td><%= employeur.ancien_num_css %></td>
+          <td><%= employeur.fhrsoc %></td>
+
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_traitement_collectif_path(employeur.fhnum), class: 'btn btn-outline btn-primary btn-xs' if current_user.gestionnaire_compte_allocataire? %>
+            <%= link_to 'détails', admin_traitement_collectif_list_bordereau_path(employeur.fhnum), class: 'btn btn-outline btn-primary btn-xs' if current_user.chef_agence? or current_user.comptable? %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @employeurs %>
+  </div>
+</div>

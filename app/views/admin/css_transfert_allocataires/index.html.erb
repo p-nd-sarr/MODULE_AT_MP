@@ -1,0 +1,59 @@
+<%= content_for :titre_page, "Css Transfert Allocataires" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Ajouter', new_admin_css_transfert_allocataire_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <%= render 'admin/css_transfert_allocataires/search_allocataire' %>
+    <br> <br>
+    <%= paginate @css_transfert_allocataires %>
+    <table class="table table-bordered table-responsive table-hover">
+      <thead>
+      <tr>
+        <th scope="col">N°</th>
+        <th scope="col">Numéro d'affiliation</th>
+        <th scope="col">Employeur source</th>
+        <th scope="col">Employeur destination</th>
+        <th scope="col">Agence source</th>
+        <th scope="col">Agence destination</th>
+        <th scope="col">Date transfert</th>
+        <th scope="col">Date embauche</th>
+        <th scope="col">Etat</th>
+        <th scope="col">Créé le</th>
+        <th colspan="3"></th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @css_transfert_allocataires.each_with_index do |transfer, i| %>
+        <tr>
+          <td><%= i + 1 %></td>
+          <td><%= Psrm::Participant.find_by_matric(transfer.numero_affiliation).full_name unless Psrm::Participant.find_by_matric(transfer.numero_affiliation).nil? %></td>
+          <td><%= Psrm::Employeur.find_by_fhnum(transfer.employeur_source_id).fhrsoc unless Psrm::Employeur.find_by_fhnum(transfer.employeur_source_id).nil? %></td>
+          <td><%= Psrm::Employeur.find_by_fhnum(transfer.employeur_destination_id).fhrsoc unless Psrm::Employeur.find_by_fhnum(transfer.employeur_destination_id).nil? %></td>
+          <td><%= Admin::Agence.find(transfer.agence_source_id).description_prest unless Admin::Agence.find(transfer.agence_source_id).nil? %></td>
+          <td><%= Admin::Agence.find(transfer.agence_destination_id).description_prest unless Admin::Agence.find(transfer.agence_source_id).nil? %></td>
+          <td><%= l transfer.date_transfert unless transfer.date_transfert.nil? %></td>
+          <td><%= l transfer.date_embauche unless transfer.date_embauche.nil? %></td>
+          <td><%= CssTransfertAllocataire.human_enum_name(:workflow_state, transfer.workflow_state) %></td>
+          <td><%= transfer.created_at.strftime('%d-%m-%Y') %></td>
+          <td style="width: 75px">
+            <%= link_to 'détails', admin_css_transfert_allocataire_path(transfer), class: 'btn btn-outline btn-primary btn-xs' %>
+          </td>
+          <% if transfer.creation? and current_user.gestionnaire_compte_allocataire? %>
+            <td style="width: 75px">
+              <%= link_to 'modifier', edit_admin_css_transfert_allocataire_path(transfer), class: 'btn btn-outline btn-primary btn-xs' %>
+            </td>
+            <td style="width: 75px">
+              <%= link_to 'supprimer', admin_css_transfert_allocataire_path(transfer), method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @css_transfert_allocataires %>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="modal inmodal" id=<%="affectation_modal_"+at.id.to_s%> tabindex="-1" role="dialog" aria-hidden="true">
+  <%if at.accepte? or at.rechute?%>
+   <%= form_tag admin_arret_travail_user_affectation_path(at), method: :post, class: "form-inline"  do %>
+    <div class="modal-dialog">
+      <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+        <%if at.creer_par_ag_direction_at%>
+         Affection de technicien direction AT
+         <%else%> 
+         Affection de technicien agence
+         <%end%> 
+        </h4>
+
+      </div>
+      <div class="modal-body">
+       <%if at.creer_par_ag_direction_at%>
+        <%= select_tag 'user_id', options_for_select(User.technicien_direction_at.collect{ |u| [u.email, u.id] }), class: 'form-control' %>
+       <%else%> 
+        <%= select_tag 'user_id', options_for_select(User.technicien_at.where(agence: current_user.agence).collect{ |u| [u.email, u.id] }), class: 'form-control' %>
+       <%end%> 
+     
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= submit_tag "affecter", class: "btn btn-primary btn-sm" %>
+        </div>
+      </div>
+    </div>
+   <% end %>
+  <%else%> 
+    <%= form_tag admin_arret_travail_user_affectation_path(at), method: :post, class: "form-inline"  do %>
+    <div class="modal-dialog">
+      <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-check modal-icon btn-primary"></i>
+        <h4 class="modal-title">
+         Affection de rédacteur
+        </h4>
+
+      </div>
+      <div class="modal-body">    
+        <%= select_tag 'user_id', options_for_select(User.redacteur.collect{ |u| [u.email, u.id] }), class: 'form-control' %>
+      </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+          <%= submit_tag "affecter", class: "btn btn-primary btn-sm" %>
+        </div>
+      </div>
+    </div>
+   <% end %>
+  <% end %>
+</div>
+
+

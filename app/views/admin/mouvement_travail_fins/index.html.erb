@@ -1,0 +1,36 @@
+<%= content_for :titre_page, 'Admin Mouvement Travail Fins' %>
+
+<%= content_for :actions_page do %>
+    <%= link_to 'Ajouter', new_admin_mouvement_travail_fin_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox-content">
+    <table class="table table-bordered table-condensed table-hover">
+    <thead>
+    <tr>
+      <th width="10px">ID</th>
+                <th scope="col">Code</th>
+                <th scope="col">Description</th>
+            <th colspan="2"></th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <% @admin_mouvement_travail_fins.each do |admin_mouvement_travail_fin| %>
+    <tr>
+      <td><%= link_to "##{admin_mouvement_travail_fin.id}", admin_mouvement_travail_fin %></td>
+                <td><%= admin_mouvement_travail_fin.code %></td>
+                <td><%= admin_mouvement_travail_fin.description %></td>
+            <td style="width: 75px">
+        <%= link_to 'modifier', edit_admin_mouvement_travail_fin_path(admin_mouvement_travail_fin), class: 'btn btn-outline btn-primary btn-xs' %>
+      </td>
+      <td style="width: 75px">
+        <%= link_to 'supprimer', admin_mouvement_travail_fin, method: :delete, data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-danger btn-xs' %>
+      </td>
+    </tr>
+    <% end %>
+    </tbody>
+    </table>
+  </div>
+</div>

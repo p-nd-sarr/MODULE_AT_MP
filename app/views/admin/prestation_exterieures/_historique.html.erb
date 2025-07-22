@@ -1,0 +1,174 @@
+<div class="ibox-content" style="font-size: 13px">
+  <div class="full-height-scroll">
+    <div class="row">
+      <h4>
+        Historiqie du dossier de prestations exterieures CAF
+      </h4>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-sm-4">
+        <h5>Ouvert Par :  <%= @prestation_exterieure.ajoute_par.full_name %> </h5>
+        <h5>Date de création : <%= @prestation_exterieure.created_at.strftime("%d/%m/%Y") %> </h5>
+      </div>
+
+      <div class="col-sm-4">
+        <h5>Soumission état de famille par
+          : <%= @prestation_exterieure.soumis_etf_par.full_name unless @prestation_exterieure.soumis_etf_par.nil? %> </h5>
+        <h5>Date de soumission
+          : <%= @prestation_exterieure.date_soumission_etf.strftime("%d/%m/%Y") unless @prestation_exterieure.date_soumission_etf.nil? %> </h5>
+      </div>
+
+
+      <div class="col-sm-4">
+        <h5>Validation état de famille par
+          : <%= @prestation_exterieure.valide_etf_par.full_name unless @prestation_exterieure.valide_etf_par.nil? %>  </h5>
+        <h5>Date
+          Date de validation
+          : <%= @prestation_exterieure.date_validation_etf.strftime("%d/%m/%Y") unless @prestation_exterieure.date_validation_etf.nil? %> </h5>
+      </div>
+
+    </div>
+    <hr>
+    <div class="row">
+      <h4>
+        Historiqie des droits de liquidation
+      </h4>
+    </div>
+    <hr>
+    <!--
+    <div class="row">
+      <%# @droits_liquidations.each do |items| %>
+        <div class="row">
+          <h5>
+            Prenom conjoint : <%#= items.first.first %>
+          </h5>
+          <h5>
+            Nom conjoint : <%#= items.first.last %>
+          </h5>
+          <br>
+        </div>
+        <div class="row" style="margin-bottom: 30px">
+          <%#= paginate items.last.last unless items.last.last.nil? %>
+          <table class="table table-bordered table-condensed table-hover">
+            <thead>
+            <tr>
+              <th align="center">Prénom</th>
+              <th align="center">Nom</th>
+              <th align="center">Période indemnités</th>
+              <th align="center">Liquidation</th>
+              <th align="center">Validation chef grp</th>
+              <th align="center">Validation chef sub CAF</th>
+              <th align="center">Validation comptable</th>
+            </tr>
+            </thead>
+            <tbody>
+            <%# unless items.last.last.nil? %>
+              <%# items.last.last.each do |item| %>
+                <tr>
+                  <td><%#= item.caf_enfant.prenom %></td>
+                  <td><%#= item.caf_enfant.nom %></td>
+                  <td><%#= item.date_debut %> - <%#= item.date_fin %></td>
+                  <td>
+                  <span>
+                    par : <%#= item.liquide_par.prenom unless item.liquide_par.nil? %> <%#= item.liquide_par.nom unless item.liquide_par.nil? %>
+                  </span> <br>
+                    <span>
+                    le <%#= item.date_liquidation.strftime('%m/%d/%Y') unless item.date_liquidation.nil? %>
+                  </span>
+                  </td>
+                  <td>
+                  <span>
+                    par : <%#= item.valide_chef_grp_par.prenom unless item.valide_chef_grp_par.nil? %> <%#= item.valide_chef_grp_par.nom unless item.valide_chef_grp_par.nil? %>
+                  </span> <br>
+                    <span>
+                    le <%#= item.date_validation_chef_grp.strftime('%m/%d/%Y') unless item.date_validation_chef_grp.nil? %>
+                  </span>
+                  </td>
+                  <td>
+                  <span>
+                    par : <%#= item.valide_chef_sub_par.prenom unless item.valide_chef_sub_par.nil? %> <%#= item.valide_chef_sub_par.nom unless item.valide_chef_sub_par.nil? %>
+                  </span> <br>
+                    <span>
+                    le <%#= item.date_validation_chef_sub.strftime('%m/%d/%Y') unless item.date_validation_chef_sub.nil? %>
+                  </span>
+                  </td>
+                  <td>
+                  <span>
+                    par : <%#= item.valide_cpt_par.prenom unless item.valide_cpt_par.nil? %> <%#= item.valide_cpt_par.nom unless item.valide_cpt_par.nil? %>
+                  </span> <br>
+                    <span>
+                    le <%#= item.date_validation_cpt.strftime('%m/%d/%Y') unless item.date_validation_cpt.nil? %>
+                  </span>
+                  </td>
+                </tr>
+              <%# end %>
+            <%# end %>
+            </tbody>
+          </table>
+          <%#= paginate items.last.last unless items.last.last.nil? %>
+        </div>
+        <hr>
+        <br>
+      <%# end %>
+    </div>
+-->
+    <div class="row">
+
+      <%= paginate @droits_liquidations %>
+      <table class="table table-bordered table-condensed table-hover">
+        <thead>
+        <tr>
+          <th align="center">Période indemnités</th>
+          <th align="center">Liquidation</th>
+          <th align="center">Validation chef grp</th>
+          <th align="center">Validation chef sub CAF</th>
+          <th align="center">Validation comptable</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% @droits_liquidations.each do |droits_liquidation| %>
+          <tr>
+            <td><%= droits_liquidation.date_debut %> - <%= droits_liquidation.date_fin %></td>
+            <td>
+                  <span>
+                    par : <%= droits_liquidation.liquide_par.prenom unless droits_liquidation.liquide_par.nil? %> <%= droits_liquidation.liquide_par.nom unless droits_liquidation.liquide_par.nil? %>
+                  </span> <br>
+              <span>
+                    le <%= droits_liquidation.date_liquidation.strftime('%d/%m/%Y') unless droits_liquidation.date_liquidation.nil? %>
+                  </span>
+            </td>
+            <td>
+                  <span>
+                    par : <%= droits_liquidation.valide_chef_grp_par.prenom unless droits_liquidation.valide_chef_grp_par.nil? %> <%= droits_liquidation.valide_chef_grp_par.nom unless droits_liquidation.valide_chef_grp_par.nil? %>
+                  </span> <br>
+              <span>
+                    le <%= droits_liquidation.date_validation_chef_grp.strftime('%d/%m/%Y') unless droits_liquidation.date_validation_chef_grp.nil? %>
+                  </span>
+            </td>
+            <td>
+                  <span>
+                    par : <%= droits_liquidation.valide_chef_sub_par.prenom unless droits_liquidation.valide_chef_sub_par.nil? %> <%= droits_liquidation.valide_chef_sub_par.nom unless droits_liquidation.valide_chef_sub_par.nil? %>
+                  </span> <br>
+              <span>
+                    le <%= droits_liquidation.date_validation_chef_sub.strftime('%d/%m/%Y') unless droits_liquidation.date_validation_chef_sub.nil? %>
+                  </span>
+            </td>
+            <td>
+                  <span>
+                    par : <%= droits_liquidation.valide_cpt_par.prenom unless droits_liquidation.valide_cpt_par.nil? %> <%= droits_liquidation.valide_cpt_par.nom unless droits_liquidation.valide_cpt_par.nil? %>
+                  </span> <br>
+              <span>
+                    le <%= droits_liquidation.date_validation_cpt.strftime('%d/%m/%Y') unless droits_liquidation.date_validation_cpt.nil? %>
+                  </span>
+            </td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+      <%= paginate @droits_liquidations %>
+    </div>
+
+  </div>
+</div>
+

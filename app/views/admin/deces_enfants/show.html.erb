@@ -1,0 +1,62 @@
+<%= content_for :titre_page, "Détails enfant" %>
+
+<%= content_for :actions_page do %>
+  <%= link_to 'Retour', admin_deces_enfants_path, class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Modifier', edit_admin_deces_enfant_path(@admin_deces_enfant), class: 'btn btn-white btn-sm' %>
+  <%= link_to 'Enregistrer un décés', new_admin_deces_enfant_path, class: 'btn btn-primary btn-sm' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <p>
+              <strong>Numero affiliation:</strong>
+              <%= @admin_deces_enfant.numero_affiliation %>
+            </p>
+
+            <p>
+              <strong>Prenom:</strong>
+              <%= @admin_deces_enfant.enfant.prenom unless @admin_deces_enfant.enfant.nil?%>
+            </p>
+
+            <p>
+              <strong>Nom:</strong>
+              <%= @admin_deces_enfant.enfant.nom unless @admin_deces_enfant.enfant.nil?%>
+            </p>
+
+            <p>
+              <strong>Date naissance:</strong>
+              <%= @admin_deces_enfant.enfant.date_naissance unless @admin_deces_enfant.enfant.nil?%>
+            </p>
+
+            <p>
+              <strong>Date deces:</strong>
+              <%= @admin_deces_enfant.date_deces unless @admin_deces_enfant.date_deces.nil?%>
+            </p>
+            <p>
+              <strong>Type piece:</strong>
+              <%= @admin_deces_enfant.type_piece unless @admin_deces_enfant.type_piece.nil?%>
+            </p>
+
+            <p>
+              <strong>Numero piece:</strong>
+              <%= @admin_deces_enfant.numero_piece unless @admin_deces_enfant.numero_piece.nil?%>
+            </p>
+
+
+            <p>
+              <strong>Justificatif décés:</strong>
+              <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @admin_deces_enfant.justificatif_deces, target: :_blank if @admin_deces_enfant.justificatif_deces.attached?%>
+              <%#= link_to image_tag(@admin_deces_enfant.justificatif_deces.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @admin_deces_enfant.justificatif_deces, target: :_blank if @admin_deces_enfant.justificatif_deces.attached?%>
+            </p>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

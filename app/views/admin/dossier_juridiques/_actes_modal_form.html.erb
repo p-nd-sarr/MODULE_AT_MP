@@ -1,0 +1,82 @@
+<div class="modal inmodal" id="actes<%= object.id %>" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content animated bounceInRight">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <i class="fa fa-meetup modal-icon btn-outline"></i>
+        <h4 class="modal-title">
+          Ajouter Audience / Séance
+        </h4>
+      </div>
+      <div class="modal-body">
+        <div class="ibox-content">
+          <%= bootstrap_form_for([:admin, object], layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+
+            <div class="row">
+              -             <%= f.select :type_act,
+                                         DossierJuridiqueActe::TYPE_ACT.keys.collect { |type_act| [DossierJuridiqueActe.human_enum_name(:type_act, type_act), type_act] }, label: "Type acte", required: true %>
+            </div>
+
+            <div class="row">
+              <%= f.date_field :date_act, label: "Date acte", required: true %>
+            </div>
+
+            <div class="row">
+              <%= f.text_area :comment, label: "Commentaire", required: true %>
+            </div>
+
+            <div class="section_audience">
+              <div class="row">
+                <%= f.file_field :pv_audience, label: "PV d'audience" %>
+              </div>
+
+              <div class="row">
+                <%= f.file_field :pv_assignation, label: "PV d'assignation" %>
+              </div>
+
+              <div class="row">
+                <%= f.file_field :pv_decision, label: "PV de décision" %>
+              </div>
+            </div>
+
+            <%= f.hidden_field :dossier_juridique_id, value: @dossier_juridique.id %>
+
+            <div class="hr-line-dashed"></div>
+            <br>
+
+            <div class="modal-footer form-group">
+              <button class="btn btn-white" type="button" data-dismiss="modal">Fermer</button>
+              <%= f.button 'Ajouter', class: 'btn btn-primary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript do %>
+  <script type="text/javascript">
+      $(document).ready(function () {
+          const type_array = document.getElementsByName('dossier_juridique_acte[type_act]');
+          const file_section_array = document.getElementsByClassName('section_audience');
+
+          for (let i = 0; i < type_array.length; i++) {
+              show_or_hide_file_section(i);
+              type_array[i].addEventListener('change', function (event) {
+                  show_or_hide_file_section(i);
+              });
+          }
+
+          function show_or_hide_file_section(i) {
+              if (type_array[i].value == 'audience') {
+                  file_section_array[i].style.display = 'block'
+              } else {
+                  file_section_array[i].style.display = 'none'
+              }
+          }
+
+      });
+  </script>
+<% end %>

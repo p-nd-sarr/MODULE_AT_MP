@@ -1,0 +1,1 @@
+json.partial! "admin_type_piece_identifications/admin_type_piece_identification", admin_type_piece_identification: @admin_type_piece_identification

@@ -1,0 +1,126 @@
+<%= content_for :titre_page, "Détails ascendants_salary" %>
+
+<%= content_for :actions_page do %>
+    <%= link_to ' Retour', admin_ascendants_salaries_path, class: 'btn btn-white btn-sm fa fa-arrow-left' %>
+    <%= link_to ' Modifier', edit_admin_ascendants_salary_path(@ascendants_salary), class: 'btn btn-white btn-sm fa fa-edit' %>
+<% end %>
+
+<div class="wrapper wrapper-content">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <div class="wrapper wrapper-content">
+            <div class="row">
+              <div class="col-sm-12">
+                <p>
+                  <strong>Numéro Affiliation:</strong>
+                  <%= @ascendants_salary.numero_affiliation %>
+                </p>
+
+                <p>
+                  <strong>Prénom Salarié:</strong>
+                  <%= @ascendants_salary.prenom_salarie %>
+                </p>
+
+                <p>
+                  <strong>Nom salarié:</strong>
+                  <%= @ascendants_salary.nom_salarie %>
+                </p>
+              </div>
+            </div>
+            
+            <div class="row">
+            <div class="col-lg-12"><hr></div>
+              <div class="col-sm-6" style="text-align:left">
+                <h2 class="text-navy"><strong>Informations sur la mère</strong></h2>
+                <hr>
+                <p>
+                  <strong>Prénom de la mère:</strong>
+                  <%= @ascendants_salary.prenom_mere %>
+                </p>
+
+                <p>
+                  <strong>Nom de la mère:</strong>
+                  <%= @ascendants_salary.nom_mere %>
+                </p>
+
+                <p>
+                  <strong>Date de naissance de la mére:</strong>
+                  <%= @ascendants_salary.date_naissance_mere.strftime("%d/%m/%Y") %>
+                </p>
+
+                <p>
+                  <strong>Type de la pièce de la mère:</strong>
+                  <%= AscendantsSalarie.human_enum_name(:type_piece_mere, @ascendants_salary.type_piece_mere) unless @ascendants_salary.type_piece_mere.nil? %>
+                </p>
+
+                <p>
+                  <strong>Numéro de la pièce de la mère:</strong>
+                  <%= @ascendants_salary.numero_piece_mere %>
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <h2 class="text-navy"><strong>Informations sur le père</strong></h2>
+                <hr>
+                <p>
+                  <strong>Prénom du père:</strong>
+                  <%= @ascendants_salary.prenom_pere %>
+                </p>
+
+                <p>
+                  <strong>Nom du père:</strong>
+                  <%= @ascendants_salary.nom_pere %>
+                </p>
+
+                <p>
+                  <strong>Date de naissance du père:</strong>
+                  <%= @ascendants_salary.date_naissance_pere.strftime("%d/%m/%Y") %>
+                </p>
+
+                <p>
+                  <strong>Type de la pièce du père:</strong>
+                  <%= AscendantsSalarie.human_enum_name(:type_piece_pere, @ascendants_salary.type_piece_pere) unless @ascendants_salary.type_piece_pere.nil? %>
+                </p>
+
+                <p>
+                  <strong>Numéro de la pièce du père:</strong>
+                  <%= @ascendants_salary.numero_piece_pere %>
+                </p>
+              </div>
+
+              <div class="hr-line-dashed"></div>
+              <div class="col-lg-12">
+                <hr>
+
+                <h3>Liste des documents fournis:</h3>
+                <div class="col-sm-6">
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6" style="text-align: right;">
+                      <dt>Pièce fournie pour la mère:</dt>
+                    </div>
+                    <div class="col-sm-6" style="text-align: left;">
+                      <dd class="mb-1"><%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @ascendants_salary.piece_mere, target: :_blank %></dd>
+<!--                      <dd class="mb-1"><%#= link_to image_tag(@ascendants_salary.piece_mere.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @ascendants_salary.piece_mere, target: :_blank %></dd>-->
+                    </div>
+                  </d1>
+                </div>
+                <div class="col-sm-6">
+                  <d1 class="row mb-0">
+                    <div class="col-sm-6" style="text-align: right;">
+                      <dt>Pièce fournie pour le père:</dt>
+                    </div>
+                    <div class="col-sm-6" style="text-align: left;">
+                      <dd class="mb-1"> <%= link_to image_tag('missing_logo.png', size: "200x200>", class: "m-t-xs img-responsive"), @ascendants_salary.piece_pere, target: :_blank %></dd>
+<!--                      <dd class="mb-1"> <%#= link_to image_tag(@ascendants_salary.piece_pere.preview(resize: "200x200>"), class: "m-t-xs img-responsive"), @ascendants_salary.piece_pere, target: :_blank %></dd>-->
+                    </div>
+                  </d1>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

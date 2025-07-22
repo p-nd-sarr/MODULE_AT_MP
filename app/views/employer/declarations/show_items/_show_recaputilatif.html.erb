@@ -1,0 +1,50 @@
+<% unless @declaration.recap_salarie_valide? %>
+<div class="row">
+  <div class="col-lg-4">
+    <div class="form-group row">
+      <div class="col-sm-12">
+        <%= link_to "Je valide les informations sur le récapitulatif", employer_declaration_valider_recapitulatif_path(@declaration), 'data-confirm': 'Vous confirmez cette action ?', class: 'btn btn-w-m btn-primary', id: 'valider_recap' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% end %>
+
+<div class="row">
+
+  <div class="col-sm-12">
+
+    <table class="table table-bordered table-condensed table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Numéro</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Prénom</th>
+        <th scope="col">Salaire</th>
+        <th scope="col">Montant AT</th>
+        <th scope="col">Montant PF</th>
+        <th scope="col">Montant RG</th>
+        <th scope="col">Montant RCC</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <% @effectifs.each do |salarie| %>
+        <tr>
+          <td><%= salarie.matricule %></td>
+          <td><%= salarie.nom %></td>
+          <td><%= salarie.prenom %></td>
+          <td><%= salarie.salaire_contractuel %></td>
+          <td><%= salarie.montant_at(@taux_at) %></td>
+          <td><%= salarie.montant_pf %></td>
+          <td><%= salarie.montant_rg %></td>
+          <td><%= salarie.montant_rcc %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <%= paginate @effectifs %>
+  </div>
+
+</div>

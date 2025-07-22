@@ -1,0 +1,23 @@
+
+  <div class="modal inmodal" id="affecter-one-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <%= bootstrap_form_for(@at_consolidation, url: admin_arret_travail_at_consolidation_affectation_technicien_path(@arret_travail, @at_consolidation), layout: :horizontal, label_col: "col-sm-4", control_col: "col-sm-8") do |f| %>
+        <div class="modal-content animated bounceInRight">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <i class="fa fa-laptop modal-icon"></i>
+            <h4 class="modal-title">Consolidation Numéro : <%= @at_consolidation.id %> </h4>
+            <small class="font-bold">Choisir le technicien</small>
+          </div>
+          <div class="modal-body">
+            <%= f.collection_select :affectation_technicien, @techniciens, :id, :full_name, label: 'Choisir un technicien', required: true %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-white" data-dismiss="modal">Fermer</button>
+            <button type="submit" class="btn btn-primary">Affecter </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
