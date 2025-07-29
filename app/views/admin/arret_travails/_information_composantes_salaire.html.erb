@@ -126,7 +126,9 @@
   </div>
 
   <div class="col-md-12" style="margin-top: 10px;">
-    <h3 style="margin-top: 30px;" class="text-success"> Accident de travail </h3>
+    <h3 style="margin-top: 30px;" class="text-success"> 
+      <%= @est_mp ? "Maladie professionnelle" : "Accident de travail" %> 
+    </h3>
     <hr class="no-margins">
     <ul>
       <li class="mb-1"> Date accident:

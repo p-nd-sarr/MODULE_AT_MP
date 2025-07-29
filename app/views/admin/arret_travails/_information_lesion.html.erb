@@ -3,12 +3,16 @@
 
 <div class="row" style="margin-top: 30px;" >
     <div class="col-lg-9">
-        <h3>Liste lésions</h3>
+        <h3>Liste des atteintes</h3>
+        <!--<h3>Liste lésions</h3>-->
     </div>
     <div class="col-sm-3" style="text-align: right;">
-      <%if @demande_arret_travail.creation?%>
-        <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#lesion1">Ajouter lésion</button>
-      <% end %>
+        <% if @demande_arret_travail.creation? %>
+            <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#lesion1">
+              <%= @est_mp ? 'Ajouter atteinte' : 'Ajouter lésion' %>
+            </button>
+        <% end %>
+
       <div class="modal inmodal" id="lesion1" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
           <%= bootstrap_form_for(@at_lesion, url:  admin_arret_travail_ajouter_lesion_path(@demande_arret_travail), label_col: "col-sm-5", control_col: "col-sm-7") do |f| %>
@@ -19,12 +23,15 @@
                   <span aria-hidden="true">x</span>
                   <span class="sr-only">Close</span>
                 </button>
-                <h4 class="modal-title">Ajouter lésion</h4>
+                <h4 class="modal-title">
+                  <%= @est_mp ? 'Ajouter atteinte' : 'Ajouter lésion' %>
+                </h4>
               </div>
+
               <div class="modal-body">
                 <%= f.hidden_field :arret_travail_id, value: @demande_arret_travail.id %>
-                <%= f.select :nature_lesion, AtLesion::NATURE_LESION.keys.collect { |item| [ArretTravail.human_enum_name(:nature_lesion, item), item] }, label: 'Nature lésion', include_blank: 'Selectionner' %>
-                <%= f.select :siege_lesion, AtLesion::SIEGEE_LESION.reject { |k, v| v == 4 || v == 5 || v == 6 || v == 8 }.keys.collect { |item| [ArretTravail.human_enum_name(:siege_lesion, item), item] }, label: 'Siege lésion', include_blank: 'Selectionner' %>
+                <%= f.select :nature_lesion, AtLesion::NATURE_LESION.keys.collect { |item| [ArretTravail.human_enum_name(:nature_lesion, item), item] }, label: (@est_mp ? 'Nature atteinte' : 'Nature lésion'), include_blank: 'Selectionner' %>
+                <%= f.select :siege_lesion, AtLesion::SIEGEE_LESION.reject { |k, v| v == 4 || v == 5 || v == 6 || v == 8 }.keys.collect { |item| [ArretTravail.human_enum_name(:siege_lesion, item), item] }, label: (@est_mp ? 'Siège atteinte' : 'Siège lésion'), include_blank: 'Selectionner' %>
                 <%= f.date_field :created_at, label: "Date CMC" %>
               </div>
               <div class="modal-footer form-group">
@@ -43,8 +50,8 @@
         <thead>
         <tr>
           <th>Date établissement certificat</th>
-          <th>Nature lésion</th>
-          <th>Siege lésion</th>
+          <th><%= @est_mp ? 'Nature atteinte' : 'Nature lésion' %></th>
+          <th><%= @est_mp ? 'Siège atteinte' : 'Siège lésion' %></th>
           <th colspan="2">Action</th>
 
         </tr>

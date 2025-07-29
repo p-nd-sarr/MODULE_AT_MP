@@ -10,14 +10,18 @@ class Admin::ArretTravailsController < Admin::ApplicationController
   INFO_PRIME_SALAIRE_PAGE = 'information_prime_salaire'.freeze
   INFO_AVIS_PAGE = 'information_avis'.freeze
   INFO_SALAIRE_PAGE = '_information_les_12_derniers_salaires'.freeze
-  INFO_CONSOLIDATION_PAGE = 'information_consolidation'.freeze  
-  INFO_EXECEPTIONNELLE_PAGE = 'information_exceptionnelle'.freeze
-  NBR_HEUR_JRNL_PAGE = 'nbr_heure_jrnl'.freeze
+  INFO_CONSOLIDATION_PAGE = 'information_consolidation'.freeze
   before_action :set_admin_arret_travail, only: [:show, :edit, :update, :destroy, :recipisse_dossier]
-  def index
-    @q = ArretTravail.all.not_deleted.ransack(params[:q])
-    @demande_arret_travails = @q.result.page(params[:page]).order('created_at DESC').per(100)
-  end
+  # Dans le contrôleur - remplacer la méthode index par :
+  
+def index  
+  @est_mp = params[:est_mp].to_s == 'true'  # Conversion en booléen
+  
+  atmp = ArretTravail.all.not_deleted.where(est_mp: @est_mp) 
+  
+  @q = atmp.ransack(params[:q])
+  @demande_arret_travails = @q.result.page(params[:page]).order('created_at DESC').per(100)
+end
 
   def en_creation
     @demande_arret_travails = ArretTravail.where(user_id: current_user).en_creation.page(params[:page]).per(100)
@@ -74,20 +78,44 @@ class Admin::ArretTravailsController < Admin::ApplicationController
   end
 
   def en_attente_soumission_liquidation
-    if current_user.technicien_at?
-      @demande_arret_travails = ArretTravail.where(affectation_at: current_user.id).en_attente_affectation_technicien_agence.page(params[:page]).per(100)
-    else
-      @demande_arret_travails = ArretTravail.where(affectation_at: current_user.id).affected_tech.en_attente_affectation_technicien_direction.where(creer_par_ag_direction_at: true).where(affectation_at: current_user).page(params[:page]).per(100)
-    end
+  est_mp = params[:est_mp].to_s == 'true'  # Convertir le paramètre en booléen
+
+  base = ArretTravail.where(affectation_at: current_user.id)  # Base commune
+
+  if current_user.technicien_at?
+    base = base.en_attente_affectation_technicien_agence
+  else
+    base = base.affected_tech
+               .en_attente_affectation_technicien_direction
+               .where(creer_par_ag_direction_at: true)
+               .where(affectation_at: current_user)
   end
+
+  # Filtrer selon MP / AT
+  @demande_arret_travails = base.where(est_mp: est_mp)
+                               .page(params[:page]).per(100)
+end
+
 
   def en_attente_validation_ij
     @demande_arret_travails = ArretTravail.en_attente_validation_ij.page(params[:page]).per(100)
   end
 
+  def en_attente_validation_ij_mp
+    @demande_arret_travails = ArretTravail.en_attente_validation_ij_mp.page(params[:page]).per(100)
+     render 'en_attente_validation_ij'  # ← Ajouter cette ligne
+  end
+
   def en_attente_validation_frais
     @demande_arret_travails = ArretTravail.en_attente_validation_frais.page(params[:page]).per(100)
   end
+  
+  def en_attente_validation_frais_mp
+    @demande_arret_travails = ArretTravail.en_attente_validation_frais_mp.page(params[:page]).per(100)
+     render 'en_attente_validation_frais'
+  end
+
+  
 
   def en_attente_validation_mc_ij
     @demande_arret_travails = ArretTravail.en_attente_validation_mc_ij.page(params[:page]).per(100)
@@ -198,39 +226,40 @@ class Admin::ArretTravailsController < Admin::ApplicationController
 
   # GET /admin/arret_travails/1
   def show
-    @demande_arret_travail.indemnite_journaliere
-    #@at_document = @demande_arret_travail.at_documents.build
-    @at_document = AtDocument.new
-    @at_lesion = AtLesion.new
-    @at_carnet = AtCarnet.new
-    @at_incapacite = AtIncapacite.new
-    @at_incapacite.date_debut = @demande_arret_travail.date_accident + 1.day
-    @at_incapacite.date_fin = @demande_arret_travail.date_accident + 2.day
-    @at_frais_engage = AtFraisEngage.new
-    @at_code_prime_salaire = AtCodePrimeSalaire.new
-    @at_avi = AtAvi.new
-    @at_decompte = AtDecompte.new
-    @at_consolidation = AtConsolidation.new
-    @at_salaire = AtSalaire.new
-    @info_salaries = Psrm::Participant.find_by(matric: @demande_arret_travail.numero_affiliation) unless @demande_arret_travail.numero_affiliation.nil?
-    @employeur = @demande_arret_travail.infos_employeur
-    @transactions_dpt = @demande_arret_travail.compta_transactions.includes(:ordre_paiement).where(dossier_type: 'AtDecompte').order("created_at DESC")
-    @transactions_fr = @demande_arret_travail.compta_transactions.includes(:ordre_paiement).where(dossier_type: 'AtFraisEngage').order("created_at DESC")
-    @payment_orders_dpt = @demande_arret_travail.ordre_paiements
-                                                .joins(:compta_transactions)
-                                                .where(compta_transactions: { dossier_type: 'AtDecompte' })
-                                                .includes(:compta_transactions)
-                                                .order(created_at: :desc)
-                                                .page(params[:page])
-                                                .per(10)
-    @payment_orders_fr = @demande_arret_travail.ordre_paiements
-                                               .joins(:compta_transactions)
-                                               .where(compta_transactions: { dossier_type: 'AtFraisEngage' })
-                                               .includes(:compta_transactions)
-                                               .order(created_at: :desc)
-                                               .page(params[:page])
-                                               .per(10)
-  end
+  @demande_arret_travail = ArretTravail.find(params[:id]) # Utilisez le bon modèle (à remplacer si nécessaire)
+
+  # Initialiser les ordres de paiement frais (exemple, à adapter selon votre modèle et filtres)
+  @payment_orders_fr = @demande_arret_travail.ordre_paiements.where(statut: [:paye, :en_cours]).includes(:compta_transactions).page(params[:page])
+  
+  # Rassembler les transactions liées aux paiements frais
+  @transactions_fr = @payment_orders_fr.flat_map(&:compta_transactions)
+
+  # Initialiser les ordres de paiement indemnités (idem, à adapter)
+  @payment_orders_dpt = @demande_arret_travail.ordre_paiements.where(statut: [:paye, :en_cours]).includes(:compta_transactions).page(params[:page])
+  
+  # Rassembler les transactions liées aux paiements indemnités
+  @transactions_dpt = @payment_orders_dpt.flat_map(&:compta_transactions)
+
+  # Autres initialisations nécessaires pour la vue...
+  @at_document = AtDocument.new
+  @at_lesion = AtLesion.new
+  @at_carnet = AtCarnet.new
+
+  @at_incapacite = AtIncapacite.new
+  @at_incapacite.date_debut = @demande_arret_travail.date_accident + 1.day
+  @at_incapacite.date_fin = @demande_arret_travail.date_accident + 2.days
+
+  @at_frais_engage = AtFraisEngage.new
+  @at_code_prime_salaire = AtCodePrimeSalaire.new
+  @at_avi = AtAvi.new
+  @at_decompte = AtDecompte.new
+  @at_consolidation = AtConsolidation.new
+  @at_salaire = AtSalaire.new
+
+  @info_salaries = Psrm::Participant.find_by(matric: @demande_arret_travail.numero_affiliation)
+  @employeur = @demande_arret_travail.infos_employeur
+  @est_mp = @demande_arret_travail.est_mp
+end
 
   def edit
     #edit
@@ -245,6 +274,7 @@ class Admin::ArretTravailsController < Admin::ApplicationController
     end
 
     @demande_arret_travail = ArretTravail.new
+    @demande_arret_travail.est_mp = (params[:est_mp] == 'true')
     @demande_arret_travail.at_lesions.build
     @at_document = AtDocument.new
     #@demande_arret_travail.at_documents.build
@@ -314,15 +344,14 @@ class Admin::ArretTravailsController < Admin::ApplicationController
   def create
    @demande_arret_travail = ArretTravail.new(arret_travail_params)
    @demande_arret_travail.user_id = current_user.id
-   @demande_arret_travail.admin_agence = current_user.admin_agence
    @demande_arret_travail.etat = 'instruction'
    if current_user.agent_accueil_direction_at?
      @demande_arret_travail.etat = 'instruction'
      @demande_arret_travail.creer_par_ag_direction_at = true
    end
    if @demande_arret_travail.save
-     # desc = "Création du dossier AT n° #{@demande_arret_travail.num_dossier} par #{current_user.email} (#{current_user.type_profil})"
-     # ajouter_event(@demande_arret_travail, current_user, desc)
+     desc = "Création du dossier AT n° #{@demande_arret_travail.num_dossier} par #{current_user.email} (#{current_user.type_profil})"
+     ajouter_event(@demande_arret_travail, current_user, desc)
      redirect_to [:admin, @demande_arret_travail], notice: 'Dossier est créé avec succès.'
    else
      render :new
@@ -354,10 +383,6 @@ class Admin::ArretTravailsController < Admin::ApplicationController
        update_avis_info
      when INFO_SALAIRE_PAGE
        update_salaires_info
-     when INFO_EXECEPTIONNELLE_PAGE
-       update_exceptionnelle
-     when NBR_HEUR_JRNL_PAGE
-       update_nbr_heure_journalier
      end
    else
      @demande_arret_travail = ArretTravail.find(params[:arret_travail_id] || params[:id]  )
@@ -1177,7 +1202,6 @@ class Admin::ArretTravailsController < Admin::ApplicationController
     @demande_arret_travail = ArretTravail.find(params[:arret_travail_id])
     @at_decompte = AtDecompte.new(info_decompte_params)
     @at_decompte.ajoute_par = current_user
-    @at_decompte.etat = :creation
     if @at_decompte.save
       desc = "Mise a jour information Arret travail du dossier AT n° #{@demande_arret_travail.num_dossier} (etat #{@demande_arret_travail.etat}) par #{current_user.email} (#{current_user.type_profil})"
       ajouter_event(@demande_arret_travail, current_user, desc)
@@ -1298,9 +1322,8 @@ class Admin::ArretTravailsController < Admin::ApplicationController
      telephone adresse email nationalite type_de_piece type_declaration adresse_declarant 
      telephone_declarant consequence_accident_travail date_du_deces raison_absence_constat 
      raison_sociale_assureur nom_assureur adresse_assureur numero_police_assurance 
-     incapacite_permanente medecin_conseil_obligatoire qualite_declarant is_subrogation id_item est_mp
-     active_enquete_dprp active_avis_medecin desc_dprp desc_medecin numero_temporaire has_numero_affiliation ajoute_par_id date_reception
-     nombre_heure_paye
+     incapacite_permanente medecin_conseil_obligatoire qualite_declarant is_subrogation
+     active_enquete_dprp active_avis_medecin desc_dprp desc_medecin numero_temporaire has_numero_affiliation ajoute_par_id date_reception est_maladie_professionnelle
    )
   end
 
@@ -1323,7 +1346,7 @@ class Admin::ArretTravailsController < Admin::ApplicationController
      status_ipress status_css status_ipress_css solde_total_ipress_css solde_branche_vieillesse solde_branche_at 
      solde_branche_pf agence_gestion_ipress agence_gestion_css taux_at taux_pf nature_accident declarant est_journalier
      consequence_accident_travail date_du_deces raison_absence_constat raison_sociale_assureur nom_assureur 
-     adresse_assureur numero_police_assurance incapacite_permanente medecin_conseil_obligatoire nombre_jour nombre_heure_paye
+     adresse_assureur numero_police_assurance incapacite_permanente medecin_conseil_obligatoire
    )
   end
 
@@ -1365,7 +1388,7 @@ class Admin::ArretTravailsController < Admin::ApplicationController
   end
   
   def allowed_frais_engage_params
-    %i(numero prenom nom montant date_liquidation nature type_frais rembourse_a_qui remboursement_tiers arret_travail_id) 
+    %i(numero prenom nom montant date_liquidation nature type_frais rembourse_a_qui, remboursement_tiers arret_travail_id) 
   end
 
   def allowed_salaire_params
@@ -1404,37 +1427,6 @@ class Admin::ArretTravailsController < Admin::ApplicationController
    )
   end
 
-  # Méthode pour mettre à jour les informations d'accident
-  def update_exceptionnelle
-    @demande_arret_travail = ArretTravail.find(params[:id])
-    # Vérifier si aucun at_decompte ou at_frais_engage n'a l'état 'validation_comptable'
-    unless can_edit_info_accident?(@demande_arret_travail)
-      flash[:error] = "Impossible de modifier les informations d'accident car des décomptes ou frais engagés sont en validation comptable."
-      redirect_to admin_arret_travail_path(@demande_arret_travail)
-      return
-    end
-    
-    render_infos(@demande_arret_travail.update(info_exeptionnelle_params))
-    desc = "Mise a jour information salaire du dossier AT n° #{@demande_arret_travail.num_dossier} (etat #{@demande_arret_travail.etat}) par #{current_user.email} (#{current_user.type_profil})"
-    ajouter_event(@demande_arret_travail, current_user, desc)
-  end
-
-  # Méthode pour vérifier si les informations d'accident peuvent être modifiées
-  def can_edit_info_accident?(arret_travail)
-    # Vérifier qu'aucun at_decompte n'a l'état 'validation_comptable'
-    decomptes_en_validation_comptable = arret_travail.at_decomptes.where(etat: :validation_comptable).count
-    # Vérifier qu'aucun at_frais_engage n'a l'état 'validation_comptable'
-    frais_en_validation_comptable = arret_travail.at_frais_engages.where(etat: :validation_comptable).count
-    
-    # Retourner true si aucun n'est en validation comptable
-    decomptes_en_validation_comptable == 0 && frais_en_validation_comptable == 0
-  end
-
-  # Paramètres autorisés pour la modification des informations d'accident
-  def arret_travail_params_info_accident
-    params.require(:arret_travail).permit(allowed_info_accident_params)
-  end
-
   def update_salarie_info
     render_infos(@demande_arret_travail.update(info_salarie_params))
     desc = "Mise a jour information salaire du dossier AT n° #{@demande_arret_travail.num_dossier} (etat #{@demande_arret_travail.etat}) par #{current_user.email} (#{current_user.type_profil})"
@@ -1462,21 +1454,6 @@ class Admin::ArretTravailsController < Admin::ApplicationController
 
   end
 
-  def update_nbr_heure_journalier
-    @demande_arret_travail = ArretTravail.find(params[:id])
-    puts "====> N° Dossier ", @demande_arret_travail.num_dossier
-    puts "====> N° Adresse ", @demande_arret_travail.date_n
-    puts "====> NBR HEURE ", params[:arret_travail][:nombre_heure_paye]    
-    # Only update the specific field we want to change
-    if @demande_arret_travail.update(nombre_heure_paye: params[:arret_travail][:nombre_heure_paye])
-      desc = "Mise a jour nombre heures payés journalier du dossier AT n° #{@demande_arret_travail.num_dossier} (etat #{@demande_arret_travail.etat}) par #{current_user.email} (#{current_user.type_profil})"
-      ajouter_event(@demande_arret_travail, current_user, desc)
-      render_infos(true, params[:anchor_tag])
-    else
-      render_infos(false, params[:anchor_tag])
-    end
-  end
-  
   def update_document_info
    @at_document = AtDocument.new(info_document_params)
    
@@ -1631,9 +1608,6 @@ class Admin::ArretTravailsController < Admin::ApplicationController
        @at_frais_engage = AtFraisEngage.new
        @at_code_prime_salaire = AtCodePrimeSalaire.new
        @at_avi = AtAvi.new
-       @at_carnet = AtCarnet.new
-       @at_decompte = AtDecompte.new
-       @at_consolidation = AtConsolidation.new
        format.html { render :show}
        format.json { render json: @demande_arret_travail.errors, status: :unprocessable_entity }
      end
@@ -1643,10 +1617,6 @@ class Admin::ArretTravailsController < Admin::ApplicationController
 
   def arret_travail_params
    params.require(:arret_travail).permit(allowed_params)
-  end
-
-  def info_exeptionnelle_params
-    params.require(:arret_travail).permit(allowed_params)
   end
 
   def info_salarie_params

@@ -1,13 +1,18 @@
-<%= content_for :titre_page, " Dossier arrêt de travail" %>
+<% content_for :titre_page do %>
+  <% if @demande_arret_travail.est_mp? %>
+    Dossier Maladie Professionnelle
+  <% else %>
+    Dossier Arrêt de Travail
+  <% end %>
+<% end %>
  
 <!--------------------------------------Information dossier-------------------------------------------->
-  <%= content_for :titre_page_autres_details do %>
-  
-  <% unless @demande_arret_travail.est_journalier? %>
+ <%= content_for :titre_page_autres_details do %>
+     <% unless @demande_arret_travail.est_journalier? %>
     NUMERO AFFILIATION : <strong><%= @demande_arret_travail.try(:numero_affiliation) %></strong> <br/>
   <% else %>
     NUMERO AFFILIATION : <strong><%= @demande_arret_travail.try(:nin_salarie) %></strong> <br/>
-  <% end %>
+  <% end %> 
   <!-- NUMERO AFFILIATION : <strong><%= @demande_arret_travail.numero_affiliation %></strong> <br/> -->
   NUMERO SINISTRE : <strong><%= @demande_arret_travail.num_dossier %></strong> <br/>
   ETAT :  <span class="label label-info"> <strong> <%= @demande_arret_travail.etat %></strong></span> <br/>
@@ -314,8 +319,9 @@
                   <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.info_salarie_valid? and @demande_arret_travail.info_employeur_valid? and @demande_arret_travail.document_valid? %>   
                 </a>
               </li>
-              <li class="nav-item tab-link-top">
-                <a data-toggle="tab" href="#tab-2">Détails Accident
+             <li class="nav-item tab-link-top">
+                <a data-toggle="tab" href="#tab-2">
+                  <%= @est_mp ? 'Détails Maladie' : 'Détails Accident' %>
                   <%= '<span class="label label-warning">à valider</span>'.html_safe unless @demande_arret_travail.detail_accident_valid? %>
                   <%= '<span class="label label-primary">&#10003;</span>'.html_safe if @demande_arret_travail.detail_accident_valid? %>     
                 </a>

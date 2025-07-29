@@ -1,4 +1,10 @@
-<%= content_for :titre_page, "Création dossier Accident du travail" %>
+<% content_for :titre_page do %>
+  <% if params[:est_mp] == 'true' %>
+    Création dossier Maladie Professionnelle
+  <% else %>
+    Création dossier Accident du travail
+  <% end %>
+<% end %>
 
 <div class="wrapper wrapper-content">
   <div class="ibox-content">

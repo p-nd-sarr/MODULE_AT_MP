@@ -10,69 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_02_21_014456) do
+ActiveRecord::Schema.define(version: 2025_05_13_104400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
-
-  create_table "DR", id: false, force: :cascade do |t|
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.integer "ENTREP"
-    t.integer "MATSOL"
-    t.integer "EXER"
-    t.integer "ME_1"
-    t.integer "JE_1"
-    t.integer "MS_1"
-    t.integer "JS_1"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE"
-    t.text "ADRESSE"
-    t.integer "TEL"
-    t.integer "BP"
-  end
-
-  create_table "RETRAITE", id: false, force: :cascade do |t|
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "REGIM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.text "MATSOL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE_1"
-    t.text "ADRESSE"
-    t.text "T�l�phone"
-    t.text "BP"
-    t.integer "ENTREP"
-    t.text "RAISONSOCIALE"
-    t.integer "EXER"
-    t.integer "ME_1"
-    t.integer "JE_1"
-    t.integer "MS_1"
-    t.integer "JS_1"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -713,17 +655,10 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.boolean "suspendu_non_pointe"
     t.index ["admin_agence_id"], name: "index_allocataires_on_admin_agence_id"
     t.index ["admin_region_id"], name: "index_allocataires_on_admin_region_id"
-    t.index ["categorie"], name: "allocataires_categorie_idx"
     t.index ["css_ancien_matric"], name: "index_allocataires_on_css_ancien_matric"
-    t.index ["etat"], name: "allocataires_etat_idx"
     t.index ["ipres_ancien_matric"], name: "index_allocataires_on_ipres_ancien_matric"
-    t.index ["mode_paiement"], name: "allocataires_mode_paiement_idx"
-    t.index ["nom"], name: "allocataires_nom_idx"
     t.index ["numero_allocataire"], name: "index_allocataires_on_numero_allocataire"
     t.index ["numero_allocataire_donneur"], name: "index_allocataires_on_numero_allocataire_donneur"
-    t.index ["prenom"], name: "allocataires_prenom_idx"
-    t.index ["suspendu_non_pointe"], name: "allocataires_suspendu_non_pointe_idx"
-    t.index ["versement_unique"], name: "allocataires_versement_unique_idx"
   end
 
   create_table "allocation_familiales", force: :cascade do |t|
@@ -938,6 +873,86 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["dossier_prestation_id"], name: "index_allocations_prenatales_migrees_on_dossier_prestation_id"
   end
 
+  create_table "arret_travail_geds", force: :cascade do |t|
+    t.string "raison_sociale_employeur"
+    t.string "numero_employeur"
+    t.string "adresse_employeur"
+    t.string "email_employeur"
+    t.string "telephone_employeur"
+    t.string "activite_principale_entreprise"
+    t.string "numero_affiliation"
+    t.integer "type_de_piece"
+    t.string "nin_salarie"
+    t.string "prenom_salarie"
+    t.string "nom_salarie"
+    t.integer "sexe"
+    t.date "date_de_naissance_salarie"
+    t.integer "nationalite_salarie"
+    t.string "adresse_domiciliaire_salarie"
+    t.string "telephone_salarie"
+    t.integer "qualification_professionnelle_salarie"
+    t.date "date_embauche_salarie"
+    t.integer "type_de_contrat_travail_salarie"
+    t.string "nature_du_travail_au_moment_accident"
+    t.boolean "infirmite_anterieure_accident"
+    t.float "taux_infirmite_anterieure_accident"
+    t.string "numero_rente_infirmite_anterieure_accident"
+    t.datetime "date_accident"
+    t.integer "nombre_hr_entre_accident_et_prise_travail"
+    t.integer "lieu_accident"
+    t.boolean "accident_mortel"
+    t.date "debut_arret_travail"
+    t.integer "agent_materiel"
+    t.text "cause_circonstances_acccident"
+    t.boolean "avec_constat"
+    t.text "detail_constat"
+    t.string "raison_absence_constat"
+    t.boolean "avec_temoin"
+    t.string "nom_temoin"
+    t.string "adresse_temoin"
+    t.boolean "personne_avisee"
+    t.string "nom_personne_avisee"
+    t.string "adresse_personne_avisee"
+    t.datetime "personne_avisee_quand"
+    t.string "personne_avisee_par_qui"
+    t.boolean "accident_cause_par_tiers"
+    t.string "prenom_tiers"
+    t.string "nom_tiers"
+    t.string "adresse_tiers"
+    t.string "prenom_civilement_responsable"
+    t.string "nom_civilement_responsable"
+    t.string "adresse_civilement_responsable"
+    t.string "raison_sociale_assureur"
+    t.string "nom_assureur"
+    t.string "adresse_assureur"
+    t.string "numero_police_assurance"
+    t.boolean "salaire_verse_en_totalite_en_at"
+    t.integer "declarant"
+    t.string "prenom_declarant"
+    t.string "nom_declarant"
+    t.string "adresse_declarant"
+    t.string "telephone_declarant"
+    t.string "lieu_declaration"
+    t.string "qualite_declarant"
+    t.date "date_declaration"
+    t.boolean "est_journalier"
+    t.boolean "is_subrogation"
+    t.integer "admin_agence_id"
+    t.date "date_reception"
+    t.integer "etat"
+    t.string "status_ged"
+    t.string "id_item"
+    t.string "lien_ged"
+    t.boolean "est_mp"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "nature_accident"
+    t.integer "situation_matrimoniale_salarie"
+    t.integer "incapacite_permanente"
+    t.integer "consequence_accident_travail"
+    t.integer "type_declaration"
+  end
+
   create_table "arret_travails", force: :cascade do |t|
     t.string "raison_sociale_employeur"
     t.string "numero_employeur"
@@ -1107,6 +1122,8 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "personne_avisee_qualite"
     t.date "date_reception"
     t.boolean "info_pro_salarie_valid", default: false
+    t.boolean "est_mp", default: false
+    t.string "id_item"
     t.boolean "est_repris", default: false
     t.bigint "admin_agence_id"
     t.string "no_sinistre"
@@ -1932,48 +1949,9 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["employeur_exterieur_id"], name: "index_carrieres_exterieures_on_employeur_exterieur_id"
   end
 
-  create_table "carrieres_x", id: false, force: :cascade do |t|
-    t.string "numero_affiliation", limit: 15
-    t.date "min_rg"
-    t.date "max_rg"
-    t.bigint "lignes_rg"
-    t.decimal "mois_rg"
-    t.date "min_rc"
-    t.date "max_rc"
-    t.bigint "lignes_rc"
-    t.decimal "mois_rc"
-    t.float "first_salaire_rg"
-    t.float "last_salaire_rg"
-    t.float "first_salaire_rc"
-    t.float "last_salaire_rc"
-  end
-
-  create_table "carrieres_zz", id: false, force: :cascade do |t|
-    t.string "numero_affiliation", limit: 15
-    t.integer "type_regime_id"
-    t.decimal "min"
-    t.decimal "max"
-    t.date "min_exer"
-    t.date "max_exer"
-    t.bigint "lignes"
-    t.decimal "mois"
-  end
-
-  create_table "carrieres_zzz", id: false, force: :cascade do |t|
-    t.string "numero_affiliation", limit: 15
-    t.date "min_rg"
-    t.date "max_rg"
-    t.bigint "lignes_rg"
-    t.decimal "mois_rg"
-    t.date "min_rc"
-    t.date "max_rc"
-    t.bigint "lignes_rc"
-    t.decimal "mois_rc"
-  end
-
   create_table "carrires_prest_exterieures", force: :cascade do |t|
     t.bigint "employeur_exterieurs_id"
-    t.bigint "prestation_ext_frances_id"
+    t.bigint "cfs_reversion_veuves_id"
     t.date "date_debut"
     t.date "date_fin"
     t.integer "type_regime"
@@ -1984,8 +1962,8 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "traite_par_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["cfs_reversion_veuves_id"], name: "index_carrires_prest_exterieures_on_cfs_reversion_veuves_id"
     t.index ["employeur_exterieurs_id"], name: "index_carrires_prest_exterieures_on_employeur_exterieurs_id"
-    t.index ["prestation_ext_frances_id"], name: "index_carrires_prest_exterieures_on_prestation_ext_frances_id"
   end
 
   create_table "cfs_conjoints", force: :cascade do |t|
@@ -2230,718 +2208,7 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "compta_transactions", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigserial "id", null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-  end
-
-  create_table "compta_transactions_2015", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2015_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2015_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2015_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2015_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2015_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2015_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2015_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2015_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2015_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2016", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2016_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2016_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2016_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2016_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2016_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2016_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2016_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2016_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2016_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2017", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2017_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2017_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2017_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2017_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2017_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2017_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2017_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2017_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2017_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2018", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2018_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2018_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2018_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2018_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2018_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2018_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2018_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2018_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2018_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2019", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2019_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2019_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2019_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2019_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2019_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2019_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2019_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2019_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2019_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2020", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2020_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2020_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2020_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2020_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2020_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2020_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2020_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2020_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2020_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2021", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2021_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2021_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2021_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2021_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2021_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2021_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2021_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2021_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2021_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2022", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2022_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2022_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2022_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2022_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2022_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2022_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2022_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2022_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2022_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2023", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2023_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2023_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2023_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2023_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2023_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2023_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2023_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2023_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2023_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2024", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2024_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2024_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2024_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2024_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2024_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2024_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2024_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2024_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2024_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_2025", primary_key: ["id", "date_comptable"], force: :cascade do |t|
-    t.bigint "id", default: -> { "nextval('compta_transactions_id_seq1'::regclass)" }, null: false
-    t.string "dossier_type"
-    t.bigint "dossier_id"
-    t.string "code_operation", null: false
-    t.string "code_classe_evenement", default: "LIQUIDATION", null: false
-    t.string "code_agence_liquidation"
-    t.string "numero_allocataire", null: false
-    t.string "nom"
-    t.string "prenom"
-    t.string "adresse"
-    t.string "code_banque_allocataire"
-    t.string "numero_compte_allocataire"
-    t.date "date_debut_periode"
-    t.date "date_fin_periode"
-    t.float "montant", null: false
-    t.string "code_devise", limit: 3, default: "XOF", null: false
-    t.integer "statut", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "mode_paiement"
-    t.boolean "send_to_compta", default: false, null: false
-    t.string "bank_id"
-    t.string "bank_branch_id"
-    t.bigint "ordre_paiement_id"
-    t.string "description"
-    t.boolean "can_send_to_compta", default: true, null: false
-    t.datetime "send_to_compta_at"
-    t.bigint "echeance_paiement_id"
-    t.integer "zone"
-    t.bigint "admin_region_id"
-    t.bigint "admin_agence_id"
-    t.string "nin_allocataire"
-    t.string "telephone_allocataire"
-    t.string "mail_allocataire"
-    t.datetime "date_comptable", null: false
-    t.boolean "en_tete", default: true, null: false
-    t.boolean "est_repris", default: false, null: false
-    t.integer "id_reprise"
-    t.string "infos_paiement_id_bhs", limit: 30
-    t.string "infos_paiement_id_ccp", limit: 30
-    t.string "infos_paiement_libelle_ccp", limit: 30
-    t.string "infos_paiement_succursale_cncas", limit: 30
-    t.boolean "est_attributaire", default: false, null: false
-    t.boolean "par_subrogation", default: false, null: false
-    t.string "id_reel_allocataire"
-    t.string "nom_reel_allocataire"
-    t.string "prenom_reel_allocataire"
-    t.float "montant_subvention"
-    t.index ["admin_agence_id"], name: "compta_transactions_2025_admin_agence_id_idx"
-    t.index ["admin_region_id"], name: "compta_transactions_2025_admin_region_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2025_dossier_type_dossier_id_idx"
-    t.index ["dossier_type", "dossier_id"], name: "compta_transactions_2025_dossier_type_dossier_id_idx1"
-    t.index ["echeance_paiement_id"], name: "compta_transactions_2025_echeance_paiement_id_idx"
-    t.index ["id_reprise"], name: "compta_transactions_2025_id_reprise_idx"
-    t.index ["numero_allocataire"], name: "compta_transactions_2025_numero_allocataire_idx"
-    t.index ["ordre_paiement_id"], name: "compta_transactions_2025_ordre_paiement_id_idx"
-    t.index ["send_to_compta"], name: "compta_transactions_2025_send_to_compta_idx"
-  end
-
-  create_table "compta_transactions_legacy", id: :bigint, default: -> { "nextval('compta_transactions_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "compta_transactions", force: :cascade do |t|
     t.string "dossier_type"
     t.bigint "dossier_id"
     t.string "code_operation", null: false
@@ -2988,14 +2255,13 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "id_reel_allocataire"
     t.string "nom_reel_allocataire"
     t.string "prenom_reel_allocataire"
-    t.index ["admin_agence_id"], name: "index_compta_transactions_on_admin_agence_id_legacy"
-    t.index ["admin_region_id"], name: "index_compta_transactions_on_admin_region_id_legacy"
-    t.index ["dossier_type", "dossier_id"], name: "index_compta_transactions_on_dr_type_and_dr_id_legacy"
-    t.index ["echeance_paiement_id"], name: "index_compta_transactions_on_echeance_paiement_id_legacy"
-    t.index ["id_reprise"], name: "index_compta_transactions_on_id_reprise_legacy"
-    t.index ["numero_allocataire"], name: "compta_transactions_numero_allocataire_idx_legacy"
-    t.index ["ordre_paiement_id"], name: "index_compta_transactions_on_ordre_paiement_id_legacy"
-    t.index ["send_to_compta"], name: "compta_transactions_send_to_compta_idx_legacy"
+    t.float "montant_subvention"
+    t.index ["admin_agence_id"], name: "index_compta_transactions_on_admin_agence_id"
+    t.index ["admin_region_id"], name: "index_compta_transactions_on_admin_region_id"
+    t.index ["dossier_type", "dossier_id"], name: "index_compta_transactions_on_dr_type_and_dr_id"
+    t.index ["echeance_paiement_id"], name: "index_compta_transactions_on_echeance_paiement_id"
+    t.index ["id_reprise"], name: "index_compta_transactions_on_id_reprise"
+    t.index ["ordre_paiement_id"], name: "index_compta_transactions_on_ordre_paiement_id"
   end
 
   create_table "conjoints", force: :cascade do |t|
@@ -3047,11 +2313,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "reprise_site"
     t.boolean "deleted", default: false
     t.boolean "incomplete", default: false
-    t.index ["deleted"], name: "conjoints_deleted_idx"
-    t.index ["etat_conjoint"], name: "conjoints_etat_conjoint_idx"
-    t.index ["incomplete"], name: "conjoints_incomplete_idx"
-    t.index ["numero_affiliation"], name: "conjoints_numero_affiliation_idx"
-    t.index ["numero_salarie"], name: "conjoints_numero_salarie_idx"
     t.index ["user_id"], name: "index_conjoints_on_user_id"
   end
 
@@ -3279,31 +2540,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["prenom"], name: "index_declaration_participants_on_prenom"
   end
 
-  create_table "declaration_participants_secour", id: false, force: :cascade do |t|
-    t.bigserial "id", null: false
-    t.bigint "declaration_chargement_id"
-    t.string "matric", null: false
-    t.string "ipres_ancien_matric"
-    t.string "css_ancien_matric"
-    t.string "prenom"
-    t.string "nom"
-    t.string "type_piece"
-    t.string "numero_piece"
-    t.text "profession"
-    t.string "emploi"
-    t.string "regime"
-    t.string "addr"
-    t.string "phone"
-    t.date "date_naissance"
-    t.string "genre"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "id_employeur", limit: 20
-    t.string "contrat_en_cours", limit: 3
-    t.date "date_debut_contrat"
-    t.date "date_fin_contrat"
-  end
-
   create_table "declaration_salaire_manquantes", force: :cascade do |t|
     t.string "numero", limit: 20, null: false
     t.string "raison_sociale"
@@ -3500,7 +2736,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.datetime "updated_at", null: false
     t.date "date_expiration"
     t.date "date_delivrance_piece"
-    t.index ["documentable_type", "documentable_id", "type_document"], name: "documents_documentable_type_idx"
     t.index ["documentable_type", "documentable_id"], name: "index_documents_on_documentable_type_and_documentable_id"
   end
 
@@ -3655,6 +2890,34 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["admin_type_dossier_juridique_id"], name: "index_dossier_juridiques_on_admin_type_dossier_juridique_id"
   end
 
+  create_table "dossier_maternite_avis_tiers", force: :cascade do |t|
+    t.integer "type_avis"
+    t.integer "etat"
+    t.integer "tranche_paiement"
+    t.float "montant_avis"
+    t.integer "status"
+    t.integer "mode_paiement"
+    t.integer "ajouter_par_id"
+    t.integer "soumis_par_id"
+    t.integer "valider_par_id"
+    t.integer "traite_par_id"
+    t.date "date_soumission"
+    t.date "date_validation"
+    t.date "traite_le"
+    t.integer "retourner_par_id"
+    t.date "date_retour"
+    t.text "motif_retour"
+    t.text "motif_avis"
+    t.text "commentaire"
+    t.integer "type_motif"
+    t.float "sal_ref_a_considere"
+    t.integer "nbre_jours_a_indemnise"
+    t.bigint "dossier_maternite_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dossier_maternite_id"], name: "index_dossier_maternite_avis_tiers_on_dossier_maternite_id"
+  end
+
   create_table "dossier_maternites", force: :cascade do |t|
     t.string "num_affiliation"
     t.string "prenom"
@@ -3748,8 +3011,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.boolean "deleted", default: false
     t.boolean "incomplete", default: false
     t.integer "affecte_a_id"
-    t.index ["deleted"], name: "dossier_maternites_deleted_idx"
-    t.index ["incomplete"], name: "dossier_maternites_incomplete_idx"
     t.index ["user_id"], name: "index_dossier_maternites_on_user_id"
   end
 
@@ -3783,6 +3044,30 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "traite_par_id"
     t.date "traite_le"
     t.index ["dossier_prestation_id"], name: "index_dossier_prestation_avis_tiers_on_dossier_prestation_id"
+  end
+
+  create_table "dossier_prestation_geds", force: :cascade do |t|
+    t.string "num_affiliation"
+    t.integer "sexe_salarie"
+    t.string "prenom"
+    t.string "nom"
+    t.string "lieu_naissance"
+    t.string "adresse_domicile"
+    t.date "date_naissance"
+    t.string "nin"
+    t.integer "nationalite"
+    t.string "employeur_actuel"
+    t.date "date_embauche"
+    t.integer "admin_agence_id"
+    t.string "num_dossier"
+    t.date "date_reception"
+    t.string "id_item"
+    t.string "lien_ged"
+    t.integer "etat"
+    t.string "status_ged"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "telephone"
   end
 
   create_table "dossier_prestation_historics", force: :cascade do |t|
@@ -3843,13 +3128,9 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "affecte_a_id"
     t.boolean "deleted", default: false
     t.boolean "incomplete", default: false
+    t.string "id_item"
     t.string "employeur_actuel_old"
-    t.index ["agence_id"], name: "dossier_prestations_agence_id_idx"
     t.index ["conjoint_id"], name: "index_dossier_prestations_on_conjoint_id"
-    t.index ["deleted"], name: "dossier_prestations_deleted_idx"
-    t.index ["etat"], name: "dossier_prestations_etat_idx"
-    t.index ["incomplete"], name: "dossier_prestations_incomplete_idx"
-    t.index ["num_affiliation"], name: "dossier_prestations_num_affiliation_idx"
     t.index ["user_id"], name: "index_dossier_prestations_on_user_id"
   end
 
@@ -3932,21 +3213,11 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.bigint "echeance_caisse_employeur_id"
     t.boolean "is_individual_payment", default: false
     t.integer "individual_payment_by"
-    t.index ["created_at"], name: "echeance_caisse_dossiers_created_at_idx"
     t.index ["dossier_prestation_id"], name: "index_echeance_caisse_dossiers_on_dossier_prestation_id"
     t.index ["echeance_caisse_employeur_id"], name: "idx_ecd1"
     t.index ["echeance_caisse_id"], name: "index_echeance_caisse_dossiers_on_echeance_caisse_id"
     t.index ["employeur_actuel"], name: "index_echeance_caisse_dossiers_on_employeur_actuel"
     t.index ["num_affiliation"], name: "index_echeance_caisse_dossiers_on_num_affiliation"
-  end
-
-  create_table "echeance_caisse_dossiers_ade_port", id: false, force: :cascade do |t|
-    t.string "matricule"
-    t.string "prenom"
-    t.string "nom"
-    t.integer "nombre_enfant_payes"
-    t.string "montant"
-    t.string "numero_piece"
   end
 
   create_table "echeance_caisse_employeurs", force: :cascade do |t|
@@ -3966,6 +3237,7 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.datetime "updated_at", null: false
     t.boolean "temps_presence_valide", default: false
     t.text "motif_retour"
+    t.string "identifiant_mandataire"
     t.index ["code_agence_css"], name: "index_echeance_caisse_employeurs_on_code_agence_css"
     t.index ["code_agence_ipres"], name: "index_echeance_caisse_employeurs_on_code_agence_ipres"
     t.index ["css_ancien_matric"], name: "index_echeance_caisse_employeurs_on_css_ancien_matric"
@@ -3988,7 +3260,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.boolean "liquide", default: false
     t.boolean "paiement_individuel", default: false
     t.boolean "payable", default: true
-    t.index ["created_at"], name: "echeance_caisse_enfants_created_at_idx"
     t.index ["dossier_prestation_id"], name: "index_echeance_caisse_enfants_on_dossier_prestation_id"
     t.index ["echeance_caisse_dossier_id"], name: "index_echeance_caisse_enfants_on_echeance_caisse_dossier_id"
     t.index ["echeance_caisse_id"], name: "index_echeance_caisse_enfants_on_echeance_caisse_id"
@@ -4201,17 +3472,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.boolean "deleted", default: false
     t.boolean "incomplete", default: false
     t.index ["conjoint_id"], name: "index_enfants_on_conjoint_id"
-    t.index ["date_debut_eligibilite_af"], name: "enfants_date_debut_eligibilite_af_idx"
-    t.index ["date_deces"], name: "enfants_date_deces_idx"
-    t.index ["date_expiration_piece"], name: "enfants_date_expiration_piece_idx"
-    t.index ["date_fin_eligibilite_af"], name: "enfants_date_fin_eligibilite_af_idx"
-    t.index ["date_naissance"], name: "enfants_date_naissance_idx"
-    t.index ["deleted"], name: "enfants_deleted_idx"
-    t.index ["incomplete"], name: "enfants_incomplete_idx"
-    t.index ["migrated_document_exp_date"], name: "enfants_migrated_document_exp_date_idx"
-    t.index ["numero_affiliation"], name: "enfants_numero_affiliation_idx"
-    t.index ["old_id"], name: "enfants_old_id_idx"
-    t.index ["origine_enfant"], name: "enfants_origine_enfant_idx"
     t.index ["user_id"], name: "index_enfants_on_user_id"
   end
 
@@ -4310,14 +3570,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["declaration_id"], name: "index_factures_on_declaration_id"
   end
 
-  create_table "gestion_retours", force: :cascade do |t|
-    t.string "title"
-    t.string "description"
-    t.integer "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "grossesses", force: :cascade do |t|
     t.bigint "dossier_prestation_id", null: false
     t.date "date_grossesse", null: false
@@ -4358,7 +3610,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "field"
     t.string "new_value"
     t.string "old_value"
-    t.index ["allocataire_id"], name: "historiques_allocataire_id_idx"
   end
 
   create_table "icm_modifier_info_personnelles", force: :cascade do |t|
@@ -4621,12 +3872,17 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["prestation_exterieure_id"], name: "prestation_id"
   end
 
-  create_table "lastep", id: false, force: :cascade do |t|
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE"
-    t.text "ADRESSE"
-    t.integer "T�l�phone"
-    t.text "BP"
+  create_table "ligne_icm_avis_tiers_transactions", force: :cascade do |t|
+    t.bigint "dossier_maternite_avis_tiers_id"
+    t.bigint "ordre_paiements_id"
+    t.float "montant"
+    t.integer "ajoute_par_id"
+    t.float "montant_paye"
+    t.date "date_paiement"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dossier_maternite_avis_tiers_id"], name: "avis_tiers_icm"
+    t.index ["ordre_paiements_id"], name: "index_ligne_icm_avis_tiers_transactions_on_ordre_paiements_id"
   end
 
   create_table "ligne_pf_avis_tier_transactions", force: :cascade do |t|
@@ -4639,39 +3895,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.float "montant_paye"
     t.index ["dossier_prestation_avis_tiers_id"], name: "avis_tiers_is"
     t.index ["ordre_paiements_id"], name: "index_ligne_pf_avis_tier_transactions_on_ordre_paiements_id"
-  end
-
-  create_table "liq_enf_nor_veuf", id: false, force: :cascade do |t|
-    t.string "code_site", limit: 2500
-    t.string "libelle_site", limit: 2500
-    t.string "nin_enfant", limit: 2500
-    t.string "prenom_enfant", limit: 2500
-    t.string "nom_enfant", limit: 2500
-    t.string "nin_allocataire", limit: 2500
-    t.string "prenom_allocataire", limit: 2500
-    t.string "nom_allocataire", limit: 2500
-    t.string "sexe_enfant", limit: 2500
-    t.string "sexe_allocataire", limit: 2500
-    t.string "date_naissance_enfant", limit: 2500
-    t.string "date_naissance_allocataire", limit: 2500
-    t.string "type_prestation", limit: 2500
-    t.string "nin_beneficiaire", limit: 2500
-    t.string "prenom_beneficiaire", limit: 2500
-    t.string "nom_beneficiaire", limit: 2500
-    t.string "sexe_beneficiaire", limit: 2500
-    t.string "statut_beneficiaire", limit: 2500
-    t.string "num_liquidation", limit: 2500
-    t.string "date_depot_dossier", limit: 2500
-    t.string "date_liquidation", limit: 2500
-    t.string "montant_liquidation", limit: 2500
-    t.string "date_paiement", limit: 2500
-    t.string "montant_paye_pour_la_liquidation", limit: 2500
-    t.string "annee_de_liquidation", limit: 2500
-    t.string "montant_liquide_est_il_paye", limit: 2500
-    t.string "date_fin_prestation", limit: 2500
-    t.string "motif_fin_prestation", limit: 2500
-    t.string "old_id", limit: 2500
-    t.string "num_dossier", limit: 2500
   end
 
   create_table "liquidation_retraite_frances", force: :cascade do |t|
@@ -5003,37 +4226,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["user_id"], name: "index_maladie_professionnelles_on_user_id"
   end
 
-  create_table "mats", id: false, force: :cascade do |t|
-    t.string "numero_unique"
-    t.float "MATRIC"
-    t.text "MATSOL"
-  end
-
-  create_table "mats1", id: false, force: :cascade do |t|
-    t.string "numero_unique"
-    t.float "MATRIC"
-  end
-
-  create_table "mats2", id: false, force: :cascade do |t|
-    t.float "MATRIC"
-    t.string "numero_unique"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "REGIM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.text "MATSOL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE_1"
-    t.text "ADRESSE"
-    t.text "T�l�phone"
-    t.text "BP"
-  end
-
   create_table "missing_declarations", force: :cascade do |t|
     t.string "numero_ipres"
     t.string "exercice"
@@ -5165,7 +4357,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "agence_creation_id"
     t.index ["admin_agence_id"], name: "index_modifier_mode_paiements_on_admin_agence_id"
     t.index ["allocataire_id"], name: "index_modifier_mode_paiements_on_allocataire_id"
-    t.index ["numero_allocataire"], name: "modifier_mode_paiements_numero_allocataire_idx"
     t.index ["user_id"], name: "index_modifier_mode_paiements_on_user_id"
   end
 
@@ -5253,15 +4444,11 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "beneficiaire_id"
     t.integer "regularisation_pointage_id"
     t.string "num_echeance"
-    t.string "type_beneficiary"
+    t.integer "type_beneficiary"
     t.integer "echeance_caisse_lot_liquidation_id"
     t.integer "echeance_veuves_caisse_lot_liquidation_id"
-    t.index ["created_at"], name: "ordre_paiements_created_at_idx"
     t.index ["dossier_type", "dossier_id"], name: "index_ordre_paiements_on_dossier_type_and_dossier_id"
     t.index ["echeance_paiement_id"], name: "index_ordre_paiements_on_echeance_paiement_id"
-    t.index ["numero"], name: "ordre_paiements_numero_idx"
-    t.index ["numero_allocataire"], name: "ordre_paiements_numero_allocataire_idx"
-    t.index ["regularisation_pointage_id"], name: "ordre_paiements_regularisation_pointage_id_idx"
   end
 
   create_table "paiement_allocataires", force: :cascade do |t|
@@ -5325,26 +4512,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["factures_id"], name: "index_paiements_on_factures_id"
   end
 
-  create_table "partdr", id: false, force: :cascade do |t|
-    t.string "numero_unique"
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "REGIM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.text "MATSOL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE_1"
-    t.text "ADRESSE"
-    t.text "T�l�phone"
-    t.text "BP"
-  end
-
   create_table "pension_alimentaires", force: :cascade do |t|
     t.string "numero_dossier"
     t.string "nom"
@@ -5382,96 +4549,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "provenance"
     t.bigint "liquidation_retraite_france_id"
     t.index ["cfs_reversion_veuve_id"], name: "index_periode_assurances_on_cfs_reversion_veuve_id"
-  end
-
-  create_table "pre_retraite_1b", id: false, force: :cascade do |t|
-    t.string "numero_unique"
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "REGIM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.integer "ENTREP"
-    t.text "MATSOL"
-    t.integer "EXER"
-    t.integer "ME2"
-    t.integer "JE3"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE"
-    t.text "ADRESSE"
-    t.text "T�l�phone"
-    t.text "BP"
-  end
-
-  create_table "pre_retraite_1bx", id: false, force: :cascade do |t|
-    t.string "prenom", limit: 100
-    t.string "nom", limit: 100
-    t.string "ipres_ancien_matric"
-    t.string "matric", limit: 20
-    t.date "date_naissance"
-    t.string "regime", limit: 5
-    t.string "fhnum", limit: 20
-    t.string "fhrsoc"
-    t.date "date_debut_periode_cotisation"
-    t.date "date_fin_periode_cotisation"
-    t.float "sal_rg"
-    t.float "sal_rc"
-    t.integer "points_rg"
-    t.integer "points_rc"
-  end
-
-  create_table "pre_retraite_1bz", id: false, force: :cascade do |t|
-    t.string "numero_unique"
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "REGIM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.text "MATSOL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE_1"
-    t.text "ADRESSE"
-    t.text "T�l�phone"
-    t.text "BP"
-    t.integer "ENTREP"
-    t.text "RAISONSOCIALE"
-    t.integer "EXER"
-    t.integer "ME_1"
-    t.integer "JE_1"
-    t.integer "MS_1"
-    t.integer "JS_1"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-  end
-
-  create_table "pre_retraite_fv", id: false, force: :cascade do |t|
-    t.text "prenom"
-    t.text "nom"
-    t.string "ipres_ancien_matric"
-    t.string "numero_affiliation"
-    t.date "date_naissance"
-    t.date "date_entree"
-    t.date "date_sortie"
-    t.integer "type_regime_id"
-    t.integer "exercice"
-    t.string "ref_employeur"
-    t.text "raison_sociale"
   end
 
   create_table "prestation_exterieures", force: :cascade do |t|
@@ -5595,12 +4672,7 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.integer "points_rc", default: 0, null: false
     t.integer "points_rg", default: 0, null: false
     t.integer "edi_id"
-    t.index ["date_debut_periode_cotisation"], name: "psrm_carrieres_date_debut_periode_cotisation_idx"
-    t.index ["date_fin_periode_cotisation"], name: "psrm_carrieres_date_fin_periode_cotisation_idx"
     t.index ["edi_id"], name: "index_psrm_carrieres_on_edi_id"
-    t.index ["fhnum"], name: "psrm_carrieres_fhnum_idx"
-    t.index ["matric"], name: "psrm_carrieres_matric_idx"
-    t.index ["regime"], name: "psrm_carrieres_regime_idx"
   end
 
   create_table "psrm_employeurs", force: :cascade do |t|
@@ -5627,52 +4699,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "description_agence_ipres", limit: 100
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.index ["ancien_num_css"], name: "psrm_employeurs_ancien_num_css_idx"
-    t.index ["ancien_num_ipres"], name: "psrm_employeurs_ancien_num_ipres_idx"
-    t.index ["fhnum"], name: "psrm_employeurs_fhnum_idx"
-  end
-
-  create_table "psrm_histo_v2", id: false, force: :cascade do |t|
-    t.integer "id"
-    t.string "matricule", limit: 100
-    t.string "regime", limit: 100
-    t.string "fhcat", limit: 100
-    t.string "exercice", limit: 100
-    t.string "trimestre", limit: 100
-    t.string "occurence", limit: 100
-    t.string "fhnet", limit: 100
-    t.string "fhobsv", limit: 100
-    t.string "fhreje", limit: 100
-    t.string "fhmtnl", limit: 100
-    t.string "fhetat", limit: 100
-    t.string "fhnenf", limit: 100
-    t.string "fhgrat_rg", limit: 100
-    t.string "fhcoti_rg", limit: 100
-    t.string "fhmino_rg", limit: 100
-    t.string "fhmajo_rg", limit: 100
-    t.string "fhcmpl_rg", limit: 100
-    t.string "fhserv_rg", limit: 100
-    t.string "fhbase_rg", limit: 100
-    t.string "fhtypp", limit: 100
-    t.string "fhbrut_rg", limit: 100
-    t.string "fhgrat_rcc", limit: 100
-    t.string "fhcoti_rcc", limit: 100
-    t.string "fhmino_rcc", limit: 100
-    t.string "fhmajo_rcc", limit: 100
-    t.string "fhcmpl_rcc", limit: 100
-    t.string "fhserv_rcc", limit: 100
-    t.string "fhbase_rcc", limit: 100
-    t.string "fhbrut_rcc", limit: 100
-    t.string "fhiprs", limit: 100
-    t.string "fhavis", limit: 100
-    t.string "fhtutl", limit: 100
-    t.string "fhvalp_rg", limit: 100
-    t.string "fhvalp_rcc", limit: 100
-    t.string "fhmodp", limit: 100
-    t.index ["exercice"], name: "psrm_histo_v2_exercice_idx"
-    t.index ["id"], name: "psrm_histo_v2_id_idx"
-    t.index ["matricule"], name: "psrm_histo_v2_matricule_idx"
-    t.index ["trimestre"], name: "psrm_histo_v2_trimestre_idx"
   end
 
   create_table "psrm_participants", force: :cascade do |t|
@@ -5700,7 +4726,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.boolean "from_psrm", default: false, null: false
     t.index ["css_ancien_matric"], name: "index_psrm_participants_on_css_ancien_matric"
     t.index ["edi_id"], name: "index_psrm_participants_on_edi_id"
-    t.index ["genre"], name: "psrm_participants_genre_idx"
     t.index ["id_employeur"], name: "index_psrm_participants_on_id_employeur"
     t.index ["ipres_ancien_matric"], name: "index_psrm_participants_on_ipres_ancien_matric"
     t.index ["matric"], name: "index_psrm_participants_on_matric"
@@ -5735,8 +4760,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "dossier_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["etat"], name: "regularisation_impayes_etat_idx"
-    t.index ["numero_allocataire"], name: "regularisation_impayes_numero_allocataire_idx"
     t.index ["ordre_paiement_id"], name: "index_regularisation_impayes_on_ordre_paiement_id"
     t.index ["regularisation_pension_id"], name: "index_regularisation_impayes_on_regularisation_pension_id"
   end
@@ -5795,9 +4818,7 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.boolean "beneficiaire_valide"
     t.text "comment_gestionnaire"
     t.index ["allocataire_id"], name: "index_regularisation_pensions_on_allocataire_id"
-    t.index ["numero_allocataire"], name: "regularisation_pensions_numero_allocataire_idx"
     t.index ["user_id"], name: "index_regularisation_pensions_on_user_id"
-    t.index ["workflow_state"], name: "regularisation_pensions_workflow_state_idx"
   end
 
   create_table "regulation_pensions", force: :cascade do |t|
@@ -5921,98 +4942,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "type_employeur"
     t.index ["immatriculation_societe_prive_id"], name: "index_representant_legals_on_immatriculation_societe_prive_id"
     t.index ["user_id"], name: "index_representant_legals_on_user_id"
-  end
-
-  create_table "retr_dr", id: false, force: :cascade do |t|
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.integer "ENTREP"
-    t.text "MATSOL"
-    t.integer "EXER"
-    t.integer "ME_1"
-    t.integer "JE_1"
-    t.integer "MS_1"
-    t.integer "JS_1"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE"
-    t.text "ADRESSE"
-    t.integer "TEL"
-    t.integer "BP"
-  end
-
-  create_table "retr_dr1", id: false, force: :cascade do |t|
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "REGIM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.integer "ENTREP"
-    t.text "MATSOL"
-    t.integer "EXER"
-    t.integer "ME2"
-    t.integer "JE3"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE"
-    t.text "ADRESSE"
-    t.text "T�l�phone"
-    t.text "BP"
-  end
-
-  create_table "retr_pr_3", id: false, force: :cascade do |t|
-    t.string "numero_allocataire_donneur", limit: 20
-  end
-
-  create_table "retr_pr_4", id: false, force: :cascade do |t|
-    t.string "numero_allocataire", limit: 20
-    t.text "num_donn"
-  end
-
-  create_table "retraites_dr", id: false, force: :cascade do |t|
-    t.float "MATRIC"
-    t.text "NOM"
-    t.text "PRENOM"
-    t.integer "AE"
-    t.integer "ME"
-    t.integer "JE"
-    t.integer "AS"
-    t.integer "MS"
-    t.integer "JS"
-    t.integer "ENTREP"
-    t.integer "MATSOL"
-    t.integer "EXER"
-    t.integer "ME_1"
-    t.integer "JE_1"
-    t.integer "MS_1"
-    t.integer "JS_1"
-    t.integer "SAL1"
-    t.integer "SAL2"
-    t.text "MOTIF"
-    t.integer "SREEL"
-    t.integer "DERNIEREENTREPRISE"
-    t.text "RAISONSOCIALE"
-    t.text "ADRESSE"
-    t.integer "TEL"
-    t.integer "BP"
   end
 
   create_table "revaloriser_pensions", force: :cascade do |t|
@@ -6238,7 +5167,7 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.datetime "date_verification"
   end
 
-  create_table "trackings", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "trackings", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "user_id"
     t.string "type_requete", limit: 7
     t.string "path", limit: 500
@@ -6248,8 +5177,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.string "action", limit: 100
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["created_at"], name: "trackings_created_at_idx"
-    t.index ["path"], name: "trackings_path_idx"
     t.index ["user_id"], name: "index_trackings_on_user_id"
   end
 
@@ -6365,100 +5292,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
     t.index ["user_id"], name: "index_workflow_histories_on_user_id"
   end
 
-  create_table "xxipres_css_op_det", id: false, force: :cascade do |t|
-    t.integer "legal_entity_id"
-    t.integer "entity_id"
-    t.integer "event_id"
-    t.string "code_type_ligne_operation", limit: 100
-    t.string "desc_ligne_paiement", limit: 200
-    t.integer "montant_ligne"
-    t.string "attribute1", limit: 150
-    t.string "attribute2", limit: 150
-    t.string "attribute3", limit: 150
-    t.string "attribute4", limit: 150
-    t.string "attribute5", limit: 150
-    t.string "attribute6", limit: 150
-    t.string "attribute7", limit: 150
-    t.string "attribute8", limit: 150
-    t.string "attribute9", limit: 150
-    t.string "attribute10", limit: 150
-    t.string "attribute11", limit: 150
-    t.string "attribute12", limit: 150
-    t.string "attribute13", limit: 150
-    t.string "attribute14", limit: 150
-    t.string "attribute15", limit: 150
-    t.date "creation_date"
-    t.integer "created_by"
-    t.string "last_update_date", limit: 100
-    t.integer "last_updated_by"
-    t.integer "last_update_login"
-    t.index ["event_id"], name: "xxdetl170", unique: true
-  end
-
-  create_table "xxipres_css_op_ent", id: false, force: :cascade do |t|
-    t.integer "legal_entity_id"
-    t.integer "entity_id"
-    t.string "code_type_evenement", limit: 100
-    t.date "date_evenement"
-    t.string "security_id_int_1", limit: 100
-    t.integer "ledger_id"
-    t.string "id_allocataire", limit: 100
-    t.string "nom_allocataire", limit: 200
-    t.string "pnom_allocataire", limit: 200
-    t.string "adresse_allocataire", limit: 200
-    t.string "adresse_rue", limit: 200
-    t.string "adrese_ville", limit: 200
-    t.string "pays", limit: 100
-    t.string "region", limit: 100
-    t.float "montant_op"
-    t.string "mode_de_paiement", limit: 100
-    t.string "code_banque", limit: 100
-    t.string "code_agence", limit: 100
-    t.string "numero_compte_alloc", limit: 100
-    t.string "zone_de_paiement", limit: 100
-    t.string "code_agence_paiement", limit: 100
-    t.string "code_caisse_paiement", limit: 100
-    t.string "numero_ordre_paiement", limit: 100
-    t.string "desc_ord_paiement", limit: 100
-    t.string "nin", limit: 100
-    t.string "num_tel", limit: 100
-    t.string "email", limit: 100
-    t.string "categ_allocataire", limit: 100
-    t.string "num_echeance", limit: 100
-    t.string "code_statut_transaction", limit: 100
-    t.string "code_processus_transaction", limit: 100
-    t.string "branche_liq", limit: 100
-    t.string "attribute1", limit: 150
-    t.string "attribute2", limit: 150
-    t.string "attribute3", limit: 150
-    t.string "attribute4", limit: 150
-    t.string "attribute5", limit: 150
-    t.string "attribute6", limit: 150
-    t.string "attribute7", limit: 150
-    t.string "attribute8", limit: 150
-    t.string "attribute9", limit: 150
-    t.string "attribute10", limit: 150
-    t.string "attribute11", limit: 150
-    t.string "attribute12", limit: 150
-    t.string "attribute13", limit: 150
-    t.string "attribute14", limit: 150
-    t.string "attribute15", limit: 150
-    t.date "creation_date"
-    t.integer "created_by"
-    t.date "last_update_date"
-    t.integer "last_updated_by"
-    t.integer "last_update_login"
-    t.index ["entity_id"], name: "xxentl160", unique: true
-    t.index ["legal_entity_id", "creation_date", "security_id_int_1"], name: "iopcss"
-    t.index ["legal_entity_id", "entity_id"], name: "xxentl150", unique: true
-    t.index ["numero_ordre_paiement"], name: "xxentl170", unique: true
-  end
-
-  create_table "zz_nbr_heure", id: false, force: :cascade do |t|
-    t.string "no_sinistre", limit: 50, null: false
-    t.integer "nb_jj_numerique", null: false
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "activity_recommandations", "dossier_audit_activities", column: "dossier_audit_activities_id"
   add_foreign_key "activity_recommandations", "dossier_audits", column: "dossier_audits_id"
@@ -6513,7 +5346,7 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
   add_foreign_key "carriere_dossier_prestations", "echeance_caisses"
   add_foreign_key "carrieres_exterieures", "cfs_reversion_veuves"
   add_foreign_key "carrieres_exterieures", "employeur_exterieurs"
-  add_foreign_key "carrires_prest_exterieures", "cfs_reversion_veuves", column: "prestation_ext_frances_id"
+  add_foreign_key "carrires_prest_exterieures", "cfs_reversion_veuves", column: "cfs_reversion_veuves_id"
   add_foreign_key "carrires_prest_exterieures", "employeur_exterieurs", column: "employeur_exterieurs_id"
   add_foreign_key "cfs_conjoints", "liquidation_retraite_frances"
   add_foreign_key "cfs_conjoints", "users"
@@ -6526,42 +5359,6 @@ ActiveRecord::Schema.define(version: 2025_02_21_014456) do
   add_foreign_key "compta_transactions", "admin_agences"
   add_foreign_key "compta_transactions", "admin_regions"
   add_foreign_key "compta_transactions", "echeance_paiements"
-  add_foreign_key "compta_transactions_2015", "admin_agences"
-  add_foreign_key "compta_transactions_2015", "admin_regions"
-  add_foreign_key "compta_transactions_2015", "echeance_paiements"
-  add_foreign_key "compta_transactions_2016", "admin_agences"
-  add_foreign_key "compta_transactions_2016", "admin_regions"
-  add_foreign_key "compta_transactions_2016", "echeance_paiements"
-  add_foreign_key "compta_transactions_2017", "admin_agences"
-  add_foreign_key "compta_transactions_2017", "admin_regions"
-  add_foreign_key "compta_transactions_2017", "echeance_paiements"
-  add_foreign_key "compta_transactions_2018", "admin_agences"
-  add_foreign_key "compta_transactions_2018", "admin_regions"
-  add_foreign_key "compta_transactions_2018", "echeance_paiements"
-  add_foreign_key "compta_transactions_2019", "admin_agences"
-  add_foreign_key "compta_transactions_2019", "admin_regions"
-  add_foreign_key "compta_transactions_2019", "echeance_paiements"
-  add_foreign_key "compta_transactions_2020", "admin_agences"
-  add_foreign_key "compta_transactions_2020", "admin_regions"
-  add_foreign_key "compta_transactions_2020", "echeance_paiements"
-  add_foreign_key "compta_transactions_2021", "admin_agences"
-  add_foreign_key "compta_transactions_2021", "admin_regions"
-  add_foreign_key "compta_transactions_2021", "echeance_paiements"
-  add_foreign_key "compta_transactions_2022", "admin_agences"
-  add_foreign_key "compta_transactions_2022", "admin_regions"
-  add_foreign_key "compta_transactions_2022", "echeance_paiements"
-  add_foreign_key "compta_transactions_2023", "admin_agences"
-  add_foreign_key "compta_transactions_2023", "admin_regions"
-  add_foreign_key "compta_transactions_2023", "echeance_paiements"
-  add_foreign_key "compta_transactions_2024", "admin_agences"
-  add_foreign_key "compta_transactions_2024", "admin_regions"
-  add_foreign_key "compta_transactions_2024", "echeance_paiements"
-  add_foreign_key "compta_transactions_2025", "admin_agences"
-  add_foreign_key "compta_transactions_2025", "admin_regions"
-  add_foreign_key "compta_transactions_2025", "echeance_paiements"
-  add_foreign_key "compta_transactions_legacy", "admin_agences"
-  add_foreign_key "compta_transactions_legacy", "admin_regions"
-  add_foreign_key "compta_transactions_legacy", "echeance_paiements"
   add_foreign_key "conjoints", "users"
   add_foreign_key "declaration_carrieres", "declaration_chargements"
   add_foreign_key "declaration_chargement_lignes", "declaration_chargements"

@@ -7,7 +7,7 @@ ruby '2.7.8'
 gem 'rails', '5.2.8.1'
 # Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
-gem 'mysql2'
+# gem 'mysql2'
 # Use Puma as the app server
 gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
@@ -72,7 +72,7 @@ gem 'simple_form'
 gem 'bootstrap_form', '4.3.0'
 gem 'cocoon'
 
-gem 'unicorn'
+#gem 'unicorn'
 gem 'kaminari'
 gem 'rack-cors'
 gem 'phonelib', '~> 0.6.33'
@@ -143,3 +143,5 @@ gem 'select_all-rails'
 
 gem 'caxlsx'
 gem 'caxlsx_rails'
+gem 'wdm', '>= 0.1.0' if Gem.win_platform?
+gem "state_machines-activerecord", "~> 0.8.0"

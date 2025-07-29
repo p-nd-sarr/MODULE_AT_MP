@@ -420,6 +420,10 @@ class ArretTravail < ApplicationRecord
   scope :dossiers_rejetes, -> { where(workflow_state: [:dossier_rejete]) }
   scope :en_attente_annulation_guerison, -> { where(workflow_state: [:annulation_guerison_soumise]) }
 
+  # arret_travail.rb pour gerer les deux enregistrement AT/MP
+  scope :maladies_professionnelles, -> { where(est_maladie_professionnelle: true) }
+  scope :accidents_de_travail, -> { where(est_maladie_professionnelle: false) }
+
   scope :en_attente_affectation_rechute_agence, -> { where(workflow_state: [:rechute]) }
   scope :en_attente_affectation_rechute_dir, -> { where(workflow_state: [:rechute]).where(creer_par_ag_direction_at: true) }
   scope :en_attente_liquidation_dossoer_rechute, -> { where(workflow_state: [:rechute]).where.not(affectation_at: nil) }

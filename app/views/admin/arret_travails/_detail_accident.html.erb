@@ -12,8 +12,9 @@
                     <div class="panel-heading">
                         <h5 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#infoAccident">
-                                <span class="fa fa-user"></span> Informations sur l'accident
-                            </a>
+                            <span class="fa fa-user"></span>
+                            <%= @est_mp ? 'Informations sur la maladie' : 'Informations sur l\'accident' %>
+                        </a>
                         </h5>
                     </div>
                     <div class="panel-collapse collapse" id="infoAccident" style="padding-top: 20px">
@@ -24,7 +25,8 @@
                     <div class="panel-heading">
                             <h5 class="panel-title">
                             <a data-toggle="collapse" data-parent="#accordion" href="#lesion">
-                                <span class="fa fa-user"></span> Lésions
+                                <span class="fa fa-user"></span>
+                                <%= @est_mp ? 'Atteinte' : 'Lésion' %>
                             </a>
                             </h5>
                     </div>

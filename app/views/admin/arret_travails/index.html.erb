@@ -1,5 +1,8 @@
-<%= content_for :titre_page, 'Accidents du Travail' %>
-
+<% if @est_mp %>
+  <%= content_for :titre_page, 'Maladie professionnelle' %>
+<% else %>
+  <%= content_for :titre_page, 'Accidents du Travail' %>  
+<% end %>
 
 <div class="wrapper wrapper-content">
   <div class="ibox-content">

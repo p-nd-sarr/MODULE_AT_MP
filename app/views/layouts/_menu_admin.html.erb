@@ -83,23 +83,33 @@
   </ul>
 </li>
 
-<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>">
   <a href="#"><i class="fa fa-users"></i>
-    <span class="nav-label"><%= I18n.t('module_arret_travail.admin_menu.arret_travail_label') %></span><span class="fa arrow"></span></a>
+    <span class="nav-label">Accident travail</span><span class="fa arrow"></span></a>
   <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
     <li class="<%= 'active' if is_active_controller('admin/arret_travails') and is_active_action('index') %>">
-      <%= link_to I18n.t('module_arret_travail.admin_menu.toute_les_demandes'), admin_arret_travails_path %>
+      <%= link_to 'Toutes les demandes at', admin_arret_travails_path(est_mp: false ) %>
     </li>
     <li class="<%= 'active' if is_active_controller('admin/arret_travails') and is_active_action('new') %>">
-      <%= link_to I18n.t('module_arret_travail.admin_menu.ajouter_dossier'), new_admin_arret_travail_path %>
-    </li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
-      <%= link_to "Origine GED", admin_arret_travail_geds_path(est_mp: false) %>
+      <%= link_to 'Ajouter dossier at', new_admin_arret_travail_path(est_mp: false )  %>
     </li>
   </ul>
 </li>
 
-<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+<li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == true %>">
+  <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Maladies professionnelles</span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') and is_active_action('index') %>">
+      <%= link_to 'Toutes les demandes mp', admin_arret_travails_path(est_mp: true ) %>
+    </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') and is_active_action('new') %>">
+      <%= link_to 'Ajouter dossier mp', new_admin_arret_travail_path(est_mp: true )  %>
+    </li>
+  </ul>
+</li>
+
+<!--<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles')%>">
   <a href="#"><i class="fa fa-users"></i>
     <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
   <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
@@ -109,11 +119,8 @@
     <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') and is_active_action('new') %>">
       <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
     </li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
-      <%= link_to "Origine GED", admin_arret_travail_geds_path(est_mp: true) %>
-    </li>
   </ul>
-</li>
+</li>-->
 
 <li class="<%= 'active' if is_active_controller('admin/prestation_retraite') %>">
   <%= link_to admin_prestation_retraite_index_path do %>
@@ -182,9 +189,6 @@
     </li> -->
     <li class="<%= 'active' if is_active_controller('admin/dossier_prestations') and is_active_action('new') %>">
       <%= link_to "Ajouter une demande", new_admin_dossier_prestation_path %>
-    </li>
-    <li class="<%= 'active' if is_active_controller('admin/dossier_prestation_geds') %>">
-      <%= link_to "Origine GED", admin_dossier_prestation_geds_path %>
     </li>
   </ul>
 </li>

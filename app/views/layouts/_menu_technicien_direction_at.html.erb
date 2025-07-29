@@ -92,8 +92,9 @@
   </ul>
 </li>
 
-<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
-  <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
+<li class="<%= 'active' if controller_name == 'arret_travails' && @est_mp == true %>">
+   <a href="#"><i class="fa fa-users"></i>
+    <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
   <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
     <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
       <%= link_to 'Accueil', admin_maladie_professionnelles_path %>

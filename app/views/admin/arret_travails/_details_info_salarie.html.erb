@@ -146,8 +146,8 @@
       </div>
     </d1>
     <d1 class="row mb-0">
-      <div class="col-sm-6" style="text-align: right;">
-        <dt>Date accident:</dt>
+     <div class="col-sm-6" style="text-align: right;">
+         <dt><%= @est_mp ? 'Date de première constatation de la maladie :' : 'Date accident :' %></dt>
       </div>
       <div class="col-sm-6" style="text-align: left;">
         <dd class="mb-1"><%= @demande_arret_travail.date_accident.strftime("%d-%m-%Y") %></dd>

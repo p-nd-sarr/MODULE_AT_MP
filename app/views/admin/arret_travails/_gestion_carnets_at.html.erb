@@ -18,7 +18,9 @@
                 <span aria-hidden="true">x</span>
                 <span class="sr-only">Close</span>
               </button>
-              <h4 class="modal-title">Ajouter un carnet AT</h4>
+              <h4 class="modal-title">
+                <%= @est_mp ? 'Ajouter un carnet maladie' : 'Ajouter un carnet accident' %>
+              </h4>
             </div>
             <div class="modal-body">
                 <%=f.hidden_field :arret_travail_id, value: @demande_arret_travail.id%>
@@ -44,7 +46,6 @@
         <th>N° Employeur</th>
         <th>Raison social</th>
         <th>Date achat</th>
-        <th>Existe dans AT vente ?</th>
         <th colspan="2">Action</th>
 
       </tr>
@@ -56,7 +57,6 @@
           <td><%= carnet.numero_employeur %></td>
           <td><%= carnet.raison_sociale %></td>
           <td><%= carnet.date_achat.strftime('%d/%m/%Y') unless carnet.date_achat.nil? %></td>
-          <td><%= state_yes_no carnet.is_verified? %></td>
           <td style="width: 75px">
             <%= (link_to 'Modifier', edit_admin_arret_travail_at_carnet_path(@demande_arret_travail, id: carnet), data: { confirm: 'En êtes vous sûr?' }, class: 'btn btn-outline btn-warning btn-xs') %>
           </td>

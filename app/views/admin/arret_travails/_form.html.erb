@@ -70,6 +70,10 @@
       <div class="tab row">
         <div class="col-lg-12">
           <h2><strong class="text-navy"> Etape 1:</strong> Informations personnelles</h2>
+          <div class="col-lg-6" id="est_mp">
+            <%= f.text_field :est_mp, label: "S'agit-il d'une maladie professionnelle ?", readonly: true %>
+          </div>
+
           <div class="col-lg-6">
             <%= f.select :has_numero_affiliation, options_for_select([["OUI", 1], ["NON", 0]], @demande_arret_travail.has_numero_affiliation), label: "Posséde un numéro d'affiliation?", required: is_required_field?(ArretTravail, 'has_numero_affiliation') %>
           </div>
@@ -137,16 +141,31 @@
         </div>
 
         <div class="col-lg-12">
-          <h2><strong class="text-navy"> </strong> Informations sur l'accident</h2>
+          <h2><strong class="text-navy"> </strong> <%= params[:est_mp] == 'true' ? "Informations sur la maladie" : "Informations sur l'accident" %></h2>
           <hr>
           <div class="col-lg-8">
-            <%= f.datetime_select :date_accident, label: "Date et heure de l'accident", include_blank: true,
-                                  start_year: (Date.today.year - 10), end_year: (Date.today.year + 10), required: true %>
+          <% if params[:est_mp] == 'true' %>
+            <%= f.date_select :date_accident, 
+              label: (params[:est_mp] == 'true' ? "Date de constatation de la maladie " : "Date et heure de l'accident"),
+              include_blank: true,
+              start_year: (Date.today.year - 10),
+              end_year: (Date.today.year + 10),
+              required: true %>
+              <% else %>
+              <%= f.datetime_select :date_accident, 
+              label: (params[:est_mp] == 'true' ? "Date et heure de constatation de la maladie" : "Date et heure de l'accident"),
+              include_blank: true,
+              start_year: (Date.today.year - 10),
+              end_year: (Date.today.year + 10),
+              required: true %>
+
+            <% end %>
           </div>
+
           <div class="col-lg-4 box_subrogation">
             <%= f.check_box :is_subrogation, label: "Cocher la case si le salaire est maintenu " %>
+            </div>
           </div>
-        </div>
 
 
         <div class="col-lg-12" style="margin-bottom:20px;">
@@ -200,7 +219,7 @@
             <%= link_to 'Annuler', (@demande_arret_travail.persisted? ? [:admin, @demande_arret_travail] : admin_arret_travails_path), class: 'btn btn-white', id: "cancelBtn" %>
             <button type="button" id="prevBtn" class="btn btn-primary" onclick="nextPrev(-1)">Précèdent</button>
             <button type="button" class="btn btn-success" id="nextBtn" onclick="nextPrev(1)">Suivant</button>
-            <%= f.button 'Valider', class: 'btn btn-success', id: "saveBtn" %>
+            <%= f.button 'Valider', class: 'btn btn-success', id: "saveBtn", onclick: "nextPrev(1)" %>
           </div>
         </div>
       </div>
@@ -219,7 +238,6 @@
 <% content_for :javascript do %>
   <script type="text/javascript">
       $(document).ready(function () {
-          showTab(-1);
           load_infos_participant();
           load_conjoints();
           has_numero_affiliation();
@@ -275,6 +293,8 @@
                               } else {
                                   $("#arret_travail_prenom_declarant").val('');
                                   $("#arret_travail_nom_declarant").val('');
+                                  $("#arret_travail_date_de_naissance_salarie_3i").val('');
+
                               }
                           } else {
                               $("#arret_travail_prenom_salarie").val('');
@@ -304,11 +324,13 @@
               if (has_numero_affiliation == 1) {
                   $("#numero_affiliation").show();
                   $("#numero_temporaire").hide();
+                  $("#est_mp").hide();
                   console.log("possede num_affiliation: ", has_numero_affiliation);
               } else {
                   //console.log("possede num_affiliation: ",has_numero_affiliation);
                   $("#numero_affiliation").hide();
                   $("#numero_temporaire").show();
+                  $("#est_mp").hide();
                   $("#arret_travail_prenom_salarie").val('');
                   $("#arret_travail_nom_salarie").val('');
                   $("#arret_travail_date_de_naissance_salarie_3i").val('');

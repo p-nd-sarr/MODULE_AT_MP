@@ -10,125 +10,133 @@
       <%=hidden_field_tag :custom_page, 'information_accident'%>
       <%=hidden_field_tag :anchor_tag, page_anchor_tag%>
     <div class="col-sm-6 col-md-6">      
-      <%= f.text_field :nature_du_travail_au_moment_accident, label:"Nature du travail effectué au moment de l’accident", readonly: @demande_arret_travail.read_only?%>
+      <%= f.text_field :nature_du_travail_au_moment_accident, label:"Nature du travail effectué", readonly: @demande_arret_travail.read_only?%>
     </div>
     <div class="col-sm-6 col-md-6">
-      <%= f.text_field :taux_infirmite_anterieure_accident, label:"Taux IPP antérieur", value: @demande_arret_travail.taux_infirmite_anterieure_accident, readonly: true%>
-    </div>
+          <%= f.text_field :taux_infirmite_anterieure_accident, 
+              label: (@est_mp ? "Taux d'infirmité antérieure à la maladie" : "Taux d'infirmité antérieure à l'accident"), 
+              value: @demande_arret_travail.taux_infirmite_anterieure_accident, 
+              readonly: true %>
+      </div>
     <!--div class="col-sm-4 col-md-4">
       <%= f.text_field :numero_rente_infirmite_anterieure_accident, label:"Numéro rente infirmité antérieure accident", readonly: @demande_arret_travail.read_only?%>
     </div-->
     <div class="col-md-12"><hr></div>
     <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
-      <%= f.datetime_select :date_accident , label: "Date de l'accident",
-                           start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year ,disabled: true%>
+     <%= f.date_select :date_accident , label: (@est_mp ? "Date de première constatation de la maladie" : "Date de l'accident"),
+                     start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year ,disabled: true%>
     </div>
     <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
-      <%= f.select :lieu_accident, ArretTravail::LIEU_ACCIDENT.keys.collect { |item| [ArretTravail.human_enum_name(:lieu_accident, item), item] }, label: 'Lieu accident' %> 
+        <%= f.select :lieu_accident, ArretTravail::LIEU_ACCIDENT.keys.collect { |item| [ArretTravail.human_enum_name(:lieu_accident, item), item] }, label: (@est_mp ? 'Lieu d\'exposition' : 'Lieu accident') %>
     </div>
-    <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
-      <%= f.select :nombre_hr_entre_accident_et_prise_travail, (0..10).to_a, label:"Nombre d’heures entre la prise du travail et l’accident du travail", readonly: @demande_arret_travail.read_only?%>
-    </div>
+    <% unless @est_mp %>
+      <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
+        <%= f.select :nombre_hr_entre_accident_et_prise_travail, (0..10).to_a, label:"Nombre d'heures entre la prise du travail et l'accident du travail", readonly: @demande_arret_travail.read_only?%>
+      </div>
+    <% end %>
     <div id="debut_at" class="col-sm-6 col-md-6" style="margin-top: 20px;">
-      <%= f.datetime_select :debut_arret_travail , label: "Debut arrêt travail",
+      <%= f.date_select :debut_arret_travail , label: "Debut arrêt travail",
                             start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year%>
     </div>
     <div class="col-sm-6 col-md-6 " style="margin-top: 20px;">
-      <%= f.select :consequence_accident_travail, ArretTravail::CONSEQUENCE_ACCIDENT_TRAVAIL.keys.collect { |item| [ArretTravail.human_enum_name(:consequence_accident_travail, item), item] }, label: 'Consequence accident de travail' %> 
+      <%= f.select :consequence_accident_travail, ArretTravail::CONSEQUENCE_ACCIDENT_TRAVAIL.keys.collect { |item| [ArretTravail.human_enum_name(:consequence_accident_travail, item), item] }, label: (@est_mp ? 'Conséquence de la maladie professionnelle' : 'Conséquence de l\'accident de travail') %>
     </div>
     <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
       <%= f.select :agent_materiel, ArretTravail::AGENT_MATERIEL.keys.collect { |item| [ArretTravail.human_enum_name(:agent_materiel, item), item] }, label: 'Agent Matériel' %> 
     </div>
 
     <div class="col-sm-6 col-md-6" style="margin-top: 20px; height: 110px;">
-      <%= f.text_area :cause_circonstances_acccident, label: "Cause et circonstances de l'accident", readonly: @demande_arret_travail.read_only?, style: "height:5em", required: true %>
+      <%= f.text_area :cause_circonstances_acccident, label: (@est_mp ? "Cause et circonstances de la maladie professionnelle" : "Cause et circonstances de l'accident"), readonly: @demande_arret_travail.read_only?, style: "height:5em", required: true %>
     </div>
-    <div class="col-sm-12 col-md-12">
-      <hr>
-      <div class="col-sm-4 col-md-4 box2">
-        <%= f.check_box :avec_constat, label:"Constat effectué par une autorité (OUI/NON)", readonly: @demande_arret_travail.read_only?, id:"avec_constat", option: @demande_arret_travail.avec_constat%>
-      </div>
-      <div class="col-sm-8 col-md-8">
-        <div  id="detail_constat" style="display: none;">
-          <%= f.text_field :detail_constat ,label: 'Détails constat', readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div  id="sans_detail_constat" style="display: block;">
-          <%= f.text_field :raison_absence_constat, label: 'Raison non constat', readonly: @demande_arret_travail.read_only?%>
-        </div>
-      </div>
+   <!-- Sections AT - Visibles seulement pour AT, cachées pour MP -->
+<div class="col-sm-12 col-md-12" style="<%= @est_mp ? 'display: none;' : '' %>">
+  <hr>
+  <div class="col-sm-4 col-md-4 box2">
+    <%= f.check_box :avec_constat, label:"Constat effectué par une autorité (OUI/NON)", readonly: @demande_arret_travail.read_only?, id:"avec_constat", option: @demande_arret_travail.avec_constat%>
+  </div>
+  <div class="col-sm-8 col-md-8">
+    <div  id="detail_constat" style="display: none;">
+      <%= f.text_field :detail_constat ,label: 'Détails constat', readonly: @demande_arret_travail.read_only?%>
     </div>
-    <!-- Avec témoin -->
-    <div class="col-sm-12 col-md-12">
-      <hr>
-      <div class="col-sm-4 col-md-4 box2">
-        <%= f.check_box :avec_temoin, label:"Avec témoin", disabled: @demande_arret_travail.read_only?, id:"avec_temoin",  option: @demande_arret_travail.avec_temoin%>
-      </div>
-      <div id="detail_temoin" style="display: none;">
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :nom_temoin, label:"Nom témoin",readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :adresse_temoin, label:"Adresse témoin",readonly: @demande_arret_travail.read_only?%>
-        </div>
-      </div>
+    <div  id="sans_detail_constat" style="display: block;">
+      <%= f.text_field :raison_absence_constat, label: 'Raison non constat', readonly: @demande_arret_travail.read_only?%>
     </div>
-    <!-- Accident causé par tiers -->
-    <div class="col-sm-12 col-md-12">
-      <hr>
-      <div class="col-sm-4 col-md-4 box2">
-        <%= f.check_box :accident_cause_par_tiers, label:"Accident causé par un tiers", disabled: @demande_arret_travail.read_only?, id:"avec_tiers", option: @demande_arret_travail.accident_cause_par_tiers%>
-      </div>
-      <div id="detail_tiers" style="display: none;">
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :prenom_civilement_responsable, label: "Prénom civilement responsable",readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :nom_tiers , label: 'Nom', readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">    
-          <%= f.text_field :adresse_tiers, label:"Adresse tiers", readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <!-- Responsable -->
-        <div class="col-sm-4 col-md-4" style="margin-top: 20px;">
-          <%= f.text_field :raison_sociale_assureur, readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">
-          <%= f.text_field :adresse_assureur, label: "Adresse assureur",readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div class="col-sm-4 col-md-4 " style="margin-top: 20px;">
-          <%= f.text_field :numero_police_assurance, label: "Numéro de la police d’assurance",readonly: @demande_arret_travail.read_only?%>
-        </div>
-      </div>
-    </div>
-    <!-- Personne avisée -->
-    <div class="col-sm-12 col-md-12">
-      <hr>
-      <div class="col-sm-4 col-md-4 box2">
-        <%= f.check_box :personne_avisee, label:"Première personne avisée ?", disabled: @demande_arret_travail.read_only?, id:"personne_avisee"%>
-      </div>
-      <div id="detail_personne_avisee" style="display: none;">
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :nom_personne_avisee, label:"Nom personne avisée", readonly: @demande_arret_travail.read_only?%>
-        </div>
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :adresse_personne_avisee, label:"Adresse personne avisée", readonly: @demande_arret_travail.read_only?%>
-        </div>
+  </div>
+</div>
 
-        <div class="col-sm-4 col-md-4 col-sm-offset-4">
-          <%= f.text_field :personne_avisee_quand, label:"Personne avisée quand?",readonly: @demande_arret_travail.read_only?%>
-        </div>
-
-        <div class="col-sm-4 col-md-4">
-          <%= f.text_field :personne_avisee_qualite, label:"Personne avisée qualité?",readonly: @demande_arret_travail.read_only?%>
-        </div>
-
- 
-
-        <div class="col-sm-4 col-md-4 col-sm-offset-4">
-          <%= f.text_field :personne_avisee_par_qui, label:"Personne avisée par qui?",readonly: @demande_arret_travail.read_only?%>
-        </div>
-      </div>
+<!-- Avec témoin -->
+<div class="col-sm-12 col-md-12" style="<%= @est_mp ? 'display: none;' : '' %>">
+  <hr>
+  <div class="col-sm-4 col-md-4 box2">
+    <%= f.check_box :avec_temoin, label:"Avec témoin", disabled: @demande_arret_travail.read_only?, id:"avec_temoin",  option: @demande_arret_travail.avec_temoin%>
+  </div>
+  <div id="detail_temoin" style="display: none;">
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :nom_temoin, label:"Nom témoin",readonly: @demande_arret_travail.read_only?%>
     </div>
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :adresse_temoin, label:"Adresse témoin",readonly: @demande_arret_travail.read_only?%>
+    </div>
+  </div>
+</div>
+
+<!-- Accident causé par tiers -->
+<div class="col-sm-12 col-md-12" style="<%= @est_mp ? 'display: none;' : '' %>">
+  <hr>
+  <div class="col-sm-4 col-md-4 box2">
+    <%= f.check_box :accident_cause_par_tiers, label:"Accident causé par un tiers", disabled: @demande_arret_travail.read_only?, id:"avec_tiers", option: @demande_arret_travail.accident_cause_par_tiers%>
+  </div>
+  <div id="detail_tiers" style="display: none;">
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :prenom_civilement_responsable, label: "Prénom civilement responsable",readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :nom_tiers , label: 'Nom', readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">    
+      <%= f.text_field :adresse_tiers, label:"Adresse tiers", readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <!-- Responsable -->
+    <div class="col-sm-4 col-md-4" style="margin-top: 20px;">
+      <%= f.text_field :raison_sociale_assureur, readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div class="col-sm-4 col-md-4 col-sm-offset-4" style="margin-top: 20px;">
+      <%= f.text_field :adresse_assureur, label: "Adresse assureur",readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div class="col-sm-4 col-md-4 " style="margin-top: 20px;">
+      <%= f.text_field :numero_police_assurance, label: "Numéro de la police d'assurance",readonly: @demande_arret_travail.read_only?%>
+    </div>
+  </div>
+</div>
+
+<!-- Personne avisée - CACHÉE POUR TOUS LES CAS -->
+<div class="col-sm-12 col-md-12" style="display: none;">
+  <hr>
+  <div class="col-sm-4 col-md-4 box2">
+    <%= f.check_box :personne_avisee, label:"Première personne avisée ?", disabled: @demande_arret_travail.read_only?, id:"personne_avisee"%>
+  </div>
+  <div id="detail_personne_avisee" style="display: none;">
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :nom_personne_avisee, label:"Nom personne avisée", readonly: @demande_arret_travail.read_only?%>
+    </div>
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :adresse_personne_avisee, label:"Adresse personne avisée", readonly: @demande_arret_travail.read_only?%>
+    </div>
+
+    <div class="col-sm-4 col-md-4 col-sm-offset-4">
+      <%= f.text_field :personne_avisee_quand, label:"Personne avisée quand?",readonly: @demande_arret_travail.read_only?%>
+    </div>
+
+    <div class="col-sm-4 col-md-4">
+      <%= f.text_field :personne_avisee_qualite, label:"Personne avisée qualité?",readonly: @demande_arret_travail.read_only?%>
+    </div>
+
+    <div class="col-sm-4 col-md-4 col-sm-offset-4">
+      <%= f.text_field :personne_avisee_par_qui, label:"Personne avisée par qui?",readonly: @demande_arret_travail.read_only?%>
+    </div>
+  </div>
+</div>
+
 
     <!-- Declarant -->
     <div class="col-sm-12 col-md-12">
@@ -140,7 +148,7 @@
         <%= f.text_field :nom_declarant, label:"Nom déclarant", readonly: true%>
       </div>
       <div class="col-sm-6 col-md-6" style="margin-top: 20px;">
-        <%= f.datetime_select :date_declaration , label: "Date déclaration", disabled: true,
+        <%= f.date_select :date_declaration , label: "Date déclaration", disabled: true,
                               start_year: (Date.today - 100.year).year, end_year: (Date.today + 100.year).year%>
       </div>
       <div class="col-sm-6 col-md-6" style="margin-top: 20px;">

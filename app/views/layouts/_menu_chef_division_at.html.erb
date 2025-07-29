@@ -16,19 +16,19 @@
   </ul>
 </li>
 
-<li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
-  <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%=I18n.t('module_arret_travail.admin_menu.arret_travail_label')%></span><span class="fa arrow"></span></a>
-  <ul class="nav nav-second-level <%= is_active_controller('admin/arret_travails') %>">
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>">
-      <%= link_to 'Accueil', admin_arret_travails_path %>
+<li class="<%= 'active' if controller_name == 'arret_travails' && @est_mp == false %>">
+ <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><%= I18n.t('module_arret_travail.admin_menu.arret_travail_label') %></span><span class="fa arrow"></span></a>
+  <ul class="nav nav-second-level <%= @est_mp == false ? 'active' : '' %>">
+    <li class="<%= 'active' if controller_name == 'arret_travails' && @est_mp == false %>">
+      <%= link_to 'Accueil', admin_arret_travails_path(est_mp: false) %>
     </li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En instructions', en_attente_affectation_redacteur_admin_arret_travails_path %></li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente avis', en_attente_avis_chef_service_at_admin_arret_travails_path %></li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'A soumettre au directeur at', en_attente_soumission_dir_at_admin_arret_travails_path %></li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'A affecter aux techniciens', en_attente_affectation_technicien_admin_arret_travails_path %></li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation des ij', en_attente_validation_ij_admin_arret_travails_path %></li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente validation des frais', en_attente_validation_frais_admin_arret_travails_path %></li>
-    <li class="<%= 'active' if is_active_controller('admin/arret_travails') %>"><%= link_to 'En attente affectation dossiers rechutes', en_attente_affectation_dossoer_rechute_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'En instructions', en_attente_affectation_redacteur_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'En attente avis', en_attente_avis_chef_service_at_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'A soumettre au directeur at', en_attente_soumission_dir_at_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'A affecter aux techniciens', en_attente_affectation_technicien_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'En attente validation des ij', en_attente_validation_ij_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'En attente validation des frais', en_attente_validation_frais_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == false %>"><%= link_to 'En attente affectation dossiers rechutes', en_attente_affectation_dossoer_rechute_admin_arret_travails_path %></li>
     <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>"><%= link_to "Origine GED", admin_arret_travail_geds_path %></li>    
     <li class="<%= 'active' if is_active_controller('admin/arret_travail_geds') %>">
       <%= link_to "Origine GED AT", admin_arret_travail_geds_path(est_mp: false) %>
@@ -110,13 +110,16 @@
   </ul>
 </li>
 
-<li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
+<!-- Menu Maladies Professionnelles -->
+<li class="<%= 'active' if controller_name == 'arret_travails' && @est_mp == true %>">
   <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Maladies Professionnelles</span><span class="fa arrow"></span></a>
-  <ul class="nav nav-second-level <%= is_active_controller('admin/maladie_professionnelles') %>">
-    <li class="<%= 'active' if is_active_controller('admin/maladie_professionnelles') %>">
-      <%= link_to 'Accueil', admin_maladie_professionnelles_path %>
-      <%= link_to 'Ajouter un dossier', new_admin_maladie_professionnelle_path %>
+  <ul class="nav nav-second-level <%= @est_mp == true ? 'active' : '' %>">
+    <li class="<%= 'active' if controller_name == 'arret_travails' && @est_mp == true %>">
+      <%= link_to 'Accueil', admin_arret_travails_path(est_mp: true) %>
     </li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == true %>"><%= link_to 'En instructions', en_attente_affectation_redacteur_admin_arret_travails_path(est_mp: true) %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == true %>"><%= link_to 'En attente validation des ij', en_attente_validation_ij_admin_arret_travails_path %></li>
+    <li class="<%= 'active' if is_active_controller('admin/arret_travails') && @est_mp == true %>"><%= link_to 'En attente validation des frais', en_attente_validation_frais_admin_arret_travails_path %></li>
   </ul>
 </li>
 
